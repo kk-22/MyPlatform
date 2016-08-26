@@ -17,8 +17,6 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jp.co.my.mysupport.model.SUDeviceSetting;
-
 /**
  * Created by kazuki on 2015/08/12.
  */
@@ -135,6 +133,5 @@ public class MYLogUtil {
 
 	public static void deleteLogFile() {
 		sContext.deleteFile(LOG_FILE_NAME);
-		SUDeviceSetting.clearStartCalendar();
 	}
 }
