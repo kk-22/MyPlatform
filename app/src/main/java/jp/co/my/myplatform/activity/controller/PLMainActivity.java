@@ -1,9 +1,11 @@
-package jp.co.my.myplatform.myplatform;
+package jp.co.my.myplatform.activity.controller;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
-public class PLMainActivity extends AppCompatActivity {
+import jp.co.my.myplatform.myplatform.R;
+
+public class PLMainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
