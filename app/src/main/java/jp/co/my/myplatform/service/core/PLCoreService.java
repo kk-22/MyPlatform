@@ -10,6 +10,7 @@ import android.support.v7.app.NotificationCompat;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.activity.controller.PLMainActivity;
+import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLCoreService extends Service {
 
@@ -30,6 +31,7 @@ public class PLCoreService extends Service {
 		MYLogUtil.outputLog("onStartCommand");
 
 		showNotification();
+		PLOverlayManager.init(this);
 
 		return START_STICKY;
 	}

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLServiceController {
 
@@ -34,6 +35,6 @@ public class PLServiceController {
 	}
 
 	public void destroyCoreService() {
-
+		PLOverlayManager.getInstance().removeAllView();
 	}
 }

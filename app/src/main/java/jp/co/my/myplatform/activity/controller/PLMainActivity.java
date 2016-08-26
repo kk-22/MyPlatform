@@ -15,6 +15,8 @@ public class PLMainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		setButtonEvent();
+
+		PLServiceController.getInstance().startCoreService();
 	}
 
 	private void setButtonEvent() {
