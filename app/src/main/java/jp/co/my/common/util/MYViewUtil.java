@@ -4,11 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.view.WindowManager;
 
-import java.util.Calendar;
-
-/**
- * Created by kazuki on 2016/05/04.
- */
 public class MYViewUtil {
 
 	private MYViewUtil() {}

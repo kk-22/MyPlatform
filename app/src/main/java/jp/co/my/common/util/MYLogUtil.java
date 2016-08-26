@@ -1,25 +1,11 @@
 package jp.co.my.common.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-/**
- * Created by kazuki on 2015/08/12.
- */
 public class MYLogUtil {
 	private static final String LOG_FILE_NAME = "MyLog";
 	private static final String TOAST_TAG = "toastLog";
@@ -94,41 +80,41 @@ public class MYLogUtil {
 	ログファイル操作
 	 */
 	private static void writeLogFile(String text) {
-		if (!sIsWriteLog) {
-			return;
-		}
-		SimpleDateFormat dataFormat = new SimpleDateFormat("MM/dd HH:mm:ss ");
-		String entryStr = dataFormat.format(new Date()) + text +"\n";
-		try {
-			FileOutputStream fileOutputstream = sContext.openFileOutput(LOG_FILE_NAME, Context.MODE_PRIVATE | Context.MODE_APPEND);
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutputstream));
-			writer.write(entryStr);
-			writer.close();
-		} catch (IOException e) {
-			MYLogUtil.showExceptionToast(e);
-		}
+//		if (!sIsWriteLog) {
+//			return;
+//		}
+//		SimpleDateFormat dataFormat = new SimpleDateFormat("MM/dd HH:mm:ss ");
+//		String entryStr = dataFormat.format(new Date()) + text +"\n";
+//		try {
+//			FileOutputStream fileOutputstream = sContext.openFileOutput(LOG_FILE_NAME, Context.MODE_PRIVATE | Context.MODE_APPEND);
+//			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutputstream));
+//			writer.write(entryStr);
+//			writer.close();
+//		} catch (IOException e) {
+//			MYLogUtil.showExceptionToast(e);
+//		}
 	}
 
 	public static void displayLogDialog(Activity activity) {
-		FileInputStream fileInputStream = null;
-		BufferedReader reader = null;
-		try {
-			fileInputStream = sContext.openFileInput(LOG_FILE_NAME);
-			reader= new BufferedReader(new InputStreamReader(fileInputStream,"UTF-8"));
-			StringBuffer strBuffer = new StringBuffer();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				strBuffer.append(line);
-				strBuffer.append("\n");
-			}
-			reader.close();
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-			alertDialogBuilder.setMessage(strBuffer.toString());
-			alertDialogBuilder.create().show();
-		} catch (IOException e) {
-			MYLogUtil.showExceptionToast(e);
-		}
+//		FileInputStream fileInputStream;
+//		BufferedReader reader;
+//		try {
+//			fileInputStream = sContext.openFileInput(LOG_FILE_NAME);
+//			reader = new BufferedReader(new InputStreamReader(fileInputStream,"UTF-8"));
+//			StringBuffer stringBuffer = new StringBuffer();
+//			String line;
+//			while ((line = reader.readLine()) != null) {
+//				stringBuffer.append(line);
+//				stringBuffer.append("\n");
+//			}
+//			reader.close();
+//
+//			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+//			alertDialogBuilder.setMessage(stringBuffer.toString());
+//			alertDialogBuilder.create().show();
+//		} catch (IOException e) {
+//			MYLogUtil.showExceptionToast(e);
+//		}
 	}
 
 	public static void deleteLogFile() {

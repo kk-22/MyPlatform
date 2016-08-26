@@ -11,9 +11,6 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.activity.controller.PLMainActivity;
 
-/**
- * Created by kazuki on 2016/08/26.
- */
 public class PLCoreService extends Service {
 
 	private boolean mIsRunning;					// 多重起動対策
