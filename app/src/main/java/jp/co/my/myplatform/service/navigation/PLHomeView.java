@@ -3,8 +3,8 @@ package jp.co.my.myplatform.service.navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.browser.PLBrowserView;
 
 public class PLHomeView extends PLNavigationView {
 
@@ -17,10 +17,10 @@ public class PLHomeView extends PLNavigationView {
 	}
 
 	private void setButtonEvent() {
-		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYLogUtil.showToast("ok");
+				PLNavigationController.getInstance().pushView(PLBrowserView.class);
 			}
 		});
 		findViewById(R.id.alarm_button).setOnClickListener(new View.OnClickListener() {

@@ -8,4 +8,16 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="HighlightImageButton">
+        <item name="android:src">@drawable/selector_image_button</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+
+    <style name="HighlightImageButton.HorizontalImageButton">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0pt</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
 </resources>
