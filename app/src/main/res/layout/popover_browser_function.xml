@@ -13,8 +13,8 @@
 
         <ImageButton
             style="@style/HighlightImageButton.HorizontalImageButton"
-            android:background="@drawable/forward_arrow_off"
-            android:id="@+id/forward_arrow_button"/>
+            android:background="@drawable/search"
+            android:id="@+id/search_button"/>
 
         <ImageButton
             style="@style/HighlightImageButton.HorizontalImageButton"
@@ -34,7 +34,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="160dp"
         android:listSelector="@drawable/selector_list"
         android:id="@+id/function_list"/>
 

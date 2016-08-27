@@ -20,13 +20,10 @@ import jp.co.my.myplatform.service.navigation.PLPopoverView;
 public class PLBrowserFunctionList extends PLPopoverView {
 
 	private enum LIST_INDEX {
-		LIST_INDEX_NEW_TAB,
-		LIST_INDEX_BOOKMARK_LIST,
 		LIST_INDEX_SCROLL_TOP,
 		LIST_INDEX_SCROLL_BOTTOM,
 		LIST_INDEX_OPEN_BROWSER,
-		LIST_INDEX_CLOSE_WEB_VIEW,
-		LIST_INDEX_FINISH_SERVICE,;
+		LIST_INDEX_RELEASE_BROWSER;
 	}
 
 	private PLWebView mWebView;
@@ -34,7 +31,6 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	private PLWebPageModel mSavedPageModel;
 
 	private ListView mListView;
-	private ImageButton mForwardButton;
 	private ImageButton mAddBookmarkButton;
 	private ImageButton mScriptButton;
 	private ImageButton mReloadButton;
@@ -49,7 +45,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				.and(PLWebPageModel_Table.url.eq(mWebView.getUrl()))
 				.querySingle();
 
-		String[] titles = {"新しいタブ", "ブックマーク一覧", "上までスクロール", "下までスクロール", "ブラウザで開く", "WebView閉じる", "サービス終了"};
+		String[] titles = {"上までスクロール", "下までスクロール", "ブラウザで開く", "インスタンス破棄"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
 				R.layout.cell_browser_function,
 				titles);
@@ -57,13 +53,11 @@ public class PLBrowserFunctionList extends PLPopoverView {
 		mListView = (ListView) findViewById(R.id.function_list);
 		mListView.setAdapter(adapter);
 
-		mForwardButton = (ImageButton) findViewById(R.id.forward_arrow_button);
 		mAddBookmarkButton = (ImageButton) findViewById(R.id.add_bookmark_button);
 		mScriptButton = (ImageButton) findViewById(R.id.script_button);
 		mReloadButton = (ImageButton) findViewById(R.id.reload_button);
 
 		initClickEvent();
-		updateForwardImage();
 		updateAddBookmarkImage();
 		updateScriptImage();
 	}
@@ -74,18 +68,6 @@ public class PLBrowserFunctionList extends PLPopoverView {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				LIST_INDEX index = LIST_INDEX.values()[position];
 				switch (index) {
-					case LIST_INDEX_NEW_TAB: {
-						// 新しいタブ
-						MYLogUtil.showToast("coming soon");
-						break;
-					}
-					case LIST_INDEX_BOOKMARK_LIST: {
-						// ブックマーク一覧を開く
-						removeCover();
-//							PLBookmarkList bookmarkList = new PLBookmarkList(mContext, view, mBrowserView);
-//							mBrowserView.addOverCoverView(bookmarkList);
-						break;
-					}
 					case LIST_INDEX_SCROLL_TOP: {
 						mWebView.setScrollY(0);
 						removeCover();
@@ -102,34 +84,16 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						mContext.startActivity(intent);
-						// WebViewも閉じる
-					}
-					case LIST_INDEX_CLOSE_WEB_VIEW: {
-						// WebViewを閉じる
-						removeCover();
-//							PLOverlayManager.getInstance().hideBrowser();
 						break;
 					}
-					case LIST_INDEX_FINISH_SERVICE: {
-						// サービス終了
-//							PLController.stopSupportService();
+					case LIST_INDEX_RELEASE_BROWSER: {
+						MYLogUtil.showToast("No action");
 						break;
 					}
 				}
 			}
 		});
 
-		mForwardButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// 進むボタン
-				mWebView.goForward();
-				updateForwardImage();
-				if (!mWebView.canGoForward()) {
-					removeCover();
-				}
-			}
-		});
 		mAddBookmarkButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -165,14 +129,6 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				removeCover();
 			}
 		});
-	}
-
-	private void updateForwardImage() {
-		if (mWebView.canGoForward()) {
-			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_on);
-		} else {
-			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
-		}
 	}
 
 	private void updateAddBookmarkImage() {

@@ -46,8 +46,8 @@ public class PLPopoverView extends FrameLayout {
 			@Override
 			public void onGlobalLayout() {
 				// サイズが設定された後のタイミングで位置調整
-				View parentView = (View) getParent();
-				Point displaySize = new Point(parentView.getWidth(), parentView.getHeight());
+				FrameLayout frameLayout = (FrameLayout) getParent();
+				Point displaySize = new Point(frameLayout.getWidth(), frameLayout.getHeight());
 				float subSizeX = mSubView.getWidth();
 				if (parentPointX + subSizeX < displaySize.x) {
 					// 画面に収まる場合は親のX座標と同じ
