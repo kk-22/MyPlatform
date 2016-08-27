@@ -1,7 +1,6 @@
 package jp.co.my.myplatform.service.overlay;
 
 import android.content.Context;
-import android.view.View;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class PLOverlayManager {
 
 	private Context mContext;
 	private WindowManager mWindowManager;
-	private PLNavigationView mNavigationView;
+	private PLNavigationController mNavigationController;
 	private ArrayList<PLOverlayView> mOverlayViews;
 
 	private PLOverlayManager(Context context) {
@@ -28,7 +27,7 @@ public class PLOverlayManager {
 	private void initFrontOverlays() {
 		addOverlayView(new PLFrontButtonView());
 
-		mNavigationView = new PLNavigationView();
+		mNavigationController = new PLNavigationController();
 	}
 
 	public void removeAllView() {
@@ -36,7 +35,7 @@ public class PLOverlayManager {
 			PLOverlayView view = mOverlayViews.get(0);
 			removeOverlayView(view);
 		}
-		removeNavigationView();
+		removeNavigationController();
 		sInstance = null;
 	}
 
@@ -61,16 +60,16 @@ public class PLOverlayManager {
 		}
 	}
 
-	public void displayNavigationView(View view) {
-		if (!mOverlayViews.contains(mNavigationView)) {
-			addOverlayView(mNavigationView);
+	public void displayNavigationView(PLNavigationView view) {
+		if (!mOverlayViews.contains(mNavigationController)) {
+			addOverlayView(mNavigationController);
 		}
-		mNavigationView.pushView(view);
+		mNavigationController.pushView(view);
 	}
 
-	public void removeNavigationView() {
-		if (mNavigationView != null && mOverlayViews.contains(mNavigationView)) {
-			removeOverlayView(mNavigationView);
+	public void removeNavigationController() {
+		if (mNavigationController != null && mOverlayViews.contains(mNavigationController)) {
+			removeOverlayView(mNavigationController);
 		}
 	}
 
