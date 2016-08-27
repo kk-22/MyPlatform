@@ -6,6 +6,8 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.navigation.PLNavigationController;
+import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
 public class PLOverlayManager {
 

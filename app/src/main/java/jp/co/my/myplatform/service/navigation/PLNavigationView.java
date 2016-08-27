@@ -1,6 +1,8 @@
-package jp.co.my.myplatform.service.overlay;
+package jp.co.my.myplatform.service.navigation;
 
 import android.widget.LinearLayout;
+
+import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLNavigationView extends LinearLayout {
 

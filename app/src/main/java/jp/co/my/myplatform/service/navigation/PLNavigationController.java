@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.overlay;
+package jp.co.my.myplatform.service.navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,7 +6,8 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.view.PLHomeView;
+import jp.co.my.myplatform.service.overlay.PLOverlayManager;
+import jp.co.my.myplatform.service.overlay.PLOverlayView;
 
 public class PLNavigationController extends PLOverlayView {
 

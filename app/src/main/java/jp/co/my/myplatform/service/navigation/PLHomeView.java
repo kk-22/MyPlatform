@@ -1,11 +1,10 @@
-package jp.co.my.myplatform.service.view;
+package jp.co.my.myplatform.service.navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.overlay.PLNavigationView;
 
 public class PLHomeView extends PLNavigationView {
 
