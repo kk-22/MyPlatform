@@ -25,7 +25,7 @@ public class PLBrowserView extends PLNavigationView {
 	private PLWebView mCurrentWebView;
 	private ProgressBar mProgressBar1, mProgressBar2;
 	private FrameLayout mContentLayout;
-//	private ArrayList<SUOverCoverView> mCoverViewArray;
+//	private ArrayList<PLPopoverView> mCoverViewArray;
 
 	public PLBrowserView() {
 		super();
@@ -109,17 +109,17 @@ public class PLBrowserView extends PLNavigationView {
 //				addOverCoverView(list);
 //			}
 //		});
-// 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				PLBrowserFunctionList list = new PLBrowserFunctionList(getContext(), v, PLBrowserView.this);
-//				addOverCoverView(list);
-//			}
-//		});
+ 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLBrowserFunctionList list = new PLBrowserFunctionList(getContext(), v, PLBrowserView.this);
+				addPopover(list);
+			}
+		});
 	}
 
 	private void onBackKey(View view) {
-		if (removeCoverView()) {
+		if (removeTopPopover()) {
 			// 子ビューがあったときのみWebView戻る処理を行わない
 			return;
 		}
@@ -131,28 +131,9 @@ public class PLBrowserView extends PLNavigationView {
 		}
 	}
 
-	private boolean removeCoverView() {
-		// mChildViewArrayの要素がremoveCoverメソッドでremove済みのケースがあるためループでチェック
-		boolean hasCoverView = false;
-//		for (int i = 0; i < mContentLayout.getChildCount(); i++) {
-//			View childView = mContentLayout.getChildAt(i);
-//			if (mCoverViewArray.contains(childView)) {
-//				mContentLayout.removeView(childView);
-//				hasCoverView = true;
-//			}
-//		}
-//		mCoverViewArray.clear();
-		return hasCoverView;
-	}
-
 	public PLWebView getCurrentWebView() {
 		return mCurrentWebView;
 	}
-
-//	public void addOverCoverView(PLOverCoverView view) {
-//		mContentLayout.addView(view);
-//		mCoverViewArray.add(view);
-//	}
 
 	private void updateProgressBar(ProgressBar progressBar, int progress) {
 		progressBar.setVisibility(View.VISIBLE);
