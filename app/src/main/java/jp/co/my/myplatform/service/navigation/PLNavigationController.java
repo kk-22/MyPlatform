@@ -31,6 +31,12 @@ public class PLNavigationController extends PLOverlayView {
 				PLOverlayManager.getInstance().removeOverlayView(PLNavigationController.this);
 			}
 		});
+		findViewById(R.id.home_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLNavigationController.getInstance().pushView(PLHomeView.class);
+			}
+		});
 
 		mViewCache = new ArrayList<>();
 
