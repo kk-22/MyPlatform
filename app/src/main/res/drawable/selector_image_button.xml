@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- 選択状態の選択肢が押されたとき -->
+
+	<!-- 押下時 -->
+	<item
+		android:state_checked="false"
+		android:state_pressed="true">
+		<shape android:shape="rectangle">
+			<solid android:color="#44F08000"></solid>
+		</shape>
+	</item>
+
+	<!-- 通常時 -->
+	<item
+		android:state_focused="true"
+		android:state_checked="false"
+		android:state_pressed="false"
+		android:drawable="@android:color/transparent"/>
+
+</selector>
