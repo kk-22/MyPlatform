@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.overlay;
 
 import android.content.Context;
+import android.view.View;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class PLOverlayManager {
 
 	private Context mContext;
 	private WindowManager mWindowManager;
+	private PLNavigationView mNavigationView;
 	private ArrayList<PLOverlayView> mOverlayViews;
 
 	private PLOverlayManager(Context context) {
@@ -23,8 +25,10 @@ public class PLOverlayManager {
 		mOverlayViews = new ArrayList<>();
 	}
 
-	private void displayFrontOverlays() {
+	private void initFrontOverlays() {
 		addOverlayView(new PLFrontButtonView());
+
+		mNavigationView = new PLNavigationView();
 	}
 
 	public void removeAllView() {
@@ -32,6 +36,7 @@ public class PLOverlayManager {
 			PLOverlayView view = mOverlayViews.get(0);
 			removeOverlayView(view);
 		}
+		removeNavigationView();
 		sInstance = null;
 	}
 
@@ -53,6 +58,19 @@ public class PLOverlayManager {
 		PLOverlayView view = getOverlayView(clazz);
 		if (view != null) {
 			removeOverlayView(view);
+		}
+	}
+
+	public void displayNavigationView(View view) {
+		if (!mOverlayViews.contains(mNavigationView)) {
+			addOverlayView(mNavigationView);
+		}
+		mNavigationView.pushView(view);
+	}
+
+	public void removeNavigationView() {
+		if (mNavigationView != null && mOverlayViews.contains(mNavigationView)) {
+			removeOverlayView(mNavigationView);
 		}
 	}
 
@@ -85,7 +103,7 @@ public class PLOverlayManager {
 			return;
 		}
 		sInstance = new PLOverlayManager(context);
-		sInstance.displayFrontOverlays();
+		sInstance.initFrontOverlays();
 	}
 
 	public static PLOverlayManager getInstance() {

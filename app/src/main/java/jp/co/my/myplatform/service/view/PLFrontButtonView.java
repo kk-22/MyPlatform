@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.overlay.PLDragDropView;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 import jp.co.my.myplatform.service.overlay.PLOverlayView;
@@ -47,7 +46,7 @@ public class PLFrontButtonView extends PLOverlayView {
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYLogUtil.showToast("ok");
+				PLOverlayManager.getInstance().displayNavigationView(null);
 			}
 		});
 		return button;
