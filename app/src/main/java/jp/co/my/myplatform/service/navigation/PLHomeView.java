@@ -11,7 +11,7 @@ public class PLHomeView extends PLNavigationView {
 
 	public PLHomeView() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.view_home, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.navigation_home, this);
 
 		setButtonEvent();
 	}
