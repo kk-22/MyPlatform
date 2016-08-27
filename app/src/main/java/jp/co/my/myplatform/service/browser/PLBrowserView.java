@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -38,17 +37,7 @@ public class PLBrowserView extends PLNavigationView {
 		mContentLayout = (FrameLayout) findViewById(R.id.content_frame);
 
 		mCurrentWebView = (PLWebView) findViewById(R.id.su_web_view);
-		mCurrentWebView.setWebViewClient(new WebViewClient() {
-			@Override
-			public boolean shouldOverrideUrlLoading(WebView webView, String url) {
-				if (url.startsWith("http:") || url.startsWith("https:")) {
-					// WebView内で開く
-					return false;
-				}
-				MYLogUtil.showToast("リンクストップ\n" + url);
-				return true;
-			}
-		});
+
 		mCurrentWebView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
 				updateProgressBar(mProgressBar1, progress);
@@ -113,19 +102,6 @@ public class PLBrowserView extends PLNavigationView {
 				return false;
 			}
 		});
-//		findViewById(R.id.hide_button).setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				PLOverlayManager.getInstance().hideBrowser();
-//			}
-//		});
-//		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				PLBrowserFunctionList list = new PLBrowserFunctionList(getContext(), v, PLBrowserView.this);
-//				addOverCoverView(list);
-//			}
-//		});
 //		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 //			@Override
 //			public void onClick(View v) {
@@ -133,12 +109,14 @@ public class PLBrowserView extends PLNavigationView {
 //				addOverCoverView(list);
 //			}
 //		});
+// 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				PLBrowserFunctionList list = new PLBrowserFunctionList(getContext(), v, PLBrowserView.this);
+//				addOverCoverView(list);
+//			}
+//		});
 	}
-
-//	@Override
-//	public WindowManager.LayoutParams getOverlayParams() {
-//		return getBaseParamsForFullView();
-//	}
 
 	private void onBackKey(View view) {
 		if (removeCoverView()) {

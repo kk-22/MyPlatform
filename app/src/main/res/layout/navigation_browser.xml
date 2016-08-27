@@ -53,13 +53,6 @@
                 android:imeOptions="actionSearch"
                 android:id="@+id/search_edit"/>
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Hide"
-                android:id="@+id/hide_button"/>
-
             <Space
                 android:layout_weight="1"
                 android:layout_width="0dp"

@@ -5,8 +5,10 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
@@ -102,6 +104,19 @@ public class PLWebView extends WebView {
 //		if (mPageData.getSiteData().isEnablePCViewr()) {
 //			setting.setUserAgentString("MyUserAgent");
 //		}
+
+		setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+				String url = request.getUrl().toString();
+				if (url.startsWith("http:") || url.startsWith("https:")) {
+					// WebView内で開く
+					return false;
+				}
+				MYLogUtil.showToast("リンクストップ\n" + url);
+				return true;
+			}
+		});
 	}
 
 	@Override
