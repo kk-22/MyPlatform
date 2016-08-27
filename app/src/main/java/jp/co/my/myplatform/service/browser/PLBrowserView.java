@@ -107,13 +107,13 @@ public class PLBrowserView extends PLNavigationView {
 				onForwardKey();
 			}
 		});
-//		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				PLBookmarkList list = new PLBookmarkList(getContext(), v, PLBrowserView.this);
-//				addOverCoverView(list);
-//			}
-//		});
+		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLBookmarkList list = new PLBookmarkList(getContext(), v, PLBrowserView.this);
+				addPopover(list);
+			}
+		});
  		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

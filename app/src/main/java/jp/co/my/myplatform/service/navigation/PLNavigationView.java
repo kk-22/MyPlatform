@@ -26,7 +26,7 @@ public class PLNavigationView extends LinearLayout {
 		popoverViews.clear();
 	}
 
-	protected boolean removeTopPopover() {
+	public boolean removeTopPopover() {
 		int size = popoverViews.size();
 		if (size == 0) {
 			return false;
@@ -35,7 +35,7 @@ public class PLNavigationView extends LinearLayout {
 		return true;
 	}
 
-	protected void removePopover(PLPopoverView view) {
+	public void removePopover(PLPopoverView view) {
 		if (popoverViews.remove(view)) {
 			getParentFrameLayout().removeView(view);
 		} else {
@@ -43,7 +43,7 @@ public class PLNavigationView extends LinearLayout {
 		}
 	}
 
-	protected void addPopover(PLPopoverView view) {
+	public void addPopover(PLPopoverView view) {
 		popoverViews.add(view);
 		getParentFrameLayout().addView(view);
 	}
