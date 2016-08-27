@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.navigation.PLNavigationController;
-import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
 public class PLOverlayManager {
 
@@ -15,7 +14,6 @@ public class PLOverlayManager {
 
 	private Context mContext;
 	private WindowManager mWindowManager;
-	private PLNavigationController mNavigationController;
 	private ArrayList<PLOverlayView> mOverlayViews;
 
 	private PLOverlayManager(Context context) {
@@ -25,18 +23,18 @@ public class PLOverlayManager {
 		mOverlayViews = new ArrayList<>();
 	}
 
-	private void initFrontOverlays() {
-		addOverlayView(new PLFrontButtonView());
-
-		mNavigationController = new PLNavigationController();
-	}
-
-	public void removeAllView() {
+	public void destroyOverlay() {
 		while (0 < mOverlayViews.size()) {
 			PLOverlayView view = mOverlayViews.get(0);
 			removeOverlayView(view);
 		}
-		removeNavigationController();
+
+		PLNavigationController navigation = PLNavigationController.getInstance();
+		if (mOverlayViews.contains(navigation)) {
+			removeOverlayView(navigation);
+		}
+		navigation.destroyNavigation();
+
 		sInstance = null;
 	}
 
@@ -61,19 +59,7 @@ public class PLOverlayManager {
 		}
 	}
 
-	public void displayNavigationView(PLNavigationView view) {
-		if (!mOverlayViews.contains(mNavigationController)) {
-			addOverlayView(mNavigationController);
-		}
-		mNavigationController.pushView(view);
-	}
-
-	public void removeNavigationController() {
-		if (mNavigationController != null && mOverlayViews.contains(mNavigationController)) {
-			removeOverlayView(mNavigationController);
-		}
-	}
-
+	@SuppressWarnings("unchecked")
 	public <T extends PLOverlayView> T getOverlayView(Class<T> clazz) {
 		for (PLOverlayView view : mOverlayViews) {
 			if (clazz.isInstance(view)) {
@@ -97,12 +83,19 @@ public class PLOverlayManager {
 		return mContext;
 	}
 
+	private void initFrontOverlays() {
+		addOverlayView(new PLFrontButtonView());
+
+		PLNavigationController.init();
+	}
+
 	public static void init(Context context) {
 		if (sInstance != null) {
 			MYLogUtil.showErrorToast("PLOverlayManagerは既に初期化済みです");
 			return;
 		}
 		sInstance = new PLOverlayManager(context);
+		// View作成時にsInstanceが必要なのでここで実行
 		sInstance.initFrontOverlays();
 	}
 

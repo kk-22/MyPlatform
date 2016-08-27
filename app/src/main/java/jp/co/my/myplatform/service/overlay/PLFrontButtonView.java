@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.navigation.PLNavigationController;
 
 public class PLFrontButtonView extends PLOverlayView {
 
@@ -22,7 +23,7 @@ public class PLFrontButtonView extends PLOverlayView {
 		mButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLOverlayManager.getInstance().displayNavigationView(null);
+				PLNavigationController.getInstance().displayNavigationIfNeeded();
 			}
 		});
 		mButton.setOnLongClickListener(new OnLongClickListener() {
