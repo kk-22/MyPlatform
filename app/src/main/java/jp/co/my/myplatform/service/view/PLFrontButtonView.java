@@ -1,12 +1,13 @@
 package jp.co.my.myplatform.service.view;
 
 import android.content.ClipData;
-import android.graphics.Color;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.overlay.PLDragDropView;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 import jp.co.my.myplatform.service.overlay.PLOverlayView;
@@ -17,8 +18,16 @@ public class PLFrontButtonView extends PLOverlayView {
 
 	public PLFrontButtonView() {
 		super();
-		mButton = createButton();
+		LayoutInflater.from(getContext()).inflate(R.layout.overlay_front_button, this);
+
+		mButton = (Button) findViewById(R.id.button);
 		mButton.setLayoutParams(createMatchParams());
+		mButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLOverlayManager.getInstance().displayNavigationView(null);
+			}
+		});
 		mButton.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
@@ -34,22 +43,6 @@ public class PLFrontButtonView extends PLOverlayView {
 				return true;
 			}
 		});
-		addView(mButton);
-	}
-
-	protected Button createButton() {
-		Button button = new Button(getContext());
-		button.setText("Button");
-		button.setTextSize(10);
-		button.setTextColor(Color.BLACK);
-		button.setBackgroundColor(Color.parseColor("#00ffff"));
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				PLOverlayManager.getInstance().displayNavigationView(null);
-			}
-		});
-		return button;
 	}
 
 	@Override
