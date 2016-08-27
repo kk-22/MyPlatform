@@ -2,6 +2,7 @@ package jp.co.my.common.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
@@ -119,5 +120,13 @@ public class MYLogUtil {
 
 	public static void deleteLogFile() {
 		sContext.deleteFile(LOG_FILE_NAME);
+	}
+
+	public static SharedPreferences getPreference() {
+		return sContext.getSharedPreferences("preference", Context.MODE_PRIVATE);
+	}
+
+	public static SharedPreferences.Editor getPreferenceEditor() {
+		return getPreference().edit();
 	}
 }

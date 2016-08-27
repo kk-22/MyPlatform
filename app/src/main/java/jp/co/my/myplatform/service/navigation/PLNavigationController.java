@@ -35,7 +35,7 @@ public class PLNavigationController extends PLOverlayView {
 	}
 
 	public void pushView(PLNavigationView view) {
-		if (view == null) {
+		if (view == null || (mCurrentView != null && mCurrentView.equals(view))) {
 			// 前回のViewを表示
 			return;
 		}

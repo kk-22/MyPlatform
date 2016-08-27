@@ -10,9 +10,12 @@ import android.support.v7.app.NotificationCompat;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.activity.controller.PLMainActivity;
+import jp.co.my.myplatform.service.navigation.PLSetAlarmView;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLCoreService extends Service {
+
+	public static final String KEY_CLASS_NAME = "KEY_CLASS_NAME";
 
 	private boolean mIsRunning;					// 多重起動対策
 
@@ -23,17 +26,16 @@ public class PLCoreService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (mIsRunning) {
-			MYLogUtil.showToast("既にServiceが開始しています");
-			return START_STICKY;
-		}
-		mIsRunning = true;
 		MYLogUtil.outputLog("onStartCommand");
+		if (!mIsRunning) {
+			mIsRunning = true;
 
-		showNotification();
-		PLOverlayManager.init(this);
-		PLOverlayManager.getInstance().displayNavigationView(null);
+			showNotification();
+			PLOverlayManager.init(this);
+			PLOverlayManager.getInstance().displayNavigationView(null);
+		}
 
+		actionIntent(intent);
 		return START_STICKY;
 	}
 
@@ -48,6 +50,23 @@ public class PLCoreService extends Service {
 	public IBinder onBind(Intent intent) {
 		MYLogUtil.showToast("onBind");
 		return null;
+	}
+
+	private void actionIntent(Intent intent) {
+		if (intent == null) {
+			return;
+		}
+
+		String className = intent.getStringExtra(KEY_CLASS_NAME);
+		if (className != null) {
+			MYLogUtil.outputLog("indent className = " + className);
+
+			if (className.equals(PLSetAlarmView.class.getCanonicalName())) {
+				PLSetAlarmView alarmView = new PLSetAlarmView();
+				PLOverlayManager.getInstance().displayNavigationView(alarmView);
+				alarmView.startAlarm();
+			}
+		}
 	}
 
 	private void showNotification() {
