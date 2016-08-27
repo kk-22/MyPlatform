@@ -6,7 +6,6 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.service.view.PLFrontButtonView;
 
 public class PLOverlayManager {
 
