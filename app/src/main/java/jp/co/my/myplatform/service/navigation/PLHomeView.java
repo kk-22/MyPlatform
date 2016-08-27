@@ -5,6 +5,7 @@ import android.view.View;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLHomeView extends PLNavigationView {
 
@@ -26,7 +27,8 @@ public class PLHomeView extends PLNavigationView {
 		findViewById(R.id.alarm_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYLogUtil.showToast("ok");
+				PLOverlayManager.getInstance().displayNavigationView(new PLSetAlarmView());
 			}
-		});	}
+		});
+	}
 }

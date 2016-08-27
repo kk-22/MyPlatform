@@ -32,6 +32,7 @@ public class PLCoreService extends Service {
 
 		showNotification();
 		PLOverlayManager.init(this);
+		PLOverlayManager.getInstance().displayNavigationView(null);
 
 		return START_STICKY;
 	}
