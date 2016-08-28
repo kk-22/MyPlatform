@@ -32,6 +32,11 @@ public class PLSetAlarmView extends PLNavigationView {
 		mAlarmCount = 0;
 
 		setButtonEvent();
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
 		setDefaultTimeIfNecessary();
 	}
 
