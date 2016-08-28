@@ -69,8 +69,10 @@ public class PLNavigationController extends PLOverlayView {
 		}
 
 		if (mCurrentView != null) {
+			mCurrentView.viewWillDisappear();
 			mViewCache.remove(mCurrentView);
 			mFrameLayout.removeView(mCurrentView);
+			mCurrentView = null;
 		}
 		mViewCache.add(view);
 		mFrameLayout.addView(view, createMatchParams());

@@ -33,14 +33,6 @@ public class PLWebView extends WebView {
 		initWebView();
 	}
 
-//	public void releaseWebView() {
-//		mCurrentWebView.setWebChromeClient(null);
-//		mCurrentWebView.setWebViewClient(null);
-////		unregisterForContextMenu(mCurrentWebView);
-//		mCurrentWebView.destroy();
-//		mCurrentWebView = null;
-//	}
-
 	@Override
 	protected void onFinishInflate() {
 		MYLogUtil.outputLog("onFinishInflate");
@@ -52,22 +44,8 @@ public class PLWebView extends WebView {
 		MYLogUtil.outputLog("onAttachedToWindow");
 		super.onAttachedToWindow();
 
-//		if (mCurrentWebView != null)	{
-//			mCurrentWebView.onPause();
-//			mCurrentWebView.pauseTimers();
-//		}
-	}
-
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		MYLogUtil.outputLog("onMeasure");
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-	}
-
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		MYLogUtil.outputLog("onLayout");
-		super.onLayout(changed, l, t, r, b);
+		onResume();
+		resumeTimers();
 	}
 
 	@Override
@@ -75,10 +53,19 @@ public class PLWebView extends WebView {
 		MYLogUtil.outputLog("onDetachedFromWindow");
 		super.onDetachedFromWindow();
 
-//		if (mCurrentWebView != null)	{
-//			mCurrentWebView.onResume();
-//			mCurrentWebView.resumeTimers();
-//		}
+		onPause();
+		pauseTimers();
+	}
+
+	@Override
+	public void destroy() {
+		removeAllViews();
+
+		stopLoading();
+		setWebChromeClient(null);
+		setWebViewClient(null);
+
+		super.destroy();
 	}
 
 	public void loadPageModel(PLWebPageModel pageModel) {

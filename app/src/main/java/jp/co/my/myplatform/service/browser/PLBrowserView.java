@@ -33,6 +33,9 @@ public class PLBrowserView extends PLNavigationView {
 
 		mCurrentWebView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
+				if (mCurrentWebView == null) {
+					return;
+				}
 				updateProgressBar(mProgressBar1, progress);
 				updateProgressBar(mProgressBar2, progress);
 				updateArrowButtonImage();
@@ -121,6 +124,15 @@ public class PLBrowserView extends PLNavigationView {
 				addPopover(list);
 			}
 		});
+	}
+
+	@Override
+	public void viewWillDisappear() {
+		super.viewWillDisappear();
+
+		removeView(mCurrentWebView);
+		mCurrentWebView.destroy();
+		mCurrentWebView = null;
 	}
 
 	private void onBackKey() {
