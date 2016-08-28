@@ -69,9 +69,11 @@ public class PLNavigationController extends PLOverlayView {
 		}
 
 		if (mCurrentView != null) {
-			mCurrentView.viewWillDisappear();
-			mViewCache.remove(mCurrentView);
-			mFrameLayout.removeView(mCurrentView);
+			if (!mCurrentView.isKeepCache) {
+				mCurrentView.viewWillDisappear();
+				mViewCache.remove(mCurrentView);
+			}
+			mFrameLayout.removeAllViews();
 			mCurrentView = null;
 		}
 		mViewCache.add(view);
@@ -102,10 +104,10 @@ public class PLNavigationController extends PLOverlayView {
 		for (PLNavigationView view : mViewCache) {
 			view.viewWillDisappear();
 		}
-		if (mCurrentView != null) {
-			removeView(mCurrentView);
-			mCurrentView = null;
-		}
+		mFrameLayout.removeAllViews();
+		removeAllViews();
+		mCurrentView = null;
+
 		sInstance = null;
 	}
 

@@ -12,16 +12,17 @@ import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 public class PLNavigationView extends LinearLayout {
 
 	private ArrayList<PLPopoverView> popoverViews;
+	protected boolean isKeepCache;
 
 	public PLNavigationView() {
 		super(PLOverlayManager.getInstance().getContext());
 
 		popoverViews = new ArrayList<>();
+		isKeepCache = false;
 	}
 
 	public void viewWillDisappear() {
 		removeAllViews();
-		getParentFrameLayout().removeAllViews();
 		popoverViews.clear();
 	}
 

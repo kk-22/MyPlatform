@@ -24,6 +24,8 @@ public class PLBrowserView extends PLNavigationView {
 
 	public PLBrowserView() {
 		super();
+		isKeepCache = true;
+
 		LayoutInflater.from(getContext()).inflate(R.layout.navigation_browser, this);
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mForwardButton = (ImageButton) findViewById(R.id.forward_button);
