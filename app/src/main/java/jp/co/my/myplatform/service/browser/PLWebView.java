@@ -1,7 +1,6 @@
 package jp.co.my.myplatform.service.browser;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -41,12 +40,6 @@ public class PLWebView extends WebView {
 //		mCurrentWebView.destroy();
 //		mCurrentWebView = null;
 //	}
-
-	@Override
-	protected void onDraw(Canvas canvas) {
-//		MYLogUtil.outputLog("onDraw");
-		super.onDraw(canvas);
-	}
 
 	@Override
 	protected void onFinishInflate() {
@@ -109,12 +102,13 @@ public class PLWebView extends WebView {
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
 				String url = request.getUrl().toString();
-				if (url.startsWith("http:") || url.startsWith("https:")) {
-					// WebView内で開く
-					return false;
-				}
-				MYLogUtil.showToast("リンクストップ\n" + url);
-				return true;
+				return canLoadUrl(url);
+			}
+
+			@Override
+			@SuppressWarnings("deprecation")
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				return canLoadUrl(url);
 			}
 		});
 	}
@@ -122,6 +116,15 @@ public class PLWebView extends WebView {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return (mGestureDetector.onTouchEvent(event) || super.onTouchEvent(event));
+	}
+
+	private boolean canLoadUrl(String url) {
+		if (url.startsWith("http:") || url.startsWith("https:")) {
+			// WebView内で開く
+			return false;
+		}
+		MYLogUtil.showToast("リンクストップ\n" + url);
+		return true;
 	}
 
 	// タッチイベントのリスナー
