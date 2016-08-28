@@ -70,12 +70,12 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				switch (index) {
 					case LIST_INDEX_SCROLL_TOP: {
 						mWebView.setScrollY(0);
-						removeCover();
+						removeFromNavigation();
 						break;
 					}
 					case LIST_INDEX_SCROLL_BOTTOM: {
 						mWebView.setScrollY(9999999);
-						removeCover();
+						removeFromNavigation();
 						break;
 					}
 					case LIST_INDEX_OPEN_BROWSER: {
@@ -108,7 +108,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 					mSavedPageModel.delete();
 					mSavedPageModel = null;
 				}
-				removeCover();
+				removeFromNavigation();
 			}
 		});
 		mScriptButton.setOnClickListener(new OnClickListener() {
@@ -118,7 +118,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				boolean nextScriptEnabled = !mWebView.getSettings().getJavaScriptEnabled();
 				mWebView.getSettings().setJavaScriptEnabled(nextScriptEnabled);
 				mWebView.reload();
-				removeCover();
+				removeFromNavigation();
 			}
 		});
 		mReloadButton.setOnClickListener(new OnClickListener() {
@@ -126,7 +126,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 			public void onClick(View v) {
 				// リロードボタン
 				mWebView.reload();
-				removeCover();
+				removeFromNavigation();
 			}
 		});
 	}

@@ -46,6 +46,7 @@ public class PLNavigationView extends LinearLayout {
 	public void addPopover(PLPopoverView view) {
 		popoverViews.add(view);
 		getParentFrameLayout().addView(view);
+		view.addedPopover(this);
 	}
 
 	private FrameLayout getParentFrameLayout() {

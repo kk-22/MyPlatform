@@ -51,7 +51,7 @@ public class PLBookmarkActionView extends PLPopoverView {
 						MYLogUtil.showToast("ブックマーク削除：" +mPageModel.getTitle());
 						mPageModel.delete();
 						mBookmarkList.updateList();
-						removeCover();
+						removeFromNavigation();
 						break;
 					}
 				}

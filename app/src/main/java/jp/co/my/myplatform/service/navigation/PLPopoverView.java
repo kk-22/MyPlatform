@@ -14,6 +14,7 @@ public class PLPopoverView extends FrameLayout {
 
 	protected Context mContext;
 	protected View mSubView;
+	protected PLNavigationView mParentNavigationView;
 
 	public PLPopoverView(Context context, View parentView, int subResource) {
 		super(context);
@@ -27,8 +28,12 @@ public class PLPopoverView extends FrameLayout {
 		setSubViewPosition(parentView);
 	}
 
-	public void removeCover() {
-		((ViewGroup)getParent()).removeView(this);
+	public void addedPopover(PLNavigationView navigationView) {
+		mParentNavigationView = navigationView;
+	}
+
+	public void removeFromNavigation() {
+		mParentNavigationView.removePopover(this);
 	}
 
 	private void setSubViewPosition(final View parentView) {
@@ -74,7 +79,7 @@ public class PLPopoverView extends FrameLayout {
 		findViewById(R.id.background_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				removeCover();
+				removeFromNavigation();
 			}
 		});
 		mSubView.setOnClickListener(new OnClickListener() {

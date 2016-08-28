@@ -55,14 +55,14 @@ public class PLBookmarkList extends PLPopoverView {
 				PLWebPageModel pageModel = (PLWebPageModel) listView.getItemAtPosition(position);
 				mBrowserView.getCurrentWebView().loadPageModel(pageModel);
 
-				removeCover();
+				removeFromNavigation();
 			}
 		});
 
 		findViewById(R.id.close_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				removeCover();
+				removeFromNavigation();
 			}
 		});
 	}
