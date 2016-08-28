@@ -20,9 +20,8 @@ public class PLNavigationView extends LinearLayout {
 	}
 
 	public void viewWillDisappear() {
-		for (PLPopoverView view : popoverViews) {
-			removePopover(view);
-		}
+		removeAllViews();
+		getParentFrameLayout().removeAllViews();
 		popoverViews.clear();
 	}
 
