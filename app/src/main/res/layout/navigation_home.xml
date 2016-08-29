@@ -28,8 +28,8 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="New Button"
-            android:id="@+id/home3_button"/>
+            android:text="ロック画面"
+            android:id="@+id/lock_button"/>
     </LinearLayout>
 
     <LinearLayout

@@ -7,6 +7,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.overlay.PLLockView;
 
 public class PLHomeView extends PLNavigationView {
 
@@ -24,6 +25,14 @@ public class PLHomeView extends PLNavigationView {
 			public void onClick(View v) {
 				PLApplication.startMainActivity();
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+			}
+		});
+		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+				PLLockView lockView = new PLLockView();
+				PLCoreService.getOverlayManager().addOverlayView(lockView);
 			}
 		});
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
