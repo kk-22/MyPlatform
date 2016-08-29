@@ -100,6 +100,13 @@ public class PLNavigationController extends PLOverlayView {
 		manager.addOverlayView(this);
 	}
 
+	public void hideNavigationIfNeeded() {
+		if (getParent() == null) {
+			return;
+		}
+		PLOverlayManager.getInstance().removeOverlayView(this);
+	}
+
 	public void destroyNavigation() {
 		for (PLNavigationView view : mViewCache) {
 			view.viewWillDisappear();
