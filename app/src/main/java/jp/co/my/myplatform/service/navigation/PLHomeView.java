@@ -21,7 +21,7 @@ public class PLHomeView extends PLNavigationView {
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLNavigationController.getInstance().pushView(PLBrowserView.class);
+				PLCoreService.getNavigationController().pushView(PLBrowserView.class);
 			}
 		});
 		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {
@@ -29,13 +29,13 @@ public class PLHomeView extends PLNavigationView {
 			public void onClick(View v) {
 				PLCoreService.getAppStrategy().startApp();
 
-				PLNavigationController.getInstance().hideNavigationIfNeeded();
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
 		});
 		findViewById(R.id.alarm_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLNavigationController.getInstance().pushView(PLSetAlarmView.class);
+				PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
 			}
 		});
 	}

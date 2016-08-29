@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import jp.co.my.common.util.MYViewUtil;
+import jp.co.my.myplatform.service.core.PLCoreService;
 
 public class PLDragDropView extends PLOverlayView {
 	PLOverlayView mMoveView;
@@ -41,7 +42,7 @@ public class PLDragDropView extends PLOverlayView {
 			@Override
 			public void onClick(View v) {
 				// ドラッグ失敗時の解除用
-				PLOverlayManager overlayManager = PLOverlayManager.getInstance();
+				PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
 				overlayManager.removeOverlayView(PLDragDropView.this);
 			}
 		});
@@ -61,7 +62,7 @@ public class PLDragDropView extends PLOverlayView {
 		params.horizontalMargin = positionX / screenSize.x;
 		params.verticalMargin = positionY / screenSize.y;
 
-		PLOverlayManager overlayManager = PLOverlayManager.getInstance();
+		PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
 		overlayManager.updateOverlayLayout(mMoveView, params);
 		overlayManager.removeOverlayView(this);
 	}

@@ -9,12 +9,11 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 import jp.co.my.myplatform.service.overlay.PLOverlayView;
 
 public class PLNavigationController extends PLOverlayView {
-
-	private static PLNavigationController sInstance;
 
 	private FrameLayout mFrameLayout;
 	private PLNavigationView mCurrentView;
@@ -28,13 +27,13 @@ public class PLNavigationController extends PLOverlayView {
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLOverlayManager.getInstance().removeOverlayView(PLNavigationController.this);
+				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationController.this);
 			}
 		});
 		findViewById(R.id.home_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLNavigationController.getInstance().pushView(PLHomeView.class);
+				PLCoreService.getNavigationController().pushView(PLHomeView.class);
 			}
 		});
 
@@ -96,7 +95,7 @@ public class PLNavigationController extends PLOverlayView {
 		if (getParent() != null) {
 			return;
 		}
-		PLOverlayManager manager = PLOverlayManager.getInstance();
+		PLOverlayManager manager = PLCoreService.getOverlayManager();
 		manager.addOverlayView(this);
 	}
 
@@ -104,7 +103,7 @@ public class PLNavigationController extends PLOverlayView {
 		if (getParent() == null) {
 			return;
 		}
-		PLOverlayManager.getInstance().removeOverlayView(this);
+		PLCoreService.getOverlayManager().removeOverlayView(this);
 	}
 
 	public void destroyNavigation() {
@@ -115,18 +114,8 @@ public class PLNavigationController extends PLOverlayView {
 		removeAllViews();
 		mCurrentView = null;
 
-		sInstance = null;
-	}
-
-	public static void init() {
-		if (sInstance != null) {
-			MYLogUtil.showErrorToast("PLNavigationControllerは既に初期化済みです");
-			return;
+		if (getParent() != null) {
+			PLCoreService.getOverlayManager().removeOverlayView(this);
 		}
-		sInstance = new PLNavigationController();
-	}
-
-	public static PLNavigationController getInstance() {
-		return sInstance;
 	}
 }

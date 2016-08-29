@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.core;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.app.NotificationManagerCompat;
@@ -21,7 +22,10 @@ public class PLCoreService extends Service {
 	public static final String KEY_CLASS_NAME = "KEY_CLASS_NAME";
 
 	// シングルトン
+	private static Context sContext;
 	private static PLAppStrategy sAppStrategy;
+	private static PLOverlayManager sOverlayManager;
+	private static PLNavigationController sNavigationController;
 
 	private boolean mIsRunning;					// 多重起動対策
 
@@ -35,12 +39,15 @@ public class PLCoreService extends Service {
 		MYLogUtil.outputLog("onStartCommand");
 		if (!mIsRunning) {
 			mIsRunning = true;
-
 			showNotification();
-			PLOverlayManager.init(this);
-			PLNavigationController.getInstance().displayNavigationIfNeeded();
 
+			sContext = this;
 			sAppStrategy = new PLYurudoraApp();
+			sOverlayManager = new PLOverlayManager(this);
+			sNavigationController = new PLNavigationController();
+
+			sOverlayManager.initFrontOverlays();
+			sNavigationController.displayNavigationIfNeeded();
 		}
 
 		actionIntent(intent);
@@ -52,9 +59,13 @@ public class PLCoreService extends Service {
 	public void onDestroy() {
 		MYLogUtil.outputLog("onDestroy");
 
-		PLOverlayManager.getInstance().destroyOverlay();
+		sNavigationController.destroyNavigation();
+		sOverlayManager.destroyOverlay();
 
+		sNavigationController = null;
+		sOverlayManager = null;
 		sAppStrategy = null;
+		sContext = null;
 
 		mIsRunning = false;
 	}
@@ -75,7 +86,7 @@ public class PLCoreService extends Service {
 			MYLogUtil.outputLog("indent className = " + className);
 
 			if (className.equals(PLSetAlarmView.class.getCanonicalName())) {
-				PLSetAlarmView alarmView = PLNavigationController.getInstance().pushView(PLSetAlarmView.class);
+				PLSetAlarmView alarmView = PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
 				alarmView.startAlarm();
 			}
 		}
@@ -96,5 +107,17 @@ public class PLCoreService extends Service {
 
 	public static PLAppStrategy getAppStrategy() {
 		return sAppStrategy;
+	}
+
+	public static PLOverlayManager getOverlayManager() {
+		return sOverlayManager;
+	}
+
+	public static PLNavigationController getNavigationController() {
+		return sNavigationController;
+	}
+
+	public static Context getContext() {
+		return sContext;
 	}
 }

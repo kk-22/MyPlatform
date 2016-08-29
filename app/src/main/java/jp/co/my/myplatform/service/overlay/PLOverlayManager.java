@@ -6,20 +6,17 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.service.navigation.PLNavigationController;
 
 public class PLOverlayManager {
-
-	private static PLOverlayManager sInstance;
 
 	private Context mContext;
 	private WindowManager mWindowManager;
 	private ArrayList<PLOverlayView> mOverlayViews;
 
-	private PLOverlayManager(Context context) {
+	public PLOverlayManager(Context context) {
 		super();
 		mContext = context;
-		mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 		mOverlayViews = new ArrayList<>();
 	}
 
@@ -28,14 +25,6 @@ public class PLOverlayManager {
 			PLOverlayView view = mOverlayViews.get(0);
 			removeOverlayView(view);
 		}
-
-		PLNavigationController navigation = PLNavigationController.getInstance();
-		if (mOverlayViews.contains(navigation)) {
-			removeOverlayView(navigation);
-		}
-		navigation.destroyNavigation();
-
-		sInstance = null;
 	}
 
 	public void addOverlayView(PLOverlayView view) {
@@ -79,27 +68,7 @@ public class PLOverlayManager {
 		mWindowManager.updateViewLayout(view, nextParams);
 	}
 
-	public Context getContext() {
-		return mContext;
-	}
-
-	private void initFrontOverlays() {
+	public void initFrontOverlays() {
 		addOverlayView(new PLFrontButtonView());
-
-		PLNavigationController.init();
-	}
-
-	public static void init(Context context) {
-		if (sInstance != null) {
-			MYLogUtil.showErrorToast("PLOverlayManagerは既に初期化済みです");
-			return;
-		}
-		sInstance = new PLOverlayManager(context);
-		// View作成時にsInstanceが必要なのでここで実行
-		sInstance.initFrontOverlays();
-	}
-
-	public static PLOverlayManager getInstance() {
-		return sInstance;
 	}
 }

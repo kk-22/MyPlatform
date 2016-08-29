@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.service.overlay.PLOverlayManager;
+import jp.co.my.myplatform.service.core.PLCoreService;
 
 public class PLNavigationView extends LinearLayout {
 
@@ -15,7 +15,7 @@ public class PLNavigationView extends LinearLayout {
 	protected boolean isKeepCache;
 
 	public PLNavigationView() {
-		super(PLOverlayManager.getInstance().getContext());
+		super(PLCoreService.getContext());
 
 		popoverViews = new ArrayList<>();
 		isKeepCache = false;

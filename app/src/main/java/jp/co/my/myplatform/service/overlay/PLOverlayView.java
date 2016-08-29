@@ -4,10 +4,12 @@ import android.graphics.PixelFormat;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import jp.co.my.myplatform.service.core.PLCoreService;
+
 public abstract class PLOverlayView extends LinearLayout {
 
 	public PLOverlayView() {
-		super(PLOverlayManager.getInstance().getContext());
+		super(PLCoreService.getContext());
 	}
 
 	public void viewWillRemove() {
