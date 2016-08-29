@@ -48,6 +48,8 @@ public class PLCoreService extends Service {
 
 			sOverlayManager.initFrontOverlays();
 			sNavigationController.displayNavigationIfNeeded();
+			// 初回起動時にnaviよりもボタンが前に出る問題対策
+			sOverlayManager.bringToFront(PLNavigationController.class);
 		}
 
 		actionIntent(intent);
