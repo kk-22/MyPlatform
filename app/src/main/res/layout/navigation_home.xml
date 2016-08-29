@@ -14,8 +14,8 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="New Button"
-            android:id="@+id/home1_button"/>
+            android:text="Activityへ"
+            android:id="@+id/start_activity_button"/>
 
         <Button
             android:layout_weight="1"

@@ -35,4 +35,11 @@ public class PLApplication extends Application {
 		MYLogUtil.outputLog("stopCoreService");
 		sContext.stopService(new Intent(sContext, PLCoreService.class));
 	}
+
+	public static void startMainActivity() {
+		Intent intent = new Intent();
+		intent.setClassName(sContext.getPackageName(), "jp.co.my.myplatform.activity.controller.PLMainActivity");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		sContext.startActivity(intent);
+	}
 }

@@ -5,6 +5,7 @@ import android.view.View;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
+import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
 
 public class PLHomeView extends PLNavigationView {
@@ -18,6 +19,13 @@ public class PLHomeView extends PLNavigationView {
 	}
 
 	private void setButtonEvent() {
+		findViewById(R.id.start_activity_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLApplication.startMainActivity();
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+			}
+		});
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -28,7 +36,6 @@ public class PLHomeView extends PLNavigationView {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getAppStrategy().startApp();
-
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
 		});
