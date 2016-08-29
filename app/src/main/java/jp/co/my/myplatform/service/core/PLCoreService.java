@@ -10,6 +10,8 @@ import android.support.v7.app.NotificationCompat;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.activity.controller.PLMainActivity;
+import jp.co.my.myplatform.service.app.PLAppStrategy;
+import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.navigation.PLNavigationController;
 import jp.co.my.myplatform.service.navigation.PLSetAlarmView;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
@@ -17,6 +19,9 @@ import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 public class PLCoreService extends Service {
 
 	public static final String KEY_CLASS_NAME = "KEY_CLASS_NAME";
+
+	// シングルトン
+	private static PLAppStrategy sAppStrategy;
 
 	private boolean mIsRunning;					// 多重起動対策
 
@@ -34,6 +39,8 @@ public class PLCoreService extends Service {
 			showNotification();
 			PLOverlayManager.init(this);
 			PLNavigationController.getInstance().displayNavigationIfNeeded();
+
+			sAppStrategy = new PLYurudoraApp();
 		}
 
 		actionIntent(intent);
@@ -81,5 +88,9 @@ public class PLCoreService extends Service {
 		NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
 		manager.notify(1, builder.build());
 		startForeground(1, builder.build());
+	}
+
+	public static PLAppStrategy getAppStrategy() {
+		return sAppStrategy;
 	}
 }
