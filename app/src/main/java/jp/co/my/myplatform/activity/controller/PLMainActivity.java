@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.core.PLServiceController;
+import jp.co.my.myplatform.service.core.PLApplication;
 
 public class PLMainActivity extends Activity {
 
@@ -16,20 +16,20 @@ public class PLMainActivity extends Activity {
 
 		setButtonEvent();
 
-		PLServiceController.getInstance().startCoreService();
+		PLApplication.startCoreService();
 	}
 
 	private void setButtonEvent() {
 		findViewById(R.id.start_Service_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLServiceController.getInstance().startCoreService();
+				PLApplication.startCoreService();
 			}
 		});
 		findViewById(R.id.stop_Service_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLServiceController.getInstance().stopCoreService();
+				PLApplication.stopCoreService();
 			}
 		});
 	}

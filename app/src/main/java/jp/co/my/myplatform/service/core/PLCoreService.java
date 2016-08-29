@@ -51,7 +51,11 @@ public class PLCoreService extends Service {
 	@Override
 	public void onDestroy() {
 		MYLogUtil.outputLog("onDestroy");
-		PLServiceController.getInstance().destroyCoreService();
+
+		PLOverlayManager.getInstance().destroyOverlay();
+
+		sAppStrategy = null;
+
 		mIsRunning = false;
 	}
 
