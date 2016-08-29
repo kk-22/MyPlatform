@@ -78,7 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="アプリ起動"
-            android:id="@+id/home8_button"/>
+            android:id="@+id/application_button"/>
 
         <Button
             android:layout_weight="1"

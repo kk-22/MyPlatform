@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.navigation;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -21,6 +22,17 @@ public class PLHomeView extends PLNavigationView {
 			@Override
 			public void onClick(View v) {
 				PLNavigationController.getInstance().pushView(PLBrowserView.class);
+			}
+		});
+		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClassName("jp.cloverlab.yurudora", "jp.cloverlab.yurudora.Yurudora");
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				getContext().startActivity(intent);
+
+				PLNavigationController.getInstance().hideNavigationIfNeeded();
 			}
 		});
 		findViewById(R.id.alarm_button).setOnClickListener(new View.OnClickListener() {
