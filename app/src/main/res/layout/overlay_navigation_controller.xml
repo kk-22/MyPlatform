@@ -18,22 +18,22 @@
         android:background="#FFFFFF">
     </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="55dp">
-
-        <Button
-            android:layout_width="55dp"
-            android:layout_height="wrap_content"
-            android:text="Home"
-            android:id="@+id/home_button"/>
 
         <View
             android:background="#000000"
             android:alpha="0.5"
             android:id="@+id/space_view"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </LinearLayout>
+
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="Home"
+            android:id="@+id/home_button"/>
+    </FrameLayout>
 </LinearLayout>
