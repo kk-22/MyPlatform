@@ -6,6 +6,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -19,8 +20,9 @@ import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
 public class PLBrowserView extends PLNavigationView {
 	private PLWebView mCurrentWebView;
-	private ImageButton mBackButton, mForwardButton;
+	private ImageButton mBackButton, mForwardButton, mShowButton;
 	private ProgressBar mProgressBar1, mProgressBar2;
+	private LinearLayout mToolbar;
 
 	public PLBrowserView() {
 		super();
@@ -29,9 +31,12 @@ public class PLBrowserView extends PLNavigationView {
 		LayoutInflater.from(getContext()).inflate(R.layout.navigation_browser, this);
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mForwardButton = (ImageButton) findViewById(R.id.forward_button);
+		mShowButton = (ImageButton) findViewById(R.id.show_toolbar_button);
 		mProgressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
 		mProgressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
 		mCurrentWebView = (PLWebView) findViewById(R.id.su_web_view);
+		mToolbar = (LinearLayout) findViewById(R.id.browser_toolbar);
+		initButtonEvent();
 
 		mCurrentWebView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
@@ -54,16 +59,6 @@ public class PLBrowserView extends PLNavigationView {
 				}
 			}
 		});
-		mCurrentWebView.setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-					onBackKey();
-					return true;
-				}
-				return false;
-			}
-		});
 
 		// TODO:仮で読み込み
 		PLWebPageModel bookmark = SQLite.select().from(PLWebPageModel.class)
@@ -74,6 +69,62 @@ public class PLBrowserView extends PLNavigationView {
 		} else {
 			mCurrentWebView.loadUrl(bookmark.getUrl());
 		}
+	}
+
+	@Override
+	public void viewWillDisappear() {
+		mCurrentWebView.destroy();
+		mCurrentWebView = null;
+
+		super.viewWillDisappear();
+	}
+
+	private void onBackKey() {
+		if (removeTopPopover()) {
+			// 子ビューがあったときのみWebView戻る処理を行わない
+			return;
+		}
+
+		mCurrentWebView.goBack();
+		updateArrowButtonImage();
+	}
+	private void onForwardKey() {
+		mCurrentWebView.goForward();
+		updateArrowButtonImage();
+	}
+
+	private void updateArrowButtonImage() {
+		if (mCurrentWebView.canGoBack()) {
+			mBackButton.setBackgroundResource(R.drawable.back_arrow_on);
+		} else {
+			mBackButton.setBackgroundResource(R.drawable.back_arrow_off);
+		}
+		if (mCurrentWebView.canGoForward()) {
+			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_on);
+		} else {
+			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
+		}
+	}
+
+	private void updateProgressBar(ProgressBar progressBar, int progress) {
+		progressBar.setVisibility(View.VISIBLE);
+		progressBar.setProgress(progress);
+		if (progress == 100) {
+			progressBar.setVisibility(View.GONE);
+		}
+	}
+
+	private void initButtonEvent() {
+		mCurrentWebView.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+					onBackKey();
+					return true;
+				}
+				return false;
+			}
+		});
 
 //		findViewById(R.id.search_edit).setOnKeyListener(new OnKeyListener() {
 //			@Override
@@ -112,6 +163,13 @@ public class PLBrowserView extends PLNavigationView {
 				onForwardKey();
 			}
 		});
+		findViewById(R.id.hide_toolbar_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mToolbar.setVisibility(View.GONE);
+				mShowButton.setVisibility(View.VISIBLE);
+			}
+		});
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -119,56 +177,20 @@ public class PLBrowserView extends PLNavigationView {
 				addPopover(list);
 			}
 		});
- 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLBrowserFunctionList list = new PLBrowserFunctionList(getContext(), v, PLBrowserView.this);
 				addPopover(list);
 			}
 		});
-	}
-
-	@Override
-	public void viewWillDisappear() {
-		super.viewWillDisappear();
-
-		mCurrentWebView.destroy();
-		mCurrentWebView = null;
-	}
-
-	private void onBackKey() {
-		if (removeTopPopover()) {
-			// 子ビューがあったときのみWebView戻る処理を行わない
-			return;
-		}
-
-		mCurrentWebView.goBack();
-		updateArrowButtonImage();
-	}
-	private void onForwardKey() {
-		mCurrentWebView.goForward();
-		updateArrowButtonImage();
-	}
-
-	private void updateArrowButtonImage() {
-		if (mCurrentWebView.canGoBack()) {
-			mBackButton.setBackgroundResource(R.drawable.back_arrow_on);
-		} else {
-			mBackButton.setBackgroundResource(R.drawable.back_arrow_off);
-		}
-		if (mCurrentWebView.canGoForward()) {
-			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_on);
-		} else {
-			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
-		}
-	}
-
-	private void updateProgressBar(ProgressBar progressBar, int progress) {
-		progressBar.setVisibility(View.VISIBLE);
-		progressBar.setProgress(progress);
-		if (progress == 100) {
-			progressBar.setVisibility(View.GONE);
-		}
+		findViewById(R.id.show_toolbar_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mToolbar.setVisibility(View.VISIBLE);
+				mShowButton.setVisibility(View.GONE);
+			}
+		});
 	}
 
 	public PLWebView getCurrentWebView() {

@@ -33,7 +33,9 @@
             android:layout_gravity="bottom"/>
 
         <LinearLayout
+            android:id="@+id/browser_toolbar"
             android:background="@android:color/black"
+            android:clickable="true"
             android:layout_gravity="bottom"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -47,8 +49,8 @@
             <ImageButton
                 style="@style/HighlightImageButton"
                 android:background="@drawable/back_arrow_off"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
                 android:id="@+id/back_button"/>
 
             <Space
@@ -59,8 +61,8 @@
             <ImageButton
                 style="@style/HighlightImageButton"
                 android:background="@drawable/forward_arrow_off"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
                 android:id="@+id/forward_button"/>
 
             <Space
@@ -70,9 +72,21 @@
 
             <ImageButton
                 style="@style/HighlightImageButton"
+                android:background="@drawable/down_arrow"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
+                android:id="@+id/hide_toolbar_button"/>
+
+            <Space
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <ImageButton
+                style="@style/HighlightImageButton"
                 android:background="@drawable/bookmark"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
                 android:id="@+id/bookmark_button"/>
 
             <Space
@@ -83,9 +97,22 @@
             <ImageButton
                 style="@style/HighlightImageButton"
                 android:background="@drawable/settings"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
                 android:id="@+id/function_button"/>
+
+            <Space
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/show_toolbar_button"
+            android:visibility="gone"
+            android:background="@drawable/up_arrow"
+            android:layout_gravity="bottom|right"
+            android:layout_width="57dp"
+            android:layout_height="57dp"/>
     </FrameLayout>
 </LinearLayout>
