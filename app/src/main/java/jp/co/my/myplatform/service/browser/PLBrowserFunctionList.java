@@ -46,7 +46,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 
 		String[] titles = {"上までスクロール", "下までスクロール", "ブラウザで開く", "インスタンス破棄"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-				R.layout.cell_browser_function,
+				R.layout.cell_simple_title,
 				titles);
 
 		mListView = (ListView) findViewById(R.id.function_list);

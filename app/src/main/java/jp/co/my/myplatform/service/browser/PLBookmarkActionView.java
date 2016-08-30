@@ -28,7 +28,7 @@ public class PLBookmarkActionView extends PLPopoverView {
 
 		String[] titles = {"編集", "移動", "削除"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-				R.layout.cell_browser_function,
+				R.layout.cell_simple_title,
 				titles);
 
 		ListView listView = (ListView) findViewById(R.id.action_list);
