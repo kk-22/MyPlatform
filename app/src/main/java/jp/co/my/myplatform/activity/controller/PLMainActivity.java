@@ -6,6 +6,7 @@ import android.view.View;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLApplication;
+import jp.co.my.myplatform.service.core.PLDeviceSetting;
 
 public class PLMainActivity extends Activity {
 
@@ -30,6 +31,8 @@ public class PLMainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				PLApplication.stopCoreService();
+
+				PLDeviceSetting.revertAllSetting();
 			}
 		});
 	}

@@ -7,6 +7,7 @@ import android.widget.Switch;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.core.PLDeviceSetting;
 
 public class PLLockView extends PLOverlayView {
 
@@ -29,7 +30,7 @@ public class PLLockView extends PLOverlayView {
 		});
 
 		// ディスプレイを暗くする
-//		SUDeviceSetting.setMinScreenBrightness();
+		PLDeviceSetting.setMinScreenBrightness();
 
 		// ホームボタン対策で定期的にアプリ起動
 //		mPrevIsAutoStartApp = SUDeviceSetting.issIsAutoStartApp();
@@ -39,7 +40,8 @@ public class PLLockView extends PLOverlayView {
 	@Override
 	public void viewWillRemove() {
 		// 画面ロック時に変えた設定を元に戻す
-//		SUDeviceSetting.revertScreenBrightness();
+		PLDeviceSetting.revertScreenBrightness();
+
 //		SUDeviceSetting.setsIsAutoStartApp(mPrevIsAutoStartApp);
 	}
 
