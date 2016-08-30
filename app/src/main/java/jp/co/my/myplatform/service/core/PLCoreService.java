@@ -12,7 +12,6 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
-import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.navigation.PLNavigationController;
 import jp.co.my.myplatform.service.navigation.PLSetAlarmView;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
@@ -42,7 +41,7 @@ public class PLCoreService extends Service {
 			showNotification();
 
 			sContext = this;
-			sAppStrategy = new PLYurudoraApp();
+			sAppStrategy = new PLAppStrategy();
 			sOverlayManager = new PLOverlayManager(this);
 			sNavigationController = new PLNavigationController();
 
@@ -111,6 +110,10 @@ public class PLCoreService extends Service {
 
 	public static PLAppStrategy getAppStrategy() {
 		return sAppStrategy;
+	}
+
+	public static void setAppStrategy(PLAppStrategy appStrategy) {
+		sAppStrategy = appStrategy;
 	}
 
 	public static PLOverlayManager getOverlayManager() {

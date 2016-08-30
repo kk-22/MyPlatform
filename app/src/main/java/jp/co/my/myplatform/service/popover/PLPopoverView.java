@@ -36,23 +36,31 @@ public class PLPopoverView extends FrameLayout {
 	}
 
 	private void setSubViewPosition(final View parentView) {
-		if (parentView == null) {
-			// 位置を設定しない(左上配置)
-			return;
-		}
-		// 親ビューの座標取得
-		int[] locations = new int[2];
-		parentView.getLocationInWindow(locations);
-		final int parentPointX = locations[0];
-		final int parentPointY = locations[1];
-
 		mSubView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
 				// サイズが設定された後のタイミングで位置調整
+				// 変更によってループしないように解除
+				mSubView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
 				FrameLayout frameLayout = (FrameLayout) getParent();
 				Point displaySize = new Point(frameLayout.getWidth(), frameLayout.getHeight());
 				float subSizeX = mSubView.getWidth();
+				float subSizeY = mSubView.getHeight();
+
+				if (parentView == null) {
+					// 中央に配置
+					mSubView.setTranslationX((displaySize.x - subSizeX) / 2);
+					mSubView.setTranslationY((displaySize.y - subSizeY) / 2);
+					return;
+				}
+
+				// 親ビューの座標取得
+				int[] locations = new int[2];
+				parentView.getLocationInWindow(locations);
+				int parentPointX = locations[0];
+				int parentPointY = locations[1];
+
 				if (parentPointX + subSizeX < displaySize.x) {
 					// 画面に収まる場合は親のX座標と同じ
 					mSubView.setTranslationX(parentPointX);
@@ -60,16 +68,12 @@ public class PLPopoverView extends FrameLayout {
 					// 画面右端に寄せる
 					mSubView.setTranslationX(displaySize.x - subSizeX);
 				}
-				float subSizeY = mSubView.getHeight();
 				if (parentPointY + subSizeY < displaySize.y) {
 					mSubView.setTranslationY(parentPointY);
 				} else {
 					// 収まるように上方向にずらす
 					mSubView.setTranslationY(displaySize.y - parentView.getHeight() - subSizeY);
 				}
-
-				// 変更によってループしないように解除
-				mSubView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 			}
 		});
 	}

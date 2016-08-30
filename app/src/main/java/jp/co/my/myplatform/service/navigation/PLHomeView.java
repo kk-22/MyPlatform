@@ -2,12 +2,16 @@ package jp.co.my.myplatform.service.navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.app.PLAppStrategy;
+import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.overlay.PLLockView;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 
 public class PLHomeView extends PLNavigationView {
 
@@ -44,8 +48,7 @@ public class PLHomeView extends PLNavigationView {
 		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getAppStrategy().startApp();
-				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+				putAppButton();
 			}
 		});
 		findViewById(R.id.alarm_button).setOnClickListener(new View.OnClickListener() {
@@ -54,5 +57,30 @@ public class PLHomeView extends PLNavigationView {
 				PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
 			}
 		});
+	}
+
+	private void putAppButton() {
+		String[] titles = {"ゆるドラシル"};
+		PLListPopover popover = new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLAppStrategy appStrategy = null;
+				switch (position) {
+					case 0: {
+						appStrategy = new PLYurudoraApp();
+						break;
+					}
+					default:
+						break;
+				}
+				if (appStrategy != null) {
+					PLCoreService.setAppStrategy(appStrategy);
+					PLCoreService.getAppStrategy().startApp();
+				}
+				PLHomeView.this.removeTopPopover();
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+			}
+		});
+		addPopover(popover);
 	}
 }
