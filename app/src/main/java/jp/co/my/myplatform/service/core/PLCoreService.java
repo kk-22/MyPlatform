@@ -47,13 +47,15 @@ public class PLCoreService extends Service {
 			sNavigationController = new PLNavigationController();
 
 			sOverlayManager.initFrontOverlays();
-			sNavigationController.displayNavigationIfNeeded();
-			// 初回起動時にnaviよりもボタンが前に出る問題対策
-			sOverlayManager.bringToFront(PLNavigationController.class);
 		}
+		if (intent != null) {
+			// Activityからの起動時用の処理
+			sNavigationController.displayNavigationIfNeeded();
+			// 初回起動時にNavigationよりもボタンが前に出る問題対策
+			sOverlayManager.bringToFront(PLNavigationController.class);
 
-		actionIntent(intent);
-
+			actionIntent(intent);
+		}
 		return START_STICKY;
 	}
 
