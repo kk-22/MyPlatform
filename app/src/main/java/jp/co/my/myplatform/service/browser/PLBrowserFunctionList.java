@@ -15,7 +15,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
-import jp.co.my.myplatform.service.navigation.PLPopoverView;
+import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLBrowserFunctionList extends PLPopoverView {
 

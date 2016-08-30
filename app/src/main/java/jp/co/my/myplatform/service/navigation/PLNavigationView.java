@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLNavigationView extends LinearLayout {
 

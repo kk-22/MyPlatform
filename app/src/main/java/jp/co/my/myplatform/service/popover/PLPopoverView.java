@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.navigation;
+package jp.co.my.myplatform.service.popover;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -9,6 +9,7 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
 public class PLPopoverView extends FrameLayout {
 

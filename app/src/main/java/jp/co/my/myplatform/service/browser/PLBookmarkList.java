@@ -12,7 +12,7 @@ import java.util.List;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
-import jp.co.my.myplatform.service.navigation.PLPopoverView;
+import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLBookmarkList extends PLPopoverView {
 
