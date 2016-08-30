@@ -24,11 +24,10 @@ public class PLHomeView extends PLNavigationView {
 	}
 
 	private void setButtonEvent() {
-		findViewById(R.id.start_activity_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.stop_service_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLApplication.startMainActivity();
-				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+				stopService();
 			}
 		});
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
@@ -48,7 +47,7 @@ public class PLHomeView extends PLNavigationView {
 		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				putAppButton();
+				startApp();
 			}
 		});
 		findViewById(R.id.alarm_button).setOnClickListener(new View.OnClickListener() {
@@ -59,7 +58,18 @@ public class PLHomeView extends PLNavigationView {
 		});
 	}
 
-	private void putAppButton() {
+	private void stopService() {
+		String[] titles = {"サービス終了"};
+		PLListPopover popover = new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLApplication.stopCoreService();
+			}
+		});
+		addPopover(popover);
+	}
+
+	private void startApp() {
 		String[] titles = {"ゆるドラシル"};
 		PLListPopover popover = new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
 			@Override
