@@ -66,7 +66,7 @@ public class PLPopoverView extends FrameLayout {
 					mSubView.setTranslationY(parentPointY);
 				} else {
 					// 収まるように上方向にずらす
-					mSubView.setTranslationY(displaySize.y - subSizeY);
+					mSubView.setTranslationY(displaySize.y - parentView.getHeight() - subSizeY);
 				}
 
 				// 変更によってループしないように解除
