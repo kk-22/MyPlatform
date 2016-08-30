@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.browser;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,13 +21,13 @@ public class PLBookmarkActionView extends PLPopoverView {
 	private PLWebPageModel mPageModel;
 	private PLBookmarkList mBookmarkList;
 
-	public PLBookmarkActionView(Context context, View parentView, PLWebPageModel pageModel, PLBookmarkList bookmarkList) {
-		super(context, parentView, R.layout.popover_bookmark_action);
+	public PLBookmarkActionView(View parentView, PLWebPageModel pageModel, PLBookmarkList bookmarkList) {
+		super(parentView, R.layout.popover_bookmark_action);
 		mPageModel = pageModel;
 		mBookmarkList = bookmarkList;
 
 		String[] titles = {"編集", "移動", "削除"};
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_browser_function,
 				titles);
 

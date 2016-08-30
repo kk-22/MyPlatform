@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.browser;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -35,8 +34,8 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	private ImageButton mScriptButton;
 	private ImageButton mReloadButton;
 
-	public PLBrowserFunctionList(Context context, View parentView, PLBrowserView browserView) {
-		super(context, parentView, R.layout.popover_browser_function);
+	public PLBrowserFunctionList(View parentView, PLBrowserView browserView) {
+		super(parentView, R.layout.popover_browser_function);
 		mBrowserView = browserView;
 		mWebView = browserView.getCurrentWebView();
 
@@ -46,7 +45,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				.querySingle();
 
 		String[] titles = {"上までスクロール", "下までスクロール", "ブラウザで開く", "インスタンス破棄"};
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_browser_function,
 				titles);
 
@@ -83,7 +82,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						Uri uri = Uri.parse(mWebView.getUrl());
 						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						mContext.startActivity(intent);
+						getContext().startActivity(intent);
 						break;
 					}
 					case LIST_INDEX_RELEASE_BROWSER: {

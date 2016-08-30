@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.popover;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +8,20 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
 public class PLPopoverView extends FrameLayout {
 
-	protected Context mContext;
 	protected View mSubView;
 	protected PLNavigationView mParentNavigationView;
 
-	public PLPopoverView(Context context, View parentView, int subResource) {
-		super(context);
-		mContext = context;
+	public PLPopoverView(View parentView, int subResource) {
+		super(PLCoreService.getContext());
 
-		LayoutInflater.from(context).inflate(R.layout.popover_base_view, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.popover_base_view, this);
 		ViewGroup viewCroup = (ViewGroup) findViewById(R.id.content_relative);
-		mSubView = LayoutInflater.from(context).inflate(subResource, viewCroup);
+		mSubView = LayoutInflater.from(getContext()).inflate(subResource, viewCroup);
 
 		initBackgroundTouchEvent();
 		setSubViewPosition(parentView);
