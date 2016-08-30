@@ -56,6 +56,10 @@ public class PLSetAlarmView extends PLNavigationView {
 		findViewById(R.id.set_alarm_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (mSelectTimeView.isZeroAll()) {
+					MYLogUtil.showErrorToast("時間未設定");
+					return;
+				}
 				String timeString = mSelectTimeView.getSelectTimeString();
 				MYLogUtil.showToast(timeString +"後にアラームセット");
 

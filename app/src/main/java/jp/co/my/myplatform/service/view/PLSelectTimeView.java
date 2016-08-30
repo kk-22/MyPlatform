@@ -90,6 +90,13 @@ public class PLSelectTimeView extends LinearLayout
 		setAllProgress(progresses);
 	}
 
+	public boolean isZeroAll() {
+		int hour = mHourSeekBar.getProgress();
+		int min = mMinSeekBar.getProgress();
+		int sec = mSecSeekBar.getProgress();
+		return (hour == 0 && min == 0 && sec == 0);
+	}
+
 	private void setAllProgress(int[] progresses) {
 		mHourSeekBar.setProgress(progresses[0]);
 		mMinSeekBar.setProgress(progresses[1]);
