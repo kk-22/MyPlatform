@@ -126,31 +126,6 @@ public class PLBrowserView extends PLNavigationView {
 			}
 		});
 
-//		findViewById(R.id.search_edit).setOnKeyListener(new OnKeyListener() {
-//			@Override
-//			public boolean onKey(View v, int keyCode, KeyEvent event) {
-//				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-//					onBackKey(v);
-//					return true;
-//				}
-//				if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-//					// キーボードを閉じて検索
-//					InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//					inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//
-//					EditText editText = (EditText) v;
-//					String inputStr = editText.getText().toString();
-//					editText.setText("");
-//					if (inputStr.length() == 0) {
-//						return false;
-//					}
-//					String urlStr = "https://www.google.co.jp/search?q=" + inputStr;
-//					mCurrentWebView.loadUrl(urlStr);
-//					return true;
-//				}
-//				return false;
-//			}
-//		});
 		mBackButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

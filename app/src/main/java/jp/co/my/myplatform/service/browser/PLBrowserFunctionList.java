@@ -15,6 +15,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
+import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 
 public class PLBrowserFunctionList extends PLPopoverView {
 
@@ -93,6 +94,21 @@ public class PLBrowserFunctionList extends PLPopoverView {
 			}
 		});
 
+		findViewById(R.id.search_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLTextFieldPopover popover = new PLTextFieldPopover(null, new PLTextFieldPopover.OnEnterListener() {
+					@Override
+					public boolean onEnter(View v, String text) {
+						String urlStr = "https://www.google.co.jp/search?q=" + text;
+						mWebView.loadUrl(urlStr);
+						return true;
+					}
+				});
+				removeFromNavigation();
+				mBrowserView.addPopover(popover);
+			}
+		});
 		mAddBookmarkButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

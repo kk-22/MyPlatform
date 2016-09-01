@@ -27,6 +27,9 @@ public class PLPopoverView extends FrameLayout {
 		setSubViewPosition(parentView);
 	}
 
+	public void popoverWillRemove() {
+	}
+
 	public void addedPopover(PLNavigationView navigationView) {
 		mParentNavigationView = navigationView;
 	}

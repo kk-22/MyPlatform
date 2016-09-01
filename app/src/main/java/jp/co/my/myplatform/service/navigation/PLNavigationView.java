@@ -38,6 +38,7 @@ public class PLNavigationView extends LinearLayout {
 
 	public void removePopover(PLPopoverView view) {
 		if (popoverViews.remove(view)) {
+			view.popoverWillRemove();
 			getParentFrameLayout().removeView(view);
 		} else {
 			MYLogUtil.showErrorToast("存在しないviewのremovePopover");
