@@ -8,12 +8,14 @@ import android.content.SharedPreferences;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 
 import java.util.Calendar;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.view.PLSelectTimeView;
 
 public class PLSetAlarmView extends PLNavigationView {
@@ -82,9 +84,16 @@ public class PLSetAlarmView extends PLNavigationView {
 					 MYLogUtil.showToast("アラーム未登録");
 					return;
 				}
-				MYLogUtil.showToast("アラーム解除");
-				mSelectTimeView.resetAllTime();
-				cancelAlarm();
+				String[] titles = {"アラーム解除"};
+				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						PLSetAlarmView.this.removeTopPopover();
+						MYLogUtil.showToast("アラーム解除");
+						mSelectTimeView.resetAllTime();
+						cancelAlarm();
+					}
+				}).showPopover();
 			}
 		});
 	}
