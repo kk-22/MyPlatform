@@ -73,8 +73,10 @@ public class PLBrowserView extends PLNavigationView {
 
 	@Override
 	public void viewWillDisappear() {
-		mCurrentWebView.destroy();
-		mCurrentWebView = null;
+		if (mCurrentWebView != null) {
+			mCurrentWebView.destroy();
+			mCurrentWebView = null;
+		}
 
 		super.viewWillDisappear();
 	}
