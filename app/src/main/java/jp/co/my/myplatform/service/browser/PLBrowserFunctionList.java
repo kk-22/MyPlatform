@@ -100,16 +100,15 @@ public class PLBrowserFunctionList extends PLPopoverView {
 		findViewById(R.id.search_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLTextFieldPopover popover = new PLTextFieldPopover(null, new PLTextFieldPopover.OnEnterListener() {
+				removeFromNavigation();
+				new PLTextFieldPopover(null, new PLTextFieldPopover.OnEnterListener() {
 					@Override
 					public boolean onEnter(View v, String text) {
 						String urlStr = "https://www.google.co.jp/search?q=" + text;
 						mWebView.loadUrl(urlStr);
 						return true;
 					}
-				});
-				removeFromNavigation();
-				mBrowserView.addPopover(popover);
+				}).showPopover();
 			}
 		});
 		mAddBookmarkButton.setOnClickListener(new OnClickListener() {

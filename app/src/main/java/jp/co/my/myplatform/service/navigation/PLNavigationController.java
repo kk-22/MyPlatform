@@ -118,4 +118,8 @@ public class PLNavigationController extends PLOverlayView {
 			PLCoreService.getOverlayManager().removeOverlayView(this);
 		}
 	}
+
+	public PLNavigationView getCurrentView() {
+		return mCurrentView;
+	}
 }

@@ -27,6 +27,11 @@ public class PLPopoverView extends FrameLayout {
 		setSubViewPosition(parentView);
 	}
 
+	public void showPopover() {
+		PLNavigationView navigationView = PLCoreService.getNavigationController().getCurrentView();
+		navigationView.addPopover(this);
+	}
+
 	public void popoverWillRemove() {
 	}
 

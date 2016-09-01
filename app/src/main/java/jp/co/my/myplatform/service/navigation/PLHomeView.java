@@ -60,18 +60,17 @@ public class PLHomeView extends PLNavigationView {
 
 	private void stopService() {
 		String[] titles = {"サービス終了"};
-		PLListPopover popover = new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
+		new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLApplication.stopCoreService();
 			}
-		});
-		addPopover(popover);
+		}).showPopover();
 	}
 
 	private void startApp() {
 		String[] titles = {"ゆるドラシル"};
-		PLListPopover popover = new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
+		new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLAppStrategy appStrategy = null;
@@ -90,7 +89,6 @@ public class PLHomeView extends PLNavigationView {
 				PLHomeView.this.removeTopPopover();
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
-		});
-		addPopover(popover);
+		}).showPopover();
 	}
 }

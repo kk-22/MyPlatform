@@ -43,7 +43,7 @@ public class PLBookmarkList extends PLPopoverView {
 
 	public void displayActionView(final PLWebPageModel pageModel, View buttonView) {
 		String[] titles = {"編集", "移動", "削除"};
-		PLListPopover popover = new PLListPopover(buttonView, titles, new AdapterView.OnItemClickListener() {
+		new PLListPopover(buttonView, titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				switch (position) {
@@ -64,8 +64,7 @@ public class PLBookmarkList extends PLPopoverView {
 					}
 				}
 			}
-		});
-		mBrowserView.addPopover(popover);
+		}).showPopover();
 	}
 
 	private void initClickEvent() {
