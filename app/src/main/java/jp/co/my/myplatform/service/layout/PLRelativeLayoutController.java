@@ -14,29 +14,29 @@ public class PLRelativeLayoutController extends PLAbstractLayoutController {
 	}
 
 	@Override
-	public void updateLayout(View view, ViewGroup parentView) {
-		Point displaySize = new Point(parentView.getWidth(), parentView.getHeight());
-		float subSizeX = view.getWidth();
-		float subSizeY = view.getHeight();
-
-		// 親ビューの座標取得
+	public void controlLayout(View view, ViewGroup parentView) {
+		// 相対ビューの座標取得
 		int[] locations = new int[2];
 		mRelativeView.getLocationInWindow(locations);
-		int parentPointX = locations[0];
-		int parentPointY = locations[1];
+		int relativePointX = locations[0];
+		int relativePointY = locations[1];
 
-		if (parentPointX + subSizeX < displaySize.x) {
+		Point parentSize = new Point(parentView.getWidth(), parentView.getHeight());
+		float viewSizeX = view.getWidth();
+		float viewSizeY = view.getHeight();
+
+		if (relativePointX + viewSizeX < parentSize.x) {
 			// 画面に収まる場合は親のX座標と同じ
-			view.setTranslationX(parentPointX);
+			view.setTranslationX(relativePointX);
 		} else {
 			// 画面右端に寄せる
-			view.setTranslationX(displaySize.x - subSizeX);
+			view.setTranslationX(parentSize.x - viewSizeX);
 		}
-		if (parentPointY + subSizeY < displaySize.y) {
-			view.setTranslationY(parentPointY);
+		if (relativePointY + viewSizeY < parentSize.y) {
+			view.setTranslationY(relativePointY);
 		} else {
 			// 収まるように上方向にずらす
-			view.setTranslationY(displaySize.y - mRelativeView.getHeight() - subSizeY);
+			view.setTranslationY(parentSize.y - mRelativeView.getHeight() - viewSizeY);
 		}
 	}
 }

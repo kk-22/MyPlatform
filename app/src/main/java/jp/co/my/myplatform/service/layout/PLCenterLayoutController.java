@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 public class PLCenterLayoutController extends PLAbstractLayoutController {
 
 	@Override
-	public void updateLayout(View view, ViewGroup parentView) {
+	public void controlLayout(View view, ViewGroup parentView) {
 		// 中央に配置
-		Point displaySize = new Point(parentView.getWidth(), parentView.getHeight());
-		view.setTranslationX((displaySize.x - view.getWidth()) / 2);
-		view.setTranslationY((displaySize.y - view.getHeight()) / 2);
+		Point parentSize = new Point(parentView.getWidth(), parentView.getHeight());
+		view.setTranslationX((parentSize.x - view.getWidth()) / 2);
+		view.setTranslationY((parentSize.y - view.getHeight()) / 2);
 	}
 }

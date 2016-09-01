@@ -14,7 +14,7 @@ import jp.co.my.myplatform.service.layout.PLAbstractLayoutController;
 
 public class PLPopoverView extends FrameLayout {
 
-	protected View mSubView;
+	protected View mPopView;
 	protected PLNavigationView mParentNavigationView;
 	protected PLAbstractLayoutController mLayout;
 
@@ -23,7 +23,7 @@ public class PLPopoverView extends FrameLayout {
 
 		LayoutInflater.from(getContext()).inflate(R.layout.popover_base_view, this);
 		ViewGroup viewCroup = (ViewGroup) findViewById(R.id.content_relative);
-		mSubView = LayoutInflater.from(getContext()).inflate(subResource, viewCroup);
+		mPopView = LayoutInflater.from(getContext()).inflate(subResource, viewCroup);
 
 		initBackgroundTouchEvent();
 	}
@@ -52,14 +52,14 @@ public class PLPopoverView extends FrameLayout {
 	}
 
 	private void setSubViewPosition() {
-		mSubView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+		mPopView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
 				// 変更によってループしないように解除
-				mSubView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				mPopView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 				// サイズが設定された後のタイミングで位置調整
 				FrameLayout frameLayout = (FrameLayout) getParent();
-				mLayout.updateLayout(mSubView, frameLayout);
+				mLayout.controlLayout(mPopView, frameLayout);
 			}
 		});
 	}
@@ -71,7 +71,7 @@ public class PLPopoverView extends FrameLayout {
 				removeFromNavigation();
 			}
 		});
-		mSubView.setOnClickListener(new OnClickListener() {
+		mPopView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// タップイベントを裏に送らない

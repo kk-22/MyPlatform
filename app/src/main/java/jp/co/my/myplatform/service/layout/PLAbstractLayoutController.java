@@ -5,6 +5,6 @@ import android.view.ViewGroup;
 
 public abstract class PLAbstractLayoutController {
 
-	public abstract void updateLayout(View view, ViewGroup parentView);
+	public abstract void controlLayout(View view, ViewGroup parentView);
 }
 
