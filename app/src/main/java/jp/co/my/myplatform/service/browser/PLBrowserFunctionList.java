@@ -12,6 +12,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
@@ -84,6 +85,8 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						getContext().startActivity(intent);
+
+						PLCoreService.getNavigationController().hideNavigationIfNeeded();
 						break;
 					}
 					case LIST_INDEX_RELEASE_BROWSER: {

@@ -8,9 +8,11 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLBookmarkList extends PLPopoverView {
@@ -39,9 +41,31 @@ public class PLBookmarkList extends PLPopoverView {
 		mListView.setAdapter(adapter);
 	}
 
-	public void displayActionView(PLWebPageModel pageModel, View buttonView) {
-		PLBookmarkActionView actionView = new PLBookmarkActionView(buttonView, pageModel, this);
-		mBrowserView.addPopover(actionView);
+	public void displayActionView(final PLWebPageModel pageModel, View buttonView) {
+		String[] titles = {"編集", "移動", "削除"};
+		PLListPopover popover = new PLListPopover(buttonView, titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				switch (position) {
+					case 0: {
+						MYLogUtil.showToast("未実装");
+						break;
+					}
+					case 1: {
+						MYLogUtil.showToast("未実装");
+						break;
+					}
+					case 2: {
+						MYLogUtil.showToast("ブックマーク削除：" +pageModel.getTitle());
+						pageModel.delete();
+						PLBookmarkList.this.updateList();
+						removeFromNavigation();
+						break;
+					}
+				}
+			}
+		});
+		mBrowserView.addPopover(popover);
 	}
 
 	private void initClickEvent() {
