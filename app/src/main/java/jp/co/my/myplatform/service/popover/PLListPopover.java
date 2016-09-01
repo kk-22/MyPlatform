@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.popover;
 
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -11,9 +10,9 @@ public class PLListPopover extends PLPopoverView {
 
 	private ListView mListView;
 
-	public PLListPopover(View parentView, String[] titles,
+	public PLListPopover(String[] titles,
 						 AdapterView.OnItemClickListener clickListener) {
-		super(parentView, R.layout.popover_title_list);
+		super(R.layout.popover_title_list);
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_simple_title,

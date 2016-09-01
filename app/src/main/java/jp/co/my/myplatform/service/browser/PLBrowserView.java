@@ -17,6 +17,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.navigation.PLNavigationView;
+import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
 public class PLBrowserView extends PLNavigationView {
 	private PLWebView mCurrentWebView;
@@ -150,13 +151,13 @@ public class PLBrowserView extends PLNavigationView {
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLBookmarkList(v, PLBrowserView.this).showPopover();
+				new PLBookmarkList(PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLBrowserFunctionList(v, PLBrowserView.this).showPopover();
+				new PLBrowserFunctionList(PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.show_toolbar_button).setOnClickListener(new OnClickListener() {

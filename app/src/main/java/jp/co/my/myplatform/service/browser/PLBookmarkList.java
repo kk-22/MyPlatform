@@ -14,6 +14,7 @@ import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
+import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
 public class PLBookmarkList extends PLPopoverView {
 
@@ -21,8 +22,8 @@ public class PLBookmarkList extends PLPopoverView {
 
 	private ListView mListView;
 
-	public PLBookmarkList(View parentView, PLBrowserView browserView) {
-		super(parentView, R.layout.popover_bookmark_list);
+	public PLBookmarkList(PLBrowserView browserView) {
+		super(R.layout.popover_bookmark_list);
 		mBrowserView = browserView;
 
 		mListView = (ListView) findViewById(R.id.bookmark_list);
@@ -43,7 +44,7 @@ public class PLBookmarkList extends PLPopoverView {
 
 	public void displayActionView(final PLWebPageModel pageModel, View buttonView) {
 		String[] titles = {"編集", "移動", "削除"};
-		new PLListPopover(buttonView, titles, new AdapterView.OnItemClickListener() {
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				switch (position) {
@@ -64,7 +65,7 @@ public class PLBookmarkList extends PLPopoverView {
 					}
 				}
 			}
-		}).showPopover();
+		}).showPopover(new PLRelativeLayoutController(buttonView));
 	}
 
 	private void initClickEvent() {

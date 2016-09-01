@@ -60,7 +60,7 @@ public class PLHomeView extends PLNavigationView {
 
 	private void stopService() {
 		String[] titles = {"サービス終了"};
-		new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLApplication.stopCoreService();
@@ -70,7 +70,7 @@ public class PLHomeView extends PLNavigationView {
 
 	private void startApp() {
 		String[] titles = {"ゆるドラシル"};
-		new PLListPopover(null, titles, new AdapterView.OnItemClickListener() {
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLAppStrategy appStrategy = null;

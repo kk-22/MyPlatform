@@ -36,8 +36,8 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	private ImageButton mScriptButton;
 	private ImageButton mReloadButton;
 
-	public PLBrowserFunctionList(View parentView, PLBrowserView browserView) {
-		super(parentView, R.layout.popover_browser_function);
+	public PLBrowserFunctionList(PLBrowserView browserView) {
+		super(R.layout.popover_browser_function);
 		mBrowserView = browserView;
 		mWebView = browserView.getCurrentWebView();
 
@@ -101,7 +101,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 			@Override
 			public void onClick(View v) {
 				removeFromNavigation();
-				new PLTextFieldPopover(null, new PLTextFieldPopover.OnEnterListener() {
+				new PLTextFieldPopover(new PLTextFieldPopover.OnEnterListener() {
 					@Override
 					public boolean onEnter(View v, String text) {
 						String urlStr = "https://www.google.co.jp/search?q=" + text;

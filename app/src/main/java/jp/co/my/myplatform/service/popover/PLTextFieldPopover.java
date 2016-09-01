@@ -14,8 +14,8 @@ public class PLTextFieldPopover extends PLPopoverView {
 	private EditText mEditText;
 	private OnEnterListener mEnterListener;
 
-	public PLTextFieldPopover(View parentView, OnEnterListener enterListener) {
-		super(parentView, R.layout.popover_text_field);
+	public PLTextFieldPopover(OnEnterListener enterListener) {
+		super(R.layout.popover_text_field);
 		mEnterListener = enterListener;
 
 		mEditText = (EditText) findViewById(R.id.form_edit);
