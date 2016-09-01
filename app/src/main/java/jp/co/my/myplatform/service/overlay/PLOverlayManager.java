@@ -12,12 +12,14 @@ public class PLOverlayManager {
 	private Context mContext;
 	private WindowManager mWindowManager;
 	private ArrayList<PLOverlayView> mOverlayViews;
+	private Boolean mIsShowingFrontViews;
 
 	public PLOverlayManager(Context context) {
 		super();
 		mContext = context;
 		mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 		mOverlayViews = new ArrayList<>();
+		mIsShowingFrontViews = false;
 	}
 
 	public void destroyOverlay() {
@@ -68,7 +70,16 @@ public class PLOverlayManager {
 		mWindowManager.updateViewLayout(view, nextParams);
 	}
 
-	public void initFrontOverlays() {
+	public void addFrontOverlays() {
+		if (mIsShowingFrontViews) {
+			return;
+		}
+		mIsShowingFrontViews = true;
 		addOverlayView(new PLFrontButtonView());
+	}
+
+	public void removeFrontOverlays() {
+		removeOverlayView(PLFrontButtonView.class);
+		mIsShowingFrontViews = false;
 	}
 }

@@ -91,12 +91,13 @@ public class PLNavigationController extends PLOverlayView {
 		return null;
 	}
 
-	public void displayNavigationIfNeeded() {
+	public boolean displayNavigationIfNeeded() {
 		if (getParent() != null) {
-			return;
+			return false;
 		}
 		PLOverlayManager manager = PLCoreService.getOverlayManager();
 		manager.addOverlayView(this);
+		return true;
 	}
 
 	public void hideNavigationIfNeeded() {

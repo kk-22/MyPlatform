@@ -30,6 +30,12 @@ public class PLHomeView extends PLNavigationView {
 				stopService();
 			}
 		});
+		findViewById(R.id.hide_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				hideButton();
+			}
+		});
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -64,6 +70,18 @@ public class PLHomeView extends PLNavigationView {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLApplication.stopCoreService();
+			}
+		}).showPopover();
+	}
+
+	private void hideButton() {
+		String[] titles = {"ボタン非表示"};
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLHomeView.this.removeTopPopover();
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+				PLCoreService.getOverlayManager().removeFrontOverlays();
 			}
 		}).showPopover();
 	}
