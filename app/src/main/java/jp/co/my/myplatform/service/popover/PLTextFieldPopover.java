@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
 public class PLTextFieldPopover extends PLPopoverView {
 
@@ -49,18 +50,21 @@ public class PLTextFieldPopover extends PLPopoverView {
 		});
 	}
 
-//	@Override
-//	protected void didShowPopover() {
-//		// キーボード表示
-//		InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//		inputMethodManager.showSoftInput(mEditText, 0);
-//	}
+	@Override
+	public void addedPopover(PLNavigationView navigationView) {
+		super.addedPopover(navigationView);
+
+		// キーボード表示
+		mEditText.requestFocus();
+		InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethod.toggleSoftInput(0, 0);
+	}
 
 	@Override
 	public void popoverWillRemove() {
 		// キーボードを閉じる
-		InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+		InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 	}
 
 	public interface OnEnterListener {
