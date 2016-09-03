@@ -30,6 +30,12 @@ public class PLHomeView extends PLNavigationView {
 				stopService();
 			}
 		});
+		findViewById(R.id.app_list_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().pushView(PLAppListView.class);
+			}
+		});
 		findViewById(R.id.hide_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

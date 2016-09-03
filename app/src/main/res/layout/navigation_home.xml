@@ -21,8 +21,8 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="New Button"
-            android:id="@+id/home2_button"/>
+            android:text="アプリ一覧"
+            android:id="@+id/app_list_button"/>
 
         <Button
             android:layout_weight="1"
