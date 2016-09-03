@@ -42,7 +42,7 @@ public class PLExplorerView extends PLNavigationView implements PLExplorerRecycl
 
 		String extension = MYStringUtil.getSuffix(file.getName());
 		if (extension.equals("png") || extension.equals("jpg")) {
-			MYLogUtil.showToast("image");
+			new PLImagePopover(file).showPopover();
 		} else {
 			MYLogUtil.showToast("Sorry, No action");
 		}
