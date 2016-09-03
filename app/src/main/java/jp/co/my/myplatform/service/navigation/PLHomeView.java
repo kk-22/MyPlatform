@@ -56,6 +56,12 @@ public class PLHomeView extends PLNavigationView {
 				PLCoreService.getNavigationController().pushView(PLBrowserView.class);
 			}
 		});
+		findViewById(R.id.image_list_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().pushView(PLImageListView.class);
+			}
+		});
 		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -49,8 +49,8 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="New Button"
-            android:id="@+id/home5_button"/>
+            android:text="画像リスト"
+            android:id="@+id/image_list_button"/>
 
         <Button
             android:layout_weight="1"
