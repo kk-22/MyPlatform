@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.navigation;
+package jp.co.my.myplatform.service.explorer;
 
 import android.os.Environment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,20 +14,20 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.adapter.PLImageRecyclerAdapter;
+import jp.co.my.myplatform.service.navigation.PLNavigationView;
 
-public class PLImageListView extends PLNavigationView implements PLImageRecyclerAdapter.PLOnClickFileListener {
+public class PLExplorerView extends PLNavigationView implements PLExplorerRecyclerAdapter.PLOnClickFileListener {
 
 	private File mCurrentFile;
 	private TextView mPathText;
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 
-	public PLImageListView() {
+	public PLExplorerView() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.content_image_list, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_explorer, this);
 		mPathText = (TextView) findViewById(R.id.path_text);
-		mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler);
+		mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
 
 		loadPicturesDirectory();
 		initClickEvent();
@@ -55,7 +55,7 @@ public class PLImageListView extends PLNavigationView implements PLImageRecycler
 
 		File[] allFiles = new File(path).listFiles();
 		List<File> fileList = Arrays.asList(allFiles);
-		mAdapter = new PLImageRecyclerAdapter(getContext(), fileList, this);
+		mAdapter = new PLExplorerRecyclerAdapter(getContext(), fileList, this);
 		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 		mRecyclerView.setAdapter(mAdapter);
 	}

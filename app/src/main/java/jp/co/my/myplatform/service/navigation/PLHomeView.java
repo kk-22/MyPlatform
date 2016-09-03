@@ -10,6 +10,7 @@ import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.explorer.PLExplorerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 
@@ -59,7 +60,7 @@ public class PLHomeView extends PLNavigationView {
 		findViewById(R.id.image_list_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLImageListView.class);
+				PLCoreService.getNavigationController().pushView(PLExplorerView.class);
 			}
 		});
 		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {

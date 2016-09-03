@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.adapter;
+package jp.co.my.myplatform.service.explorer;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,14 +15,14 @@ import java.util.List;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
 
-public class PLImageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private Context mContext;
 	private LayoutInflater mInflater;
 	private List<File> mFiles;
 	private PLOnClickFileListener mListener;
 
-	public PLImageRecyclerAdapter(Context context, List<File> data, PLOnClickFileListener listener) {
+	public PLExplorerRecyclerAdapter(Context context, List<File> data, PLOnClickFileListener listener) {
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
 		mFiles = data;
@@ -31,7 +31,7 @@ public class PLImageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-		return new PLImageViewHolder(mInflater.inflate(R.layout.cell_image_item, viewGroup, false));
+		return new PLImageViewHolder(mInflater.inflate(R.layout.cell_explorer, viewGroup, false));
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class PLImageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 		public PLImageViewHolder(View itemView) {
 			super(itemView);
-			mImageView = (ImageView) itemView.findViewById(R.id.image_view);
+			mImageView = (ImageView) itemView.findViewById(R.id.icon_image);
 			mTextView = (TextView) itemView.findViewById(R.id.image_title);
 		}
 
