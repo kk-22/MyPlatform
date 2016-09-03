@@ -21,14 +21,16 @@ public class PLExplorerView extends PLNavigationView implements PLExplorerRecycl
 	private File mCurrentFile;
 	private TextView mPathText;
 	private RecyclerView mRecyclerView;
-	private RecyclerView.Adapter mAdapter;
+	private PLExplorerRecyclerAdapter mAdapter;
 
 	public PLExplorerView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_explorer, this);
 		mPathText = (TextView) findViewById(R.id.path_text);
 		mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+		mAdapter = new PLExplorerRecyclerAdapter(getContext(), this);
 
+		loadPicturesDirectory();
 		loadPicturesDirectory();
 		initClickEvent();
 	}
@@ -55,7 +57,7 @@ public class PLExplorerView extends PLNavigationView implements PLExplorerRecycl
 
 		File[] allFiles = new File(path).listFiles();
 		List<File> fileList = Arrays.asList(allFiles);
-		mAdapter = new PLExplorerRecyclerAdapter(getContext(), fileList, this);
+		mAdapter.setFileList(fileList);
 		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 		mRecyclerView.setAdapter(mAdapter);
 	}

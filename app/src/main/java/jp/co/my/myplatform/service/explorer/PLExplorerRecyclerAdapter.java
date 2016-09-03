@@ -19,13 +19,12 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
 	private Context mContext;
 	private LayoutInflater mInflater;
-	private List<File> mFiles;
+	private List<File> mFileList;
 	private PLOnClickFileListener mListener;
 
-	public PLExplorerRecyclerAdapter(Context context, List<File> data, PLOnClickFileListener listener) {
+	public PLExplorerRecyclerAdapter(Context context,  PLOnClickFileListener listener) {
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
-		mFiles = data;
 		mListener = listener;
 	}
 
@@ -37,7 +36,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 		PLImageViewHolder customHolder = (PLImageViewHolder) viewHolder;
-		final File file = mFiles.get(position);
+		final File file = mFileList.get(position);
 		customHolder.setFile(file);
 		viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -49,7 +48,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
 	@Override
 	public int getItemCount() {
-		return mFiles.size();
+		return mFileList.size();
 	}
 
 	private static class PLImageViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +62,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 			mTextView = (TextView) itemView.findViewById(R.id.image_title);
 		}
 
-		public void setFile(File file) {
+		public void setFile(final File file) {
 			String fileName = file.getName();
 			String extension = MYStringUtil.getSuffix(fileName);
 			if (extension != null && (extension.equals("png") || extension.equals("jpg"))) {
@@ -86,5 +85,9 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
 	public interface PLOnClickFileListener {
 		void onClickFile(File file);
+	}
+
+	public void setFileList(List<File> fileList) {
+		mFileList = fileList;
 	}
 }
