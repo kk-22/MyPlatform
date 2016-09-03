@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_margin="5dp"
               android:gravity="center"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="200dp">
+              android:layout_height="130dp">
 
-    <ImageButton
+    <ImageView
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
-        android:id="@+id/image_button"
-        style="HighlightImageButton"
+        android:id="@+id/image_view"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"/>
 
     <TextView
         android:id="@+id/image_title"
+        android:textSize="15dp"
         android:textAlignment="center"
         android:textColor="#000"
         android:text="title"

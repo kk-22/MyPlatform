@@ -6,25 +6,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
-import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
 
 public class PLImageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private Context mContext;
 	private LayoutInflater mInflater;
-	private ArrayList<File> mFiles;
+	private List<File> mFiles;
+	private PLOnClickFileListener mListener;
 
-	public PLImageRecyclerAdapter(Context context, ArrayList<File> data) {
+	public PLImageRecyclerAdapter(Context context, List<File> data, PLOnClickFileListener listener) {
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
 		mFiles = data;
+		mListener = listener;
 	}
 
 	@Override
@@ -35,7 +37,14 @@ public class PLImageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 		PLImageViewHolder customHolder = (PLImageViewHolder) viewHolder;
-		customHolder.setFile(mFiles.get(position));
+		final File file = mFiles.get(position);
+		customHolder.setFile(file);
+		viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mListener.onClickFile(file);
+			}
+		});
 	}
 
 	@Override
@@ -45,26 +54,37 @@ public class PLImageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 	private static class PLImageViewHolder extends RecyclerView.ViewHolder {
 
-		private ImageButton mImageButton;
+		private ImageView mImageView;
 		private TextView mTextView;
 
 		public PLImageViewHolder(View itemView) {
 			super(itemView);
-			mImageButton = (ImageButton) itemView.findViewById(R.id.image_button);
+			mImageView = (ImageView) itemView.findViewById(R.id.image_view);
 			mTextView = (TextView) itemView.findViewById(R.id.image_title);
 		}
 
 		public void setFile(File file) {
-			mTextView.setText(file.getName());
+			String fileName = file.getName();
+			String extension = MYStringUtil.getSuffix(fileName);
+			if (extension != null && (extension.equals("png") || extension.equals("jpg"))) {
+				Uri uri = Uri.fromFile(file);
+				mImageView.setImageURI(uri);
+				mTextView.setVisibility(View.GONE);
+				return;
+			}
 
-			Uri uri = Uri.fromFile(file);
-			mImageButton.setImageURI(uri);
-			mImageButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					MYLogUtil.showToast("ok yes");
-				}
-			});
+			mTextView.setVisibility(View.VISIBLE);
+			if (file.isDirectory()) {
+				mImageView.setImageResource(R.drawable.directory);
+				mTextView.setText(fileName);
+				return;
+			} else {
+				mImageView.setImageResource(R.drawable.file);
+			}
 		}
+	}
+
+	public interface PLOnClickFileListener {
+		void onClickFile(File file);
 	}
 }
