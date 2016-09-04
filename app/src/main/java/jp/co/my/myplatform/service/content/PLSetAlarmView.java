@@ -130,7 +130,7 @@ public class PLSetAlarmView extends PLContentView {
 
 	private PendingIntent getPendingIntent(int flags) {
 		Intent intent = new Intent(getContext(), PLCoreService.class);
-		intent.putExtra(PLCoreService.KEY_CLASS_NAME, getClass().getCanonicalName());
+		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, getClass().getCanonicalName());
 		PendingIntent pendingIntent = PendingIntent.getService(getContext(), 77, intent, flags);
 		return pendingIntent;
 	}

@@ -49,7 +49,6 @@ public class PLNavigationController extends PLOverlayView {
 
 	@SuppressWarnings("unchecked")
 	public <T extends PLContentView> T pushView(Class<T> clazz) {
-		displayNavigationIfNeeded();
 		if (clazz.isInstance(mCurrentView)) {
 			// 前回のViewを表示
 			return (T) mCurrentView;

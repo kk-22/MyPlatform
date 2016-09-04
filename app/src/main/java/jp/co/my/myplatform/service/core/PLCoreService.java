@@ -11,13 +11,13 @@ import android.support.v7.app.NotificationCompat;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
-import jp.co.my.myplatform.service.overlay.PLNavigationController;
 import jp.co.my.myplatform.service.content.PLSetAlarmView;
+import jp.co.my.myplatform.service.overlay.PLNavigationController;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLCoreService extends Service {
 
-	public static final String KEY_CLASS_NAME = "KEY_CLASS_NAME";
+	public static final String KEY_CONTENT_CLASS_NAME = "KEY_CONTENT_CLASS_NAME";
 	public static final String KEY_ACTION_SHOW = "KEY_ACTION_SHOW";
 
 	// シングルトン
@@ -43,16 +43,11 @@ public class PLCoreService extends Service {
 			sContext = this;
 			sAppStrategy = new PLAppStrategy();
 			sOverlayManager = new PLOverlayManager(this);
+			sOverlayManager.addFrontOverlays();
 			sNavigationController = new PLNavigationController();
 		}
-		sOverlayManager.addFrontOverlays();
 
 		if (intent != null) {
-			// Activityからの起動時用の処理
-			sNavigationController.displayNavigationIfNeeded();
-			// 初回起動時にNavigationよりもボタンが前に出る問題対策
-			sOverlayManager.bringToFront(PLNavigationController.class);
-
 			actionIntent(intent);
 		}
 		return START_STICKY;
@@ -84,11 +79,14 @@ public class PLCoreService extends Service {
 			return;
 		}
 
-		String className = intent.getStringExtra(KEY_CLASS_NAME);
+		String className = intent.getStringExtra(KEY_CONTENT_CLASS_NAME);
 		if (className != null) {
 			MYLogUtil.outputLog("indent className = " + className);
-
-			if (className.equals(PLSetAlarmView.class.getCanonicalName())) {
+			sOverlayManager.addFrontOverlays();
+			sNavigationController.displayNavigationIfNeeded();
+			if (className.equals(PLNavigationController.class.getCanonicalName())) {
+				// ナビゲーション表示のみ
+			} else if (className.equals(PLSetAlarmView.class.getCanonicalName())) {
 				PLSetAlarmView alarmView = PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
 				alarmView.startAlarm();
 			}
@@ -96,6 +94,7 @@ public class PLCoreService extends Service {
 
 		if (intent.getBooleanExtra(KEY_ACTION_SHOW, false)) {
 			sOverlayManager.addFrontOverlays();
+			sNavigationController.displayNavigationIfNeeded();
 		}
 	}
 

@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.overlay.PLNavigationController;
 
 public class PLApplication extends Application {
 
@@ -28,7 +29,9 @@ public class PLApplication extends Application {
 
 	public static void startCoreService() {
 		MYLogUtil.outputLog("startCoreService");
-		sContext.startService(new Intent(sContext, PLCoreService.class));
+		Intent intent = new Intent(sContext, PLCoreService.class);
+		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, PLNavigationController.class.getCanonicalName());
+		sContext.startService(intent);
 	}
 
 	public static void stopCoreService() {
