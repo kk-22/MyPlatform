@@ -48,7 +48,14 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mListener.onClickFile(file);
+				mListener.onClickFile(v, file);
+			}
+		});
+		viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				mListener.onLongClickFile(v, file);
+				return true;
 			}
 		});
 	}
@@ -113,7 +120,8 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 	}
 
 	public interface PLOnClickFileListener {
-		void onClickFile(File file);
+		void onClickFile(View view, File file);
+		void onLongClickFile(View view, File file);
 	}
 
 	private static class PLImageViewHolder extends RecyclerView.ViewHolder {

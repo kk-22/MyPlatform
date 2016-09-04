@@ -1,10 +1,12 @@
 package jp.co.my.myplatform.service.explorer;
 
+import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -15,6 +17,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 
 public class PLExplorerView extends PLContentView implements PLExplorerRecyclerAdapter.PLOnClickFileListener {
 
@@ -36,7 +39,7 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 	}
 
 	@Override
-	public void onClickFile(File file) {
+	public void onClickFile(View view, File file) {
 		if (file.isDirectory()) {
 			loadDirectory(file);
 			return;
@@ -48,6 +51,23 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		} else {
 			MYLogUtil.showToast("Sorry, No action");
 		}
+	}
+
+	@Override
+	public void onLongClickFile(final View view, final File file) {
+		String[] titles = {"削除"};
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View cellView, int position, long id) {
+				if (file.delete()) {
+					MYLogUtil.showToast(file.getName() +"を削除");
+					view.setBackgroundColor(Color.GRAY);
+				} else {
+					MYLogUtil.showErrorToast(file.getName() +"の削除に失敗");
+				}
+				PLExplorerView.this.removeTopPopover();
+			}
+		}).showPopover();
 	}
 
 	private void loadDirectory(File file) {
