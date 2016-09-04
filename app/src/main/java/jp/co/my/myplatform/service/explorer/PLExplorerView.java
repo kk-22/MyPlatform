@@ -14,9 +14,9 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.navigation.PLNavigationView;
+import jp.co.my.myplatform.service.content.PLContentView;
 
-public class PLExplorerView extends PLNavigationView implements PLExplorerRecyclerAdapter.PLOnClickFileListener {
+public class PLExplorerView extends PLContentView implements PLExplorerRecyclerAdapter.PLOnClickFileListener {
 
 	private File mCurrentFile;
 	private TextView mPathText;

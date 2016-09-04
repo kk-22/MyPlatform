@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.navigation;
+package jp.co.my.myplatform.service.content;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +14,12 @@ import jp.co.my.myplatform.service.explorer.PLExplorerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 
-public class PLHomeView extends PLNavigationView {
+public class PLHomeView extends PLContentView {
 
 
 	public PLHomeView() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.navigation_home, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_home, this);
 
 		setButtonEvent();
 	}

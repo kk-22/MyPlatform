@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.navigation;
+package jp.co.my.myplatform.service.content;
 
 import android.view.ViewParent;
 import android.widget.FrameLayout;
@@ -10,12 +10,12 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
 
-public class PLNavigationView extends LinearLayout {
+public class PLContentView extends LinearLayout {
 
 	private ArrayList<PLPopoverView> popoverViews;
 	protected boolean isKeepCache;
 
-	public PLNavigationView() {
+	public PLContentView() {
 		super(PLCoreService.getContext());
 
 		popoverViews = new ArrayList<>();
@@ -54,5 +54,9 @@ public class PLNavigationView extends LinearLayout {
 	private FrameLayout getParentFrameLayout() {
 		ViewParent parentView = getParent();
 		return (FrameLayout) parentView;
+	}
+
+	public boolean isKeepCache() {
+		return isKeepCache;
 	}
 }

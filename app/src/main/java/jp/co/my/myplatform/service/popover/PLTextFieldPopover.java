@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.navigation.PLNavigationView;
+import jp.co.my.myplatform.service.content.PLContentView;
 
 public class PLTextFieldPopover extends PLPopoverView {
 
@@ -51,7 +51,7 @@ public class PLTextFieldPopover extends PLPopoverView {
 	}
 
 	@Override
-	public void addedPopover(PLNavigationView navigationView) {
+	public void addedPopover(PLContentView navigationView) {
 		super.addedPopover(navigationView);
 
 		// キーボード表示

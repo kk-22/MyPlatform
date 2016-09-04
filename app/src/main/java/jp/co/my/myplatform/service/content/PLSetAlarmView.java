@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.navigation;
+package jp.co.my.myplatform.service.content;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -18,7 +18,7 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.view.PLSelectTimeView;
 
-public class PLSetAlarmView extends PLNavigationView {
+public class PLSetAlarmView extends PLContentView {
 
 	private static final String KEY_ALARM_TIME = "AlarmTime";
 
@@ -28,7 +28,7 @@ public class PLSetAlarmView extends PLNavigationView {
 
 	public PLSetAlarmView() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.navigation_set_alarm, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_set_alarm, this);
 		mSelectTimeView = (PLSelectTimeView) findViewById(R.id.time_select_view);
 		mAlarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 		mAlarmCount = 0;

@@ -16,10 +16,10 @@ import java.util.List;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
-import jp.co.my.myplatform.service.navigation.PLNavigationView;
+import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
-public class PLBrowserView extends PLNavigationView {
+public class PLBrowserView extends PLContentView {
 	private PLWebView mCurrentWebView;
 	private ImageButton mBackButton, mForwardButton, mShowButton;
 	private ProgressBar mProgressBar1, mProgressBar2;
@@ -29,7 +29,7 @@ public class PLBrowserView extends PLNavigationView {
 		super();
 		isKeepCache = true;
 
-		LayoutInflater.from(getContext()).inflate(R.layout.navigation_browser, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mForwardButton = (ImageButton) findViewById(R.id.forward_button);
 		mShowButton = (ImageButton) findViewById(R.id.show_toolbar_button);

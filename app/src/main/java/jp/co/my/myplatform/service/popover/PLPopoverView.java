@@ -8,14 +8,14 @@ import android.widget.FrameLayout;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
-import jp.co.my.myplatform.service.navigation.PLNavigationView;
+import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.layout.PLCenterLayoutController;
 import jp.co.my.myplatform.service.layout.PLAbstractLayoutController;
 
 public class PLPopoverView extends FrameLayout {
 
 	protected View mPopView;
-	protected PLNavigationView mParentNavigationView;
+	protected PLContentView mParentNavigationView;
 	protected PLAbstractLayoutController mLayout;
 
 	public PLPopoverView(int subResource) {
@@ -36,14 +36,14 @@ public class PLPopoverView extends FrameLayout {
 		mLayout = layout;
 		setSubViewPosition();
 
-		PLNavigationView navigationView = PLCoreService.getNavigationController().getCurrentView();
+		PLContentView navigationView = PLCoreService.getNavigationController().getCurrentView();
 		navigationView.addPopover(this);
 	}
 
 	public void popoverWillRemove() {
 	}
 
-	public void addedPopover(PLNavigationView navigationView) {
+	public void addedPopover(PLContentView navigationView) {
 		mParentNavigationView = navigationView;
 	}
 

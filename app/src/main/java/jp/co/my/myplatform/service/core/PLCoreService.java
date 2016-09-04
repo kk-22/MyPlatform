@@ -11,8 +11,8 @@ import android.support.v7.app.NotificationCompat;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
-import jp.co.my.myplatform.service.navigation.PLNavigationController;
-import jp.co.my.myplatform.service.navigation.PLSetAlarmView;
+import jp.co.my.myplatform.service.overlay.PLNavigationController;
+import jp.co.my.myplatform.service.content.PLSetAlarmView;
 import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLCoreService extends Service {

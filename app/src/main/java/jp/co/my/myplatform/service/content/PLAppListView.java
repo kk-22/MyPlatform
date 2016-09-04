@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.navigation;
+package jp.co.my.myplatform.service.content;
 
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
 
-public class PLAppListView extends PLNavigationView {
+public class PLAppListView extends PLContentView {
 
 	ListView mListView;
 	ArrayList<ComponentName> mComponentArray;
 
 	public PLAppListView() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.navigation_app_list, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_app_list, this);
 
 		mComponentArray = getForegroundAppList(5);
 		int componentCuont = mComponentArray.size();
