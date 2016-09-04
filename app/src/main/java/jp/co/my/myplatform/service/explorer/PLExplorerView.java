@@ -80,6 +80,9 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		mAdapter.setFileList(fileList);
 		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 		mRecyclerView.setAdapter(mAdapter);
+		if (fileList.size() == 0) {
+			MYLogUtil.showToast("ファイルなし");
+		}
 	}
 
 	private void initClickEvent() {
