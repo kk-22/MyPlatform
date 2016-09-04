@@ -7,7 +7,7 @@
               android:layout_height="130dp">
 
     <ImageView
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:id="@+id/icon_image"
         android:layout_weight="1"
