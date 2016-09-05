@@ -71,18 +71,20 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 	}
 
 	private void loadDirectory(File file) {
-		mCurrentFile = file;
 		String path = file.getPath();
-		mPathText.setText(path);
-
 		File[] allFiles = new File(path).listFiles();
 		List<File> fileList = Arrays.asList(allFiles);
+		if (fileList.size() == 0) {
+			MYLogUtil.showToast("ファイルなし");
+			return;
+		}
+
+		mCurrentFile = file;
+		mPathText.setText(path);
+
 		mAdapter.setFileList(fileList);
 		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 		mRecyclerView.setAdapter(mAdapter);
-		if (fileList.size() == 0) {
-			MYLogUtil.showToast("ファイルなし");
-		}
 	}
 
 	private void initClickEvent() {
