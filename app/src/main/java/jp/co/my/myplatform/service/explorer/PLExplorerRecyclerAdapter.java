@@ -68,8 +68,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 	public void updateHolderByFile(PLImageViewHolder holder, final File file) {
 		holder.mFile = file;
 		String fileName = file.getName();
-		String extension = MYStringUtil.getSuffix(fileName);
-		if (extension != null && (extension.equals("png") || extension.equals("jpg"))) {
+		if (MYStringUtil.isImageFileName(fileName)) {
 			loadImageOnBackground(holder, file);
 			holder.mTextView.setVisibility(View.GONE);
 			return;
@@ -134,5 +133,9 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 			mImageView = (ImageView) itemView.findViewById(R.id.icon_image);
 			mTextView = (TextView) itemView.findViewById(R.id.image_title);
 		}
+	}
+
+	public List<File> getFileList() {
+		return mFileList;
 	}
 }
