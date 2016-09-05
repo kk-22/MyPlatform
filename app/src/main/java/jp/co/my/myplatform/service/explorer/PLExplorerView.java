@@ -47,7 +47,7 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 
 		String extension = MYStringUtil.getSuffix(file.getName());
 		if (extension.equals("png") || extension.equals("jpg")) {
-			new PLImagePopover(mAdapter.getFileList(), file).showPopover();
+			new PLImagePopover(mAdapter.getFileList(), file, mAdapter.getImageCache()).showPopover();
 		} else {
 			MYLogUtil.showToast("Sorry, No action");
 		}

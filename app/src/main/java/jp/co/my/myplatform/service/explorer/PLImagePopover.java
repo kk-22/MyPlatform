@@ -1,6 +1,8 @@
 package jp.co.my.myplatform.service.explorer;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.v4.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -18,9 +20,11 @@ public class PLImagePopover extends PLPopoverView {
 	private int mCurrentIndex;
 	private ImageView mImageView;
 	private List<File> mImageFileList;
+	private LruCache<String, Bitmap> mCache;
 
-	public PLImagePopover(List<File> fileList, File imageFile) {
+	public PLImagePopover(List<File> fileList, File imageFile, LruCache<String, Bitmap> imageCache) {
 		super(R.layout.popover_full_image);
+		mCache = imageCache;
 		mImageView = (ImageView) findViewById(R.id.image_view);
 
 		mImageFileList = new ArrayList<>();
@@ -43,8 +47,13 @@ public class PLImagePopover extends PLPopoverView {
 		mCurrentIndex = index;
 
 		File file = mImageFileList.get(index);
-		Uri uri = Uri.fromFile(file);
-		mImageView.setImageURI(uri);
+		Bitmap cacheImage = mCache.get(file.getName());
+		if (cacheImage != null) {
+			mImageView.setImageBitmap(cacheImage);
+		} else {
+			Uri uri = Uri.fromFile(file);
+			mImageView.setImageURI(uri);
+		}
 	}
 
 	private void initClickEvent() {

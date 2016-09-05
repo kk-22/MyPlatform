@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.support.v4.util.LruCache;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
 	private LayoutInflater mInflater;
 	private List<File> mFileList;
+	private LruCache<String, Bitmap> mImageCache;
 	private PLOnClickFileListener mListener;
 
 	public PLExplorerRecyclerAdapter(Context context,  PLOnClickFileListener listener) {
@@ -85,6 +87,12 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 	}
 
 	private void loadImageOnBackground(final PLImageViewHolder holder, final File file) {
+		Bitmap image = mImageCache.get(file.getName());
+		if (image != null) {
+			holder.mImageView.setImageBitmap(image);
+			return;
+		}
+
 		holder.mImageView.setImageResource(R.drawable.file);
 		new Thread(new Runnable() {
 			@Override
@@ -93,6 +101,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 					FileInputStream stream = new FileInputStream(file);
 					Bitmap bitmap = BitmapFactory.decodeStream(stream);
 					setImageOnMainThread(holder, file, bitmap);
+					mImageCache.put(file.getName(), bitmap);
 				} catch (Exception e) {
 					MYLogUtil.showExceptionToast(e);
 				}
@@ -114,10 +123,6 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		});
 	}
 
-	public void setFileList(List<File> fileList) {
-		mFileList = fileList;
-	}
-
 	public interface PLOnClickFileListener {
 		void onClickFile(View view, File file);
 		void onLongClickFile(View view, File file);
@@ -135,7 +140,16 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		}
 	}
 
+	public void setFileList(List<File> fileList) {
+		mFileList = fileList;
+		mImageCache = new LruCache<>(1024 * 1024 * 10);
+	}
+
 	public List<File> getFileList() {
 		return mFileList;
+	}
+
+	public LruCache<String, Bitmap> getImageCache() {
+		return mImageCache;
 	}
 }
