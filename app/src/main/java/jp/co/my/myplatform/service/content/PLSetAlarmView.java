@@ -9,6 +9,7 @@ import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,12 +26,16 @@ public class PLSetAlarmView extends PLContentView {
 	private static final String KEY_ALARM_TIME = "AlarmTime";
 
 	private int mAlarmCount;
+	private Button mStartButton;
+	private Button mCancelButton;
 	private AlarmManager mAlarmManager;
 	private PLSelectTimeView mSelectTimeView;
 
 	public PLSetAlarmView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_set_alarm, this);
+		mStartButton = (Button) findViewById(R.id.set_alarm_button);
+		mCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
 		mSelectTimeView = (PLSelectTimeView) findViewById(R.id.time_select_view);
 		mAlarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 		mAlarmCount = 0;
@@ -42,6 +47,7 @@ public class PLSetAlarmView extends PLContentView {
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		setDefaultTimeIfNecessary();
+		mCancelButton.setEnabled(isExistPendingIntent());
 	}
 
 	public void startAlarm() {
@@ -57,7 +63,7 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	private void setButtonEvent() {
-		findViewById(R.id.set_alarm_button).setOnClickListener(new OnClickListener() {
+		mStartButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (mSelectTimeView.isZeroAll()) {
@@ -66,6 +72,7 @@ public class PLSetAlarmView extends PLContentView {
 				}
 				String timeString = mSelectTimeView.getSelectTimeString();
 				MYLogUtil.showToast(timeString +"後にアラームセット");
+				mCancelButton.setEnabled(true);
 
 				Calendar calendar = mSelectTimeView.getSelectTimeCalendar();
 				Long timeInMillis = calendar.getTimeInMillis();
@@ -80,7 +87,7 @@ public class PLSetAlarmView extends PLContentView {
 				updateFrontButtonText(calendar);
 			}
 		});
-		findViewById(R.id.cancel_alarm_button).setOnClickListener(new View.OnClickListener() {
+		mCancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (!isExistPendingIntent()) {
@@ -107,6 +114,8 @@ public class PLSetAlarmView extends PLContentView {
 
 	private void cancelAlarm() {
 		MYLogUtil.showToast("アラーム解除");
+		mCancelButton.setEnabled(false);
+
 		PendingIntent alarmSender = createPendingIntent();
 		mAlarmManager.cancel(alarmSender);
 		alarmSender.cancel();
