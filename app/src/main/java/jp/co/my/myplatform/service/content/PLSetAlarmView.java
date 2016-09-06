@@ -87,12 +87,16 @@ public class PLSetAlarmView extends PLContentView {
 					 MYLogUtil.showToast("アラーム未登録");
 					return;
 				}
+				if (mAlarmCount > 0) {
+					// すでにアラームが鳴っている場合
+					cancelAlarm();
+					return;
+				}
 				String[] titles = {"アラーム解除"};
 				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 						PLSetAlarmView.this.removeTopPopover();
-						MYLogUtil.showToast("アラーム解除");
 						mSelectTimeView.resetAllTime();
 						cancelAlarm();
 					}
@@ -102,6 +106,7 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	private void cancelAlarm() {
+		MYLogUtil.showToast("アラーム解除");
 		PendingIntent alarmSender = createPendingIntent();
 		mAlarmManager.cancel(alarmSender);
 		alarmSender.cancel();
