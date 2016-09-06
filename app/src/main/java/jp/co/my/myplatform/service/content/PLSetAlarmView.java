@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.overlay.PLFrontButtonView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.view.PLSelectTimeView;
 
@@ -75,6 +77,7 @@ public class PLSetAlarmView extends PLContentView {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, timeInMillis, 10000, alarmSender);
 
 				mAlarmCount = 0;
+				updateFrontButtonText(calendar);
 			}
 		});
 		findViewById(R.id.cancel_alarm_button).setOnClickListener(new View.OnClickListener() {
@@ -106,6 +109,9 @@ public class PLSetAlarmView extends PLContentView {
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 		editor.remove(KEY_ALARM_TIME);
 		editor.commit();
+
+		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
+		buttonView.clearText(this.getClass());
 	}
 
 	private void setDefaultTimeIfNecessary() {
@@ -133,5 +139,12 @@ public class PLSetAlarmView extends PLContentView {
 		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, getClass().getCanonicalName());
 		PendingIntent pendingIntent = PendingIntent.getService(getContext(), 77, intent, flags);
 		return pendingIntent;
+	}
+	private void updateFrontButtonText(Calendar calendar) {
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+		String text = format.format(calendar.getTime());
+
+		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
+		buttonView.setText(this.getClass(), 8, text);
 	}
 }

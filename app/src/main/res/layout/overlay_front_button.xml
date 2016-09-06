@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:background="#00ffff"
         android:textColor="#000000"
-        android:textSize="5dp"
-        android:text="Button"
+        android:text=""
+        android:textStyle="bold"
         android:id="@+id/front_button"/>
 </LinearLayout>

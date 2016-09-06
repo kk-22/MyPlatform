@@ -13,6 +13,7 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 public class PLFrontButtonView extends PLOverlayView {
 
 	protected Button mButton;
+	protected Class mTextClass;
 
 	public PLFrontButtonView() {
 		super();
@@ -50,5 +51,20 @@ public class PLFrontButtonView extends PLOverlayView {
 		params.verticalMargin = 0.4f;
 		params.alpha = 0.5f;
 		return params;
+	}
+
+	public void setText(Class klass, int fontSize, String text) {
+		mTextClass = klass;
+		mButton.setTextSize(fontSize);
+		mButton.setText(text);
+	}
+
+	public boolean clearText(Class klass) {
+		if (!klass.equals(mTextClass)) {
+			return false;
+		}
+		mTextClass = null;
+		mButton.setText("");
+		return true;
 	}
 }
