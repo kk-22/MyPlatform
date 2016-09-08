@@ -42,6 +42,34 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:text="デバッグ"
+            android:id="@+id/debug_button"/>
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text=""
+            android:id="@+id/a2_button"/>
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text=""
+            android:id="@+id/a3_button"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:text="ボタン非表示"
             android:id="@+id/hide_button"/>
 
@@ -50,7 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="Explorer"
-            android:id="@+id/image_list_button"/>
+            android:id="@+id/explorer_button"/>
 
         <Button
             android:layout_weight="1"

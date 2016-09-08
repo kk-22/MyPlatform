@@ -51,13 +51,19 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getOverlayManager().addOverlayView(lockView);
 			}
 		});
+		findViewById(R.id.debug_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().pushView(PLDebugView.class);
+			}
+		});
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLBrowserView.class);
 			}
 		});
-		findViewById(R.id.image_list_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.explorer_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLExplorerView.class);
