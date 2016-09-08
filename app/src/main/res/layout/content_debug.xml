@@ -44,7 +44,7 @@
             android:layout_height="match_parent"/>
 
         <Button
-            android:text="exit GC"
+            android:text="USE GC"
             android:id="@+id/gc_button"
             android:layout_weight="1"
             android:layout_width="0dp"
