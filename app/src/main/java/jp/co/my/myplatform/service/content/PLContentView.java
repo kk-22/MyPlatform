@@ -13,7 +13,7 @@ import jp.co.my.myplatform.service.popover.PLPopoverView;
 public class PLContentView extends LinearLayout {
 
 	private ArrayList<PLPopoverView> popoverViews;
-	protected boolean isKeepCache;
+	private boolean isKeepCache;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
@@ -58,5 +58,9 @@ public class PLContentView extends LinearLayout {
 
 	public boolean isKeepCache() {
 		return isKeepCache;
+	}
+
+	public void setKeepCache(boolean keepCache) {
+		isKeepCache = keepCache;
 	}
 }

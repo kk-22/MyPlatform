@@ -27,7 +27,7 @@ public class PLBrowserView extends PLContentView {
 
 	public PLBrowserView() {
 		super();
-		isKeepCache = true;
+		setKeepCache(true);
 
 		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
