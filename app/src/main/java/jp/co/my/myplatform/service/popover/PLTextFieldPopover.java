@@ -63,6 +63,7 @@ public class PLTextFieldPopover extends PLPopoverView {
 	@Override
 	public void popoverWillRemove() {
 		// キーボードを閉じる
+		super.popoverWillRemove();
 		InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 	}
