@@ -14,6 +14,7 @@ public class MYStringUtil {
 
 	public static boolean isImageFileName(String fileName) {
 		String extension = MYStringUtil.getSuffix(fileName);
-		return (extension != null && (extension.equals("png") || extension.equals("jpg")));
+		return (extension != null &&
+				(extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg")));
 	}
 }

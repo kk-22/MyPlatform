@@ -32,12 +32,18 @@ public class PLPopoverView extends FrameLayout {
 		showPopover(new PLCenterLayoutController());
 	}
 
+	public void showPopover(PLContentView contentView) {
+		showPopover(new PLCenterLayoutController(), contentView);
+	}
+
 	public void showPopover(PLAbstractLayoutController layout) {
+		showPopover(layout, PLCoreService.getNavigationController().getCurrentView());
+	}
+
+	public void showPopover(PLAbstractLayoutController layout, PLContentView contentView) {
 		mLayout = layout;
 		setSubViewPosition();
-
-		PLContentView content = PLCoreService.getNavigationController().getCurrentView();
-		content.addPopover(this);
+		contentView.addPopover(this);
 	}
 
 	public void popoverWillRemove() {

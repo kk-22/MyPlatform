@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.explorer;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +20,11 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 
-public class PLExplorerView extends PLContentView implements PLExplorerRecyclerAdapter.PLOnClickFileListener {
+public class PLExplorerView extends PLContentView implements PLExplorerRecyclerAdapter.PLOnClickFileListener
+		, PLImagePopover.PLOnSetImageListener {
+
+	private static final String KEY_LAST_PATH = "KEY_LAST_PATH";
+	private static final String KEY_LAST_IMAGE = "KEY_LAST_IMAGE";
 
 	private File mCurrentFile;
 	private TextView mPathText;
@@ -33,8 +38,21 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
 		mAdapter = new PLExplorerRecyclerAdapter(getContext(), this);
 
-		loadPicturesDirectory();
-		loadPicturesDirectory();
+		SharedPreferences pref = MYLogUtil.getPreference();
+		String lastPath = pref.getString(KEY_LAST_PATH, null);
+		if (lastPath != null) {
+			File directory = new File(lastPath);
+			loadDirectory(directory);
+		} else {
+			loadPicturesDirectory();
+		}
+		String imagePath = pref.getString(KEY_LAST_IMAGE, null);
+		if (imagePath != null) {
+			// Popoverの追加先がContentViewではなくNavigationなので、コンストラク時にはaddできない
+//			File imageFile = new File(lastPath);
+//			showImageFile(imageFile);
+		}
+
 		initClickEvent();
 	}
 
@@ -45,9 +63,8 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 			return;
 		}
 
-		String extension = MYStringUtil.getSuffix(file.getName());
-		if (extension.equals("png") || extension.equals("jpg")) {
-			new PLImagePopover(mAdapter.getFileList(), file, mAdapter.getImageCache()).showPopover();
+		if (MYStringUtil.isImageFileName(file.getName())) {
+			showImageFile(file);
 		} else {
 			MYLogUtil.showToast("Sorry, No action");
 		}
@@ -70,6 +87,13 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		}).showPopover();
 	}
 
+	@Override
+	public void onSetImage(File file) {
+		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+		editor.putString(KEY_LAST_IMAGE, file.getPath());
+		editor.commit();
+	}
+
 	private void loadDirectory(File file) {
 		String path = file.getPath();
 		File[] allFiles = new File(path).listFiles();
@@ -85,6 +109,10 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		mAdapter.setFileList(fileList);
 		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 		mRecyclerView.setAdapter(mAdapter);
+
+		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+		editor.putString(KEY_LAST_PATH, path);
+		editor.commit();
 	}
 
 	private void initClickEvent() {
@@ -109,5 +137,11 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 
 	private void loadPicturesDirectory() {
 		loadDirectory(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+	}
+
+	private void showImageFile(File file) {
+		PLImagePopover imagePopover = new PLImagePopover(mAdapter.getFileList(), file, mAdapter.getImageCache());
+		imagePopover.showPopover(this);
+		imagePopover.setListener(this);
 	}
 }

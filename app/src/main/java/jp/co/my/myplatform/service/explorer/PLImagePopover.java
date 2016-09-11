@@ -21,6 +21,7 @@ public class PLImagePopover extends PLPopoverView {
 	private ImageView mImageView;
 	private List<File> mImageFileList;
 	private LruCache<String, Bitmap> mCache;
+	private PLOnSetImageListener mListener;
 
 	public PLImagePopover(List<File> fileList, File imageFile, LruCache<String, Bitmap> imageCache) {
 		super(R.layout.popover_full_image);
@@ -54,6 +55,10 @@ public class PLImagePopover extends PLPopoverView {
 			Uri uri = Uri.fromFile(file);
 			mImageView.setImageURI(uri);
 		}
+
+		if (mListener != null) {
+			mListener.onSetImage(file);
+		}
 	}
 
 	private void initClickEvent() {
@@ -83,4 +88,12 @@ public class PLImagePopover extends PLPopoverView {
 				setImage(index);
 			}
 		});	}
+
+	public interface PLOnSetImageListener {
+		void onSetImage(File file);
+	}
+
+	public void setListener(PLOnSetImageListener listener) {
+		mListener = listener;
+	}
 }
