@@ -85,6 +85,7 @@ public class PLSetAlarmView extends PLContentView {
 
 				mAlarmCount = 0;
 				updateFrontButtonText(calendar);
+				PLCoreService.getNavigationController().pushView(PLHomeView.class);
 			}
 		});
 		mCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +107,7 @@ public class PLSetAlarmView extends PLContentView {
 						PLSetAlarmView.this.removeTopPopover();
 						mSelectTimeView.resetAllTime();
 						cancelAlarm();
+						PLCoreService.getNavigationController().pushView(PLHomeView.class);
 					}
 				}).showPopover();
 			}
