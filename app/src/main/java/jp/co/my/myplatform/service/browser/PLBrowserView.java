@@ -13,11 +13,13 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
-import jp.co.my.myplatform.service.content.PLContentView;
-import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
 public class PLBrowserView extends PLContentView {
 	private PLWebView mCurrentWebView;
@@ -80,6 +82,16 @@ public class PLBrowserView extends PLContentView {
 		}
 
 		super.viewWillDisappear();
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		if (mCurrentWebView == null) {
+			MYLogUtil.showErrorToast("viewが開放済み");
+			setKeepCache(false);
+			PLCoreService.getNavigationController().pushView(PLBrowserView.class);
+		}
 	}
 
 	private void onBackKey() {
