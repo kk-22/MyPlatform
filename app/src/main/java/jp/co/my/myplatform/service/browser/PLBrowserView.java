@@ -16,6 +16,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
@@ -76,12 +77,11 @@ public class PLBrowserView extends PLContentView {
 
 	@Override
 	public void viewWillDisappear() {
+		super.viewWillDisappear();
 		if (mCurrentWebView != null) {
 			mCurrentWebView.destroy();
 			mCurrentWebView = null;
 		}
-
-		super.viewWillDisappear();
 	}
 
 	@Override
@@ -90,6 +90,7 @@ public class PLBrowserView extends PLContentView {
 		if (mCurrentWebView == null) {
 			MYLogUtil.showErrorToast("viewが開放済み");
 			setKeepCache(false);
+			PLCoreService.getNavigationController().pushView(PLHomeView.class);
 			PLCoreService.getNavigationController().pushView(PLBrowserView.class);
 		}
 	}
