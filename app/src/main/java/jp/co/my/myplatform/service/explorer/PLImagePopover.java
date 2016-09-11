@@ -60,7 +60,7 @@ public class PLImagePopover extends PLPopoverView {
 		mImageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLImagePopover.this.removeFromNavigation();
+				PLImagePopover.this.removeFromContentView();
 			}
 		});
 		findViewById(R.id.left_view).setOnClickListener(new OnClickListener() {

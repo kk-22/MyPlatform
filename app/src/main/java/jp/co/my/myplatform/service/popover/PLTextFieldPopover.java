@@ -28,7 +28,7 @@ public class PLTextFieldPopover extends PLPopoverView {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 					// 戻るボタン押下で閉じる
-					removeFromNavigation();
+					removeFromContentView();
 					return true;
 				}
 				if (keyCode != KeyEvent.KEYCODE_ENTER || event.getAction() != KeyEvent.ACTION_DOWN) {
@@ -44,15 +44,15 @@ public class PLTextFieldPopover extends PLPopoverView {
 					return false;
 				}
 				// テキストフィールド終了
-				removeFromNavigation();
+				removeFromContentView();
 				return true;
 			}
 		});
 	}
 
 	@Override
-	public void addedPopover(PLContentView navigationView) {
-		super.addedPopover(navigationView);
+	public void addedPopover(PLContentView contentView) {
+		super.addedPopover(contentView);
 
 		// キーボード表示
 		mEditText.requestFocus();

@@ -15,7 +15,7 @@ import jp.co.my.myplatform.service.layout.PLAbstractLayoutController;
 public class PLPopoverView extends FrameLayout {
 
 	protected View mPopView;
-	protected PLContentView mParentNavigationView;
+	protected PLContentView mParentContentView;
 	protected PLAbstractLayoutController mLayout;
 
 	public PLPopoverView(int subResource) {
@@ -36,19 +36,19 @@ public class PLPopoverView extends FrameLayout {
 		mLayout = layout;
 		setSubViewPosition();
 
-		PLContentView navigationView = PLCoreService.getNavigationController().getCurrentView();
-		navigationView.addPopover(this);
+		PLContentView content = PLCoreService.getNavigationController().getCurrentView();
+		content.addPopover(this);
 	}
 
 	public void popoverWillRemove() {
 	}
 
-	public void addedPopover(PLContentView navigationView) {
-		mParentNavigationView = navigationView;
+	public void addedPopover(PLContentView contentView) {
+		mParentContentView = contentView;
 	}
 
-	public void removeFromNavigation() {
-		mParentNavigationView.removePopover(this);
+	public void removeFromContentView() {
+		mParentContentView.removePopover(this);
 	}
 
 	private void setSubViewPosition() {
@@ -68,7 +68,7 @@ public class PLPopoverView extends FrameLayout {
 		findViewById(R.id.background_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				removeFromNavigation();
+				removeFromContentView();
 			}
 		});
 		mPopView.setOnClickListener(new OnClickListener() {

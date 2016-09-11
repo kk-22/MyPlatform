@@ -60,7 +60,7 @@ public class PLBookmarkList extends PLPopoverView {
 						MYLogUtil.showToast("ブックマーク削除：" +pageModel.getTitle());
 						pageModel.delete();
 						PLBookmarkList.this.updateList();
-						removeFromNavigation();
+						removeFromContentView();
 						break;
 					}
 				}
@@ -76,14 +76,14 @@ public class PLBookmarkList extends PLPopoverView {
 				PLWebPageModel pageModel = (PLWebPageModel) listView.getItemAtPosition(position);
 				mBrowserView.getCurrentWebView().loadPageModel(pageModel);
 
-				removeFromNavigation();
+				removeFromContentView();
 			}
 		});
 
 		findViewById(R.id.close_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				removeFromNavigation();
+				removeFromContentView();
 			}
 		});
 	}
