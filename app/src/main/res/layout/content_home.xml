@@ -49,8 +49,8 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text=""
-            android:id="@+id/a2_button"/>
+            android:text="Explorer"
+            android:id="@+id/explorer_button"/>
 
         <Button
             android:layout_weight="1"
@@ -77,8 +77,8 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Explorer"
-            android:id="@+id/explorer_button"/>
+            android:text=""
+            android:id="@+id/a2_button"/>
 
         <Button
             android:layout_weight="1"
