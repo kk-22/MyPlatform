@@ -12,32 +12,32 @@ import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLContentView extends LinearLayout {
 
-	private ArrayList<PLPopoverView> popoverViews;
-	private boolean isKeepCache;
+	private ArrayList<PLPopoverView> mPopoverViews;
+	private boolean mIsKeepCache;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
 
-		popoverViews = new ArrayList<>();
-		isKeepCache = false;
+		mPopoverViews = new ArrayList<>();
+		mIsKeepCache = false;
 	}
 
 	public void viewWillDisappear() {
 		removeAllViews();
-		popoverViews.clear();
+		mPopoverViews.clear();
 	}
 
 	public boolean removeTopPopover() {
-		int size = popoverViews.size();
+		int size = mPopoverViews.size();
 		if (size == 0) {
 			return false;
 		}
-		removePopover(popoverViews.get(size - 1));
+		removePopover(mPopoverViews.get(size - 1));
 		return true;
 	}
 
 	public void removePopover(PLPopoverView view) {
-		if (popoverViews.remove(view)) {
+		if (mPopoverViews.remove(view)) {
 			view.popoverWillRemove();
 			getParentFrameLayout().removeView(view);
 		} else {
@@ -46,7 +46,7 @@ public class PLContentView extends LinearLayout {
 	}
 
 	public void addPopover(PLPopoverView view) {
-		popoverViews.add(view);
+		mPopoverViews.add(view);
 		getParentFrameLayout().addView(view);
 		view.addedPopover(this);
 	}
@@ -57,10 +57,10 @@ public class PLContentView extends LinearLayout {
 	}
 
 	public boolean isKeepCache() {
-		return isKeepCache;
+		return mIsKeepCache;
 	}
 
 	public void setKeepCache(boolean keepCache) {
-		isKeepCache = keepCache;
+		mIsKeepCache = keepCache;
 	}
 }
