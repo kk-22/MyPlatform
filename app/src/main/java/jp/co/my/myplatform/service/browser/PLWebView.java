@@ -55,6 +55,8 @@ public class PLWebView extends WebView {
 
 		onPause();
 		pauseTimers();
+		clearCache(false);
+		clearHistory();
 	}
 
 	@Override
