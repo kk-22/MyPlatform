@@ -1,118 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <FrameLayout
+    <jp.co.my.myplatform.service.browser.PLWebView
+        android:id="@+id/su_web_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <requestFocus/>
+    </jp.co.my.myplatform.service.browser.PLWebView>
 
-        <jp.co.my.myplatform.service.browser.PLWebView
-            android:id="@+id/su_web_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:focusable="true"
-            android:focusableInTouchMode="true">
-            <requestFocus/>
-        </jp.co.my.myplatform.service.browser.PLWebView>
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar1"
+        android:layout_gravity="top"/>
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/progressBar1"
-            android:layout_gravity="top"/>
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="57dp"
+        android:id="@+id/progressBar2"
+        android:layout_gravity="bottom"/>
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="57dp"
-            android:id="@+id/progressBar2"
-            android:layout_gravity="bottom"/>
+    <LinearLayout
+        android:id="@+id/browser_toolbar"
+        android:background="@android:color/black"
+        android:clickable="true"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="57dp">
 
-        <LinearLayout
-            android:id="@+id/browser_toolbar"
-            android:background="@android:color/black"
-            android:clickable="true"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="57dp">
-
-            <Space
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-            <ImageButton
-                style="@style/HighlightImageButton"
-                android:background="@drawable/back_arrow_off"
-                android:layout_width="57dp"
-                android:layout_height="57dp"
-                android:id="@+id/back_button"/>
-
-            <Space
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-            <ImageButton
-                style="@style/HighlightImageButton"
-                android:background="@drawable/forward_arrow_off"
-                android:layout_width="57dp"
-                android:layout_height="57dp"
-                android:id="@+id/forward_button"/>
-
-            <Space
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-            <ImageButton
-                style="@style/HighlightImageButton"
-                android:background="@drawable/down_arrow"
-                android:layout_width="57dp"
-                android:layout_height="57dp"
-                android:id="@+id/hide_toolbar_button"/>
-
-            <Space
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-            <ImageButton
-                style="@style/HighlightImageButton"
-                android:background="@drawable/bookmark"
-                android:layout_width="57dp"
-                android:layout_height="57dp"
-                android:id="@+id/bookmark_button"/>
-
-            <Space
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-            <ImageButton
-                style="@style/HighlightImageButton"
-                android:background="@drawable/settings"
-                android:layout_width="57dp"
-                android:layout_height="57dp"
-                android:id="@+id/function_button"/>
-
-            <Space
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
 
         <ImageButton
-            android:id="@+id/show_toolbar_button"
-            android:visibility="gone"
-            android:background="@drawable/up_arrow"
-            android:layout_gravity="bottom|right"
+            style="@style/HighlightImageButton"
+            android:background="@drawable/back_arrow_off"
             android:layout_width="57dp"
-            android:layout_height="57dp"/>
-    </FrameLayout>
-</LinearLayout>
+            android:layout_height="57dp"
+            android:id="@+id/back_button"/>
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            style="@style/HighlightImageButton"
+            android:background="@drawable/forward_arrow_off"
+            android:layout_width="57dp"
+            android:layout_height="57dp"
+            android:id="@+id/forward_button"/>
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            style="@style/HighlightImageButton"
+            android:background="@drawable/down_arrow"
+            android:layout_width="57dp"
+            android:layout_height="57dp"
+            android:id="@+id/hide_toolbar_button"/>
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            style="@style/HighlightImageButton"
+            android:background="@drawable/bookmark"
+            android:layout_width="57dp"
+            android:layout_height="57dp"
+            android:id="@+id/bookmark_button"/>
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            style="@style/HighlightImageButton"
+            android:background="@drawable/settings"
+            android:layout_width="57dp"
+            android:layout_height="57dp"
+            android:id="@+id/function_button"/>
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/show_toolbar_button"
+        android:visibility="gone"
+        android:background="@drawable/up_arrow"
+        android:layout_gravity="bottom|right"
+        android:layout_width="57dp"
+        android:layout_height="57dp"/>
+</FrameLayout>
