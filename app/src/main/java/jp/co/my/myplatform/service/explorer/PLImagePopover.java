@@ -37,7 +37,7 @@ public class PLImagePopover extends PLPopoverView {
 		}
 		int index = mImageFileList.indexOf(imageFile);
 		if (index == -1) {
-			MYLogUtil.showErrorToast(imageFile.getName() + "is not image");
+			MYLogUtil.showErrorToast(imageFile.getName() + " is not image");
 			return;
 		}
 		setImage(index);
@@ -66,6 +66,9 @@ public class PLImagePopover extends PLPopoverView {
 			@Override
 			public void onClick(View v) {
 				PLImagePopover.this.removeFromContentView();
+				if (mListener != null) {
+					mListener.onSetImage(null);
+				}
 			}
 		});
 		findViewById(R.id.left_view).setOnClickListener(new OnClickListener() {
@@ -95,5 +98,10 @@ public class PLImagePopover extends PLPopoverView {
 
 	public void setListener(PLOnSetImageListener listener) {
 		mListener = listener;
+		if (mListener != null) {
+			// コンストラクタで設定した画像パスを保存
+			File file = mImageFileList.get(mCurrentIndex);
+			mListener.onSetImage(file);
+		}
 	}
 }

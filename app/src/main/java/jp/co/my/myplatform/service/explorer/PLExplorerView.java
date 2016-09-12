@@ -48,9 +48,8 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		}
 		String imagePath = pref.getString(KEY_LAST_IMAGE, null);
 		if (imagePath != null) {
-			// Popoverの追加先がContentViewではなくNavigationなので、コンストラク時にはaddできない
-//			File imageFile = new File(lastPath);
-//			showImageFile(imageFile);
+			File imageFile = new File(imagePath);
+			showImageFile(imageFile);
 		}
 
 		initClickEvent();
@@ -90,7 +89,11 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 	@Override
 	public void onSetImage(File file) {
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
-		editor.putString(KEY_LAST_IMAGE, file.getPath());
+		if (file == null) {
+			editor.putString(KEY_LAST_IMAGE, null);
+		} else {
+			editor.putString(KEY_LAST_IMAGE, file.getPath());
+		}
 		editor.commit();
 	}
 
@@ -116,9 +119,11 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 	}
 
 	private void initClickEvent() {
+		MYLogUtil.outputLog("initClick");
 		findViewById(R.id.parent_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				MYLogUtil.outputLog("onClick1");
 				File parentFile = mCurrentFile.getParentFile();
 				if (parentFile == null) {
 					MYLogUtil.showErrorToast("parentFile is null");
@@ -130,9 +135,11 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 		findViewById(R.id.pictures_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				MYLogUtil.outputLog("initClick2");
 				loadPicturesDirectory();
 			}
 		});
+		MYLogUtil.outputLog("initClick end");
 	}
 
 	private void loadPicturesDirectory() {
