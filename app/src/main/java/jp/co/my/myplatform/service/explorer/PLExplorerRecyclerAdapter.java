@@ -36,27 +36,28 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-		return new PLImageViewHolder(mInflater.inflate(R.layout.cell_explorer, viewGroup, false));
-	}
-
-	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-		PLImageViewHolder customHolder = (PLImageViewHolder) viewHolder;
-		final File file = mFileList.get(position);
-		updateHolderByFile(customHolder, file);
+		final PLImageViewHolder viewHolder = new PLImageViewHolder(mInflater.inflate(R.layout.cell_explorer, viewGroup, false));
 		viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mListener.onClickFile(v, file);
+				mListener.onClickFile(v, viewHolder.mFile);
 			}
 		});
 		viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				mListener.onLongClickFile(v, file);
+				mListener.onLongClickFile(v, viewHolder.mFile);
 				return true;
 			}
 		});
+		return viewHolder;
+	}
+
+	@Override
+	public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+		PLImageViewHolder customHolder = (PLImageViewHolder) viewHolder;
+		File file = mFileList.get(position);
+		updateHolderByFile(customHolder, file);
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		return mFileList.size();
 	}
 
-	public void updateHolderByFile(PLImageViewHolder holder, final File file) {
+	public void updateHolderByFile(PLImageViewHolder holder, File file) {
 		holder.mFile = file;
 		String fileName = file.getName();
 		if (MYStringUtil.isImageFileName(fileName)) {
@@ -77,7 +78,6 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		if (file.isDirectory()) {
 			holder.mLoadImage.loadImageResource(R.drawable.directory);
 			holder.mTextView.setText(fileName);
-			return;
 		} else {
 			holder.mLoadImage.loadImageResource(R.drawable.file);
 		}
