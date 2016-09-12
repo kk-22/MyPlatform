@@ -2,23 +2,20 @@ package jp.co.my.myplatform.service.explorer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v4.util.LruCache;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.view.PLLoadImageView;
 
 public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -71,56 +68,19 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		holder.mFile = file;
 		String fileName = file.getName();
 		if (MYStringUtil.isImageFileName(fileName)) {
-			loadImageOnBackground(holder, file);
+			holder.mLoadImage.loadImageFile(file, mImageCache);
 			holder.mTextView.setVisibility(View.GONE);
 			return;
 		}
 
 		holder.mTextView.setVisibility(View.VISIBLE);
 		if (file.isDirectory()) {
-			holder.mImageView.setImageResource(R.drawable.directory);
+			holder.mLoadImage.loadImageResource(R.drawable.directory);
 			holder.mTextView.setText(fileName);
 			return;
 		} else {
-			holder.mImageView.setImageResource(R.drawable.file);
+			holder.mLoadImage.loadImageResource(R.drawable.file);
 		}
-	}
-
-	private void loadImageOnBackground(final PLImageViewHolder holder, final File file) {
-		Bitmap image = mImageCache.get(file.getName());
-		if (image != null) {
-			holder.mImageView.setImageBitmap(image);
-			return;
-		}
-
-		holder.mImageView.setImageResource(R.drawable.file);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					FileInputStream stream = new FileInputStream(file);
-					Bitmap bitmap = BitmapFactory.decodeStream(stream);
-					setImageOnMainThread(holder, file, bitmap);
-					mImageCache.put(file.getName(), bitmap);
-				} catch (Exception e) {
-					MYLogUtil.showExceptionToast(e);
-				}
-			}
-		}).start();
-	}
-
-	private void setImageOnMainThread(final PLImageViewHolder holder, final File file, final Bitmap bitmap) {
-		if (!holder.mFile.equals(file)) {
-			return;
-		}
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (holder.mFile.equals(file)) {
-					holder.mImageView.setImageBitmap(bitmap);
-				}
-			}
-		});
 	}
 
 	public interface PLOnClickFileListener {
@@ -129,13 +89,13 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 	}
 
 	private static class PLImageViewHolder extends RecyclerView.ViewHolder {
-		 File mFile;
-		ImageView mImageView;
+		File mFile;
+		PLLoadImageView mLoadImage;
 		TextView mTextView;
 
 		public PLImageViewHolder(View itemView) {
 			super(itemView);
-			mImageView = (ImageView) itemView.findViewById(R.id.icon_image);
+			mLoadImage = (PLLoadImageView) itemView.findViewById(R.id.load_image_view);
 			mTextView = (TextView) itemView.findViewById(R.id.image_title);
 		}
 	}

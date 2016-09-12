@@ -1,10 +1,8 @@
 package jp.co.my.myplatform.service.explorer;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.support.v4.util.LruCache;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,11 +12,12 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
+import jp.co.my.myplatform.service.view.PLLoadImageView;
 
 public class PLImagePopover extends PLPopoverView {
 
 	private int mCurrentIndex;
-	private ImageView mImageView;
+	private PLLoadImageView mLoadImage;
 	private List<File> mImageFileList;
 	private LruCache<String, Bitmap> mCache;
 	private PLOnSetImageListener mListener;
@@ -26,7 +25,7 @@ public class PLImagePopover extends PLPopoverView {
 	public PLImagePopover(List<File> fileList, File imageFile, LruCache<String, Bitmap> imageCache) {
 		super(R.layout.popover_full_image);
 		mCache = imageCache;
-		mImageView = (ImageView) findViewById(R.id.image_view);
+		mLoadImage = (PLLoadImageView) findViewById(R.id.load_image_view);
 
 		mImageFileList = new ArrayList<>();
 		for (File file : fileList) {
@@ -46,15 +45,8 @@ public class PLImagePopover extends PLPopoverView {
 
 	private void setImage(int index) {
 		mCurrentIndex = index;
-
 		File file = mImageFileList.get(index);
-		Bitmap cacheImage = mCache.get(file.getName());
-		if (cacheImage != null) {
-			mImageView.setImageBitmap(cacheImage);
-		} else {
-			Uri uri = Uri.fromFile(file);
-			mImageView.setImageURI(uri);
-		}
+		mLoadImage.loadImageFile(file, mCache);
 
 		if (mListener != null) {
 			mListener.onSetImage(file);
@@ -62,7 +54,7 @@ public class PLImagePopover extends PLPopoverView {
 	}
 
 	private void initClickEvent() {
-		mImageView.setOnClickListener(new OnClickListener() {
+		mLoadImage.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLImagePopover.this.removeFromContentView();
