@@ -17,6 +17,7 @@ import jp.co.my.myplatform.service.overlay.PLOverlayManager;
 
 public class PLCoreService extends Service {
 
+	public static final String KEY_INTENT_FROM_BROADCAST = "KEY_INTENT_FROM_BROADCAST";
 	public static final String KEY_CONTENT_CLASS_NAME = "KEY_CONTENT_CLASS_NAME";
 	public static final String KEY_ACTION_SHOW = "KEY_ACTION_SHOW";
 
@@ -95,6 +96,11 @@ public class PLCoreService extends Service {
 		if (intent.getBooleanExtra(KEY_ACTION_SHOW, false)) {
 			sOverlayManager.addFrontOverlays();
 			sNavigationController.displayNavigationIfNeeded();
+		}
+
+		if (intent.getBooleanExtra(KEY_INTENT_FROM_BROADCAST, false)) {
+			// PLBroadcastReceiver で設定した分を解除
+			PLWakeLockManager.getInstance().decrementKeepCPU();
 		}
 	}
 

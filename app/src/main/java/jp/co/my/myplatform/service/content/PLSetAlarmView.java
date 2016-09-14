@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import java.util.Calendar;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLBroadcastReceiver;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.core.PLWakeLockManager;
 import jp.co.my.myplatform.service.overlay.PLFrontButtonView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.view.PLSelectTimeView;
@@ -26,6 +29,7 @@ public class PLSetAlarmView extends PLContentView {
 	private static final String KEY_ALARM_TIME = "AlarmTime";
 
 	private int mAlarmCount;
+	private Handler mAlarmHandler;
 	private Button mStartButton;
 	private Button mCancelButton;
 	private AlarmManager mAlarmManager;
@@ -50,16 +54,36 @@ public class PLSetAlarmView extends PLContentView {
 		mCancelButton.setEnabled(isExistPendingIntent());
 	}
 
+	@Override
+	public void viewWillDisappear() {
+		super.viewWillDisappear();
+		if (mAlarmHandler != null) {
+			stopAlarm();
+		}
+	}
+
 	public void startAlarm() {
+		if (mAlarmCount == 0) {
+			PLWakeLockManager.getInstance().incrementKeepScreen();
+		} else if (6 <= mAlarmCount) {
+			MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
+			stopAlarm();
+			return;
+		}
+		mAlarmCount++;
+		MYLogUtil.showToast("alarm count=" +mAlarmCount);
+
 		Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 		vibrator.vibrate(300);
 
-		mAlarmCount++;
-		MYLogUtil.showToast("alarm count=" +mAlarmCount);
-		if (5 <= mAlarmCount) {
-			MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
-			cancelAlarm();
-		}
+		// レジュームアラーム
+		mAlarmHandler = new Handler();
+		mAlarmHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				startAlarm();
+			}
+		}, 10000);
 	}
 
 	private void setButtonEvent() {
@@ -81,7 +105,7 @@ public class PLSetAlarmView extends PLContentView {
 				editor.commit();
 
 				PendingIntent alarmSender = createPendingIntent();
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, timeInMillis, 10000, alarmSender);
+				mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
 
 				mAlarmCount = 0;
 				updateFrontButtonText(calendar);
@@ -95,9 +119,9 @@ public class PLSetAlarmView extends PLContentView {
 					 MYLogUtil.showToast("アラーム未登録");
 					return;
 				}
-				if (mAlarmCount > 0) {
+				if (mAlarmHandler != null) {
 					// すでにアラームが鳴っている場合
-					cancelAlarm();
+					stopAlarm();
 					return;
 				}
 				String[] titles = {"アラーム解除"};
@@ -114,8 +138,9 @@ public class PLSetAlarmView extends PLContentView {
 		});
 	}
 
+	// 予約したアラーム解除
 	private void cancelAlarm() {
-		MYLogUtil.showToast("アラーム解除");
+		MYLogUtil.showToast("アラームキャンセル");
 		mCancelButton.setEnabled(false);
 
 		PendingIntent alarmSender = createPendingIntent();
@@ -128,6 +153,15 @@ public class PLSetAlarmView extends PLContentView {
 
 		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
 		buttonView.clearText(this.getClass());
+	}
+
+	// 開始したアラーム停止
+	private void stopAlarm() {
+		cancelAlarm();
+		PLWakeLockManager.getInstance().decrementKeepScreen();
+		mAlarmHandler.removeCallbacksAndMessages(null);
+		mAlarmHandler = null;
+		mAlarmCount = 0;
 	}
 
 	private void setDefaultTimeIfNecessary() {
@@ -151,11 +185,12 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	private PendingIntent getPendingIntent(int flags) {
-		Intent intent = new Intent(getContext(), PLCoreService.class);
+		Intent intent = new Intent(getContext(), PLBroadcastReceiver.class);
 		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, getClass().getCanonicalName());
-		PendingIntent pendingIntent = PendingIntent.getService(getContext(), 77, intent, flags);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 77, intent, flags);
 		return pendingIntent;
 	}
+
 	private void updateFrontButtonText(Calendar calendar) {
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 		String text = format.format(calendar.getTime());
