@@ -14,6 +14,90 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
 
+        <TextView
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="WakeLock"
+            android:textSize="20dp"
+            android:background="#8af"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#000"
+                android:text="isHold"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/is_hold_text"
+                android:textColor="#000"
+                android:text="no text"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="right"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#000"
+                android:text="Keep CPU count"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/cpu_count_text"
+                android:textColor="#000"
+                android:text="no text"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="right"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#000"
+                android:text="Screen count"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/screen_count_text"
+                android:textColor="#000"
+                android:text="no text"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="right"/>
+        </LinearLayout>
+
+        <TextView
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="メモリ"
+            android:textSize="20dp"
+            android:background="#8af"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

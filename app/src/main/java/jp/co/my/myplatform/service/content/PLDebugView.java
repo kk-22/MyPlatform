@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.content;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.PowerManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLWakeLockManager;
 
 public class PLDebugView extends PLContentView {
 
@@ -20,8 +22,21 @@ public class PLDebugView extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.content_debug, this);
 		mMemoryText = (TextView) findViewById(R.id.memory_text);
 
+		updateWakeUpText();
 		updateMemoryText();
 		setClickEvent();
+	}
+
+	private void updateWakeUpText() {
+		PLWakeLockManager manager = PLWakeLockManager.getInstance();
+		PowerManager.WakeLock wakeLock = manager.getWakeLock();
+		String isHoldStr = "null";
+		if (wakeLock != null) {
+			isHoldStr = String.valueOf(manager.getWakeLock().isHeld());
+		}
+		((TextView) findViewById(R.id.is_hold_text)).setText(isHoldStr);
+		((TextView) findViewById(R.id.cpu_count_text)).setText(Integer.toString(manager.getKeepScreenCount()));
+		((TextView) findViewById(R.id.screen_count_text)).setText(Integer.toString(manager.getKeepCPUCount()));
 	}
 
 	private void updateMemoryText() {
