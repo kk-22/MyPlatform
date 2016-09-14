@@ -21,17 +21,18 @@ public class PLNewsPagerView extends PLContentView {
 	public PLNewsPagerView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_news_pager, this);
+		mNewsGroupArray = new ArrayList<>();
 
 		loadNewsGroup();
-		createViewPager();
+//		createViewPager();
 	}
 
 	private void loadNewsGroup() {
-		mNewsGroupArray = new ArrayList<>();
+		PLSiteFetcher.fetchGroup(getContext());
 
-		mNewsGroupArray.add(new PLNewsGroupModel());
-		mNewsGroupArray.add(new PLNewsGroupModel());
-		mNewsGroupArray.add(new PLNewsGroupModel());
+//		mNewsGroupArray.add(new PLNewsGroupModel());
+//		mNewsGroupArray.add(new PLNewsGroupModel());
+//		mNewsGroupArray.add(new PLNewsGroupModel());
 	}
 
 	private void createViewPager() {
