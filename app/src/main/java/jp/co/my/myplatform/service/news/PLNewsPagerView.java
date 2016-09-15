@@ -46,7 +46,7 @@ public class PLNewsPagerView extends PLContentView {
 			@Override
 			public int getIndicatorColor(int position) {
 				// タブ下部のスライドするバーの色
-				return mNewsGroupArray.get(position).getTabColor();
+				return mNewsGroupArray.get(position).getColor();
 			}
 
 			@Override
@@ -76,7 +76,7 @@ public class PLNewsPagerView extends PLContentView {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			return mNewsGroupArray.get(position).getTabName();
+			return mNewsGroupArray.get(position).getTitle();
 		}
 
 		@Override
