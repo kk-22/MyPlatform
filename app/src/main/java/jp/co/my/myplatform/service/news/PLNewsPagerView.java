@@ -28,7 +28,8 @@ public class PLNewsPagerView extends PLContentView {
 	}
 
 	private void loadNewsGroup() {
-		PLSiteFetcher.fetchGroup(getContext());
+		PLSiteFetcher fetcher = new PLSiteFetcher();
+		fetcher.startRequest();
 
 //		mNewsGroupArray.add(new PLNewsGroupModel());
 //		mNewsGroupArray.add(new PLNewsGroupModel());
@@ -46,7 +47,8 @@ public class PLNewsPagerView extends PLContentView {
 			@Override
 			public int getIndicatorColor(int position) {
 				// タブ下部のスライドするバーの色
-				return mNewsGroupArray.get(position).getColor();
+				String colorString = mNewsGroupArray.get(position).getColor();
+				return Color.parseColor(colorString);
 			}
 
 			@Override

@@ -14,7 +14,7 @@ public class PLNewsGroupModel extends BaseModel {
 	private int no;
 
 	@Column
-	private int color;
+	private String color;
 	@Column
 	private String title;
 	@Column
@@ -26,8 +26,9 @@ public class PLNewsGroupModel extends BaseModel {
 		super();
 	}
 
-	private PLNewsGroupModel(int color, String title) {
+	public PLNewsGroupModel(int no, String color, String title) {
 		this();
+		this.no = no;
 		this.color = color;
 		this.title = title;
 	}
@@ -40,11 +41,11 @@ public class PLNewsGroupModel extends BaseModel {
 		this.no = no;
 	}
 
-	public int getColor() {
+	public String getColor() {
 		return color;
 	}
 
-	public void setColor(int color) {
+	public void setColor(String color) {
 		this.color = color;
 	}
 
