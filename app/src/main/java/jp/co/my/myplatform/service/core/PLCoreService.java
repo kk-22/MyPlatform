@@ -23,6 +23,7 @@ public class PLCoreService extends Service {
 
 	// シングルトン
 	private static Context sContext;
+	private static PLVolleyHelper sVolleyHelper;
 	private static PLAppStrategy sAppStrategy;
 	private static PLOverlayManager sOverlayManager;
 	private static PLNavigationController sNavigationController;
@@ -42,6 +43,7 @@ public class PLCoreService extends Service {
 			showNotification();
 
 			sContext = this;
+			sVolleyHelper = new PLVolleyHelper(this);
 			sAppStrategy = new PLAppStrategy();
 			sOverlayManager = new PLOverlayManager(this);
 			sOverlayManager.addFrontOverlays();
@@ -58,9 +60,11 @@ public class PLCoreService extends Service {
 	public void onDestroy() {
 		MYLogUtil.outputLog("onDestroy");
 
+		sVolleyHelper.destroyRequest();
 		sNavigationController.destroyNavigation();
 		sOverlayManager.destroyOverlay();
 
+		sVolleyHelper = null;
 		sNavigationController = null;
 		sOverlayManager = null;
 		sAppStrategy = null;
@@ -117,6 +121,10 @@ public class PLCoreService extends Service {
 		NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
 		manager.notify(1, builder.build());
 		startForeground(1, builder.build());
+	}
+
+	public static PLVolleyHelper getVolleyHelper() {
+		return sVolleyHelper;
 	}
 
 	public static PLAppStrategy getAppStrategy() {
