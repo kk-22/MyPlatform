@@ -12,27 +12,33 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.core.PLVolleyHelper;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
+import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLSiteFetcher {
 
 	private int mFinishCount;
 	private ArrayList<PLNewsGroupModel> mGroupArray;
-	private ArrayList<PLNewsGroupModel> mSiteArray;
+	private ArrayList<PLNewsSiteModel> mSiteArray;
+	private PLCallbackListener mListener;
 
 	public PLSiteFetcher() {
 		super();
 	}
 
-	public void startRequest() {
+	public void startRequest(PLCallbackListener listener) {
 		cancelAllRequest();
-		mFinishCount = 0;
-
+		mListener = listener;
 		fetchGroup();
+		fetchSite();
 	}
 
 	public void cancelAllRequest() {
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
+		mFinishCount = 0;
+		mGroupArray = null;
+		mSiteArray = null;
 	}
 
 	private void finishFetch() {
@@ -40,6 +46,8 @@ public class PLSiteFetcher {
 		if (mFinishCount < 2) {
 			return;
 		}
+		mListener.finishedRequest(mGroupArray, mSiteArray);
+		mListener = null;
 	}
 
 	private void fetchGroup() {
@@ -48,6 +56,7 @@ public class PLSiteFetcher {
 				new Response.Listener<JSONArray>() {
 					@Override
 					public void onResponse(JSONArray response) {
+						MYLogUtil.showToast("Fetched group");
 						mGroupArray = parseGroup(response);
 						finishFetch();
 					}
@@ -67,15 +76,59 @@ public class PLSiteFetcher {
 		try {
 			for (int i = 0; i < response.length(); i++) {
 				JSONObject jsonObject = response.getJSONObject(i);
-				int no = jsonObject.getInt("group_no");
-				String color = jsonObject.getString("color");
-				String title = jsonObject.getString("title");
-				PLNewsGroupModel model = new PLNewsGroupModel(no, color, title);;
+				PLNewsGroupModel model = new PLNewsGroupModel();
+				model.setNo(jsonObject.getInt("group_no"));
+				model.setColor(jsonObject.getString("color"));
+				model.setTitle(jsonObject.getString("title"));
 				array.add(model);
 			}
 		} catch(JSONException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
 		return array;
+	}
+
+	private void fetchSite() {
+		String url = "https://script.google.com/macros/s/AKfycbzI7PZcERIwZeDeE-7RXthqfQZZP4JU_T5Imcg12tOBoIdu_yVq/exec?sheet=site";
+		JsonArrayRequest request = new JsonArrayRequest(url,
+				new Response.Listener<JSONArray>() {
+					@Override
+					public void onResponse(JSONArray response) {
+						MYLogUtil.showToast("Fetched site");
+						mSiteArray = parseSite(response);
+						finishFetch();
+					}
+				}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error){
+				MYLogUtil.showErrorToast("Fetch site error " + error.toString());
+				finishFetch();
+			}
+		}
+		);
+		PLCoreService.getVolleyHelper().addRequest(request, this.getClass());
+	}
+
+	private ArrayList<PLNewsSiteModel> parseSite(JSONArray response) {
+		ArrayList<PLNewsSiteModel> array = new ArrayList<>();
+		try {
+			for (int i = 0; i < response.length(); i++) {
+				JSONObject jsonObject = response.getJSONObject(i);
+				PLNewsSiteModel model = new PLNewsSiteModel();
+				model.setNo(jsonObject.getInt("site_no"));
+				model.setGroupNo(jsonObject.getInt("group_no"));
+				model.setUrl(jsonObject.getString("url"));
+				model.setEnableScript(PLVolleyHelper.parseBoolean(jsonObject, "script"));
+				model.setEnablePCViewr(PLVolleyHelper.parseBoolean(jsonObject, "pc_viewer"));
+				array.add(model);
+			}
+		} catch(JSONException e) {
+			MYLogUtil.showExceptionToast(e);
+		}
+		return array;
+	}
+
+	public static abstract class PLCallbackListener {
+		public abstract void finishedRequest(ArrayList<PLNewsGroupModel> modelArray, ArrayList<PLNewsSiteModel> siteArray);
 	}
 }

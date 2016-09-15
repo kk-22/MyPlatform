@@ -6,6 +6,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class PLVolleyHelper {
 
 	private RequestQueue mRequestQueue;
@@ -30,5 +33,11 @@ public class PLVolleyHelper {
 				return true;
 			}
 		});
+	}
+
+	public static boolean parseBoolean(JSONObject jsonObject,String name) throws JSONException {
+		// 空文字のみfalseとする
+		String value = jsonObject.getString(name);
+		return (value != null && value.length() > 0);
 	}
 }

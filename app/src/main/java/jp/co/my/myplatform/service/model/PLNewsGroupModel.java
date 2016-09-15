@@ -26,13 +26,6 @@ public class PLNewsGroupModel extends BaseModel {
 		super();
 	}
 
-	public PLNewsGroupModel(int no, String color, String title) {
-		this();
-		this.no = no;
-		this.color = color;
-		this.title = title;
-	}
-
 	public int getNo() {
 		return no;
 	}

@@ -13,6 +13,7 @@ import jp.co.my.common.view.SlidingTabLayout;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
+import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLNewsPagerView extends PLContentView {
 
@@ -29,7 +30,12 @@ public class PLNewsPagerView extends PLContentView {
 
 	private void loadNewsGroup() {
 		PLSiteFetcher fetcher = new PLSiteFetcher();
-		fetcher.startRequest();
+		fetcher.startRequest(new PLSiteFetcher.PLCallbackListener() {
+			 @Override
+			 public void finishedRequest(ArrayList<PLNewsGroupModel> modelArray, ArrayList<PLNewsSiteModel> siteArray) {
+
+			 }
+		 });
 
 //		mNewsGroupArray.add(new PLNewsGroupModel());
 //		mNewsGroupArray.add(new PLNewsGroupModel());
