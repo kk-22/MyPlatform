@@ -1,14 +1,36 @@
 package jp.co.my.myplatform.service.model;
 
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import java.util.Calendar;
 
-public class PLNewsGroupModel {
+@Table(database = PLDatabase.class)
+public class PLNewsGroupModel extends BaseModel {
 
+	@PrimaryKey(autoincrement = true)
 	private int no;
+
+	@Column
 	private int color;
+	@Column
 	private String title;
+	@Column
 	private Calendar fetchedDate;			// 最終更新日
-	private Calendar readDate;			// 最終閲覧日
+	@Column
+	private Calendar readDate;				// 最終閲覧日
+
+	public PLNewsGroupModel() {
+		super();
+	}
+
+	private PLNewsGroupModel(int color, String title) {
+		this();
+		this.color = color;
+		this.title = title;
+	}
 
 	public int getNo() {
 		return no;
