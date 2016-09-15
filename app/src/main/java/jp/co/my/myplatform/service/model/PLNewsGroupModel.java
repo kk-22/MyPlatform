@@ -3,14 +3,16 @@ package jp.co.my.myplatform.service.model;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.Calendar;
+import java.util.List;
 
 @Table(database = PLDatabase.class)
 public class PLNewsGroupModel extends BaseModel {
 
-	@PrimaryKey(autoincrement = true)
+	@PrimaryKey(autoincrement = false)
 	private int no;
 
 	@Column
@@ -21,6 +23,8 @@ public class PLNewsGroupModel extends BaseModel {
 	private Calendar fetchedDate;			// 最終更新日
 	@Column
 	private Calendar readDate;				// 最終閲覧日
+
+	private List<PLNewsSiteModel> siteArray;
 
 	public PLNewsGroupModel() {
 		super();
@@ -64,5 +68,19 @@ public class PLNewsGroupModel extends BaseModel {
 
 	public void setReadDate(Calendar readDate) {
 		this.readDate = readDate;
+	}
+
+	public List<PLNewsSiteModel> getSiteArray() {
+		if (siteArray == null || siteArray.isEmpty()) {
+			siteArray = SQLite.select()
+					.from(PLNewsSiteModel.class)
+					.where(PLNewsSiteModel_Table.groupNo.eq(no))
+					.queryList();
+		}
+		return siteArray;
+	}
+
+	public void setSiteArray(List<PLNewsSiteModel> siteArray) {
+		this.siteArray = siteArray;
 	}
 }

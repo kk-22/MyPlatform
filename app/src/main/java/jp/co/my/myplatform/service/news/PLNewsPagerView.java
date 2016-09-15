@@ -7,17 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import jp.co.my.common.view.SlidingTabLayout;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLNewsPagerView extends PLContentView {
 
-	private ArrayList<PLNewsGroupModel> mNewsGroupArray;
+	private List<PLNewsGroupModel> mNewsGroupArray;
 
 	public PLNewsPagerView() {
 		super();
@@ -25,21 +29,35 @@ public class PLNewsPagerView extends PLContentView {
 		mNewsGroupArray = new ArrayList<>();
 
 		loadNewsGroup();
-//		createViewPager();
 	}
 
 	private void loadNewsGroup() {
+		mNewsGroupArray = SQLite.select().from(PLNewsGroupModel.class).queryList();
+		if (mNewsGroupArray.size() > 0) {
+			createViewPager();
+			return;
+		}
+
+		fetchNewsGroup();
+	}
+
+	private void fetchNewsGroup() {
 		PLSiteFetcher fetcher = new PLSiteFetcher();
 		fetcher.startRequest(new PLSiteFetcher.PLCallbackListener() {
 			 @Override
-			 public void finishedRequest(ArrayList<PLNewsGroupModel> modelArray, ArrayList<PLNewsSiteModel> siteArray) {
-
+			 public void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<PLNewsSiteModel> siteArray) {
+				 if (groupArray.size() == 0 || siteArray.size() == 0) {
+					 return;
+				 }
+				 for (PLNewsSiteModel site : siteArray) {
+					 PLNewsGroupModel group = groupArray.get(site.getGroupNo() - 1);
+					 group.getSiteArray().add(site);
+				 }
+				 mNewsGroupArray = groupArray;
+				 PLDatabase.saveAllModel(groupArray, siteArray);
+				 createViewPager();
 			 }
 		 });
-
-//		mNewsGroupArray.add(new PLNewsGroupModel());
-//		mNewsGroupArray.add(new PLNewsGroupModel());
-//		mNewsGroupArray.add(new PLNewsGroupModel());
 	}
 
 	private void createViewPager() {

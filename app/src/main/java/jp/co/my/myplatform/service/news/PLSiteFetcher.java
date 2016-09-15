@@ -80,9 +80,10 @@ public class PLSiteFetcher {
 				model.setNo(jsonObject.getInt("group_no"));
 				model.setColor(jsonObject.getString("color"));
 				model.setTitle(jsonObject.getString("title"));
+				model.setSiteArray(new ArrayList<PLNewsSiteModel>());
 				array.add(model);
 			}
-		} catch(JSONException e) {
+		} catch (JSONException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
 		return array;
@@ -122,13 +123,13 @@ public class PLSiteFetcher {
 				model.setEnablePCViewr(PLVolleyHelper.parseBoolean(jsonObject, "pc_viewer"));
 				array.add(model);
 			}
-		} catch(JSONException e) {
+		} catch (JSONException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
 		return array;
 	}
 
 	public static abstract class PLCallbackListener {
-		public abstract void finishedRequest(ArrayList<PLNewsGroupModel> modelArray, ArrayList<PLNewsSiteModel> siteArray);
+		public abstract void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<PLNewsSiteModel> siteArray);
 	}
 }

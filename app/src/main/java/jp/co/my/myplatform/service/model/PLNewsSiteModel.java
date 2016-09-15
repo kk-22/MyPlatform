@@ -8,7 +8,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 @Table(database = PLDatabase.class)
 public class PLNewsSiteModel extends BaseModel {
 
-	@PrimaryKey(autoincrement = true)
+	@PrimaryKey(autoincrement = false)
 	private int no;
 
 	@Column
