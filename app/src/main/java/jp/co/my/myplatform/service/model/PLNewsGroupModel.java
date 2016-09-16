@@ -20,11 +20,15 @@ public class PLNewsGroupModel extends BaseModel {
 	@Column
 	private String title;
 	@Column
+	private int updateInterval;				// 自動更新間隔分
+	@Column
 	private Calendar fetchedDate;			// 最終更新日
 	@Column
 	private Calendar readDate;				// 最終閲覧日
 
 	private List<PLNewsSiteModel> siteArray;
+
+	private List<PLNewsPageModel> pageArray;
 
 	public PLNewsGroupModel() {
 		super();
@@ -52,6 +56,14 @@ public class PLNewsGroupModel extends BaseModel {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public int getUpdateInterval() {
+		return updateInterval;
+	}
+
+	public void setUpdateInterval(int updateInterval) {
+		this.updateInterval = updateInterval;
 	}
 
 	public Calendar getFetchedDate() {
@@ -82,5 +94,19 @@ public class PLNewsGroupModel extends BaseModel {
 
 	public void setSiteArray(List<PLNewsSiteModel> siteArray) {
 		this.siteArray = siteArray;
+	}
+
+	public List<PLNewsPageModel> getPageArray() {
+		if (pageArray == null || pageArray.isEmpty()) {
+			pageArray = SQLite.select()
+					.from(PLNewsPageModel.class)
+					.where(PLNewsPageModel_Table.groupNo.eq(no))
+					.queryList();
+		}
+		return pageArray;
+	}
+
+	public void setPageArray(List<PLNewsPageModel> pageArray) {
+		this.pageArray = pageArray;
 	}
 }

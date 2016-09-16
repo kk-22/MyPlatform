@@ -16,11 +16,13 @@ public class PLNewsSiteModel extends BaseModel {
 	@Column
 	private String url;
 	@Column
+	private String name;
+	@Column
 	private String memo;			// アプリ操作で設定可能なメモ
 	@Column
 	private boolean enableScript;	// WebView画面でのデフォルトスクリプト設定
 	@Column
-	private boolean enablePCViewr;	// WebView画面でのユーザエージェント設定
+	private boolean enablePCViewer;	// WebView画面でのユーザエージェント設定
 
 	public PLNewsSiteModel() {
 		super();
@@ -50,6 +52,14 @@ public class PLNewsSiteModel extends BaseModel {
 		this.url = url;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getMemo() {
 		return memo;
 	}
@@ -66,11 +76,11 @@ public class PLNewsSiteModel extends BaseModel {
 		this.enableScript = enableScript;
 	}
 
-	public boolean isEnablePCViewr() {
-		return enablePCViewr;
+	public boolean isEnablePCViewer() {
+		return enablePCViewer;
 	}
 
-	public void setEnablePCViewr(boolean enablePCViewr) {
-		this.enablePCViewr = enablePCViewr;
+	public void setEnablePCViewer(boolean enablePCViewer) {
+		this.enablePCViewer = enablePCViewer;
 	}
 }

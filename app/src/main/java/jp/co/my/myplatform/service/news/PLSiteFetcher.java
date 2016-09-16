@@ -80,6 +80,7 @@ public class PLSiteFetcher {
 				model.setNo(jsonObject.getInt("group_no"));
 				model.setColor(jsonObject.getString("color"));
 				model.setTitle(jsonObject.getString("title"));
+				model.setUpdateInterval(jsonObject.getInt("update_interval"));
 				model.setSiteArray(new ArrayList<PLNewsSiteModel>());
 				array.add(model);
 			}
@@ -120,7 +121,7 @@ public class PLSiteFetcher {
 				model.setGroupNo(jsonObject.getInt("group_no"));
 				model.setUrl(jsonObject.getString("url"));
 				model.setEnableScript(PLVolleyHelper.parseBoolean(jsonObject, "script"));
-				model.setEnablePCViewr(PLVolleyHelper.parseBoolean(jsonObject, "pc_viewer"));
+				model.setEnablePCViewer(PLVolleyHelper.parseBoolean(jsonObject, "pc_viewer"));
 				array.add(model);
 			}
 		} catch (JSONException e) {
