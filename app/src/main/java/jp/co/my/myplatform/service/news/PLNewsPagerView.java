@@ -36,6 +36,8 @@ public class PLNewsPagerView extends PLContentView {
 		if (mNewsGroupArray.size() > 0) {
 			createViewPager();
 			return;
+//			Delete.table(PLNewsGroupModel.class);
+//			Delete.table(PLNewsSiteModel.class);
 		}
 
 		fetchNewsGroup();
@@ -52,6 +54,7 @@ public class PLNewsPagerView extends PLContentView {
 				 for (PLNewsSiteModel site : siteArray) {
 					 PLNewsGroupModel group = groupArray.get(site.getGroupNo() - 1);
 					 group.getSiteArray().add(site);
+					 site.associateGroup(group);
 				 }
 				 mNewsGroupArray = groupArray;
 				 PLDatabase.saveAllModel(groupArray, siteArray);
@@ -90,8 +93,9 @@ public class PLNewsPagerView extends PLContentView {
 
 		@Override
 		public Object instantiateItem(ViewGroup collection, int position) {
-			View subView = new PLNewsListView(getContext());
-			collection.addView(subView);
+			PLNewsListView listView = new PLNewsListView(getContext());
+			listView.setGroupModel(mNewsGroupArray.get(position));
+			collection.addView(listView);
 			return collection;
 		}
 

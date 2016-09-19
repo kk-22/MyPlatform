@@ -1,6 +1,8 @@
 package jp.co.my.myplatform.service.model;
 
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ModelContainer;
+import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -9,6 +11,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.Calendar;
 import java.util.List;
 
+@ModelContainer
 @Table(database = PLDatabase.class)
 public class PLNewsGroupModel extends BaseModel {
 
@@ -26,9 +29,8 @@ public class PLNewsGroupModel extends BaseModel {
 	@Column
 	private Calendar readDate;				// 最終閲覧日
 
-	private List<PLNewsSiteModel> siteArray;
-
-	private List<PLNewsPageModel> pageArray;
+	public List<PLNewsSiteModel> siteArray;
+	public List<PLNewsPageModel> pageArray;
 
 	public PLNewsGroupModel() {
 		super();
@@ -82,11 +84,12 @@ public class PLNewsGroupModel extends BaseModel {
 		this.readDate = readDate;
 	}
 
+	@OneToMany(methods = {OneToMany.Method.ALL}, variableName = "siteArray")
 	public List<PLNewsSiteModel> getSiteArray() {
 		if (siteArray == null || siteArray.isEmpty()) {
 			siteArray = SQLite.select()
 					.from(PLNewsSiteModel.class)
-					.where(PLNewsSiteModel_Table.groupNo.eq(no))
+					.where(PLNewsSiteModel_Table.groupForeign_no.eq(no))
 					.queryList();
 		}
 		return siteArray;
@@ -96,11 +99,12 @@ public class PLNewsGroupModel extends BaseModel {
 		this.siteArray = siteArray;
 	}
 
+	@OneToMany(methods = {OneToMany.Method.ALL}, variableName = "pageArray")
 	public List<PLNewsPageModel> getPageArray() {
 		if (pageArray == null || pageArray.isEmpty()) {
 			pageArray = SQLite.select()
 					.from(PLNewsPageModel.class)
-					.where(PLNewsPageModel_Table.groupNo.eq(no))
+					.where(PLNewsPageModel_Table.siteForeign_no.eq(no))
 					.queryList();
 		}
 		return pageArray;

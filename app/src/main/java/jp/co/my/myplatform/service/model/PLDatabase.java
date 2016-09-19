@@ -13,7 +13,7 @@ import java.util.List;
 @Database(name = PLDatabase.NAME, version = PLDatabase.VERSION, generatedClassSeparator = "_")
 public class PLDatabase {
 	public static final String NAME = "MySupportDatabase";
-	public static final int VERSION = 8;
+	public static final int VERSION = 9;
 
 	public static void saveAllModel(final List<? extends BaseModel>... args) {
 		DatabaseDefinition database = FlowManager.getDatabase(PLDatabase.class);
