@@ -17,11 +17,13 @@ import jp.co.my.myplatform.service.model.PLNewsPageModel;
 
 public class PLNewsListView extends FrameLayout {
 
-	private PLNewsGroupModel mGroupModel;
 	private ProgressBar mProgressBar;
 	private ListView mListView;
 	private ListAdapter mAdapter;
-	private List<PLNewsPageModel> mPageArray;
+
+	private PLNewsGroupModel mGroupModel;
+	private PLRSSFetcher mRssFetcher;
+	private List<PLNewsPageModel> mPageList;
 
 	public PLNewsListView(Context context) {
 		this(context, null, 0, 0);
@@ -44,15 +46,38 @@ public class PLNewsListView extends FrameLayout {
 		fetchRSSIfNecessary();
 	}
 
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		mRssFetcher.cancelAllRequest();
+	}
+
 	private void fetchRSSIfNecessary() {
-		mPageArray = mGroupModel.getPageArray();
+		fetchRSS();
 	}
 
 	private void fetchRSS() {
+		mRssFetcher.startRequest(new PLRSSFetcher.PLRSSCallbackListener() {
+			@Override
+			public void finishedRequest() {
+				mPageList = mRssFetcher.getFetchedPageArrayAndClear();
+				// TODO: Bug of stop the thread.
+				// TODO: "has been unable to grant a connection to thread"
+//				PLDatabase.saveAllModel(mPageList);
+				showList();
+			}
+		});
+	}
+
+	private void showList() {
 
 	}
 
 	public void setGroupModel(PLNewsGroupModel groupModel) {
 		mGroupModel = groupModel;
+		if (mRssFetcher != null) {
+			mRssFetcher.cancelAllRequest();
+		}
+		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar);
 	}
 }
