@@ -22,13 +22,21 @@ import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 public class PLNewsPagerView extends PLContentView {
 
 	private List<PLNewsGroupModel> mNewsGroupArray;
+	private PLSiteFetcher mSiteFetcher;
 
 	public PLNewsPagerView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_news_pager, this);
 		mNewsGroupArray = new ArrayList<>();
 
+		mSiteFetcher = new PLSiteFetcher();
 		loadNewsGroup();
+	}
+
+	@Override
+	public void viewWillDisappear() {
+		super.viewWillDisappear();
+		mSiteFetcher.cancelAllRequest();
 	}
 
 	private void loadNewsGroup() {
@@ -44,8 +52,7 @@ public class PLNewsPagerView extends PLContentView {
 	}
 
 	private void fetchNewsGroup() {
-		PLSiteFetcher fetcher = new PLSiteFetcher();
-		fetcher.startRequest(new PLSiteFetcher.PLCallbackListener() {
+		mSiteFetcher.startRequest(new PLSiteFetcher.PLSiteCallbackListener() {
 			 @Override
 			 public void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<PLNewsSiteModel> siteArray) {
 				 if (groupArray.size() == 0 || siteArray.size() == 0) {

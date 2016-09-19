@@ -21,14 +21,17 @@ public class PLSiteFetcher {
 	private int mFinishCount;
 	private ArrayList<PLNewsGroupModel> mGroupArray;
 	private ArrayList<PLNewsSiteModel> mSiteArray;
-	private PLCallbackListener mListener;
+	private PLSiteCallbackListener mListener;
 
 	public PLSiteFetcher() {
 		super();
 	}
 
-	public void startRequest(PLCallbackListener listener) {
-		cancelAllRequest();
+	public void startRequest(PLSiteCallbackListener listener) {
+		mFinishCount = 0;
+		mGroupArray = null;
+		mSiteArray = null;
+
 		mListener = listener;
 		fetchGroup();
 		fetchSite();
@@ -130,7 +133,7 @@ public class PLSiteFetcher {
 		return array;
 	}
 
-	public static abstract class PLCallbackListener {
+	public static abstract class PLSiteCallbackListener {
 		public abstract void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<PLNewsSiteModel> siteArray);
 	}
 }
