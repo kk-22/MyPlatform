@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 @Table(database = PLDatabase.class)
@@ -33,6 +34,11 @@ public class PLNewsPageModel extends BaseModel {
 		super();
 	}
 
+	public String getPostedString() {
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd(E)HH:mm");
+		return format.format(postedDate.getTime());
+	}
+
 	public int getNo() {
 		return no;
 	}
@@ -46,9 +52,17 @@ public class PLNewsPageModel extends BaseModel {
 				.toForeignKeyContainer(model);
 	}
 
+	public ForeignKeyContainer<PLNewsGroupModel> getGroupForeign() {
+		return groupForeign;
+	}
+
 	public void associateSite(PLNewsSiteModel model) {
 		this.siteForeign = FlowManager.getContainerAdapter(PLNewsSiteModel.class)
 				.toForeignKeyContainer(model);
+	}
+
+	public ForeignKeyContainer<PLNewsSiteModel> getSiteForeign() {
+		return siteForeign;
 	}
 
 	public String getTitle() {

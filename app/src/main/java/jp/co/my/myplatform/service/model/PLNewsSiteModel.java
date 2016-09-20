@@ -53,6 +53,10 @@ public class PLNewsSiteModel extends BaseModel {
 				.toForeignKeyContainer(model);
 	}
 
+	public ForeignKeyContainer<PLNewsGroupModel> getGroupForeign() {
+		return groupForeign;
+	}
+
 	public String getUrl() {
 		return url;
 	}
