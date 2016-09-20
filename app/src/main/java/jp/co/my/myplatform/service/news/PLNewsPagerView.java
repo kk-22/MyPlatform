@@ -64,7 +64,8 @@ public class PLNewsPagerView extends PLContentView {
 					 site.associateGroup(group);
 				 }
 				 mNewsGroupArray = groupArray;
-				 PLDatabase.saveAllModel(groupArray, siteArray);
+				 PLDatabase.saveModelList(groupArray);
+				 PLDatabase.saveModelList(siteArray);
 				 createViewPager();
 			 }
 		 });

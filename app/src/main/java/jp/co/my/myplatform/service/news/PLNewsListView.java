@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import java.util.List;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 //import jp.co.my.myplatform.service.model.PLNewsPageModel;
@@ -61,9 +62,7 @@ public class PLNewsListView extends FrameLayout {
 			@Override
 			public void finishedRequest() {
 				mPageList = mRssFetcher.getFetchedPageArrayAndClear();
-				// TODO: Bug of stop the thread.
-				// TODO: "has been unable to grant a connection to thread"
-//				PLDatabase.saveAllModel(mPageList);
+				PLDatabase.saveModelList(mPageList);
 				showList();
 			}
 		});
