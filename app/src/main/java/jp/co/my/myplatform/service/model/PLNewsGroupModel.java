@@ -99,7 +99,6 @@ public class PLNewsGroupModel extends BaseModel {
 		this.siteArray = siteArray;
 	}
 
-	@OneToMany(methods = {OneToMany.Method.ALL}, variableName = "pageArray")
 	public List<PLNewsPageModel> getPageArray() {
 		if (pageArray == null || pageArray.isEmpty()) {
 			pageArray = SQLite.select()

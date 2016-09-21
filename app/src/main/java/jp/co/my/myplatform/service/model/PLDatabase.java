@@ -1,9 +1,11 @@
 package jp.co.my.myplatform.service.model;
 
 import com.raizlabs.android.dbflow.annotation.Database;
+import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.Model;
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import java.util.List;
 
@@ -21,7 +23,23 @@ public class PLDatabase {
 			return;
 		}
 		Class klass = modelList.get(0).getClass();
-		FastStoreModelTransaction.insertBuilder(
+		MYLogUtil.outputLog("saveModelList count=" + modelList.size() +" class=" +klass);
+
+		FastStoreModelTransaction<T> fast = FastStoreModelTransaction.insertBuilder(
 				FlowManager.getModelAdapter(klass)).addAll(modelList).build();
+		DatabaseDefinition database = FlowManager.getDatabase(PLDatabase.class);
+		Transaction transaction = database.beginTransactionAsync(fast)
+				.success(new Transaction.Success() {
+					@Override
+					public void onSuccess(Transaction transaction) {
+						MYLogUtil.outputLog("saveModelList onSuccess");
+					}
+				}).error(new Transaction.Error() {
+					@Override
+					public void onError(Transaction transaction, Throwable error) {
+						MYLogUtil.outputLog("saveModelList onError" +error.toString());
+					}
+				}).build();
+		transaction.execute();
 	}
 }

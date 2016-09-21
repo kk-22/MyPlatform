@@ -3,7 +3,6 @@ package jp.co.my.myplatform.service.model;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.ModelContainer;
-import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -105,7 +104,6 @@ public class PLNewsSiteModel extends BaseModel {
 		this.groupNo = groupNo;
 	}
 
-	@OneToMany(methods = {OneToMany.Method.ALL}, variableName = "pageArray")
 	public List<PLNewsPageModel> getPageArray() {
 		if (pageArray == null || pageArray.isEmpty()) {
 			pageArray = SQLite.select()
