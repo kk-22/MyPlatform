@@ -1,10 +1,8 @@
 package jp.co.my.myplatform.service.news;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -20,25 +18,26 @@ public class PLNewsListView extends FrameLayout {
 
 	private ProgressBar mProgressBar;
 	private ListView mListView;
-	private ListAdapter mAdapter;
+	private PLNewsListAdapter mAdapter;
 
 	private PLNewsGroupModel mGroupModel;
 	private PLRSSFetcher mRssFetcher;
 	private List<PLNewsPageModel> mPageList;
 
-	public PLNewsListView(Context context) {
-		this(context, null, 0, 0);
-	}
-	public PLNewsListView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0, 0);
-	}
-	public PLNewsListView(Context context, AttributeSet attrs, int defStyleAttr) {
-		this(context, attrs, defStyleAttr, 0);
-	}
-	public PLNewsListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		super(context, attrs, defStyleAttr, defStyleRes);
+	public PLNewsListView(Context context, PLNewsGroupModel group) {
+		super(context);
+		mGroupModel = group;
+
 		LayoutInflater.from(getContext()).inflate(R.layout.view_news_list, this);
+		mListView = (ListView) findViewById(R.id.page_list);
 		mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+		mPageList = mGroupModel.getPageArray();
+		mAdapter = new PLNewsListAdapter(context);
+		mAdapter.renewalAllPage(mPageList);
+		mListView.setAdapter(mAdapter);
+
+		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar);
 	}
 
 	@Override
@@ -69,14 +68,6 @@ public class PLNewsListView extends FrameLayout {
 	}
 
 	private void showList() {
-
-	}
-
-	public void setGroupModel(PLNewsGroupModel groupModel) {
-		mGroupModel = groupModel;
-		if (mRssFetcher != null) {
-			mRssFetcher.cancelAllRequest();
-		}
-		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar);
+		mAdapter.renewalAllPage(mPageList);
 	}
 }

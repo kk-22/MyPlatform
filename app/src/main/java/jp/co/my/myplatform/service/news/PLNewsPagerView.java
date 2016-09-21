@@ -101,10 +101,14 @@ public class PLNewsPagerView extends PLContentView {
 
 		@Override
 		public Object instantiateItem(ViewGroup collection, int position) {
-			PLNewsListView listView = new PLNewsListView(getContext());
-			listView.setGroupModel(mNewsGroupArray.get(position));
+			PLNewsListView listView = new PLNewsListView(getContext(), mNewsGroupArray.get(position));
 			collection.addView(listView);
-			return collection;
+			return listView;
+		}
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			container.removeView((View) object);
 		}
 
 		@Override
