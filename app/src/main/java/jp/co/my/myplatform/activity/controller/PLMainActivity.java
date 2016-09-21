@@ -18,13 +18,19 @@ import jp.co.my.myplatform.service.core.PLDeviceSetting;
 
 public class PLMainActivity extends Activity {
 
+	public static final String KEY_DO_NOT_START_SERVICE = "KEY_DO_NOT_START_SERVICE";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		setButtonEvent();
-		startServiceIfEnable();
+
+		Intent intent = getIntent();
+		if (!intent.getBooleanExtra(KEY_DO_NOT_START_SERVICE, false)) {
+			startServiceIfEnable();
+		}
 	}
 
 	private boolean enablePermission() {

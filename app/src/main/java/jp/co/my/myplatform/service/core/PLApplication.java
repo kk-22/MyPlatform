@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.overlay.PLNavigationController;
 
 public class PLApplication extends Application {
@@ -43,6 +44,7 @@ public class PLApplication extends Application {
 		Intent intent = new Intent();
 		intent.setClassName(sContext.getPackageName(), "jp.co.my.myplatform.activity.controller.PLMainActivity");
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(PLMainActivity.KEY_DO_NOT_START_SERVICE, true);
 		sContext.startActivity(intent);
 	}
 }
