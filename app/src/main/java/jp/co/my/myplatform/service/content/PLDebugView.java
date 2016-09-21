@@ -5,13 +5,17 @@ import android.content.Context;
 import android.os.PowerManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
+import jp.co.my.myplatform.service.model.PLDatabase;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 
 public class PLDebugView extends PLContentView {
 
@@ -25,6 +29,22 @@ public class PLDebugView extends PLContentView {
 		updateWakeUpText();
 		updateMemoryText();
 		setClickEvent();
+
+		findViewById(R.id.delete_db_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String[] titles = {"データベース消去"};
+				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						PLDebugView.this.removeTopPopover();
+						PLCoreService.getNavigationController().pushView(PLAppListView.class);
+						getContext().deleteDatabase(PLDatabase.NAME + ".db");
+						MYLogUtil.outputLog("Delete DB. Please restart app");
+					}
+				}).showPopover();
+			}
+		});
 	}
 
 	private void updateWakeUpText() {
