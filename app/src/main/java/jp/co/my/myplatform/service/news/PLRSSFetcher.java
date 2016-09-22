@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
@@ -20,46 +21,75 @@ import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLRSSFetcher {
 
-	private String mRequestKey;
 	private Handler mMainHandler;
 	private ProgressBar mProgressBar;
 	private PLNewsGroupModel mGroupModel;
 
 	private int mRequestCount;								// 全リクエスト数
 	private int mFetchedCount;								// 通信完了リクエスト数
+	private boolean mIsManualFetching;						// 手動更新である場合TRUE
 	private ArrayList<PLNewsPageModel> mFetchedPageArray;	// レスポンスをパースしたデータ
 	private PLRSSCallbackListener mListener;
 
-	public PLRSSFetcher(PLNewsGroupModel group, ProgressBar progressBar) {
+	public PLRSSFetcher(PLNewsGroupModel group, ProgressBar progressBar, PLRSSCallbackListener listener) {
 		mGroupModel = group;
 		mProgressBar = progressBar;
+		mListener = listener;
 
-		// TODO: Use key
-		mRequestKey = this.getClass().getName() + group.getTitle();
 		mMainHandler = new Handler();
 		mFetchedPageArray = new ArrayList<>();
+		autoFetchIfNecessary();
 	}
 
-	public boolean isFetching() {
-		return (mRequestCount > 0 &&  mFetchedCount < mRequestCount);
+	public void autoFetchIfNecessary() {
+		if (isFetching()) {
+			MYLogUtil.showToast("Fetching now");
+			return;
+		}
+		if (isFinished()) {
+			MYLogUtil.showToast("fetch was finished");
+			return;
+		}
+		Calendar cacheCalendar =  mGroupModel.getFetchedDate();
+		if (cacheCalendar != null) {
+			cacheCalendar.add(Calendar.MINUTE, mGroupModel.getUpdateInterval());
+			Calendar currentCalendar = Calendar.getInstance();
+			if (currentCalendar.compareTo(cacheCalendar) < 0) {
+				return;
+			}
+		}
+		startRequest();
 	}
 
-	public void startRequest(PLRSSCallbackListener listener) {
-		mFetchedCount = 0;
-		mFetchedPageArray.clear();
+	public void manualFetchIfNecessary() {
+		mIsManualFetching = true;
+		if (isFetching()) {
+			MYLogUtil.showToast("Fetching now");
+			return;
+		}
 
-		mProgressBar.setVisibility(View.VISIBLE);
-		mListener = listener;
-		requestAllSite();
+		if (isFinished()) {
+			finishAllFetch();
+		} else {
+			startRequest();
+		}
 	}
 
 	public void cancelAllRequest() {
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 		mFetchedCount = 0;
 		mRequestCount = 0;
+		mIsManualFetching = false;
 		mFetchedPageArray.clear();
-		mListener = null;
 		mProgressBar.setVisibility(View.GONE);
+	}
+
+	private void startRequest() {
+		mFetchedCount = 0;
+		mFetchedPageArray.clear();
+
+		mProgressBar.setVisibility(View.VISIBLE);
+		requestAllSite();
 	}
 
 	private void requestAllSite() {
@@ -79,7 +109,7 @@ public class PLRSSFetcher {
 				@Override
 				public void onErrorResponse(VolleyError error) {
 					MYLogUtil.outputErrorLog("Fetch page error " + error.toString());
-					countUpFetched();
+					countUpFetch();
 				}
 			};
 			PLInputStreamRequest request = new PLInputStreamRequest(site.getUrl(),listener, error);
@@ -100,14 +130,14 @@ public class PLRSSFetcher {
 						} else {
 							mFetchedPageArray.addAll(pageList);
 						}
-						countUpFetched();
+						countUpFetch();
 					}
 				});
 			}
 		}).start();
 	}
 
-	private void countUpFetched() {
+	private void countUpFetch() {
 		mFetchedCount++;
 		mProgressBar.setProgress(mFetchedCount);
 		if (mFetchedCount < mRequestCount) {
@@ -115,19 +145,31 @@ public class PLRSSFetcher {
 		}
 
 		// Finish all request
-		mProgressBar.setVisibility(View.GONE);
-		if (mListener != null) {
-			mListener.finishedRequest();
+		if (mIsManualFetching) {
+			finishAllFetch();
 		}
 	}
 
-	public static abstract class PLRSSCallbackListener {
-		public abstract void finishedRequest();
-	}
-
-	public ArrayList<PLNewsPageModel> getFetchedPageArrayAndClear() {
+	private void finishAllFetch() {
 		ArrayList<PLNewsPageModel> array = new ArrayList<>(mFetchedPageArray);
 		mFetchedPageArray.clear();
-		return array;
+		mIsManualFetching = false;
+		mFetchedCount = 0;
+		mRequestCount = 0;
+		mProgressBar.setVisibility(View.GONE);
+
+		mListener.finishedRequest(array);
+	}
+
+	private boolean isFetching() {
+		return (mRequestCount > 0 &&  mFetchedCount < mRequestCount);
+	}
+
+	private boolean isFinished() {
+		return (mRequestCount > 0 &&  mFetchedCount == mRequestCount);
+	}
+
+	public static abstract class PLRSSCallbackListener {
+		public abstract void finishedRequest(ArrayList<PLNewsPageModel> pageArray);
 	}
 }

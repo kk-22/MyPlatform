@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -47,15 +48,9 @@ public class PLNewsListView extends FrameLayout {
 		mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh);
 
-		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar);
 		initSwipeLayout();
 		initListView();
-	}
-
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		fetchRSSIfNecessary();
+		initFetcher();
 	}
 
 	@Override
@@ -64,22 +59,21 @@ public class PLNewsListView extends FrameLayout {
 		mRssFetcher.cancelAllRequest();
 	}
 
-	private void fetchRSSIfNecessary() {
-		fetchRSS();
-	}
-
-	private void fetchRSS() {
-		mRssFetcher.startRequest(new PLRSSFetcher.PLRSSCallbackListener() {
+	private void initFetcher() {
+		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar, new PLRSSFetcher.PLRSSCallbackListener() {
 			@Override
-			public void finishedRequest() {
-				mPageList = mRssFetcher.getFetchedPageArrayAndClear();
+			public void finishedRequest(ArrayList<PLNewsPageModel> pageArray) {
+				mPageList = pageArray;
 				showList();
+				mSwipeLayout.setRefreshing(false);
+
 				SQLite.delete(PLNewsPageModel.class)
 						.where(PLNewsPageModel_Table.groupForeign_no.is(mGroupModel.getNo()))
 						.async()
 						.execute();
 				PLDatabase.saveModelList(mPageList);
-				mSwipeLayout.setRefreshing(false);
+				mGroupModel.setFetchedDate(Calendar.getInstance());
+				mGroupModel.save();
 			}
 		});
 	}
@@ -93,7 +87,7 @@ public class PLNewsListView extends FrameLayout {
 			@Override
 			public void onRefresh() {
 				MYLogUtil.outputLog("pull");
-				fetchRSS();
+				mRssFetcher.manualFetchIfNecessary();
 			}
 		});
 		mSwipeLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
