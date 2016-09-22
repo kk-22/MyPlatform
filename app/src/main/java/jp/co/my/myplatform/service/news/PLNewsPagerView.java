@@ -44,8 +44,7 @@ public class PLNewsPagerView extends PLContentView {
 		if (mNewsGroupArray.size() > 0) {
 			createViewPager();
 			return;
-//			Delete.table(PLNewsGroupModel.class);
-//			Delete.table(PLNewsSiteModel.class);
+//			Delete.tables(PLNewsGroupModel.class, PLNewsSiteModel.class);
 		}
 
 		fetchNewsGroup();
