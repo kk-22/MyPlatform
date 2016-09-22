@@ -3,20 +3,33 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/page_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/news_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:drawSelectorOnTop="false"
-        android:fadeScrollbars="false" />
+        android:layout_height="match_parent">
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:indeterminate="false"
-        android:layout_gravity="bottom"
-        android:paddingLeft="10pt"
-        android:paddingRight="10pt"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/page_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="false"
+            android:fadeScrollbars="false" />
+
+        <ProgressBar
+            android:background="#88888888"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="false"
+            android:layout_gravity="bottom"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
+
+        </FrameLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </FrameLayout>

@@ -1,7 +1,11 @@
 package jp.co.my.myplatform.service.news;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -10,6 +14,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
@@ -18,6 +23,7 @@ import jp.co.my.myplatform.service.model.PLNewsPageModel_Table;
 
 public class PLNewsListView extends FrameLayout {
 
+	private SwipeRefreshLayout mSwipeLayout;
 	private ProgressBar mProgressBar;
 	private ListView mListView;
 	private PLNewsListAdapter mAdapter;
@@ -33,6 +39,7 @@ public class PLNewsListView extends FrameLayout {
 		LayoutInflater.from(getContext()).inflate(R.layout.view_news_list, this);
 		mListView = (ListView) findViewById(R.id.page_list);
 		mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh);
 
 		mPageList = mGroupModel.getPageArray();
 		mAdapter = new PLNewsListAdapter(context);
@@ -40,6 +47,7 @@ public class PLNewsListView extends FrameLayout {
 		mListView.setAdapter(mAdapter);
 
 		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar);
+		initSwipeLayout();
 	}
 
 	@Override
@@ -69,11 +77,31 @@ public class PLNewsListView extends FrameLayout {
 						.async()
 						.execute();
 				PLDatabase.saveModelList(mPageList);
+				mSwipeLayout.setRefreshing(false);
 			}
 		});
 	}
 
 	private void showList() {
 		mAdapter.renewalAllPage(mPageList);
+	}
+
+	private void initSwipeLayout() {
+		mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				MYLogUtil.outputLog("pull");
+				fetchRSS();
+			}
+		});
+		mSwipeLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
+			@Override
+			public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
+				if (mListView.getVisibility() == View.VISIBLE) {
+					return ViewCompat.canScrollVertically(mListView, -1);
+				}
+				return false;
+			}
+		});
 	}
 }

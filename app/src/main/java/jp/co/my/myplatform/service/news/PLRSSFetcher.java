@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.news;
 
 import android.os.Handler;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.android.volley.Response;
@@ -47,6 +48,7 @@ public class PLRSSFetcher {
 		mFetchedCount = 0;
 		mFetchedPageArray.clear();
 
+		mProgressBar.setVisibility(View.VISIBLE);
 		mListener = listener;
 		requestAllSite();
 	}
@@ -57,12 +59,13 @@ public class PLRSSFetcher {
 		mRequestCount = 0;
 		mFetchedPageArray.clear();
 		mListener = null;
+		mProgressBar.setVisibility(View.GONE);
 	}
 
 	private void requestAllSite() {
 		List<PLNewsSiteModel> siteList = mGroupModel.getSiteArray();
 		mRequestCount = siteList.size();
-		mProgressBar.setMax(mFetchedCount);
+		mProgressBar.setMax(mRequestCount);
 
 		PLVolleyHelper volleyHelper = PLCoreService.getVolleyHelper();
 		for (final PLNewsSiteModel site : siteList) {
@@ -112,6 +115,7 @@ public class PLRSSFetcher {
 		}
 
 		// Finish all request
+		mProgressBar.setVisibility(View.GONE);
 		if (mListener != null) {
 			mListener.finishedRequest();
 		}
