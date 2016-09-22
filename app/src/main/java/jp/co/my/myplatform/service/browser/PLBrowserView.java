@@ -52,27 +52,11 @@ public class PLBrowserView extends PLContentView {
 				updateArrowButtonImage();
 
 				if (progress == 100) {
-					List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
-							.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-							.queryList();
-					PLWebPageModel model = new PLWebPageModel(mCurrentWebView.getTitle(), mCurrentWebView.getUrl(), null);
-					model.save();
-					for (PLWebPageModel pageModel : pageArray) {
-						pageModel.delete();
-					}
+					finishLoadPage();
 				}
 			}
 		});
-
-		// TODO:仮で読み込み
-		PLWebPageModel bookmark = SQLite.select().from(PLWebPageModel.class)
-				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-				.querySingle();
-		if (bookmark == null) {
-			mCurrentWebView.loadUrl("http://news.yahoo.co.jp/");
-		} else {
-			mCurrentWebView.loadUrl(bookmark.getUrl());
-		}
+		loadFirstPage();
 	}
 
 	@Override
@@ -95,14 +79,38 @@ public class PLBrowserView extends PLContentView {
 		}
 	}
 
-	private void onBackKey() {
+	protected void loadFirstPage() {
+		PLWebPageModel bookmark = SQLite.select().from(PLWebPageModel.class)
+				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
+				.querySingle();
+			if (bookmark == null) {
+			mCurrentWebView.loadUrl("http://news.yahoo.co.jp/");
+		} else {
+			mCurrentWebView.loadUrl(bookmark.getUrl());
+		}
+	}
+
+	protected void finishLoadPage() {
+		List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
+				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
+				.queryList();
+		PLWebPageModel model = new PLWebPageModel(mCurrentWebView.getTitle(), mCurrentWebView.getUrl(), null);
+		model.save();
+		for (PLWebPageModel pageModel : pageArray) {
+			pageModel.delete();
+		}
+	}
+
+	protected boolean onBackKey() {
 		if (removeTopPopover()) {
 			// 子ビューがあったときのみWebView戻る処理を行わない
-			return;
+			return true;
+		} if (mCurrentWebView.canGoBack()) {
+			mCurrentWebView.goBack();
+			updateArrowButtonImage();
+			return true;
 		}
-
-		mCurrentWebView.goBack();
-		updateArrowButtonImage();
+		return false;
 	}
 	private void onForwardKey() {
 		mCurrentWebView.goForward();

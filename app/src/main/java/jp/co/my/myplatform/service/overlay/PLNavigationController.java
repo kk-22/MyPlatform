@@ -53,6 +53,25 @@ public class PLNavigationController extends PLOverlayView {
 			// 前回のViewを表示
 			return (T) mCurrentView;
 		}
+
+		T view = getContentView(clazz);
+		if (view == null) {
+			// インスタンス作成
+			try {
+				String className = clazz.getName();
+				view = (T) Class.forName(className).getConstructor().newInstance();
+			} catch (Exception e) {
+				MYLogUtil.showExceptionToast(e);
+				return null;
+			}
+		}
+		return pushView(view);
+	}
+
+	public <T extends PLContentView> T pushView(T view) {
+		if (!mViewCache.contains(view)) {
+			mViewCache.add(view);
+		}
 		if (mCurrentView != null) {
 			if (!mCurrentView.isKeepCache()) {
 				mCurrentView.viewWillDisappear();
@@ -62,18 +81,6 @@ public class PLNavigationController extends PLOverlayView {
 			mCurrentView = null;
 		}
 
-		PLContentView view = getContentView(clazz);
-		if (view == null) {
-			// インスタンス作成
-			try {
-				String className = clazz.getName();
-				view = (T) Class.forName(className).getConstructor().newInstance();
-				mViewCache.add(view);
-			} catch (Exception e) {
-				MYLogUtil.showExceptionToast(e);
-				return null;
-			}
-		}
 		mFrameLayout.addView(view, createMatchParams());
 		mCurrentView = view;
 		return (T) view;

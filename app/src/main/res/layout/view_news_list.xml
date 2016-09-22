@@ -14,9 +14,9 @@
 
         <ListView
             android:id="@+id/page_list"
+            android:listSelector="@drawable/selector_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:drawSelectorOnTop="false"
             android:fadeScrollbars="false" />
 
         <ProgressBar
