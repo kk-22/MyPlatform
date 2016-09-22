@@ -103,7 +103,7 @@ public class PLNewsGroupModel extends BaseModel {
 		if (pageArray == null || pageArray.isEmpty()) {
 			pageArray = SQLite.select()
 					.from(PLNewsPageModel.class)
-					.where(PLNewsPageModel_Table.siteForeign_no.eq(no))
+					.where(PLNewsPageModel_Table.groupForeign_no.eq(no))
 					.queryList();
 		}
 		return pageArray;

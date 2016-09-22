@@ -77,6 +77,7 @@ public class PLRSSParser {
 			} else if (tag.equals("item")) {
 				// ページ情報
 				PLNewsPageModel page = parseItemForPageModel(parser);
+				page.associateGroup(siteData.getGroupForeign().load());
 				page.associateSite(siteData);
 				pageArray.add(page);
 			}

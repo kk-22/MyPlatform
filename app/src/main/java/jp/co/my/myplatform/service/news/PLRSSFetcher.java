@@ -48,7 +48,7 @@ public class PLRSSFetcher {
 		mFetchedPageArray.clear();
 
 		mListener = listener;
-		fetchAllSite();
+		requestAllSite();
 	}
 
 	public void cancelAllRequest() {
@@ -59,7 +59,7 @@ public class PLRSSFetcher {
 		mListener = null;
 	}
 
-	private void fetchAllSite() {
+	private void requestAllSite() {
 		List<PLNewsSiteModel> siteList = mGroupModel.getSiteArray();
 		mRequestCount = siteList.size();
 		mProgressBar.setMax(mFetchedCount);

@@ -6,13 +6,15 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
 import java.util.List;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
-//import jp.co.my.myplatform.service.model.PLNewsPageModel;
+import jp.co.my.myplatform.service.model.PLNewsPageModel_Table;
 
 public class PLNewsListView extends FrameLayout {
 
@@ -61,8 +63,12 @@ public class PLNewsListView extends FrameLayout {
 			@Override
 			public void finishedRequest() {
 				mPageList = mRssFetcher.getFetchedPageArrayAndClear();
-				PLDatabase.saveModelList(mPageList);
 				showList();
+				SQLite.delete(PLNewsPageModel.class)
+						.where(PLNewsPageModel_Table.groupForeign_no.is(mGroupModel.getNo()))
+						.async()
+						.execute();
+				PLDatabase.saveModelList(mPageList);
 			}
 		});
 	}
