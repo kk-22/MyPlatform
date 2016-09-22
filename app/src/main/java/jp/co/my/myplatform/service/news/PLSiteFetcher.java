@@ -20,7 +20,7 @@ public class PLSiteFetcher {
 
 	private int mFinishCount;
 	private ArrayList<PLNewsGroupModel> mGroupArray;
-	private ArrayList<PLNewsSiteModel> mSiteArray;
+	private ArrayList<ArrayList<PLNewsSiteModel>> mSiteListArray;
 	private PLSiteCallbackListener mListener;
 
 	public PLSiteFetcher() {
@@ -30,7 +30,7 @@ public class PLSiteFetcher {
 	public void startRequest(PLSiteCallbackListener listener) {
 		mFinishCount = 0;
 		mGroupArray = null;
-		mSiteArray = null;
+		mSiteListArray = null;
 
 		mListener = listener;
 		fetchGroup();
@@ -41,7 +41,7 @@ public class PLSiteFetcher {
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 		mFinishCount = 0;
 		mGroupArray = null;
-		mSiteArray = null;
+		mSiteListArray = null;
 	}
 
 	private void finishFetch() {
@@ -49,7 +49,7 @@ public class PLSiteFetcher {
 		if (mFinishCount < 2) {
 			return;
 		}
-		mListener.finishedRequest(mGroupArray, mSiteArray);
+		mListener.finishedRequest(mGroupArray, mSiteListArray);
 		mListener = null;
 	}
 
@@ -100,7 +100,7 @@ public class PLSiteFetcher {
 					@Override
 					public void onResponse(JSONArray response) {
 						MYLogUtil.showToast("Fetched site");
-						mSiteArray = parseSite(response);
+						mSiteListArray = parseSite(response);
 						finishFetch();
 					}
 				}, new Response.ErrorListener() {
@@ -114,18 +114,26 @@ public class PLSiteFetcher {
 		PLCoreService.getVolleyHelper().addRequest(request, this.getClass());
 	}
 
-	private ArrayList<PLNewsSiteModel> parseSite(JSONArray response) {
-		ArrayList<PLNewsSiteModel> array = new ArrayList<>();
+	private ArrayList<ArrayList<PLNewsSiteModel>> parseSite(JSONArray response) {
+		ArrayList<ArrayList<PLNewsSiteModel>> array = new ArrayList<>();
 		try {
 			for (int i = 0; i < response.length(); i++) {
 				JSONObject jsonObject = response.getJSONObject(i);
 				PLNewsSiteModel model = new PLNewsSiteModel();
 				model.setNo(jsonObject.getInt("site_no"));
-				model.setGroupNo(jsonObject.getInt("group_no"));
 				model.setUrl(jsonObject.getString("url"));
 				model.setEnableScript(PLVolleyHelper.parseBoolean(jsonObject, "script"));
 				model.setEnablePCViewer(PLVolleyHelper.parseBoolean(jsonObject, "pc_viewer"));
-				array.add(model);
+
+				int groupNo = jsonObject.getInt("group_no");
+				ArrayList<PLNewsSiteModel> siteArray;
+				if (array.size() < groupNo) {
+					siteArray = new ArrayList<>();
+					array.add(siteArray);
+				} else {
+					siteArray = array.get(groupNo - 1);
+				}
+				siteArray.add(model);
 			}
 		} catch (JSONException e) {
 			MYLogUtil.showExceptionToast(e);
@@ -134,6 +142,6 @@ public class PLSiteFetcher {
 	}
 
 	public static abstract class PLSiteCallbackListener {
-		public abstract void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<PLNewsSiteModel> siteArray);
+		public abstract void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<ArrayList<PLNewsSiteModel>> siteListArray);
 	}
 }

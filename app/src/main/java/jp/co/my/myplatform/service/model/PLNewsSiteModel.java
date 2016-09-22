@@ -32,7 +32,6 @@ public class PLNewsSiteModel extends BaseModel {
 	@Column
 	private boolean enablePCViewer;	// WebView画面でのユーザエージェント設定
 
-	private int groupNo;
 	public List<PLNewsPageModel> pageArray;
 
 	public PLNewsSiteModel() {
@@ -94,14 +93,6 @@ public class PLNewsSiteModel extends BaseModel {
 
 	public void setEnablePCViewer(boolean enablePCViewer) {
 		this.enablePCViewer = enablePCViewer;
-	}
-
-	public int getGroupNo() {
-		return groupNo;
-	}
-
-	public void setGroupNo(int groupNo) {
-		this.groupNo = groupNo;
 	}
 
 	public List<PLNewsPageModel> getPageArray() {

@@ -12,6 +12,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.view.SlidingTabLayout;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
@@ -53,18 +54,27 @@ public class PLNewsPagerView extends PLContentView {
 	private void fetchNewsGroup() {
 		mSiteFetcher.startRequest(new PLSiteFetcher.PLSiteCallbackListener() {
 			 @Override
-			 public void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<PLNewsSiteModel> siteArray) {
-				 if (groupArray.size() == 0 || siteArray.size() == 0) {
+			 public void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<ArrayList<PLNewsSiteModel>> siteListArray) {
+				 int groupCount = groupArray.size();
+				 int siteGroupCount = siteListArray.size();
+				 if (groupCount == 0 || siteGroupCount == 0 || groupCount != siteGroupCount) {
+					 MYLogUtil.showErrorToast("count error. group=" +groupCount +" site=" +siteGroupCount);
 					 return;
 				 }
-				 for (PLNewsSiteModel site : siteArray) {
-					 PLNewsGroupModel group = groupArray.get(site.getGroupNo() - 1);
-					 group.getSiteArray().add(site);
-					 site.associateGroup(group);
+				 PLDatabase.saveModelList(groupArray);
+				 for (int i = 0; i < groupCount; i++) {
+					 ArrayList<PLNewsSiteModel> siteArray = siteListArray.get(i);
+					 PLNewsGroupModel group = groupArray.get(i);
+					 group.setSiteArray(siteArray);
+
+					 int siteCount = siteArray.size();
+					 for (int j = 0; j < siteCount; j++) {
+						 PLNewsSiteModel site = siteArray.get(j);
+						 site.associateGroup(group);
+					 }
+					 PLDatabase.saveModelList(siteArray);
 				 }
 				 mNewsGroupArray = groupArray;
-				 PLDatabase.saveModelList(groupArray);
-				 PLDatabase.saveModelList(siteArray);
 				 createViewPager();
 			 }
 		 });
