@@ -88,7 +88,7 @@ public class PLRSSFetcher {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				final List<PLNewsPageModel> pageList = PLRSSParser.getPagaDatasForInputStream(site, inputStream);
+				final List<PLNewsPageModel> pageList = PLRSSParser.getPageArrayFromInputStream(site, inputStream);
 				mMainHandler.post(new Runnable() {
 					@Override
 					public void run() {

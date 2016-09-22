@@ -25,14 +25,14 @@ public class PLRSSParser {
 
 	private PLRSSParser() {}
 
-	public static ArrayList<PLNewsPageModel> getPagaDatasForInputStream(PLNewsSiteModel site, InputStream inputStream) {
+	public static ArrayList<PLNewsPageModel> getPageArrayFromInputStream(PLNewsSiteModel site, InputStream inputStream) {
 		ArrayList<PLNewsPageModel> pageArray = null;
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 		try {
 			XmlPullParserFactory xmlPullParserFactory = XmlPullParserFactory.newInstance();
 			XmlPullParser parser = xmlPullParserFactory.newPullParser();
 			parser.setInput(bufferedInputStream, "UTF-8");
-			pageArray = parseXmlPLNewsPageModels(site, parser);
+			pageArray = parseXmlForPageArray(site, parser);
 		} catch (XmlPullParserException | IOException e) {
 			MYLogUtil.showExceptionToast(e);
 		} finally {
@@ -57,7 +57,7 @@ public class PLRSSParser {
 		return pageArray;
 	}
 
-	private static ArrayList<PLNewsPageModel> parseXmlPLNewsPageModels(PLNewsSiteModel siteData, XmlPullParser parser) throws XmlPullParserException, IOException {
+	private static ArrayList<PLNewsPageModel> parseXmlForPageArray(PLNewsSiteModel siteData, XmlPullParser parser) throws XmlPullParserException, IOException {
 		ArrayList<PLNewsPageModel> pageArray = new ArrayList<>();
 
 		int eventType = parser.getEventType();
@@ -76,7 +76,7 @@ public class PLRSSParser {
 				}
 			} else if (tag.equals("item")) {
 				// ページ情報
-				PLNewsPageModel page = parseItemTagPLNewsPageModel(parser);
+				PLNewsPageModel page = parseItemForPageModel(parser);
 				page.associateSite(siteData);
 				pageArray.add(page);
 			}
@@ -84,7 +84,7 @@ public class PLRSSParser {
 		return pageArray;
 	}
 
-	private static PLNewsPageModel parseItemTagPLNewsPageModel(XmlPullParser parser) throws XmlPullParserException, IOException {
+	private static PLNewsPageModel parseItemForPageModel(XmlPullParser parser) throws XmlPullParserException, IOException {
 		PLNewsPageModel pageData = new PLNewsPageModel();
 		while (true) {
 			int eventType = parser.next();
@@ -132,7 +132,7 @@ public class PLRSSParser {
 			calendar.setTime(date);
 		} else {
 			// 現在日時より先のものは書き換える
-			calendar.set(1970, 0, 1, 0, 0);
+			calendar.set(2000, 0, 1, 0, 0);
 		}
 		return calendar;
 	}
