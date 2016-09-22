@@ -16,8 +16,12 @@ public class PLDatabase {
 	public static final String NAME = "MySupportDatabase";
 	public static final int VERSION = 9;
 
-	@SuppressWarnings("unchecked") // klassがTではないため不定であるため警告発生
 	public static <T extends Model> void saveModelList(List<T> modelList) {
+		saveModelList(modelList, false);
+	}
+
+	@SuppressWarnings("unchecked") // klassがTではないため不定であるため警告発生
+	public static <T extends Model> void saveModelList(List<T> modelList, boolean isSync) {
 		if (modelList.size() == 0) {
 			MYLogUtil.showErrorToast("saveModelList list size is 0");
 			return;
@@ -28,6 +32,10 @@ public class PLDatabase {
 		FastStoreModelTransaction<T> fast = FastStoreModelTransaction.insertBuilder(
 				FlowManager.getModelAdapter(klass)).addAll(modelList).build();
 		DatabaseDefinition database = FlowManager.getDatabase(PLDatabase.class);
+		if (isSync) {
+			database.executeTransaction(fast);
+			return;
+		}
 		Transaction transaction = database.beginTransactionAsync(fast)
 				.success(new Transaction.Success() {
 					@Override

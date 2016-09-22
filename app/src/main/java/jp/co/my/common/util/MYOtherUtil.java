@@ -16,4 +16,12 @@ public class MYOtherUtil {
 			handler.post(action);
 		}
 	}
+
+	// 型チェックとキャスト
+	public static <T> T castObject(Object object, Class<T> klass) {
+		if ((object.getClass() == klass)) {
+			return (T) object;
+		}
+		return null;
+	}
 }

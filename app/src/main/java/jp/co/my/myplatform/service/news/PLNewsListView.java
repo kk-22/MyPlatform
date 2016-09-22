@@ -13,7 +13,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +27,6 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
-import jp.co.my.myplatform.service.model.PLNewsPageModel_Table;
 import jp.co.my.myplatform.service.overlay.PLNavigationController;
 
 public class PLNewsListView extends FrameLayout {
@@ -63,17 +64,48 @@ public class PLNewsListView extends FrameLayout {
 		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar, new PLRSSFetcher.PLRSSCallbackListener() {
 			@Override
 			public void finishedRequest(ArrayList<PLNewsPageModel> pageArray) {
-				mPageList = pageArray;
+				// 新旧PageModelのマージ
+				// TODO: Move to async?
+				MYLogUtil.outputLog("start " +mGroupModel.getTitle());
+				final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
+				ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>();
+				for (PLNewsPageModel oldPage : mPageList) {
+					int newIndex = pageArray.indexOf(oldPage);
+					if (newIndex == -1) {
+						removePageArray.add(oldPage);
+					} else {
+						PLNewsPageModel newPage = pageArray.get(newIndex);
+						pageArray.remove(newIndex);
+
+						oldPage.setTitle(newPage.getTitle());
+						oldPage.setPostedDate(newPage.getPostedDate());
+						nextPageArray.add(oldPage);
+					}
+				}
+				nextPageArray.addAll(pageArray);
+				MYLogUtil.outputLog("end " +mGroupModel.getTitle());
+
+				mPageList = nextPageArray;
 				showList();
 				mSwipeLayout.setRefreshing(false);
 
-				SQLite.delete(PLNewsPageModel.class)
-						.where(PLNewsPageModel_Table.groupForeign_no.is(mGroupModel.getNo()))
-						.async()
-						.execute();
-				PLDatabase.saveModelList(mPageList);
 				mGroupModel.setFetchedDate(Calendar.getInstance());
-				mGroupModel.save();
+				FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
+					@Override
+					public void execute(DatabaseWrapper databaseWrapper) {
+						MYLogUtil.outputLog("start");
+						for (PLNewsPageModel site : removePageArray) {
+							MYLogUtil.outputLog("delete " +site.getTitle());
+							site.delete();
+						}
+						for (PLNewsPageModel site : mPageList) {
+							MYLogUtil.outputLog("save " +site.getTitle());
+							site.save();
+						}
+						mGroupModel.save();
+						MYLogUtil.outputLog("end");
+					}
+				}).build().execute();
 			}
 		});
 	}

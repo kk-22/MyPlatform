@@ -11,6 +11,8 @@ import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import jp.co.my.common.util.MYOtherUtil;
+
 @Table(database = PLDatabase.class)
 public class PLNewsPageModel extends BaseModel {
 
@@ -32,6 +34,18 @@ public class PLNewsPageModel extends BaseModel {
 
 	public PLNewsPageModel() {
 		super();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		PLNewsPageModel page = MYOtherUtil.castObject(obj, this.getClass());
+		if (page == null) {
+			return false;
+		}
+		if (url == null) {
+			return super.equals(obj);
+		}
+		return url.equals(page.getUrl());
 	}
 
 	public String getPostedString() {
