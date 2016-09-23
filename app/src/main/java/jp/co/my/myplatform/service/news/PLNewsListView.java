@@ -1,7 +1,6 @@
 package jp.co.my.myplatform.service.news;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
@@ -152,8 +150,7 @@ public class PLNewsListView extends FrameLayout {
 				// 既読
 				pageModel.setAlreadyRead(true);
 				pageModel.save();
-				TextView pageText = (TextView) view.findViewById(R.id.page_title_text);
-				pageText.setTextColor(Color.RED);
+				PLNewsListAdapter.setBackgroundColorToView(view, true);
 				mGroupModel.setReadDate(Calendar.getInstance());
 				mGroupModel.save();
 			}

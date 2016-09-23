@@ -10,7 +10,7 @@
 
         <jp.co.my.common.view.SlidingTabLayout
             android:id="@+id/sliding_tab"
-            android:background="#000"
+            android:background="#14f"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

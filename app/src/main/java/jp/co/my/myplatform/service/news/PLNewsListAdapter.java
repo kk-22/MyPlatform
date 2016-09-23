@@ -43,17 +43,23 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 		if (site != null) {
 			siteText.setText(site.getName());
 		}
-		if (page.isAlreadyRead()) {
-			pageText.setTextColor(Color.RED);
-		} else {
-			pageText.setTextColor(Color.BLACK);
-		}
+		setBackgroundColorToView(view, page.isAlreadyRead());
 
 		return view;
 	}
 
+	@Override
 	public PLNewsPageModel getItem(int position) {
 		return super.getItem(position);
+	}
+
+	public static void setBackgroundColorToView(View view, boolean isAlreadyRead) {
+		TextView pageText = (TextView) view.findViewById(R.id.page_title_text);
+		if (isAlreadyRead) {
+			pageText.setTextColor(Color.LTGRAY);
+		} else {
+			pageText.setTextColor(Color.BLACK);
+		}
 	}
 
 	public void renewalAllPage(List<PLNewsPageModel> pageArray) {

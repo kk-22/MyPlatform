@@ -17,6 +17,7 @@
             android:listSelector="@drawable/selector_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scrollbarThumbVertical="@android:color/holo_blue_light"
             android:fadeScrollbars="false" />
 
         <ProgressBar
