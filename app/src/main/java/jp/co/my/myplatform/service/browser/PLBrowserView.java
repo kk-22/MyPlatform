@@ -149,6 +149,17 @@ public class PLBrowserView extends PLContentView {
 				return false;
 			}
 		});
+		mCurrentWebView.setListener(new PLWebView.PLWebViewGestureListener() {
+			@Override
+			public void swipeToRight() {
+				onBackKey();
+			}
+
+			@Override
+			public void swipeToLeft() {
+				onForwardKey();
+			}
+		});
 
 		mBackButton.setOnClickListener(new OnClickListener() {
 			@Override

@@ -16,6 +16,7 @@ import jp.co.my.myplatform.service.model.PLWebPageModel;
 public class PLWebView extends WebView {
 
 	private GestureDetector mGestureDetector;
+	private PLWebViewGestureListener mListener;
 
 	public PLWebView(Context context) {
 		this(context, null);
@@ -169,21 +170,20 @@ public class PLWebView extends WebView {
 
 			// ページ切り替え
 			if (direction == DIRECTION_RIGHT) {
-				if (PLWebView.this.canGoBack()) {
-					PLWebView.this.goBack();
-					MYLogUtil.showToast("前に戻る");
-				} else {
-					MYLogUtil.showToast("戻り先がありません");
-				}
+				mListener.swipeToRight();
 			} else {
-				if (PLWebView.this.canGoForward()) {
-					PLWebView.this.goForward();
-					MYLogUtil.showToast("次に進む");
-				} else {
-					MYLogUtil.showToast("進み先がありません");
-				}
+				mListener.swipeToLeft();
 			}
 			return false;
 		}
 	};
+
+	public void setListener(PLWebViewGestureListener listener) {
+		mListener = listener;
+	}
+
+	public static abstract class PLWebViewGestureListener {
+		public abstract void swipeToRight();
+		public abstract void swipeToLeft();
+	}
 }
