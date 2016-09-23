@@ -204,4 +204,8 @@ public class PLBrowserView extends PLContentView {
 	public PLWebView getCurrentWebView() {
 		return mCurrentWebView;
 	}
+
+	protected LinearLayout getToolbar() {
+		return mToolbar;
+	}
 }

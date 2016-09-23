@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.news;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.webkit.WebSettings;
 
 import jp.co.my.common.util.MYLogUtil;
@@ -20,19 +21,8 @@ public class PLNewsBrowserView extends PLBrowserView {
 		setKeepCache(false);
 		mPageModel = page;
 
-		PLWebView webView = getCurrentWebView();
-		webView.loadUrl(mPageModel.getUrl());
-
-		PLNewsSiteModel site = page.getSiteForeign().load();
-		if (site == null) {
-			MYLogUtil.showErrorToast("site is null");
-			return;
-		}
-		WebSettings setting = webView.getSettings();
-		setting.setJavaScriptEnabled(site.isEnableScript());
-		if (site.isEnablePCViewer()) {
-			setting.setUserAgentString("MyUserAgent");
-		}
+		customizeWebView();
+		customizeDesign();
 	}
 
 	@Override
@@ -52,5 +42,25 @@ public class PLNewsBrowserView extends PLBrowserView {
 		}
 		PLCoreService.getNavigationController().pushView(PLNewsPagerView.class);
 		return true;
+	}
+
+	private void customizeWebView() {
+		PLWebView webView = getCurrentWebView();
+		webView.loadUrl(mPageModel.getUrl());
+
+		PLNewsSiteModel site = mPageModel.getSiteForeign().load();
+		if (site == null) {
+			MYLogUtil.showErrorToast("site is null");
+			return;
+		}
+		WebSettings setting = webView.getSettings();
+		setting.setJavaScriptEnabled(site.isEnableScript());
+		if (site.isEnablePCViewer()) {
+			setting.setUserAgentString("MyUserAgent");
+		}
+	}
+
+	private void customizeDesign() {
+		getToolbar().setBackgroundColor(Color.parseColor("#0068B7"));
 	}
 }
