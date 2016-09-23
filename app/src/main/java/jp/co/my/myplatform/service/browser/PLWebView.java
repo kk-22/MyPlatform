@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.browser;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -69,12 +70,14 @@ public class PLWebView extends WebView {
 		super.destroy();
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	public void loadPageModel(PLWebPageModel pageModel) {
 		WebSettings setting = getSettings();
 		setting.setJavaScriptEnabled(pageModel.isEnableScript());
 		loadUrl(pageModel.getUrl());
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	private void initWebView() {
 		WebSettings setting = getSettings();
 		setting.setDisplayZoomControls(false);	// ズームコントローラ非表示
@@ -82,9 +85,6 @@ public class PLWebView extends WebView {
 		setting.setLoadWithOverviewMode(true);	// ページが画面に収まるように自動で縮小
 		setting.setUseWideViewPort(true);		// ページサイズが画面サイズ以上なら縮小
 		setting.setJavaScriptEnabled(true);
-//		if (mPageData.getSiteData().isEnablePCViewr()) {
-//			setting.setUserAgentString("MyUserAgent");
-//		}
 
 		setWebViewClient(new WebViewClient() {
 			@Override
