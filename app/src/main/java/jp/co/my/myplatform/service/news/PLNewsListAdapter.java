@@ -13,6 +13,7 @@ import java.util.List;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
+import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 
@@ -37,8 +38,11 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 		TextView pageText = (TextView) view.findViewById(R.id.page_title_text);
 
 		dateText.setText(page.getPostedString());
-		siteText.setText(page.getSiteForeign().load().getMemo());
 		pageText.setText(page.getTitle());
+		PLNewsSiteModel site = page.getSiteForeign().load();
+		if (site != null) {
+			siteText.setText(site.getName());
+		}
 		if (page.isAlreadyRead()) {
 			pageText.setTextColor(Color.RED);
 		} else {
@@ -46,13 +50,6 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 		}
 
 		return view;
-	}
-
-	@Override
-	public boolean isEnabled(int position) {
-		return true;
-//		PLNewsPageModel pageData = getItem(position);
-//		return (pageData.getCellType() == PLNewsPageModel.CellType.PAGE_LINK);
 	}
 
 	public PLNewsPageModel getItem(int position) {
