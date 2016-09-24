@@ -19,6 +19,7 @@ import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
+import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 
@@ -80,14 +81,20 @@ public class PLBrowserView extends PLContentView {
 	}
 
 	protected void loadFirstPage() {
-		PLWebPageModel bookmark = SQLite.select().from(PLWebPageModel.class)
+		PLModelContainer<PLWebPageModel> container = new PLModelContainer<>(SQLite.select()
+				.from(PLWebPageModel.class)
 				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-				.querySingle();
-			if (bookmark == null) {
-			mCurrentWebView.loadUrl("http://news.yahoo.co.jp/");
-		} else {
-			mCurrentWebView.loadUrl(bookmark.getUrl());
-		}
+				.limit(1));
+		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLWebPageModel>() {
+			@Override
+			public void onLoad(List<PLWebPageModel> modelLists) {
+				if (modelLists.size() == 0) {
+					mCurrentWebView.loadUrl("http://news.yahoo.co.jp/");
+					return;
+				}
+				mCurrentWebView.loadUrl(modelLists.get(0).getUrl());
+			}
+		});
 	}
 
 	protected void finishLoadPage() {
