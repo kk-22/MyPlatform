@@ -67,7 +67,7 @@ public class PLNewsListView extends FrameLayout {
 				// TODO: Move to async?
 				MYLogUtil.outputLog("start " +mGroupModel.getTitle());
 				final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
-				ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>();
+				final ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>();
 				for (PLNewsPageModel oldPage : mPageList) {
 					int newIndex = pageArray.indexOf(oldPage);
 					if (newIndex == -1) {
@@ -97,10 +97,7 @@ public class PLNewsListView extends FrameLayout {
 							MYLogUtil.outputLog("delete " +site.getTitle());
 							site.delete();
 						}
-						for (PLNewsPageModel site : mPageList) {
-							MYLogUtil.outputLog("save " +site.getTitle());
-							site.save();
-						}
+						PLDatabase.saveModelList(nextPageArray, true);
 						mGroupModel.save();
 						MYLogUtil.outputLog("end");
 					}

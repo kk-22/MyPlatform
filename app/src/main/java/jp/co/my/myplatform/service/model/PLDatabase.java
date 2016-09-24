@@ -29,7 +29,7 @@ public class PLDatabase {
 		Class klass = modelList.get(0).getClass();
 		MYLogUtil.outputLog("saveModelList count=" + modelList.size() +" class=" +klass);
 
-		FastStoreModelTransaction<T> fast = FastStoreModelTransaction.insertBuilder(
+		FastStoreModelTransaction<T> fast = FastStoreModelTransaction.saveBuilder(
 				FlowManager.getModelAdapter(klass)).addAll(modelList).build();
 		DatabaseDefinition database = FlowManager.getDatabase(PLDatabase.class);
 		if (isSync) {
