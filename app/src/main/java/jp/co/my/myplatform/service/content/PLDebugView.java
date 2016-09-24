@@ -17,7 +17,6 @@ import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
@@ -53,9 +52,10 @@ public class PLDebugView extends PLContentView {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLDebugView.this.removeTopPopover();
 				if (position == 0) {
-					PLCoreService.getNavigationController().pushView(PLAppListView.class);
-					getContext().deleteDatabase(PLDatabase.NAME + ".db");
-					MYLogUtil.outputLog("Delete DB. Please restart app");
+//					PLCoreService.getNavigationController().pushView(PLAppListView.class);
+//					getContext().deleteDatabase(PLDatabase.NAME + ".db");
+//					MYLogUtil.outputLog("Delete DB. Please restart app");
+					MYLogUtil.outputLog("Can not delete DB");
 					return;
 				}
 
