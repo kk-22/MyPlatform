@@ -6,11 +6,8 @@ import com.raizlabs.android.dbflow.annotation.ModelContainer;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
-
-import java.util.List;
 
 @ModelContainer
 @Table(database = PLDatabase.class)
@@ -31,8 +28,6 @@ public class PLNewsSiteModel extends BaseModel {
 	private boolean enableScript;	// WebView画面でのデフォルトスクリプト設定
 	@Column
 	private boolean enablePCViewer;	// WebView画面でのユーザエージェント設定
-
-	public List<PLNewsPageModel> pageArray;
 
 	public PLNewsSiteModel() {
 		super();
@@ -93,19 +88,5 @@ public class PLNewsSiteModel extends BaseModel {
 
 	public void setEnablePCViewer(boolean enablePCViewer) {
 		this.enablePCViewer = enablePCViewer;
-	}
-
-	public List<PLNewsPageModel> getPageArray() {
-		if (pageArray == null || pageArray.isEmpty()) {
-			pageArray = SQLite.select()
-					.from(PLNewsPageModel.class)
-					.where(PLNewsPageModel_Table.siteForeign_no.eq(no))
-					.queryList();
-		}
-		return pageArray;
-	}
-
-	public void setPageArray(List<PLNewsPageModel> pageArray) {
-		this.pageArray = pageArray;
 	}
 }

@@ -1,12 +1,14 @@
 package jp.co.my.myplatform.service.news;
 
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.raizlabs.android.dbflow.sql.language.BaseModelQueriable;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
@@ -17,11 +19,13 @@ import jp.co.my.common.view.SlidingTabLayout;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.model.PLDatabase;
+import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLNewsPagerView extends PLContentView {
 
+	private Handler mHandler;
 	private List<PLNewsGroupModel> mNewsGroupArray;
 	private PLSiteFetcher mSiteFetcher;
 
@@ -30,6 +34,7 @@ public class PLNewsPagerView extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.content_news_pager, this);
 		mNewsGroupArray = new ArrayList<>();
 
+		mHandler = new Handler();
 		mSiteFetcher = new PLSiteFetcher();
 		loadNewsGroup();
 	}
@@ -48,14 +53,19 @@ public class PLNewsPagerView extends PLContentView {
 	}
 
 	private void loadNewsGroup() {
-		mNewsGroupArray = SQLite.select().from(PLNewsGroupModel.class).queryList();
-		if (mNewsGroupArray.size() > 0) {
-			createViewPager();
-			return;
-//			Delete.tables(PLNewsGroupModel.class, PLNewsSiteModel.class);
-		}
-
-		fetchNewsGroup();
+		BaseModelQueriable<PLNewsGroupModel> query = SQLite.select().from(PLNewsGroupModel.class);
+		PLModelContainer<PLNewsGroupModel> container = new PLModelContainer<>(query);
+		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLNewsGroupModel>() {
+			@Override
+			public void onLoad(List<PLNewsGroupModel> modelList) {
+				mNewsGroupArray = modelList;
+				if (mNewsGroupArray.size() == 0) {
+					fetchNewsGroup();
+				} else {
+					createViewPager();
+				}
+			}
+		});
 	}
 
 	private void fetchNewsGroup() {
@@ -72,7 +82,7 @@ public class PLNewsPagerView extends PLContentView {
 				 for (int i = 0; i < groupCount; i++) {
 					 ArrayList<PLNewsSiteModel> siteArray = siteListArray.get(i);
 					 PLNewsGroupModel group = groupArray.get(i);
-					 group.setSiteArray(siteArray);
+					 group.getSiteContainer().setModelList(siteArray);
 
 					 int siteCount = siteArray.size();
 					 for (int j = 0; j < siteCount; j++) {

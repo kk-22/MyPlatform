@@ -2,7 +2,6 @@ package jp.co.my.myplatform.service.model;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ModelContainer;
-import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -31,6 +30,8 @@ public class PLNewsGroupModel extends BaseModel {
 
 	public List<PLNewsSiteModel> siteArray;
 	public List<PLNewsPageModel> pageArray;
+	private PLModelContainer<PLNewsSiteModel> siteContainer;
+	private PLModelContainer<PLNewsPageModel> pageContainer;
 
 	public PLNewsGroupModel() {
 		super();
@@ -84,32 +85,21 @@ public class PLNewsGroupModel extends BaseModel {
 		this.readDate = readDate;
 	}
 
-	@OneToMany(methods = {OneToMany.Method.ALL}, variableName = "siteArray")
-	public List<PLNewsSiteModel> getSiteArray() {
-		if (siteArray == null || siteArray.isEmpty()) {
-			siteArray = SQLite.select()
+	public PLModelContainer<PLNewsSiteModel> getSiteContainer() {
+		if (siteContainer == null) {
+			siteContainer = new PLModelContainer<>(SQLite.select()
 					.from(PLNewsSiteModel.class)
-					.where(PLNewsSiteModel_Table.groupForeign_no.eq(no))
-					.queryList();
+					.where(PLNewsSiteModel_Table.groupForeign_no.eq(no)));
 		}
-		return siteArray;
+		return siteContainer;
 	}
 
-	public void setSiteArray(List<PLNewsSiteModel> siteArray) {
-		this.siteArray = siteArray;
-	}
-
-	public List<PLNewsPageModel> getPageArray() {
-		if (pageArray == null || pageArray.isEmpty()) {
-			pageArray = SQLite.select()
+	public PLModelContainer<PLNewsPageModel> getPageContainer() {
+		if (pageContainer == null) {
+			pageContainer = new PLModelContainer<>(SQLite.select()
 					.from(PLNewsPageModel.class)
-					.where(PLNewsPageModel_Table.groupForeign_no.eq(no))
-					.queryList();
+					.where(PLNewsPageModel_Table.groupForeign_no.eq(no)));
 		}
-		return pageArray;
-	}
-
-	public void setPageArray(List<PLNewsPageModel> pageArray) {
-		this.pageArray = pageArray;
+		return pageContainer;
 	}
 }

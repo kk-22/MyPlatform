@@ -84,7 +84,6 @@ public class PLSiteFetcher {
 				model.setColor(jsonObject.getString("color"));
 				model.setTitle(jsonObject.getString("title"));
 				model.setUpdateInterval(jsonObject.getInt("update_interval"));
-				model.setSiteArray(new ArrayList<PLNewsSiteModel>());
 				array.add(model);
 			}
 		} catch (JSONException e) {

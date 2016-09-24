@@ -23,6 +23,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLDatabase;
+import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.overlay.PLNavigationController;
@@ -132,11 +133,15 @@ public class PLNewsListView extends FrameLayout {
 	}
 
 	private void initListView() {
-		mPageList = mGroupModel.getPageArray();
-		mAdapter = new PLNewsListAdapter(getContext());
-		mAdapter.renewalAllPage(mPageList);
-		mListView.setAdapter(mAdapter);
-
+		mGroupModel.getPageContainer().loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLNewsPageModel>() {
+			@Override
+			public void onLoad(List<PLNewsPageModel> modelList) {
+				mPageList = modelList;
+				mAdapter = new PLNewsListAdapter(getContext());
+				mAdapter.renewalAllPage(mPageList);
+				mListView.setAdapter(mAdapter);
+			}
+		});
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

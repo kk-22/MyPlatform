@@ -15,6 +15,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLVolleyHelper;
+import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
@@ -28,6 +29,7 @@ public class PLRSSFetcher {
 	private int mRequestCount;								// 全リクエスト数
 	private int mFetchedCount;								// 通信完了リクエスト数
 	private boolean mIsManualFetching;						// 手動更新である場合TRUE
+	private boolean mIsCanceling;							// キャンセル済み
 	private ArrayList<PLNewsPageModel> mFetchedPageArray;	// レスポンスをパースしたデータ
 	private PLRSSCallbackListener mListener;
 
@@ -76,6 +78,8 @@ public class PLRSSFetcher {
 	}
 
 	public void cancelAllRequest() {
+		mIsCanceling = true;
+
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 		mFetchedCount = 0;
 		mRequestCount = 0;
@@ -87,34 +91,42 @@ public class PLRSSFetcher {
 	private void startRequest() {
 		mFetchedCount = 0;
 		mFetchedPageArray.clear();
+		mIsCanceling = false;
 
 		mProgressBar.setVisibility(View.VISIBLE);
 		requestAllSite();
 	}
 
 	private void requestAllSite() {
-		List<PLNewsSiteModel> siteList = mGroupModel.getSiteArray();
-		mRequestCount = siteList.size();
-		mProgressBar.setMax(mRequestCount);
+		mGroupModel.getSiteContainer().loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLNewsSiteModel>() {
+			@Override
+			public void onLoad(List<PLNewsSiteModel> siteList) {
+				if (mIsCanceling) {
+					return;
+				}
+				mRequestCount = siteList.size();
+				mProgressBar.setMax(mRequestCount);
 
-		PLVolleyHelper volleyHelper = PLCoreService.getVolleyHelper();
-		for (final PLNewsSiteModel site : siteList) {
-			Response.Listener<InputStream> listener = new Response.Listener<InputStream>() {
-				@Override
-				public void onResponse(InputStream inputStream) {
-					fetchedPage(site, inputStream);
+				PLVolleyHelper volleyHelper = PLCoreService.getVolleyHelper();
+				for (final PLNewsSiteModel site : siteList) {
+					Response.Listener<InputStream> listener = new Response.Listener<InputStream>() {
+						@Override
+						public void onResponse(InputStream inputStream) {
+							fetchedPage(site, inputStream);
+						}
+					};
+					Response.ErrorListener error = new Response.ErrorListener() {
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							MYLogUtil.outputErrorLog("Fetch page error " + error.toString());
+							countUpFetch();
+						}
+					};
+					PLInputStreamRequest request = new PLInputStreamRequest(site.getUrl(),listener, error);
+					volleyHelper.addRequest(request, this.getClass());
 				}
-			};
-			Response.ErrorListener error = new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					MYLogUtil.outputErrorLog("Fetch page error " + error.toString());
-					countUpFetch();
-				}
-			};
-			PLInputStreamRequest request = new PLInputStreamRequest(site.getUrl(),listener, error);
-			volleyHelper.addRequest(request, this.getClass());
-		}
+			}
+		});
 	}
 
 	private void fetchedPage(final PLNewsSiteModel site, final InputStream inputStream) {
