@@ -53,12 +53,17 @@ public class PLRSSFetcher {
 			return;
 		}
 		Calendar cacheCalendar =  mGroupModel.getFetchedDate();
-		if (cacheCalendar != null) {
+		boolean hasPage = (mGroupModel.getPageContainer().count() > 0);
+		if (hasPage && cacheCalendar != null) {
 			cacheCalendar.add(Calendar.MINUTE, mGroupModel.getUpdateInterval());
 			Calendar currentCalendar = Calendar.getInstance();
 			if (currentCalendar.compareTo(cacheCalendar) < 0) {
 				return;
 			}
+		}
+
+		if (!hasPage || mGroupModel.isAutoUpdate()) {
+			mIsManualFetching = true;
 		}
 		startRequest();
 	}

@@ -23,6 +23,8 @@ public class PLNewsGroupModel extends BaseModel {
 	@Column
 	private int updateInterval;				// 自動更新間隔分
 	@Column
+	private boolean isAutoUpdate;			// フェッチ後の自動更新有無
+	@Column
 	private Calendar fetchedDate;			// 最終更新日
 	@Column
 	private Calendar readDate;				// 最終閲覧日
@@ -64,6 +66,14 @@ public class PLNewsGroupModel extends BaseModel {
 
 	public void setUpdateInterval(int updateInterval) {
 		this.updateInterval = updateInterval;
+	}
+
+	public boolean isAutoUpdate() {
+		return isAutoUpdate;
+	}
+
+	public void setAutoUpdate(boolean autoUpdate) {
+		isAutoUpdate = autoUpdate;
 	}
 
 	public Calendar getFetchedDate() {

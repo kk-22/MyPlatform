@@ -24,8 +24,11 @@ public class PLModelContainer<TModel extends BaseModel> {
 		mModelList.add(model);
 	}
 
-	public void setModelList(List<TModel> modelList) {
-		mModelList = modelList;
+	public long count() {
+		if (mModelList != null) {
+			return mModelList.size();
+		}
+		return mQuery.count();
 	}
 
 	public void loadList(final PLOnModelLoadThreadListener<TModel> threadListener, final PLOnModelLoadMainListener<TModel> mainListener) {
@@ -106,5 +109,9 @@ public class PLModelContainer<TModel extends BaseModel> {
 
 	public List<TModel> getModelList() {
 		return mModelList;
+	}
+
+	public void setModelList(List<TModel> modelList) {
+		mModelList = modelList;
 	}
 }

@@ -84,6 +84,7 @@ public class PLSiteFetcher {
 				model.setColor(jsonObject.getString("color"));
 				model.setTitle(jsonObject.getString("title"));
 				model.setUpdateInterval(jsonObject.getInt("update_interval"));
+				model.setAutoUpdate(PLVolleyHelper.parseBoolean(jsonObject, "auto_update"));
 				array.add(model);
 			}
 		} catch (JSONException e) {
