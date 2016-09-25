@@ -8,7 +8,6 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.Calendar;
-import java.util.List;
 
 @ModelContainer
 @Table(database = PLDatabase.class)
@@ -28,8 +27,6 @@ public class PLNewsGroupModel extends BaseModel {
 	@Column
 	private Calendar readDate;				// 最終閲覧日
 
-	public List<PLNewsSiteModel> siteArray;
-	public List<PLNewsPageModel> pageArray;
 	private PLModelContainer<PLNewsSiteModel> siteContainer;
 	private PLModelContainer<PLNewsPageModel> pageContainer;
 

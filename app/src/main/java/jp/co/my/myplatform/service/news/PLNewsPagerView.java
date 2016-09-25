@@ -40,6 +40,12 @@ public class PLNewsPagerView extends PLContentView {
 	}
 
 	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		MYLogUtil.showToast("finalize listPager");
+	}
+
+	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		// ブラウザ開いた際にした設定を戻す

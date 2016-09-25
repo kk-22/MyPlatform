@@ -69,6 +69,9 @@ public class PLNavigationController extends PLOverlayView {
 	}
 
 	public <T extends PLContentView> T pushView(T view) {
+		// フォーカスが前のViewに残らないように移動
+		view.requestFocus();
+
 		if (!mViewCache.contains(view)) {
 			mViewCache.add(view);
 		}

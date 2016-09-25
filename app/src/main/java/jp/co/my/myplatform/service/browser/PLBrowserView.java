@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.browser;
 
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -108,7 +107,8 @@ public class PLBrowserView extends PLContentView {
 		}
 	}
 
-	protected boolean onBackKey() {
+	@Override
+	public boolean onBackKey() {
 		if (removeTopPopover()) {
 			// 子ビューがあったときのみWebView戻る処理を行わない
 			return true;
@@ -146,16 +146,9 @@ public class PLBrowserView extends PLContentView {
 	}
 
 	private void initButtonEvent() {
-		mCurrentWebView.setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-					onBackKey();
-					return true;
-				}
-				return false;
-			}
-		});
+		setOnKeyListener(this);
+		mCurrentWebView.setOnKeyListener(this);
+
 		mCurrentWebView.setListener(new PLWebView.PLWebViewGestureListener() {
 			@Override
 			public void swipeToRight() {

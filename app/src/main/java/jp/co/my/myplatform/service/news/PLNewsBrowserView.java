@@ -36,7 +36,7 @@ public class PLNewsBrowserView extends PLBrowserView {
 	}
 
 	@Override
-	protected boolean onBackKey() {
+	public boolean onBackKey() {
 		if (super.onBackKey()) {
 			return true;
 		}
