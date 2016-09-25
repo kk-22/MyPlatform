@@ -37,7 +37,6 @@ public class PLNewsListView extends FrameLayout {
 
 	private PLNewsGroupModel mGroupModel;
 	private PLRSSFetcher mRssFetcher;
-	private List<PLNewsPageModel> mPageList;
 
 	public PLNewsListView(Context context, PLNewsGroupModel group) {
 		super(context);
@@ -68,7 +67,7 @@ public class PLNewsListView extends FrameLayout {
 				MYLogUtil.outputLog("start " +mGroupModel.getTitle());
 				final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
 				final ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>();
-				for (PLNewsPageModel oldPage : mPageList) {
+				for (PLNewsPageModel oldPage : mGroupModel.getPageContainer().getModelList()) {
 					int newIndex = pageArray.indexOf(oldPage);
 					if (newIndex == -1) {
 						removePageArray.add(oldPage);
@@ -81,33 +80,42 @@ public class PLNewsListView extends FrameLayout {
 						nextPageArray.add(oldPage);
 					}
 				}
+				PLNewsPageModel partition = new PLNewsPageModel();
+				partition.associateGroup(mGroupModel);
+				if (pageArray.size() == 0) {
+					Calendar groupFetchedDate = mGroupModel.getFetchedDate();
+					partition.setPostedDate(groupFetchedDate);
+					partition.setTitle("新着なし");
+				} else {
+					mAdapter.sortList(pageArray);
+					PLNewsPageModel newPage = pageArray.get(pageArray.size() - 1);
+					Calendar calendar = newPage.getPostedDate();
+					calendar.set(Calendar.MINUTE, -1);
+					partition.setPostedDate(calendar);
+					partition.setTitle("新着" +pageArray.size() +"件");
+				}
 				nextPageArray.addAll(pageArray);
-				MYLogUtil.outputLog("end " +mGroupModel.getTitle());
+				nextPageArray.add(partition);
 
-				mPageList = nextPageArray;
-				showList();
+				MYLogUtil.outputLog("end " +mGroupModel.getTitle());
+				mGroupModel.getPageContainer().setModelList(nextPageArray);
+				mAdapter.renewalAllPage(nextPageArray);
 				mSwipeLayout.setRefreshing(false);
 
 				mGroupModel.setFetchedDate(Calendar.getInstance());
 				FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
 					@Override
 					public void execute(DatabaseWrapper databaseWrapper) {
-						MYLogUtil.outputLog("start");
 						for (PLNewsPageModel site : removePageArray) {
 							MYLogUtil.outputLog("delete " +site.getTitle());
 							site.delete();
 						}
 						PLDatabase.saveModelList(nextPageArray, true);
 						mGroupModel.save();
-						MYLogUtil.outputLog("end");
 					}
 				}).build().execute();
 			}
 		});
-	}
-
-	private void showList() {
-		mAdapter.renewalAllPage(mPageList);
 	}
 
 	private void initSwipeLayout() {
@@ -133,9 +141,8 @@ public class PLNewsListView extends FrameLayout {
 		mGroupModel.getPageContainer().loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLNewsPageModel>() {
 			@Override
 			public void onLoad(List<PLNewsPageModel> modelList) {
-				mPageList = modelList;
 				mAdapter = new PLNewsListAdapter(getContext());
-				mAdapter.renewalAllPage(mPageList);
+				mAdapter.renewalAllPage(modelList);
 				mListView.setAdapter(mAdapter);
 			}
 		});
@@ -143,6 +150,9 @@ public class PLNewsListView extends FrameLayout {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLNewsPageModel pageModel = mAdapter.getItem(position);
+				if (pageModel.isPartitionCell()) {
+					return;
+				}
 				PLNavigationController navigation = PLCoreService.getNavigationController();
 				navigation.getCurrentView().setKeepCache(true);
 

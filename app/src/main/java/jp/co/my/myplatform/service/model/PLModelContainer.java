@@ -103,4 +103,8 @@ public class PLModelContainer<TModel extends BaseModel> {
 	public static abstract class PLOnModelLoadMainListener<TModel> {
 		public abstract void onLoad(List<TModel> modelList);
 	}
+
+	public List<TModel> getModelList() {
+		return mModelList;
+	}
 }

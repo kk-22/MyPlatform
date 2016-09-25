@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 
-	private PLNewsListComparator mComparator;
+	private final PLNewsListComparator mComparator;
 
 	public PLNewsListAdapter(Context context) {
 		super(context, R.layout.cell_news_page);
@@ -25,32 +26,23 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		PLNewsPageModel page = getItem(position);
-		View view = convertView;
-		if (view == null) {
-			LayoutInflater inflater = LayoutInflater.from(getContext());
-			view = inflater.inflate(R.layout.cell_news_page, parent, false);
-		}
-
-		TextView dateText = (TextView) view.findViewById(R.id.date_text);
-		TextView siteText = (TextView) view.findViewById(R.id.site_name_text);
-		TextView pageText = (TextView) view.findViewById(R.id.page_title_text);
-
-		dateText.setText(page.getPostedString());
-		pageText.setText(page.getTitle());
-		PLNewsSiteModel site = page.getSiteForeign().load();
-		if (site != null) {
-			siteText.setText(site.getName());
-		}
-		setBackgroundColorToView(view, page.isAlreadyRead());
-
-		return view;
+	public int getViewTypeCount() {
+		return 2;
 	}
 
 	@Override
-	public PLNewsPageModel getItem(int position) {
-		return super.getItem(position);
+	public int getItemViewType(int position) {
+		return getItem(position).isPartitionCell() ? 0 : 1;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		PLNewsPageModel page = getItem(position);
+		if (page.isPartitionCell()) {
+			return createPartitionCell(page, convertView, parent);
+		} else {
+			return createNewsPageCell(page, convertView, parent);
+		}
 	}
 
 	public static void setBackgroundColorToView(View view, boolean isAlreadyRead) {
@@ -62,14 +54,52 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 		}
 	}
 
-	public void renewalAllPage(List<PLNewsPageModel> pageArray) {
+	public void renewalAllPage(List<PLNewsPageModel> pageList) {
+		sortList(pageList);
+
 		clear();
-		addAll(pageArray);
-		sort(mComparator);
+		addAll(pageList);
 		notifyDataSetChanged();
 	}
 
+	public void sortList(List<PLNewsPageModel> pageList) {
+		Collections.sort(pageList, mComparator);
+	}
+
+	private View createPartitionCell(PLNewsPageModel page, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			LayoutInflater inflater = LayoutInflater.from(getContext());
+			convertView = inflater.inflate(R.layout.cell_news_partition, parent, false);
+		}
+		TextView dateText = (TextView) convertView.findViewById(R.id.date_text);
+		TextView titleText = (TextView) convertView.findViewById(R.id.partition_title_text);
+
+		dateText.setText(page.getPostedString());
+		titleText.setText(page.getTitle());
+		return convertView;
+	}
+
+	private View createNewsPageCell(PLNewsPageModel page, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			LayoutInflater inflater = LayoutInflater.from(getContext());
+			convertView = inflater.inflate(R.layout.cell_news_page, parent, false);
+		}
+		TextView dateText = (TextView) convertView.findViewById(R.id.date_text);
+		TextView siteText = (TextView) convertView.findViewById(R.id.site_name_text);
+		TextView pageText = (TextView) convertView.findViewById(R.id.page_title_text);
+
+		dateText.setText(page.getPostedString());
+		pageText.setText(page.getTitle());
+		PLNewsSiteModel site = page.getSiteForeign().load();
+		if (site != null) {
+			siteText.setText(site.getName());
+		}
+		setBackgroundColorToView(convertView, page.isAlreadyRead());
+		return convertView;
+	}
+
 	private class PLNewsListComparator implements Comparator<PLNewsPageModel> {
+
 		public int compare(PLNewsPageModel pageA, PLNewsPageModel pageB) {
 			if (pageA.getPostedDate() == null) {
 				return 1;

@@ -49,8 +49,16 @@ public class PLNewsPageModel extends BaseModel {
 	}
 
 	public String getPostedString() {
+		if (postedDate == null) {
+			return "-";
+		}
 		SimpleDateFormat format = new SimpleDateFormat("MM/dd(E)HH:mm");
 		return format.format(postedDate.getTime());
+	}
+
+	// 一覧に表示する際の境界線
+	public boolean isPartitionCell() {
+		return (url == null);
 	}
 
 	public int getNo() {
