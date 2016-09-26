@@ -83,8 +83,7 @@ public class PLNewsListView extends FrameLayout {
 				PLNewsPageModel partition = new PLNewsPageModel();
 				partition.associateGroup(mGroupModel);
 				if (pageArray.size() == 0) {
-					Calendar groupFetchedDate = mGroupModel.getFetchedDate();
-					partition.setPostedDate(groupFetchedDate);
+					partition.setPostedDate(Calendar.getInstance());
 					partition.setTitle("新着なし");
 				} else {
 					mAdapter.sortList(pageArray);
@@ -100,6 +99,7 @@ public class PLNewsListView extends FrameLayout {
 				MYLogUtil.outputLog("end " +mGroupModel.getTitle());
 				mGroupModel.getPageContainer().setModelList(nextPageArray);
 				mAdapter.renewalAllPage(nextPageArray);
+				mListView.setSelection(nextPageArray.indexOf(partition) - 7);
 				mSwipeLayout.setRefreshing(false);
 
 				mGroupModel.setFetchedDate(Calendar.getInstance());
