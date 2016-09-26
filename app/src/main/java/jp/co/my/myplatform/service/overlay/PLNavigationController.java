@@ -44,7 +44,7 @@ public class PLNavigationController extends PLOverlayView {
 
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
-		return getBaseParamsForFullView();
+		return getBaseParamsForNavigationView();
 	}
 
 	@SuppressWarnings("unchecked")

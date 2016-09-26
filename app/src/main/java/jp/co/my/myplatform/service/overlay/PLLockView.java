@@ -31,18 +31,12 @@ public class PLLockView extends PLOverlayView {
 
 		// ディスプレイを暗くする
 		PLDeviceSetting.setMinScreenBrightness();
-
-		// ホームボタン対策で定期的にアプリ起動
-//		mPrevIsAutoStartApp = SUDeviceSetting.issIsAutoStartApp();
-//		SUDeviceSetting.setsIsAutoStartApp(true);
 	}
 
 	@Override
 	public void viewWillRemove() {
 		// 画面ロック時に変えた設定を元に戻す
 		PLDeviceSetting.revertScreenBrightness();
-
-//		SUDeviceSetting.setsIsAutoStartApp(mPrevIsAutoStartApp);
 	}
 
 	@Override
