@@ -55,8 +55,6 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 	}
 
 	public void renewalAllPage(List<PLNewsPageModel> pageList) {
-		sortList(pageList);
-
 		clear();
 		addAll(pageList);
 		notifyDataSetChanged();
@@ -101,14 +99,19 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 	private class PLNewsListComparator implements Comparator<PLNewsPageModel> {
 
 		public int compare(PLNewsPageModel pageA, PLNewsPageModel pageB) {
+			if (pageB.getPositionNo() < pageA.getPositionNo()) {
+				return 1; // Noが低い方が上
+			} else if (pageA.getPositionNo() < pageB.getPositionNo()) {
+				return -1;
+			}
+
 			if (pageA.getPostedDate() == null) {
 				return 1;
-			}
-			if (pageB.getPostedDate() == null) {
+			} else if (pageB.getPostedDate() == null) {
 				return -1;
 			}
 			if (pageA.getPostedDate().before(pageB.getPostedDate())) {
-				return 1;
+				return 1; // 日付が新しい方が上
 			} else if (pageA.getPostedDate().after(pageB.getPostedDate())) {
 				return -1;
 			} else {

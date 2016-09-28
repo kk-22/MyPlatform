@@ -28,9 +28,11 @@ public class PLNewsPageModel extends BaseModel {
 	@Column
 	private String url;
 	@Column
-	private boolean alreadyRead;
-	@Column
 	private Calendar postedDate;		// RSSに記載された登録日
+	@Column
+	private int positionNo;
+	@Column
+	private boolean alreadyRead;
 
 	public PLNewsPageModel() {
 		super();
@@ -103,19 +105,27 @@ public class PLNewsPageModel extends BaseModel {
 		this.url = url;
 	}
 
-	public boolean isAlreadyRead() {
-		return alreadyRead;
-	}
-
-	public void setAlreadyRead(boolean alreadyRead) {
-		this.alreadyRead = alreadyRead;
-	}
-
 	public Calendar getPostedDate() {
 		return postedDate;
 	}
 
 	public void setPostedDate(Calendar postedDate) {
 		this.postedDate = postedDate;
+	}
+
+	public int getPositionNo() {
+		return positionNo;
+	}
+
+	public void setPositionNo(int positionNo) {
+		this.positionNo = positionNo;
+	}
+
+	public boolean isAlreadyRead() {
+		return alreadyRead;
+	}
+
+	public void setAlreadyRead(boolean alreadyRead) {
+		this.alreadyRead = alreadyRead;
 	}
 }
