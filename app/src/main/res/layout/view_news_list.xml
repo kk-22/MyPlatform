@@ -12,27 +12,35 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/page_list"
-            android:divider="#000"
-            android:dividerHeight="0.1dp"
-            android:listSelector="@drawable/selector_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbarThumbVertical="@android:color/holo_blue_light"
-            android:fadeScrollbars="false" />
+            <ListView
+                android:id="@+id/page_list"
+                android:divider="#000"
+                android:dividerHeight="0.1dp"
+                android:listSelector="@drawable/selector_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarThumbVertical="@android:color/holo_blue_light"
+                android:fadeScrollbars="false" />
 
-        <ProgressBar
-            android:visibility="gone"
-            android:background="#88888888"
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:id="@+id/progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:indeterminate="false"
-            android:layout_gravity="bottom"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"/>
+            <ProgressBar
+                android:visibility="gone"
+                android:background="#88888888"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:indeterminate="false"
+                android:layout_gravity="bottom"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"/>
+
+            <Button
+                android:id="@+id/news_function_button"
+                android:alpha="0.5"
+                android:background="@android:color/holo_blue_light"
+                android:layout_gravity="right|bottom"
+                android:layout_width="45dp"
+                android:layout_height="45dp"/>
 
         </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>

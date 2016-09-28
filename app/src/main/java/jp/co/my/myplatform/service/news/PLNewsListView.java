@@ -27,6 +27,7 @@ import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.overlay.PLNavigationController;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 
 public class PLNewsListView extends FrameLayout {
 
@@ -50,6 +51,7 @@ public class PLNewsListView extends FrameLayout {
 		initSwipeLayout();
 		initListView();
 		initFetcher();
+		initButton();
 	}
 
 	@Override
@@ -167,5 +169,41 @@ public class PLNewsListView extends FrameLayout {
 				mGroupModel.save();
 			}
 		});
+	}
+
+	private void initButton() {
+		findViewById(R.id.news_function_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showFunction();
+			}
+		});
+	}
+
+	private void showFunction() {
+		String[] titles = {"Debug : delete 4 pages"};
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
+				switch (position) {
+					case 0: {
+						List<PLNewsPageModel> pageList = PLNewsListView.this.mGroupModel.getPageContainer().getModelList();
+						PLNewsListView.this.mAdapter.sortList(pageList);
+						int size = pageList.size();
+						int[] indexes = {0, 1, size - 2, size - 1};
+						for (int index : indexes) {
+							if (index < size) {
+								pageList.get(index).delete();
+							}
+						}
+						mGroupModel.getPageContainer().clear();
+						initListView();
+						MYLogUtil.showToast("deleted 4 pages");
+						return;
+					}
+				}
+			}
+		}).showPopover();
 	}
 }

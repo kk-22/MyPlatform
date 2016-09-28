@@ -31,6 +31,10 @@ public class PLModelContainer<TModel extends BaseModel> {
 		return mQuery.count();
 	}
 
+	public void clear() {
+		mModelList = null;
+	}
+
 	public void loadList(final PLOnModelLoadThreadListener<TModel> threadListener, final PLOnModelLoadMainListener<TModel> mainListener) {
 		if (mModelList == null) {
 			loadListInThread(true, threadListener, mainListener);
