@@ -22,16 +22,22 @@ import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLRSSFetcher {
 
+	private enum FetchState {
+		FETCH_STATE_NONE,					// 動作なし・キャンセル後
+		FETCH_STATE_MANUAL_FETCHING,		// 手動更新中
+		FETCH_STATE_AUTO_FETCHING,			// 自動更新中
+		FETCH_STATE_AUTO_FETCH_FINISHED,	// 自動更新完了で手動更新待ち
+	}
+
 	private Handler mMainHandler;
 	private ProgressBar mProgressBar;
 	private PLNewsGroupModel mGroupModel;
 
 	private int mRequestCount;								// 全リクエスト数
 	private int mFetchedCount;								// 通信完了リクエスト数
-	private boolean mIsManualFetching;						// 手動更新である場合TRUE
-	private boolean mIsCanceling;							// キャンセル済み
-	private ArrayList<PLNewsPageModel> mFetchedPageArray;	// レスポンスをパースしたデータ
+	private ArrayList<PLNewsPageModel> mFetchedPageArray;	// レスポンスをパースしたページ
 	private PLRSSCallbackListener mListener;
+	private FetchState mState;
 
 	public PLRSSFetcher(PLNewsGroupModel group, ProgressBar progressBar, PLRSSCallbackListener listener) {
 		mGroupModel = group;
@@ -40,17 +46,19 @@ public class PLRSSFetcher {
 
 		mMainHandler = new Handler();
 		mFetchedPageArray = new ArrayList<>();
+		mState = FetchState.FETCH_STATE_NONE;
 		autoFetchIfNecessary();
 	}
 
 	public void autoFetchIfNecessary() {
-		if (isFetching()) {
-			MYLogUtil.showToast("Fetching now");
-			return;
-		}
-		if (isFinished()) {
-			MYLogUtil.showToast("fetch was finished");
-			return;
+		switch (mState) {
+			case FETCH_STATE_MANUAL_FETCHING:
+			case FETCH_STATE_AUTO_FETCHING:
+				MYLogUtil.showToast("Fetching now");return;
+			case FETCH_STATE_AUTO_FETCH_FINISHED:
+				MYLogUtil.showToast("fetch was finished");return;
+			case FETCH_STATE_NONE:
+				break;
 		}
 		Calendar cacheCalendar =  mGroupModel.getFetchedDate();
 		boolean hasPage = (mGroupModel.getPageContainer().count() > 0);
@@ -63,32 +71,35 @@ public class PLRSSFetcher {
 		}
 
 		if (!hasPage || mGroupModel.isAutoUpdate()) {
-			mIsManualFetching = true;
+			mState = FetchState.FETCH_STATE_MANUAL_FETCHING;
+		} else {
+			mState = FetchState.FETCH_STATE_AUTO_FETCHING;
 		}
 		startRequest();
 	}
 
 	public void manualFetchIfNecessary() {
-		mIsManualFetching = true;
-		if (isFetching()) {
-			MYLogUtil.showToast("Fetching now");
-			return;
-		}
-
-		if (isFinished()) {
-			finishAllFetch();
-		} else {
-			startRequest();
+		switch (mState) {
+			case FETCH_STATE_NONE: {
+				mState = FetchState.FETCH_STATE_MANUAL_FETCHING;
+				startRequest();
+				break;
+			}
+			case FETCH_STATE_AUTO_FETCHING:
+				mState = FetchState.FETCH_STATE_MANUAL_FETCHING;
+			case FETCH_STATE_MANUAL_FETCHING:
+				MYLogUtil.showToast("Fetching now");break;
+			case FETCH_STATE_AUTO_FETCH_FINISHED:
+				finishAllFetch();break;
 		}
 	}
 
 	public void cancelAllRequest() {
-		mIsCanceling = true;
+		mState = FetchState.FETCH_STATE_NONE;
 
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 		mFetchedCount = 0;
 		mRequestCount = 0;
-		mIsManualFetching = false;
 		mFetchedPageArray.clear();
 		mProgressBar.setVisibility(View.GONE);
 	}
@@ -96,7 +107,6 @@ public class PLRSSFetcher {
 	private void startRequest() {
 		mFetchedCount = 0;
 		mFetchedPageArray.clear();
-		mIsCanceling = false;
 
 		mProgressBar.setVisibility(View.VISIBLE);
 		requestAllSite();
@@ -106,7 +116,7 @@ public class PLRSSFetcher {
 		mGroupModel.getSiteContainer().loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLNewsSiteModel>() {
 			@Override
 			public void onLoad(List<PLNewsSiteModel> siteList) {
-				if (mIsCanceling) {
+				if (mState == FetchState.FETCH_STATE_NONE) {
 					return;
 				}
 				mRequestCount = siteList.size();
@@ -117,7 +127,7 @@ public class PLRSSFetcher {
 					Response.Listener<InputStream> listener = new Response.Listener<InputStream>() {
 						@Override
 						public void onResponse(InputStream inputStream) {
-							fetchedPage(site, inputStream);
+							parseRssOnThread(site, inputStream);
 						}
 					};
 					Response.ErrorListener error = new Response.ErrorListener() {
@@ -134,7 +144,7 @@ public class PLRSSFetcher {
 		});
 	}
 
-	private void fetchedPage(final PLNewsSiteModel site, final InputStream inputStream) {
+	private void parseRssOnThread(final PLNewsSiteModel site, final InputStream inputStream) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -161,29 +171,40 @@ public class PLRSSFetcher {
 			return;
 		}
 
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mergeAllPage();
+			}
+		}).start();
+	}
+
+	private void mergeAllPage() {
 		// Finish all request
-		if (mIsManualFetching) {
-			finishAllFetch();
-		}
+		mMainHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				switch (mState) {
+					case FETCH_STATE_NONE:
+					case FETCH_STATE_AUTO_FETCH_FINISHED:
+						break;
+					case FETCH_STATE_MANUAL_FETCHING:
+						finishAllFetch();break;
+					case FETCH_STATE_AUTO_FETCHING: {
+						mState = FetchState.FETCH_STATE_AUTO_FETCH_FINISHED;
+						break;
+					}
+				}
+			}
+		});
 	}
 
 	private void finishAllFetch() {
-		ArrayList<PLNewsPageModel> array = new ArrayList<>(mFetchedPageArray);
+		mListener.finishedRequest(mFetchedPageArray);
+
 		mFetchedPageArray.clear();
-		mIsManualFetching = false;
-		mFetchedCount = 0;
-		mRequestCount = 0;
+		mState = FetchState.FETCH_STATE_NONE;
 		mProgressBar.setVisibility(View.GONE);
-
-		mListener.finishedRequest(array);
-	}
-
-	private boolean isFetching() {
-		return (mRequestCount > 0 &&  mFetchedCount < mRequestCount);
-	}
-
-	private boolean isFinished() {
-		return (mRequestCount > 0 &&  mFetchedCount == mRequestCount);
 	}
 
 	public static abstract class PLRSSCallbackListener {
