@@ -6,6 +6,9 @@ import android.widget.ProgressBar;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,6 +18,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLVolleyHelper;
+import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
@@ -35,7 +39,8 @@ public class PLRSSFetcher {
 
 	private int mRequestCount;								// 全リクエスト数
 	private int mFetchedCount;								// 通信完了リクエスト数
-	private ArrayList<PLNewsPageModel> mFetchedPageArray;	// レスポンスをパースしたページ
+	private ArrayList<PLNewsPageModel> mParsedPageArray;	// レスポンスをパースしたページ
+	private ArrayList<PLNewsPageModel> mResultPageArray;		// 一覧に表示するページ
 	private PLRSSCallbackListener mListener;
 	private FetchState mState;
 
@@ -45,7 +50,7 @@ public class PLRSSFetcher {
 		mListener = listener;
 
 		mMainHandler = new Handler();
-		mFetchedPageArray = new ArrayList<>();
+		mParsedPageArray = new ArrayList<>();
 		mState = FetchState.FETCH_STATE_NONE;
 		autoFetchIfNecessary();
 	}
@@ -100,13 +105,15 @@ public class PLRSSFetcher {
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 		mFetchedCount = 0;
 		mRequestCount = 0;
-		mFetchedPageArray.clear();
+		mParsedPageArray.clear();
+		mResultPageArray = null;
 		mProgressBar.setVisibility(View.GONE);
 	}
 
 	private void startRequest() {
 		mFetchedCount = 0;
-		mFetchedPageArray.clear();
+		mParsedPageArray.clear();
+		mResultPageArray = null;
 
 		mProgressBar.setVisibility(View.VISIBLE);
 		requestAllSite();
@@ -155,7 +162,7 @@ public class PLRSSFetcher {
 						if (pageList == null) {
 							MYLogUtil.showErrorToast("parsedPageList is nul. siteTitle = " +site.getName());
 						} else {
-							mFetchedPageArray.addAll(pageList);
+							mParsedPageArray.addAll(pageList);
 						}
 						countUpFetch();
 					}
@@ -180,6 +187,64 @@ public class PLRSSFetcher {
 	}
 
 	private void mergeAllPage() {
+		// 重複ページの削除
+		PLNewsListAdapter.sortList(mParsedPageArray);
+		final ArrayList<PLNewsPageModel> fetchPageArray = new ArrayList<>();
+		for (int i = 0; i < mParsedPageArray.size() ; i++) {
+			PLNewsPageModel page = mParsedPageArray.get(i);
+			if (mParsedPageArray.lastIndexOf(page) <= i) {
+				fetchPageArray.add(page);
+			}
+		}
+		mParsedPageArray.clear();
+
+		// 新旧PageModelのマージ
+		final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
+		final ArrayList<PLNewsPageModel> remainPageArray = new ArrayList<>();
+		for (PLNewsPageModel oldPage : mGroupModel.getPageContainer().getModelList()) {
+			int newIndex = fetchPageArray.indexOf(oldPage);
+			if (newIndex == -1) {
+				removePageArray.add(oldPage);
+			} else {
+				PLNewsPageModel newPage = fetchPageArray.get(newIndex);
+				fetchPageArray.remove(newIndex);
+
+				oldPage.setTitle(newPage.getTitle());
+				oldPage.setPostedDate(newPage.getPostedDate());
+				remainPageArray.add(oldPage);
+			}
+		}
+
+		mGroupModel.setFetchedDate(Calendar.getInstance());
+		if (fetchPageArray.size() == 0) {
+			MYLogUtil.showToast(mGroupModel.getTitle() +" 新着ニュースなし");
+			mGroupModel.save();
+		} else {
+			PLNewsPageModel partition = new PLNewsPageModel();
+			partition.associateGroup(mGroupModel);
+			partition.setPostedDate(Calendar.getInstance());
+			partition.setTitle("新着" + fetchPageArray.size() + "件");
+
+			mResultPageArray = new ArrayList<>(fetchPageArray);
+			mResultPageArray.add(partition);
+			mResultPageArray.addAll(remainPageArray);
+			for (int i = 0; i < mResultPageArray.size(); i++) {
+				mResultPageArray.get(i).setPositionNo(i);
+			}
+
+			FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
+				@Override
+				public void execute(DatabaseWrapper databaseWrapper) {
+					for (PLNewsPageModel site : removePageArray) {
+						MYLogUtil.outputLog("delete " + site.getTitle());
+						site.delete();
+					}
+					PLDatabase.saveModelList(fetchPageArray, true);
+					mGroupModel.save();
+				}
+			}).build().execute();
+		}
+
 		// Finish all request
 		mMainHandler.post(new Runnable() {
 			@Override
@@ -200,9 +265,9 @@ public class PLRSSFetcher {
 	}
 
 	private void finishAllFetch() {
-		mListener.finishedRequest(mFetchedPageArray);
+		mListener.finishedRequest(mResultPageArray);
 
-		mFetchedPageArray.clear();
+		mResultPageArray = null;
 		mState = FetchState.FETCH_STATE_NONE;
 		mProgressBar.setVisibility(View.GONE);
 	}

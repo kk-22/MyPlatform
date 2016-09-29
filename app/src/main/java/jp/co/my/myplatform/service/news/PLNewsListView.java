@@ -11,10 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
-import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -22,7 +18,6 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
-import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
@@ -65,71 +60,20 @@ public class PLNewsListView extends FrameLayout {
 		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar, new PLRSSFetcher.PLRSSCallbackListener() {
 			@Override
 			public void finishedRequest(ArrayList<PLNewsPageModel> pageArray) {
-				// TODO: Move to async?
-				MYLogUtil.outputLog("start " +mGroupModel.getTitle());
-
-				mAdapter.sortList(pageArray);
-				ArrayList<PLNewsPageModel> fetchArray = new ArrayList<>();
-				for (int i = pageArray.size() - 1; i >= 0 ; i--) {
-					PLNewsPageModel page = pageArray.get(i);
-					if (!fetchArray.contains(page)) {
-						fetchArray.add(page);
-					}
-				}
-
-				// 新旧PageModelのマージ
-				final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
-				final ArrayList<PLNewsPageModel> remainPageArray = new ArrayList<>();
-				for (PLNewsPageModel oldPage : mGroupModel.getPageContainer().getModelList()) {
-					int newIndex = fetchArray.indexOf(oldPage);
-					if (newIndex == -1) {
-						removePageArray.add(oldPage);
-					} else {
-						PLNewsPageModel newPage = fetchArray.get(newIndex);
-						fetchArray.remove(newIndex);
-
-						oldPage.setTitle(newPage.getTitle());
-						oldPage.setPostedDate(newPage.getPostedDate());
-						remainPageArray.add(oldPage);
-					}
-				}
 				mSwipeLayout.setRefreshing(false);
-				mGroupModel.setFetchedDate(Calendar.getInstance());
-				if (fetchArray.size() == 0) {
-					MYLogUtil.showToast(mGroupModel.getTitle() +" 新着ニュースなし");
-					mGroupModel.save();
+				if (pageArray == null) {
 					return;
 				}
 
-				PLNewsPageModel partition = new PLNewsPageModel();
-				partition.associateGroup(mGroupModel);
-				partition.setPostedDate(Calendar.getInstance());
-				partition.setTitle("新着" +fetchArray.size() +"件");
-
-				mAdapter.sortList(fetchArray);
-				final ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>(fetchArray);
-				nextPageArray.add(partition);
-				nextPageArray.addAll(remainPageArray);
-				for (int i = 0; i < nextPageArray.size(); i++) {
-					nextPageArray.get(i).setPositionNo(i);
-				}
-				MYLogUtil.outputLog("end " +mGroupModel.getTitle());
-
-				mGroupModel.getPageContainer().setModelList(nextPageArray);
-				mAdapter.renewalAllPage(nextPageArray);
-				mListView.setSelection(nextPageArray.indexOf(partition) - 7);
-
-				FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
-					@Override
-					public void execute(DatabaseWrapper databaseWrapper) {
-						for (PLNewsPageModel site : removePageArray) {
-							MYLogUtil.outputLog("delete " +site.getTitle());
-							site.delete();
-						}
-						PLDatabase.saveModelList(nextPageArray, true);
-						mGroupModel.save();
+				mGroupModel.getPageContainer().setModelList(pageArray);
+				mAdapter.renewalAllPage(pageArray);
+				for (PLNewsPageModel page : pageArray) {
+					if (page.isPartitionCell()) {
+						// 新着線へスクロール
+						mListView.setSelection(pageArray.indexOf(page) - 7);
+						break;
 					}
-				}).build().execute();
+				}
 			}
 		});
 	}
