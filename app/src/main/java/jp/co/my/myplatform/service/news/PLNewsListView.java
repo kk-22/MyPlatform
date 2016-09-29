@@ -65,18 +65,28 @@ public class PLNewsListView extends FrameLayout {
 		mRssFetcher = new PLRSSFetcher(mGroupModel, mProgressBar, new PLRSSFetcher.PLRSSCallbackListener() {
 			@Override
 			public void finishedRequest(ArrayList<PLNewsPageModel> pageArray) {
-				// 新旧PageModelのマージ
 				// TODO: Move to async?
 				MYLogUtil.outputLog("start " +mGroupModel.getTitle());
+
+				mAdapter.sortList(pageArray);
+				ArrayList<PLNewsPageModel> fetchArray = new ArrayList<>();
+				for (int i = pageArray.size() - 1; i >= 0 ; i--) {
+					PLNewsPageModel page = pageArray.get(i);
+					if (!fetchArray.contains(page)) {
+						fetchArray.add(page);
+					}
+				}
+
+				// 新旧PageModelのマージ
 				final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
 				final ArrayList<PLNewsPageModel> remainPageArray = new ArrayList<>();
 				for (PLNewsPageModel oldPage : mGroupModel.getPageContainer().getModelList()) {
-					int newIndex = pageArray.indexOf(oldPage);
+					int newIndex = fetchArray.indexOf(oldPage);
 					if (newIndex == -1) {
 						removePageArray.add(oldPage);
 					} else {
-						PLNewsPageModel newPage = pageArray.get(newIndex);
-						pageArray.remove(newIndex);
+						PLNewsPageModel newPage = fetchArray.get(newIndex);
+						fetchArray.remove(newIndex);
 
 						oldPage.setTitle(newPage.getTitle());
 						oldPage.setPostedDate(newPage.getPostedDate());
@@ -85,7 +95,7 @@ public class PLNewsListView extends FrameLayout {
 				}
 				mSwipeLayout.setRefreshing(false);
 				mGroupModel.setFetchedDate(Calendar.getInstance());
-				if (pageArray.size() == 0) {
+				if (fetchArray.size() == 0) {
 					MYLogUtil.showToast(mGroupModel.getTitle() +" 新着ニュースなし");
 					mGroupModel.save();
 					return;
@@ -94,10 +104,10 @@ public class PLNewsListView extends FrameLayout {
 				PLNewsPageModel partition = new PLNewsPageModel();
 				partition.associateGroup(mGroupModel);
 				partition.setPostedDate(Calendar.getInstance());
-				partition.setTitle("新着" +pageArray.size() +"件");
+				partition.setTitle("新着" +fetchArray.size() +"件");
 
-				mAdapter.sortList(pageArray);
-				final ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>(pageArray);
+				mAdapter.sortList(fetchArray);
+				final ArrayList<PLNewsPageModel> nextPageArray = new ArrayList<>(fetchArray);
 				nextPageArray.add(partition);
 				nextPageArray.addAll(remainPageArray);
 				for (int i = 0; i < nextPageArray.size(); i++) {
