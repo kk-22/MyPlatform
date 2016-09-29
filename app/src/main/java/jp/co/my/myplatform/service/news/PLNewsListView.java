@@ -45,8 +45,8 @@ public class PLNewsListView extends FrameLayout {
 		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh);
 
 		initSwipeLayout();
-		initListView();
 		initFetcher();
+		initListView();
 		initButton();
 	}
 
@@ -54,6 +54,24 @@ public class PLNewsListView extends FrameLayout {
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
 		mRssFetcher.cancelAllRequest();
+	}
+
+	private void initSwipeLayout() {
+		mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				mRssFetcher.manualFetchIfNecessary();
+			}
+		});
+		mSwipeLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
+			@Override
+			public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
+				if (mListView.getVisibility() == View.VISIBLE) {
+					return ViewCompat.canScrollVertically(mListView, -1);
+				}
+				return false;
+			}
+		});
 	}
 
 	private void initFetcher() {
@@ -74,25 +92,6 @@ public class PLNewsListView extends FrameLayout {
 						break;
 					}
 				}
-			}
-		});
-	}
-
-	private void initSwipeLayout() {
-		mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-			@Override
-			public void onRefresh() {
-				MYLogUtil.outputLog("pull");
-				mRssFetcher.manualFetchIfNecessary();
-			}
-		});
-		mSwipeLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
-			@Override
-			public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
-				if (mListView.getVisibility() == View.VISIBLE) {
-					return ViewCompat.canScrollVertically(mListView, -1);
-				}
-				return false;
 			}
 		});
 	}
