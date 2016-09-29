@@ -172,6 +172,9 @@ public class PLRSSFetcher {
 	}
 
 	private void countUpFetch() {
+		if (mState == FetchState.FETCH_STATE_NONE) {
+			return;
+		}
 		mFetchedCount++;
 		mProgressBar.setProgress(mFetchedCount);
 		if (mFetchedCount < mRequestCount) {

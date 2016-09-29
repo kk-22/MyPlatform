@@ -50,12 +50,6 @@ public class PLNewsListView extends FrameLayout {
 		initButton();
 	}
 
-	@Override
-	protected void onDetachedFromWindow() {
-		super.onDetachedFromWindow();
-		mRssFetcher.cancelAllRequest();
-	}
-
 	private void initSwipeLayout() {
 		mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override

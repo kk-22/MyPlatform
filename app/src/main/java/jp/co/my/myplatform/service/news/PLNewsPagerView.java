@@ -18,6 +18,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.view.SlidingTabLayout;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
@@ -50,6 +51,7 @@ public class PLNewsPagerView extends PLContentView {
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
 		mSiteFetcher.cancelAllRequest();
+		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 	}
 
 	private void loadNewsGroup() {
