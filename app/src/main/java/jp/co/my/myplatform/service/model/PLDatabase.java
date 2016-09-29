@@ -22,7 +22,7 @@ public class PLDatabase {
 
 	@SuppressWarnings("unchecked") // klassがTではないため不定であるため警告発生
 	public static <T extends Model> void saveModelList(List<T> modelList, boolean isSync) {
-		if (modelList.size() == 0) {
+		if (modelList == null || modelList.size() == 0) {
 			MYLogUtil.showErrorToast("saveModelList list size is 0");
 			return;
 		}

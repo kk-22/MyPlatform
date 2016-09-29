@@ -193,7 +193,7 @@ public class PLRSSFetcher {
 	private void mergeAllPage() {
 		// 重複・バッドワード持ちページの削除
 		PLNewsListAdapter.sortList(mParsedPageArray);
-		final ArrayList<PLNewsPageModel> fetchPageArray = new ArrayList<>();
+		ArrayList<PLNewsPageModel> fetchPageArray = new ArrayList<>();
 		List<PLBadWordModel> wordList = mGroupModel.getBadWordContainer().getModelList();
 		int parsedCount = mParsedPageArray.size();
 		for (int i = 0; i < parsedCount ; i++) {
@@ -249,6 +249,7 @@ public class PLRSSFetcher {
 				mResultPageArray.get(i).setPositionNo(i);
 			}
 
+			final ArrayList<PLNewsPageModel> savePageArray = new ArrayList<>(mResultPageArray);
 			FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
 				@Override
 				public void execute(DatabaseWrapper databaseWrapper) {
@@ -256,7 +257,7 @@ public class PLRSSFetcher {
 						MYLogUtil.outputLog("delete " + site.getTitle());
 						site.delete();
 					}
-					PLDatabase.saveModelList(mResultPageArray, true);
+					PLDatabase.saveModelList(savePageArray, true);
 					mGroupModel.save();
 				}
 			}).build().execute();
