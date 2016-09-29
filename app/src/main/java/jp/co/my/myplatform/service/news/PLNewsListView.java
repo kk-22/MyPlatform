@@ -26,6 +26,7 @@ import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
+import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 import jp.co.my.myplatform.service.overlay.PLNavigationController;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 
@@ -171,6 +172,18 @@ public class PLNewsListView extends FrameLayout {
 				PLNewsListAdapter.setBackgroundColorToView(view, true);
 				mGroupModel.setReadDate(Calendar.getInstance());
 				mGroupModel.save();
+			}
+		});
+		mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				PLNewsPageModel page = mAdapter.getItem(position);
+				if (page.isPartitionCell()) {
+					return false;
+				}
+				PLNewsSiteModel site = page.getSiteForeign().load();
+				MYLogUtil.showToast(site.getName() +"\n" +site.getUrl());
+				return true;
 			}
 		});
 	}
