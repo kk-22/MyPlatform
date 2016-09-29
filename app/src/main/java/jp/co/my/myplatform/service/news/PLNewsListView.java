@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.news;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,6 +10,8 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.raizlabs.android.dbflow.sql.language.Delete;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.model.PLBadWordModel;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
@@ -32,11 +34,13 @@ public class PLNewsListView extends FrameLayout {
 	private ListView mListView;
 	private PLNewsListAdapter mAdapter;
 
+	private PLNewsPagerView mPagerView;
 	private PLNewsGroupModel mGroupModel;
 	private PLRSSFetcher mRssFetcher;
 
-	public PLNewsListView(Context context, PLNewsGroupModel group) {
-		super(context);
+	public PLNewsListView(PLNewsPagerView pagerView, PLNewsGroupModel group) {
+		super(pagerView.getContext());
+		mPagerView = pagerView;
 		mGroupModel = group;
 
 		LayoutInflater.from(getContext()).inflate(R.layout.view_news_list, this);
@@ -145,7 +149,7 @@ public class PLNewsListView extends FrameLayout {
 	}
 
 	private void showFunction() {
-		String[] titles = {"Debug : delete 4 pages"};
+		String[] titles = {"Debug : delete 4 pages", "Update bad word"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -164,6 +168,11 @@ public class PLNewsListView extends FrameLayout {
 						mGroupModel.getPageContainer().clear();
 						initListView();
 						MYLogUtil.showToast("deleted 4 pages");
+						return;
+					}
+					case 1: {
+						Delete.table(PLBadWordModel.class);
+						mPagerView.fetchBadWord();
 						return;
 					}
 				}

@@ -19,6 +19,7 @@ import jp.co.my.common.view.SlidingTabLayout;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.model.PLBadWordModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
@@ -63,8 +64,13 @@ public class PLNewsPagerView extends PLContentView {
 				mNewsGroupArray = modelList;
 				if (mNewsGroupArray.size() == 0) {
 					fetchNewsGroup();
-				} else {
-					createViewPager();
+					return;
+				}
+
+				createViewPager();
+				// ニュースページ取得時用にキャッシュ作成
+				for (PLNewsGroupModel group : mNewsGroupArray) {
+					group.getBadWordContainer().loadList(null, null);
 				}
 			}
 		});
@@ -74,12 +80,16 @@ public class PLNewsPagerView extends PLContentView {
 		mSiteFetcher.startRequest(new PLSiteFetcher.PLSiteCallbackListener() {
 			 @Override
 			 public void finishedRequest(ArrayList<PLNewsGroupModel> groupArray, ArrayList<ArrayList<PLNewsSiteModel>> siteListArray) {
+				 if (mNewsGroupArray == null || mSiteFetcher == null) {
+					 return;
+				 }
 				 int groupCount = groupArray.size();
 				 int siteGroupCount = siteListArray.size();
 				 if (groupCount == 0 || siteGroupCount == 0 || groupCount != siteGroupCount) {
 					 MYLogUtil.showErrorToast("count error. group=" +groupCount +" site=" +siteGroupCount);
 					 return;
 				 }
+
 				 PLDatabase.saveModelList(groupArray);
 				 for (int i = 0; i < groupCount; i++) {
 					 ArrayList<PLNewsSiteModel> siteArray = siteListArray.get(i);
@@ -95,8 +105,35 @@ public class PLNewsPagerView extends PLContentView {
 				 }
 				 mNewsGroupArray = groupArray;
 				 createViewPager();
+
+				 fetchBadWord();
 			 }
 		 });
+	}
+
+	public void fetchBadWord() {
+		(new PLBadWordFetcher()).startRequest(new PLBadWordFetcher.PLWordCallbackListener() {
+			@Override
+			public void finishedRequest(ArrayList<ArrayList<PLBadWordModel>> wordListArray) {
+				if (mNewsGroupArray == null || wordListArray == null) {
+					return;
+				}
+				int wordListCount = wordListArray.size();
+				for (int i = 0; i < wordListCount; i++) {
+					ArrayList<PLBadWordModel> wordArray = wordListArray.get(i);
+					PLNewsGroupModel group = mNewsGroupArray.get(i);
+					group.getBadWordContainer().setModelList(wordArray);
+
+					int siteCount = wordArray.size();
+					for (int j = 0; j < siteCount; j++) {
+						PLBadWordModel site = wordArray.get(j);
+						site.associateGroup(group);
+					}
+					PLDatabase.saveModelList(wordArray);
+				}
+				MYLogUtil.outputLog("finishedRequest ok");
+			}
+		});
 	}
 
 	private void createViewPager() {
@@ -129,7 +166,7 @@ public class PLNewsPagerView extends PLContentView {
 
 		@Override
 		public Object instantiateItem(ViewGroup collection, int position) {
-			PLNewsListView listView = new PLNewsListView(getContext(), mNewsGroupArray.get(position));
+			PLNewsListView listView = new PLNewsListView(PLNewsPagerView.this, mNewsGroupArray.get(position));
 			collection.addView(listView);
 			return listView;
 		}

@@ -18,6 +18,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLVolleyHelper;
+import jp.co.my.myplatform.service.model.PLBadWordModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
@@ -190,12 +191,25 @@ public class PLRSSFetcher {
 	}
 
 	private void mergeAllPage() {
-		// 重複ページの削除
+		// 重複・バッドワード持ちページの削除
 		PLNewsListAdapter.sortList(mParsedPageArray);
 		final ArrayList<PLNewsPageModel> fetchPageArray = new ArrayList<>();
-		for (int i = 0; i < mParsedPageArray.size() ; i++) {
+		List<PLBadWordModel> wordList = mGroupModel.getBadWordContainer().getModelList();
+		int parsedCount = mParsedPageArray.size();
+		for (int i = 0; i < parsedCount ; i++) {
 			PLNewsPageModel page = mParsedPageArray.get(i);
-			if (mParsedPageArray.lastIndexOf(page) <= i) {
+			if (mParsedPageArray.lastIndexOf(page) > i) {
+				continue;
+			}
+			String title = page.getTitle();
+			boolean wordResult = true;
+			for (PLBadWordModel badWord : wordList) {
+				if (title.contains(badWord.getWord())) {
+					wordResult = false;
+					break;
+				}
+			}
+			if (wordResult) {
 				fetchPageArray.add(page);
 			}
 		}
@@ -203,7 +217,7 @@ public class PLRSSFetcher {
 
 		// 新旧PageModelのマージ
 		final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
-		final ArrayList<PLNewsPageModel> remainPageArray = new ArrayList<>();
+		ArrayList<PLNewsPageModel> remainPageArray = new ArrayList<>();
 		for (PLNewsPageModel oldPage : mGroupModel.getPageContainer().getModelList()) {
 			int newIndex = fetchPageArray.indexOf(oldPage);
 			if (newIndex == -1) {
