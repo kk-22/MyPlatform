@@ -31,6 +31,7 @@ public class PLNewsGroupModel extends BaseModel {
 
 	private PLModelContainer<PLNewsSiteModel> siteContainer;
 	private PLModelContainer<PLNewsPageModel> pageContainer;
+	private PLModelContainer<PLBadWordModel> badWordContainer;
 
 	public PLNewsGroupModel() {
 		super();
@@ -108,5 +109,14 @@ public class PLNewsGroupModel extends BaseModel {
 					.where(PLNewsPageModel_Table.groupForeign_no.eq(no)));
 		}
 		return pageContainer;
+	}
+
+	public PLModelContainer<PLBadWordModel> getBadWordContainer() {
+		if (badWordContainer == null) {
+			badWordContainer = new PLModelContainer<>(SQLite.select()
+					.from(PLBadWordModel.class)
+					.where(PLBadWordModel_Table.groupForeign_no.eq(no)));
+		}
+		return badWordContainer;
 	}
 }

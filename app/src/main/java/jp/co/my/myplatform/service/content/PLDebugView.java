@@ -18,6 +18,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
+import jp.co.my.myplatform.service.model.PLBadWordModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
@@ -46,7 +47,7 @@ public class PLDebugView extends PLContentView {
 	}
 
 	private void deleteDatabase() {
-		String[] titles = {"データベース消去", "PLNewsPageModel", "PLNewsSiteModel+ PLNewsGroupModel "};
+		String[] titles = {"データベース消去", "PLNewsPageModel", "Group Site BadWord", "PLBadWordModel"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -63,9 +64,12 @@ public class PLDebugView extends PLContentView {
 				DatabaseWrapper database = FlowManager.getDatabase(PLDatabase.NAME).getHelper().getDatabase();
 				if (position == 1) {
 					klassArray.add(PLNewsPageModel.class);
-				} else {
+				} else if (position == 2) {
+					klassArray.add(PLBadWordModel.class);
 					klassArray.add(PLNewsSiteModel.class);
 					klassArray.add(PLNewsGroupModel.class);
+				} else {
+					klassArray.add(PLBadWordModel.class);
 				}
 				for (Class klass : klassArray) {
 					ModelAdapter modelAdapter = FlowManager.getModelAdapter(klass);
