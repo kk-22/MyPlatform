@@ -18,11 +18,8 @@ import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
 public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 
-	private final PLNewsListComparator mComparator;
-
 	public PLNewsListAdapter(Context context) {
 		super(context, R.layout.cell_news_page);
-		mComparator = new PLNewsListComparator();
 	}
 
 	@Override
@@ -60,10 +57,6 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 		notifyDataSetChanged();
 	}
 
-	public void sortList(List<PLNewsPageModel> pageList) {
-		Collections.sort(pageList, mComparator);
-	}
-
 	private View createPartitionCell(PLNewsPageModel page, View convertView, ViewGroup parent) {
 		if (convertView == null) {
 			LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -96,8 +89,12 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 		return convertView;
 	}
 
-	private class PLNewsListComparator implements Comparator<PLNewsPageModel> {
+	public static void sortList(List<PLNewsPageModel> pageList) {
+		Collections.sort(pageList, sComparator);
+	}
 
+	public static Comparator<PLNewsPageModel> sComparator = new Comparator<PLNewsPageModel>() {
+		@Override
 		public int compare(PLNewsPageModel pageA, PLNewsPageModel pageB) {
 			if (pageB.getPositionNo() < pageA.getPositionNo()) {
 				return 1; // Noが低い方が上
@@ -118,5 +115,5 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 				return 0;
 			}
 		}
-	}
+	};
 }
