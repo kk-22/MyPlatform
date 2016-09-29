@@ -256,7 +256,7 @@ public class PLRSSFetcher {
 						MYLogUtil.outputLog("delete " + site.getTitle());
 						site.delete();
 					}
-					PLDatabase.saveModelList(fetchPageArray, true);
+					PLDatabase.saveModelList(mResultPageArray, true);
 					mGroupModel.save();
 				}
 			}).build().execute();
