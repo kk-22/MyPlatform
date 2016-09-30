@@ -149,7 +149,7 @@ public class PLNewsListView extends FrameLayout {
 	}
 
 	private void showFunction() {
-		String[] titles = {"Debug : delete 4 pages", "Update bad word"};
+		String[] titles = {"Debug : delete 4 pages", "Update bad word", "Fetch RSS"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -173,6 +173,10 @@ public class PLNewsListView extends FrameLayout {
 					case 1: {
 						Delete.table(PLBadWordModel.class);
 						mPagerView.fetchBadWord();
+						return;
+					}
+					case 2: {
+						mRssFetcher.manualFetchIfNecessary();
 						return;
 					}
 				}
