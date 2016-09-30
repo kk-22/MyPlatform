@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
@@ -72,8 +73,34 @@ public class PLLoadImageView extends FrameLayout {
 		protected Bitmap doInBackground(File... params) {
 			try {
 				File file = params[0];
-				FileInputStream stream = new FileInputStream(file);
-				Bitmap bitmap = BitmapFactory.decodeStream(stream);
+				// 画像サイズを取得
+				InputStream inputStream = new FileInputStream(file);
+				BitmapFactory.Options imageOptions = new BitmapFactory.Options();
+				imageOptions.inJustDecodeBounds = true;
+				BitmapFactory.decodeStream(inputStream, null, imageOptions);
+				inputStream.close();
+				// MYLogUtil.outputLog("Original Image Size: " + imageOptions.outWidth + " x " + imageOptions.outHeight);
+
+				int maxImageSize = 500;
+				float imageScaleWidth = (float)imageOptions.outWidth / maxImageSize;
+				float imageScaleHeight = (float)imageOptions.outHeight / maxImageSize;
+				Bitmap bitmap;
+				inputStream = new FileInputStream(file);
+				if (imageScaleWidth <= 2 || imageScaleHeight <= 2) {
+					bitmap = BitmapFactory.decodeStream(inputStream);
+				} else {
+					// 縮小できるサイズならば、 縦横の小さい方のスケールに合わせて縮小して読み込む
+					imageOptions.inJustDecodeBounds = false;
+					int imageScale = (int)Math.floor((imageScaleWidth > imageScaleHeight ? imageScaleHeight : imageScaleWidth));
+					// inSampleSizeには2のべき上が入るべきなので、imageScaleに最も近く、かつそれ以下
+					for (int i = 2; i <= imageScale; i *= 2) {
+						imageOptions.inSampleSize = i;
+					}
+					bitmap = BitmapFactory.decodeStream(inputStream, null, imageOptions);
+					// MYLogUtil.outputLog("Sample Size: 1/" + imageOptions2.inSampleSize);
+				}
+				inputStream.close();
+
 				return bitmap;
 			} catch (Exception e) {
 				MYLogUtil.showExceptionToast(e);
