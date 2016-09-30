@@ -75,9 +75,9 @@ public class PLExplorerRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 		}
 
 		holder.mTextView.setVisibility(View.VISIBLE);
+		holder.mTextView.setText(fileName);
 		if (file.isDirectory()) {
 			holder.mLoadImage.loadImageResource(R.drawable.directory);
-			holder.mTextView.setText(fileName);
 		} else {
 			holder.mLoadImage.loadImageResource(R.drawable.file);
 		}
