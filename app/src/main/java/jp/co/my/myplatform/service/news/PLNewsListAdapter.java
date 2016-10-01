@@ -19,7 +19,7 @@ import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 
 	public PLNewsListAdapter(Context context) {
-		super(context, R.layout.cell_news_page);
+		super(context, 0);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.debug.PLDebugView;
 import jp.co.my.myplatform.service.explorer.PLExplorerView;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;

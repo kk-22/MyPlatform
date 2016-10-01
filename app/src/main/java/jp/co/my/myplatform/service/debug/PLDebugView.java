@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.content;
+package jp.co.my.myplatform.service.debug;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.os.PowerManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.ModelAdapter;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
 import jp.co.my.myplatform.service.model.PLBadWordModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
@@ -27,23 +28,71 @@ import jp.co.my.myplatform.service.popover.PLListPopover;
 
 public class PLDebugView extends PLContentView {
 
-	private TextView mMemoryText;
+	private ListView mListView;
+	private PLDebugListAdapter mAdapter;
 
 	public PLDebugView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_debug, this);
-		mMemoryText = (TextView) findViewById(R.id.memory_text);
+		mListView = (ListView) findViewById(R.id.debug_list);
 
-		updateWakeUpText();
-		updateMemoryText();
-		setClickEvent();
+		mAdapter = new PLDebugListAdapter(getContext());
+		initDebugItem();
+		mListView.setAdapter(mAdapter);
+	}
 
-		findViewById(R.id.delete_db_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				deleteDatabase();
+	private void initDebugItem() {
+		ArrayList<PLDebugAbstractItem> itemList = new ArrayList<>();
+		{
+			itemList.add(new PLDebugTitleItem("Database"));
+			itemList.add(new PLDebugButtonItem("delete DB", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					deleteDatabase();
+				}
+			}));
+		}
+		{
+			PLWakeLockManager manager = PLWakeLockManager.getInstance();
+			PowerManager.WakeLock wakeLock = manager.getWakeLock();
+			String isHoldStr = "null";
+			if (wakeLock != null) {
+				isHoldStr = String.valueOf(manager.getWakeLock().isHeld());
 			}
-		});
+			itemList.add(new PLDebugTitleItem("WakeLock"));
+			itemList.add(new PLDebugValueItem("isHold", isHoldStr));
+			itemList.add(new PLDebugValueItem(
+					"CPU count", Integer.toString(manager.getKeepCPUCount()),
+					"screen count", Integer.toString(manager.getKeepScreenCount())));
+		}
+		{
+			itemList.add(new PLDebugTitleItem("Memory"));
+			String packageName = getContext().getPackageName();
+			ActivityManager activityManager = (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
+			List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+			for (ActivityManager.RunningServiceInfo serviceInfo : services) {
+				if (!serviceInfo.service.getPackageName().equals(packageName)) {
+					continue;
+				}
+				MYLogUtil.outputLog("app:service: pkg = " + serviceInfo.service.getPackageName() + " pid = " + serviceInfo.pid);
+
+				int[] processIds = {serviceInfo.pid};
+				android.os.Debug.MemoryInfo[] memories = activityManager.getProcessMemoryInfo(processIds);
+				for (android.os.Debug.MemoryInfo info : memories) {
+					int totalPss = info.getTotalPss();
+					itemList.add(new PLDebugValueItem("current", (totalPss / 1000) + "MB"));
+				}
+				break;
+			}
+			itemList.add(new PLDebugButtonItem("Exit GC", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.gc();
+					initDebugItem();
+				}
+			}));
+		}
+		mAdapter.renewalAllPage(itemList);
 	}
 
 	private void deleteDatabase() {
@@ -78,52 +127,5 @@ public class PLDebugView extends PLContentView {
 				}
 			}
 		}).showPopover();
-	}
-
-	private void updateWakeUpText() {
-		PLWakeLockManager manager = PLWakeLockManager.getInstance();
-		PowerManager.WakeLock wakeLock = manager.getWakeLock();
-		String isHoldStr = "null";
-		if (wakeLock != null) {
-			isHoldStr = String.valueOf(manager.getWakeLock().isHeld());
-		}
-		((TextView) findViewById(R.id.is_hold_text)).setText(isHoldStr);
-		((TextView) findViewById(R.id.cpu_count_text)).setText(Integer.toString(manager.getKeepScreenCount()));
-		((TextView) findViewById(R.id.screen_count_text)).setText(Integer.toString(manager.getKeepCPUCount()));
-	}
-
-	private void updateMemoryText() {
-		String packageName = getContext().getPackageName();
-		ActivityManager activityManager = (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
-		List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
-		for (ActivityManager.RunningServiceInfo serviceInfo : services) {
-			if (!serviceInfo.service.getPackageName().equals(packageName)) {
-				continue;
-			}
-			MYLogUtil.outputLog("app:service: pkg = " + serviceInfo.service.getPackageName() + " pid = " + serviceInfo.pid);
-
-			int[] processIds = {serviceInfo.pid};
-			android.os.Debug.MemoryInfo[] memories = activityManager.getProcessMemoryInfo(processIds);
-			for (android.os.Debug.MemoryInfo info : memories) {
-				int totalPss = info.getTotalPss();
-				mMemoryText.setText((totalPss / 1000) +"MB");
-			}
-		}
-	}
-
-	private void setClickEvent() {
-		findViewById(R.id.memory_reload_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				updateMemoryText();
-			}
-		});
-		findViewById(R.id.gc_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				System.gc();
-				updateMemoryText();
-			}
-		});
 	}
 }

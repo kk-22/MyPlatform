@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/debug_list"
+    <TextView
+        android:id="@+id/title_text"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:textSize="17dp"
+        android:background="#8af"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbarThumbVertical="@android:color/darker_gray"
-        android:fadeScrollbars="false" />
-
+        android:layout_height="wrap_content"/>
 </FrameLayout>
