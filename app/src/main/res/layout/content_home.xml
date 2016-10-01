@@ -82,8 +82,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text=""
-                android:id="@+id/a2_button"/>
+                android:text="メモ"
+                android:id="@+id/memo_button"/>
 
             <Button
                 android:layout_weight="1"
