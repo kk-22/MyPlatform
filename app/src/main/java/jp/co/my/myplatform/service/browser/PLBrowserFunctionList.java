@@ -15,6 +15,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
 import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 
@@ -23,7 +24,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	private enum LIST_INDEX {
 		LIST_INDEX_SCROLL_TOP,
 		LIST_INDEX_SCROLL_BOTTOM,
-		LIST_INDEX_OPEN_BROWSER,
+		LIST_INDEX_OPEN_OTHER,
 		LIST_INDEX_RELEASE_BROWSER;
 	}
 
@@ -46,7 +47,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				.and(PLWebPageModel_Table.url.eq(mWebView.getUrl()))
 				.querySingle();
 
-		String[] titles = {"上までスクロール", "下までスクロール", "ブラウザで開く", "インスタンス破棄"};
+		String[] titles = {"上までスクロール", "下までスクロール", "他のアプリで開く", "インスタンス破棄"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_simple_title,
 				titles);
@@ -79,14 +80,21 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						removeFromContentView();
 						break;
 					}
-					case LIST_INDEX_OPEN_BROWSER: {
-						//ブラウザで開く
-						Uri uri = Uri.parse(mWebView.getUrl());
-						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						getContext().startActivity(intent);
-
-						PLCoreService.getNavigationController().hideNavigationIfNeeded();
+					case LIST_INDEX_OPEN_OTHER: {
+						removeFromContentView();
+						String[] titles = {"ブラウザで開く"};
+						new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+							@Override
+							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+								mBrowserView.removeTopPopover();
+								PLCoreService.getNavigationController().hideNavigationIfNeeded();
+								// ブラウザで開く
+								Uri uri = Uri.parse(mWebView.getUrl());
+								Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+								intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								getContext().startActivity(intent);
+							}
+						}).showPopover();
 						break;
 					}
 					case LIST_INDEX_RELEASE_BROWSER: {
