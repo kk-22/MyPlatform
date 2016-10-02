@@ -78,11 +78,11 @@ public class PLBadWordFetcher {
 	}
 
 	private void finishFetch(ArrayList<ArrayList<PLBadWordModel>> wordListArray) {
-		mListener.finishedRequest(wordListArray);
+		mListener.finishedBadWordRequest(wordListArray);
 		mListener = null;
 	}
 
 	public static abstract class PLWordCallbackListener {
-		public abstract void finishedRequest(ArrayList<ArrayList<PLBadWordModel>> wordListArray);
+		public abstract void finishedBadWordRequest(ArrayList<ArrayList<PLBadWordModel>> wordListArray);
 	}
 }

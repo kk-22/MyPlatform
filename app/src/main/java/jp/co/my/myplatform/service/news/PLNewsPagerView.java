@@ -114,7 +114,7 @@ public class PLNewsPagerView extends PLContentView {
 	public void fetchBadWord() {
 		(new PLBadWordFetcher()).startRequest(new PLBadWordFetcher.PLWordCallbackListener() {
 			@Override
-			public void finishedRequest(ArrayList<ArrayList<PLBadWordModel>> wordListArray) {
+			public void finishedBadWordRequest(ArrayList<ArrayList<PLBadWordModel>> wordListArray) {
 				if (mNewsGroupArray == null || wordListArray == null) {
 					return;
 				}
@@ -131,7 +131,7 @@ public class PLNewsPagerView extends PLContentView {
 					}
 					PLDatabase.saveModelList(wordArray);
 				}
-				MYLogUtil.outputLog("finishedRequest ok");
+				MYLogUtil.showToast("Update bad word");
 			}
 		});
 	}
