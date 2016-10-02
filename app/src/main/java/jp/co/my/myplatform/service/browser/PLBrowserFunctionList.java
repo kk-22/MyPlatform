@@ -12,7 +12,6 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
@@ -91,8 +90,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						break;
 					}
 					case LIST_INDEX_RELEASE_BROWSER: {
-						mBrowserView.setKeepCache(false);
-						PLCoreService.getNavigationController().pushView(PLHomeView.class);
+						mBrowserView.closeBrowser();
 						break;
 					}
 				}

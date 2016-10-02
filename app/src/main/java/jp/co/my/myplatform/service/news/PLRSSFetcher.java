@@ -234,7 +234,6 @@ public class PLRSSFetcher {
 
 		mGroupModel.setFetchedDate(Calendar.getInstance());
 		if (fetchPageArray.size() == 0) {
-			MYLogUtil.showToast(mGroupModel.getTitle() +" 新着ニュースなし");
 			mGroupModel.save();
 		} else {
 			PLNewsPageModel partition = new PLNewsPageModel();

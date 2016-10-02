@@ -40,8 +40,13 @@ public class PLNewsBrowserView extends PLBrowserView {
 		if (super.onBackKey()) {
 			return true;
 		}
-		PLCoreService.getNavigationController().pushView(PLNewsPagerView.class);
+		closeBrowser();
 		return true;
+	}
+
+	@Override
+	public void closeBrowser() {
+		PLCoreService.getNavigationController().pushView(PLNewsPagerView.class);
 	}
 
 	private void customizeWebView() {

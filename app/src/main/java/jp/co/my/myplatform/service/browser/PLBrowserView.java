@@ -105,6 +105,11 @@ public class PLBrowserView extends PLContentView {
 		}
 	}
 
+	public void closeBrowser() {
+		setKeepCache(false);
+		PLCoreService.getNavigationController().pushView(PLHomeView.class);
+	}
+
 	@Override
 	public boolean onBackKey() {
 		if (removeTopPopover()) {
