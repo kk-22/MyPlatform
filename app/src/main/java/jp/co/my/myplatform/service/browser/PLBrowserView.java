@@ -25,7 +25,7 @@ import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 public class PLBrowserView extends PLContentView {
 	private PLWebView mCurrentWebView;
 	private ImageButton mBackButton, mForwardButton, mShowButton;
-	private ProgressBar mProgressBar1, mProgressBar2;
+	private ProgressBar mProgressBar;
 	private LinearLayout mToolbar;
 
 	public PLBrowserView() {
@@ -36,8 +36,7 @@ public class PLBrowserView extends PLContentView {
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mForwardButton = (ImageButton) findViewById(R.id.forward_button);
 		mShowButton = (ImageButton) findViewById(R.id.show_toolbar_button);
-		mProgressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
-		mProgressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
+		mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 		mCurrentWebView = (PLWebView) findViewById(R.id.su_web_view);
 		mToolbar = (LinearLayout) findViewById(R.id.browser_toolbar);
 		initButtonEvent();
@@ -47,8 +46,7 @@ public class PLBrowserView extends PLContentView {
 				if (mCurrentWebView == null) {
 					return;
 				}
-				updateProgressBar(mProgressBar1, progress);
-				updateProgressBar(mProgressBar2, progress);
+				updateProgressBar(mProgressBar, progress);
 				updateArrowButtonImage();
 
 				if (progress == 100) {
