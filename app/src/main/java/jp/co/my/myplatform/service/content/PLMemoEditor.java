@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 
 import java.io.BufferedReader;
@@ -26,11 +27,13 @@ public class PLMemoEditor extends PLContentView {
 
 	private EditText mEditText;
 	private String mCurrentName;
+	private int mPrevHeight;
 
 	public PLMemoEditor() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
 		mEditText = (EditText) findViewById(R.id.memo_edit);
+		mPrevHeight = -1;
 
 		initEvent();
 
@@ -52,23 +55,10 @@ public class PLMemoEditor extends PLContentView {
 		saveToFile();
 	}
 
-	private void initEvent() {
-		mEditText.setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (keyCode != KeyEvent.KEYCODE_ENTER || event.getAction() != KeyEvent.ACTION_DOWN) {
-					return false;
-				}
-
-//				String replaceText = "\nテスト";
-//				int start = mEditText.getSelectionStart();
-//				int end = mEditText.getSelectionEnd();
-//				Editable editable = mEditText.getText();
-//				editable.replace(Math.min( start, end ), Math.max( start, end ), replaceText );
-
-				return false;
-			}
-		});
+	@Override
+	public boolean onBackKey() {
+		revertEditHeight();
+		return super.onBackKey();
 	}
 
 	private void saveToFile() {
@@ -125,6 +115,70 @@ public class PLMemoEditor extends PLContentView {
 			editor.putString(KEY_LAST_NAME, name);
 			editor.commit();
 		}
+	}
+
+	private void initEvent() {
+		mEditText.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+					return onBackKey();
+				} else if (keyCode != KeyEvent.KEYCODE_ENTER || event.getAction() != KeyEvent.ACTION_DOWN) {
+					return false;
+				}
+
+//				String replaceText = "\nテスト";
+//				int start = mEditText.getSelectionStart();
+//				int end = mEditText.getSelectionEnd();
+//				Editable editable = mEditText.getText();
+//				editable.replace(Math.min( start, end ), Math.max( start, end ), replaceText );
+
+				MYLogUtil.outputLog("changed");
+//				PLMemoEditor.this.set
+
+				return false;
+			}
+		});
+		findViewById(R.id.reload_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MYLogUtil.outputLog("reload");
+			}
+		});
+		mEditText.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MYLogUtil.outputLog("onClick");
+				willShowKeyboard();
+			}
+		});
+
+		mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					MYLogUtil.outputLog("onFocusChange");
+					willShowKeyboard();
+				}
+			}
+		});
+		mEditText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				mPrevHeight = mEditText.getHeight();
+			}
+		});
+	}
+
+	private void willShowKeyboard() {
+		MYLogUtil.outputLog("willShowKeyboard");
+		mEditText.setHeight(1150);
+	}
+
+	private void revertEditHeight() {
+		MYLogUtil.outputLog("revertEditHeight " +mPrevHeight);
+		mEditText.setHeight(mPrevHeight);
 	}
 
 	private String getDirectoryPath() {

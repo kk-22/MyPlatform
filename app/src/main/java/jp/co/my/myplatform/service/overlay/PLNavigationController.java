@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.overlay;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 
 public class PLNavigationController extends PLOverlayView {
@@ -87,6 +88,28 @@ public class PLNavigationController extends PLOverlayView {
 		mFrameLayout.addView(view, createMatchParams());
 		mCurrentView = view;
 		return (T) view;
+	}
+
+	public void reloadContentView() {
+//		final PLContentView view = mCurrentView;
+//		pushView(PLHomeView.class);
+
+		final Handler handler = new Handler();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e){}
+
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+//						pushView(view);
+					}
+				});
+			}
+		}).start();
 	}
 
 	@SuppressWarnings("unchecked")
