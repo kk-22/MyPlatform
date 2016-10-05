@@ -27,13 +27,11 @@ public class PLMemoEditor extends PLContentView {
 
 	private EditText mEditText;
 	private String mCurrentName;
-	private int mPrevHeight;
 
 	public PLMemoEditor() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
 		mEditText = (EditText) findViewById(R.id.memo_edit);
-		mPrevHeight = -1;
 
 		initEvent();
 
@@ -57,7 +55,7 @@ public class PLMemoEditor extends PLContentView {
 
 	@Override
 	public boolean onBackKey() {
-		revertEditHeight();
+		fullEditViewMode();
 		return super.onBackKey();
 	}
 
@@ -166,7 +164,8 @@ public class PLMemoEditor extends PLContentView {
 			@Override
 			public void onGlobalLayout() {
 				mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				mPrevHeight = mEditText.getHeight();
+				int rootHeight = PLMemoEditor.this.getHeight();
+				mEditText.setHeight(rootHeight - 200);
 			}
 		});
 	}
@@ -176,9 +175,10 @@ public class PLMemoEditor extends PLContentView {
 		mEditText.setHeight(1150);
 	}
 
-	private void revertEditHeight() {
-		MYLogUtil.outputLog("revertEditHeight " +mPrevHeight);
-		mEditText.setHeight(mPrevHeight);
+	private void fullEditViewMode() {
+		MYLogUtil.outputLog("fullEditViewMode");
+		int rootHeight = PLMemoEditor.this.getHeight();
+		mEditText.setHeight(rootHeight - 200);
 	}
 
 	private String getDirectoryPath() {
