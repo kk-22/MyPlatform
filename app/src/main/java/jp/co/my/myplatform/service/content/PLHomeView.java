@@ -12,6 +12,7 @@ import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.debug.PLDebugView;
 import jp.co.my.myplatform.service.explorer.PLExplorerView;
+import jp.co.my.myplatform.service.memo.PLMemoEditorView;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLListPopover;

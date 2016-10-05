@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.content;
+package jp.co.my.myplatform.service.memo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +21,7 @@ import java.util.Calendar;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLApplication;
 
 public class PLMemoEditorView extends PLContentView {
