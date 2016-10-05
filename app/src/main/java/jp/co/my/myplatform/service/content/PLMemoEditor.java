@@ -1,10 +1,12 @@
 package jp.co.my.myplatform.service.content;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.io.BufferedReader;
@@ -24,6 +26,7 @@ import jp.co.my.myplatform.service.core.PLApplication;
 public class PLMemoEditor extends PLContentView {
 
 	private static final String KEY_LAST_NAME = "KEY_LAST_NAME";
+	private static final int EDIT_MODE_HEIGHT = 1150;				// 入力モード中のEditTextの高さ
 
 	private EditText mEditText;
 	private String mCurrentName;
@@ -33,7 +36,8 @@ public class PLMemoEditor extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
 		mEditText = (EditText) findViewById(R.id.memo_edit);
 
-		initEvent();
+		initEditTextEvent();
+		initButtonEvent();
 
 		// TODO:async?
 		SharedPreferences pref = MYLogUtil.getPreference();
@@ -55,7 +59,7 @@ public class PLMemoEditor extends PLContentView {
 
 	@Override
 	public boolean onBackKey() {
-		fullEditViewMode();
+		changeFullMode();
 		return super.onBackKey();
 	}
 
@@ -115,7 +119,7 @@ public class PLMemoEditor extends PLContentView {
 		}
 	}
 
-	private void initEvent() {
+	private void initEditTextEvent() {
 		mEditText.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -137,26 +141,19 @@ public class PLMemoEditor extends PLContentView {
 				return false;
 			}
 		});
-		findViewById(R.id.reload_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				MYLogUtil.outputLog("reload");
-			}
-		});
 		mEditText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				MYLogUtil.outputLog("onClick");
-				willShowKeyboard();
+				changeEditMode();
 			}
 		});
-
 		mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					MYLogUtil.outputLog("onFocusChange");
-					willShowKeyboard();
+					changeEditMode();
 				}
 			}
 		});
@@ -166,19 +163,44 @@ public class PLMemoEditor extends PLContentView {
 				mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 				int rootHeight = PLMemoEditor.this.getHeight();
 				mEditText.setHeight(rootHeight - 200);
+
+				// ちらつき防止
+				findViewById(R.id.button_linear).setVisibility(View.VISIBLE);
 			}
 		});
 	}
 
-	private void willShowKeyboard() {
-		MYLogUtil.outputLog("willShowKeyboard");
-		mEditText.setHeight(1150);
+	private void changeEditMode() {
+		MYLogUtil.outputLog("changeEditMode");
+		mEditText.setHeight(EDIT_MODE_HEIGHT);
 	}
 
-	private void fullEditViewMode() {
-		MYLogUtil.outputLog("fullEditViewMode");
+	private void changeFullMode() {
+		MYLogUtil.outputLog("changeFullMode");
 		int rootHeight = PLMemoEditor.this.getHeight();
 		mEditText.setHeight(rootHeight - 200);
+	}
+
+	private void initButtonEvent() {
+		findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				saveToFile();
+				MYLogUtil.showToast("Save to file");
+			}
+		});
+		findViewById(R.id.change_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mEditText.getHeight() == EDIT_MODE_HEIGHT) {
+					InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+					inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+					changeFullMode();
+				} else {
+					mEditText.setHeight(EDIT_MODE_HEIGHT);
+				}
+			}
+		});
 	}
 
 	private String getDirectoryPath() {
