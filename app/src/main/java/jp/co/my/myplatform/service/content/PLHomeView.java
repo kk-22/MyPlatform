@@ -62,7 +62,7 @@ public class PLHomeView extends PLContentView {
 		findViewById(R.id.memo_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLMemoEditor.class);
+				PLCoreService.getNavigationController().pushView(PLMemoEditorView.class);
 			}
 		});
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {

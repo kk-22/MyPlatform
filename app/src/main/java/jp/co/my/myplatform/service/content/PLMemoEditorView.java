@@ -23,7 +23,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLApplication;
 
-public class PLMemoEditor extends PLContentView {
+public class PLMemoEditorView extends PLContentView {
 
 	private static final String KEY_LAST_NAME = "KEY_LAST_NAME";
 	private static final int EDIT_MODE_HEIGHT = 1150;				// 入力モード中のEditTextの高さ
@@ -31,7 +31,7 @@ public class PLMemoEditor extends PLContentView {
 	private EditText mEditText;
 	private String mCurrentName;
 
-	public PLMemoEditor() {
+	public PLMemoEditorView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
 		mEditText = (EditText) findViewById(R.id.memo_edit);
@@ -161,7 +161,7 @@ public class PLMemoEditor extends PLContentView {
 			@Override
 			public void onGlobalLayout() {
 				mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				int rootHeight = PLMemoEditor.this.getHeight();
+				int rootHeight = PLMemoEditorView.this.getHeight();
 				mEditText.setHeight(rootHeight - 200);
 
 				// ちらつき防止
@@ -177,7 +177,7 @@ public class PLMemoEditor extends PLContentView {
 
 	private void changeFullMode() {
 		MYLogUtil.outputLog("changeFullMode");
-		int rootHeight = PLMemoEditor.this.getHeight();
+		int rootHeight = PLMemoEditorView.this.getHeight();
 		mEditText.setHeight(rootHeight - 200);
 	}
 
