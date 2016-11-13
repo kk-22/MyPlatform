@@ -18,6 +18,7 @@ public class PLMemoEditorView extends PLContentView {
 
 	private EditText mEditText;
 	private PLMemoReadWriter mReadWriter;
+	private PLMemoInputObserver mInputObserver;
 
 	public PLMemoEditorView() {
 		super();
@@ -25,7 +26,7 @@ public class PLMemoEditorView extends PLContentView {
 		mEditText = (EditText) findViewById(R.id.memo_edit);
 
 		mReadWriter = new PLMemoReadWriter(mEditText);
-
+		mInputObserver = new PLMemoInputObserver(mEditText);
 		initEditTextEvent();
 		initButtonEvent();
 
@@ -48,11 +49,13 @@ public class PLMemoEditorView extends PLContentView {
 		mEditText.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				MYLogUtil.outputLog("OnKeyListener");
 				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 					return onBackKey();
 				} else if (keyCode != KeyEvent.KEYCODE_ENTER || event.getAction() != KeyEvent.ACTION_DOWN) {
 					return false;
 				}
+
 
 //				String replaceText = "\nテスト";
 //				int start = mEditText.getSelectionStart();
