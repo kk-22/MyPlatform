@@ -47,7 +47,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				.and(PLWebPageModel_Table.url.eq(mWebView.getUrl()))
 				.querySingle();
 
-		String[] titles = {"上までスクロール", "下までスクロール", "他のアプリで開く", "インスタンス破棄"};
+		String[] titles = {"上までスクロール", "下までスクロール", "他のアプリで開く"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_simple_title,
 				titles);
@@ -95,10 +95,6 @@ public class PLBrowserFunctionList extends PLPopoverView {
 								getContext().startActivity(intent);
 							}
 						}).showPopover();
-						break;
-					}
-					case LIST_INDEX_RELEASE_BROWSER: {
-						mBrowserView.closeBrowser();
 						break;
 					}
 				}

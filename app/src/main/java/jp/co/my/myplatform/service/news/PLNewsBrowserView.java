@@ -7,7 +7,6 @@ import android.webkit.WebSettings;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
 import jp.co.my.myplatform.service.browser.PLWebView;
-import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
@@ -32,20 +31,6 @@ public class PLNewsBrowserView extends PLBrowserView {
 	@Override
 	protected void finishLoadPage() {
 		// 最終ページを保存しない
-	}
-
-	@Override
-	public boolean onBackKey() {
-		if (super.onBackKey()) {
-			return true;
-		}
-		closeBrowser();
-		return true;
-	}
-
-	@Override
-	public void closeBrowser() {
-		PLCoreService.getNavigationController().pushView(PLNewsPagerView.class);
 	}
 
 	private void customizeWebView() {

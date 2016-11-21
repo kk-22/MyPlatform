@@ -103,10 +103,6 @@ public class PLBrowserView extends PLContentView {
 		}
 	}
 
-	public void closeBrowser() {
-		PLCoreService.getNavigationController().pushView(PLHomeView.class);
-	}
-
 	@Override
 	public boolean onBackKey() {
 		if (removeTopPopover()) {
@@ -117,7 +113,8 @@ public class PLBrowserView extends PLContentView {
 			updateArrowButtonImage();
 			return true;
 		}
-		return false;
+		PLCoreService.getNavigationController().goBackView();
+		return true;
 	}
 	private void onForwardKey() {
 		mCurrentWebView.goForward();
