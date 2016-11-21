@@ -15,7 +15,6 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
-import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLModelContainer;
@@ -70,8 +69,7 @@ public class PLBrowserView extends PLContentView {
 		super.onAttachedToWindow();
 		if (mCurrentWebView == null) {
 			MYLogUtil.showErrorToast("viewが開放済み");
-			PLCoreService.getNavigationController().pushView(PLHomeView.class);
-			PLCoreService.getNavigationController().pushView(PLBrowserView.class);
+			PLCoreService.getNavigationController().goBackView();
 		}
 	}
 

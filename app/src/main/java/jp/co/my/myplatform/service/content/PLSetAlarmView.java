@@ -109,7 +109,7 @@ public class PLSetAlarmView extends PLContentView {
 
 				mAlarmCount = 0;
 				updateFrontButtonText(calendar);
-				PLCoreService.getNavigationController().pushView(PLHomeView.class);
+				PLCoreService.getNavigationController().goBackView();
 			}
 		});
 		mCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +122,7 @@ public class PLSetAlarmView extends PLContentView {
 				if (mAlarmHandler != null) {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
+					PLCoreService.getNavigationController().goBackView();
 					return;
 				}
 				String[] titles = {"アラーム解除"};
@@ -131,7 +132,7 @@ public class PLSetAlarmView extends PLContentView {
 						PLSetAlarmView.this.removeTopPopover();
 						mSelectTimeView.resetAllTime();
 						cancelAlarm();
-						PLCoreService.getNavigationController().pushView(PLHomeView.class);
+						PLCoreService.getNavigationController().goBackView();
 					}
 				}).showPopover();
 			}
