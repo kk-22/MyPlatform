@@ -13,7 +13,6 @@ import jp.co.my.myplatform.service.popover.PLPopoverView;
 public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	private ArrayList<PLPopoverView> mPopoverViews;
-	private boolean mIsKeepCache;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
@@ -21,7 +20,6 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		setFocusableInTouchMode(true);
 
 		mPopoverViews = new ArrayList<>();
-		mIsKeepCache = false;
 	}
 
 	public void viewWillDisappear() {
@@ -51,14 +49,6 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		mPopoverViews.add(popoverView);
 		addView(popoverView);
 		popoverView.addedPopover(this);
-	}
-
-	public boolean isKeepCache() {
-		return mIsKeepCache;
-	}
-
-	public void setKeepCache(boolean keepCache) {
-		mIsKeepCache = keepCache;
 	}
 
 	@Override

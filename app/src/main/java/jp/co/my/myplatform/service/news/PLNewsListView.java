@@ -112,7 +112,6 @@ public class PLNewsListView extends FrameLayout {
 					return;
 				}
 				PLNavigationController navigation = PLCoreService.getNavigationController();
-				navigation.getCurrentView().setKeepCache(true);
 
 				PLNewsBrowserView browserView = new PLNewsBrowserView(pageModel);
 				navigation.pushView(browserView);

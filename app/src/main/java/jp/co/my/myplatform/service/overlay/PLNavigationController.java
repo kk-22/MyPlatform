@@ -77,10 +77,8 @@ public class PLNavigationController extends PLOverlayView {
 			mViewCache.add(view);
 		}
 		if (mCurrentView != null) {
-			if (!mCurrentView.isKeepCache()) {
-				mCurrentView.viewWillDisappear();
-				mViewCache.remove(mCurrentView);
-			}
+			mCurrentView.viewWillDisappear();
+			mViewCache.remove(mCurrentView);
 			mFrameLayout.removeAllViews();
 			mCurrentView = null;
 		}

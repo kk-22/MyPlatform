@@ -42,13 +42,6 @@ public class PLNewsPagerView extends PLContentView {
 	}
 
 	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		// ブラウザ開いた際にした設定を戻す
-		setKeepCache(false);
-	}
-
-	@Override
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
 		mSiteFetcher.cancelAllRequest();

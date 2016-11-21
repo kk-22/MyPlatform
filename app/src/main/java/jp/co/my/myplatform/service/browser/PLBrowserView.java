@@ -30,7 +30,6 @@ public class PLBrowserView extends PLContentView {
 
 	public PLBrowserView() {
 		super();
-		setKeepCache(true);
 
 		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
@@ -71,7 +70,6 @@ public class PLBrowserView extends PLContentView {
 		super.onAttachedToWindow();
 		if (mCurrentWebView == null) {
 			MYLogUtil.showErrorToast("viewが開放済み");
-			setKeepCache(false);
 			PLCoreService.getNavigationController().pushView(PLHomeView.class);
 			PLCoreService.getNavigationController().pushView(PLBrowserView.class);
 		}
@@ -106,7 +104,6 @@ public class PLBrowserView extends PLContentView {
 	}
 
 	public void closeBrowser() {
-		setKeepCache(false);
 		PLCoreService.getNavigationController().pushView(PLHomeView.class);
 	}
 

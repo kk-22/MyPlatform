@@ -18,7 +18,6 @@ public class PLNewsBrowserView extends PLBrowserView {
 	@SuppressLint("SetJavaScriptEnabled")
 	public PLNewsBrowserView(PLNewsPageModel page) {
 		super();
-		setKeepCache(false);
 		mPageModel = page;
 
 		customizeWebView();
