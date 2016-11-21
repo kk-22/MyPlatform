@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.overlay;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,7 +33,16 @@ public class PLNavigationController extends PLOverlayView {
 		findViewById(R.id.home_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (1 < mViewCache.size()) {
+					goBackView();
+				}
+			}
+		});
+		findViewById(R.id.home_button).setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLHomeView.class);
+				return true;
 			}
 		});
 
@@ -70,44 +78,23 @@ public class PLNavigationController extends PLOverlayView {
 	}
 
 	public <T extends PLContentView> T pushView(T view) {
-		// フォーカスが前のViewに残らないように移動
-		view.requestFocus();
-
-		if (!mViewCache.contains(view)) {
-			mViewCache.add(view);
-		}
-		if (mCurrentView != null) {
-			mCurrentView.viewWillDisappear();
-			mViewCache.remove(mCurrentView);
-			mFrameLayout.removeAllViews();
-			mCurrentView = null;
-		}
-
-		mFrameLayout.addView(view, createMatchParams());
-		mCurrentView = view;
+		mViewCache.add(view);
+		changeCurrentView(view);
 		return (T) view;
 	}
 
-	public void reloadContentView() {
-//		final PLContentView view = mCurrentView;
-//		pushView(PLHomeView.class);
-
-		final Handler handler = new Handler();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e){}
-
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-//						pushView(view);
-					}
-				});
-			}
-		}).start();
+	public void goBackView() {
+		int count = mViewCache.size();
+		if (count <= 1) {
+			MYLogUtil.showErrorToast("戻り先なし count=" +count);
+			return;
+		}
+		PLContentView prevView = mViewCache.get(count - 2);
+		mViewCache.remove(count - 1);
+		if (!mViewCache.contains(mCurrentView)) {
+			mCurrentView.viewWillDisappear();
+		}
+		changeCurrentView(prevView);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -151,5 +138,17 @@ public class PLNavigationController extends PLOverlayView {
 
 	public PLContentView getCurrentView() {
 		return mCurrentView;
+	}
+
+	private void changeCurrentView(PLContentView view) {
+		// フォーカスが前のViewに残らないように移動
+		view.requestFocus();
+		if (mCurrentView != null) {
+			mFrameLayout.removeAllViews();
+			mCurrentView = null;
+		}
+
+		mFrameLayout.addView(view, createMatchParams());
+		mCurrentView = view;
 	}
 }
