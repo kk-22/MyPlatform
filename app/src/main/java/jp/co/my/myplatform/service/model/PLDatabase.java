@@ -15,6 +15,7 @@ import jp.co.my.common.util.MYLogUtil;
 public class PLDatabase {
 	public static final String NAME = "MySupportDatabase";
 	public static final int VERSION = 9;
+	public static final Object sLock = new Object();
 
 	public static <T extends Model> void saveModelList(List<T> modelList) {
 		saveModelList(modelList, false);
@@ -27,7 +28,7 @@ public class PLDatabase {
 			return;
 		}
 		Class klass = modelList.get(0).getClass();
-		MYLogUtil.outputLog("saveModelList count=" + modelList.size() +" class=" +klass);
+		MYLogUtil.outputLog("saveModelList count=" + modelList.size() + " class=" + klass);
 
 		FastStoreModelTransaction<T> fast = FastStoreModelTransaction.saveBuilder(
 				FlowManager.getModelAdapter(klass)).addAll(modelList).build();
@@ -45,9 +46,20 @@ public class PLDatabase {
 				}).error(new Transaction.Error() {
 					@Override
 					public void onError(Transaction transaction, Throwable error) {
-						MYLogUtil.outputLog("saveModelList onError" +error.toString());
+						MYLogUtil.outputLog("saveModelList onError" + error.toString());
 					}
 				}).build();
-		transaction.execute();
+		executeTransaction(transaction);
+	}
+
+	public static void executeTransaction(final Transaction transaction) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (sLock) {
+					transaction.execute();
+				}
+			}
+		}).start();
 	}
 }

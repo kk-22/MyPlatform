@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -249,7 +250,7 @@ public class PLRSSFetcher {
 			}
 
 			final ArrayList<PLNewsPageModel> savePageArray = new ArrayList<>(mResultPageArray);
-			FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
+			Transaction transaction = FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
 				@Override
 				public void execute(DatabaseWrapper databaseWrapper) {
 					for (PLNewsPageModel site : removePageArray) {
@@ -259,7 +260,8 @@ public class PLRSSFetcher {
 					PLDatabase.saveModelList(savePageArray, true);
 					mGroupModel.save();
 				}
-			}).build().execute();
+			}).build();
+			PLDatabase.executeTransaction(transaction);
 		}
 
 		// Finish all request
