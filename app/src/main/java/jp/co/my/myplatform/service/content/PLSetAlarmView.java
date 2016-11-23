@@ -88,10 +88,6 @@ public class PLSetAlarmView extends PLContentView {
 		mStartButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mSelectTimeView.isZeroAll()) {
-					MYLogUtil.showErrorToast("時間未設定");
-					return;
-				}
 				if (mAlarmHandler != null) {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
