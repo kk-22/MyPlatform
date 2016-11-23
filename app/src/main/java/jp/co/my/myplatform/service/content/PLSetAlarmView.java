@@ -92,6 +92,10 @@ public class PLSetAlarmView extends PLContentView {
 					MYLogUtil.showErrorToast("時間未設定");
 					return;
 				}
+				if (mAlarmHandler != null) {
+					// すでにアラームが鳴っている場合
+					stopAlarm();
+				}
 				String timeString = mSelectTimeView.getSelectTimeString();
 				MYLogUtil.showToast(timeString +"後にアラームセット");
 				mCancelButton.setEnabled(true);
