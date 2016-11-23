@@ -249,6 +249,7 @@ public class PLRSSFetcher {
 				mResultPageArray.get(i).setPositionNo(i);
 			}
 
+			mGroupModel.save();
 			final ArrayList<PLNewsPageModel> savePageArray = new ArrayList<>(mResultPageArray);
 			Transaction transaction = FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
 				@Override
@@ -258,7 +259,6 @@ public class PLRSSFetcher {
 						site.delete();
 					}
 					PLDatabase.saveModelList(savePageArray, true);
-					mGroupModel.save();
 				}
 			}).build();
 			PLDatabase.executeTransaction(transaction);
