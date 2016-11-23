@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,11 +28,13 @@ import jp.co.my.myplatform.service.view.PLSelectTimeView;
 public class PLSetAlarmView extends PLContentView {
 
 	private static final String KEY_ALARM_TIME = "AlarmTime";
+	private static final String KEY_SNOOZE_SEC = "SnoozeSec";
 
 	private int mAlarmCount;
 	private Handler mAlarmHandler;
 	private Button mStartButton;
 	private Button mCancelButton;
+	private RadioGroup mSnoozeRadio;
 	private AlarmManager mAlarmManager;
 	private PLSelectTimeView mSelectTimeView;
 
@@ -40,6 +43,7 @@ public class PLSetAlarmView extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.content_set_alarm, this);
 		mStartButton = (Button) findViewById(R.id.set_alarm_button);
 		mCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
+		mSnoozeRadio = (RadioGroup) findViewById(R.id.snooze_radio_group);
 		mSelectTimeView = (PLSelectTimeView) findViewById(R.id.time_select_view);
 		mAlarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 		mAlarmCount = 0;
@@ -54,18 +58,10 @@ public class PLSetAlarmView extends PLContentView {
 		mCancelButton.setEnabled(isExistPendingIntent());
 	}
 
-	@Override
-	public void viewWillDisappear() {
-		super.viewWillDisappear();
-		if (mAlarmHandler != null) {
-			stopAlarm();
-		}
-	}
-
 	public void startAlarm() {
 		if (mAlarmCount == 0) {
 			PLWakeLockManager.getInstance().incrementKeepScreen();
-		} else if (6 <= mAlarmCount) {
+		} else if (15 <= mAlarmCount) {
 			MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
 			stopAlarm();
 			return;
@@ -76,14 +72,16 @@ public class PLSetAlarmView extends PLContentView {
 		Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 		vibrator.vibrate(300);
 
-		// レジュームアラーム
+		// スヌーズ
+		SharedPreferences pref = MYLogUtil.getPreference();
+		int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 1);
 		mAlarmHandler = new Handler();
 		mAlarmHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				startAlarm();
 			}
-		}, 10000);
+		}, snoozeSec * 1000);
 	}
 
 	private void setButtonEvent() {
@@ -102,6 +100,8 @@ public class PLSetAlarmView extends PLContentView {
 				Long timeInMillis = calendar.getTimeInMillis();
 				SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 				editor.putLong(KEY_ALARM_TIME, timeInMillis);
+				int snoozeSec = getSelectSnoozeSec();
+				editor.putInt(KEY_SNOOZE_SEC, snoozeSec);
 				editor.commit();
 
 				PendingIntent alarmSender = createPendingIntent();
@@ -150,6 +150,7 @@ public class PLSetAlarmView extends PLContentView {
 
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 		editor.remove(KEY_ALARM_TIME);
+		editor.remove(KEY_SNOOZE_SEC);
 		editor.commit();
 
 		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
@@ -171,10 +172,16 @@ public class PLSetAlarmView extends PLContentView {
 		}
 		SharedPreferences pref = MYLogUtil.getPreference();
 		Long timeInMillis = pref.getLong(KEY_ALARM_TIME, 0);
-
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(timeInMillis);
 		mSelectTimeView.setPrevCalendar(calendar);
+
+		int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, -1);
+		if (0 < snoozeSec) {
+			mSnoozeRadio.check(getIdOfSnoozeSec(snoozeSec));
+		} else {
+			MYLogUtil.showErrorToast("Snooze sec wasn't saved");
+		}
 	}
 
 	private Boolean isExistPendingIntent() {
@@ -198,5 +205,45 @@ public class PLSetAlarmView extends PLContentView {
 
 		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
 		buttonView.setText(this.getClass(), 8, text);
+	}
+
+	private int getSelectSnoozeSec() {
+		switch (mSnoozeRadio.getCheckedRadioButtonId()) {
+			case R.id.snooze_10sec_radio: {
+				return 10;
+			}
+			case R.id.snooze_30sec_radio: {
+				return 30;
+			}
+			case R.id.snooze_1min_radio: {
+				return 60;
+			}
+			case R.id.snooze_5min_radio: {
+				return 300;
+			}
+			case R.id.snooze_10min_radio: {
+				return 600;
+			}
+			default:
+				MYLogUtil.showErrorToast("スヌーズ未選択");
+				return 0;
+		}
+	}
+
+	private int getIdOfSnoozeSec(int snoozeSec) {
+		switch (snoozeSec) {
+			case 10:
+				return R.id.snooze_10sec_radio;
+			case 30:
+				return R.id.snooze_30sec_radio;
+			case 60:
+				return R.id.snooze_1min_radio;
+			case 300:
+				return R.id.snooze_5min_radio;
+			case 600:
+				return R.id.snooze_10min_radio;
+			default:
+				return 0;
+		}
 	}
 }
