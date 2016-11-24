@@ -61,7 +61,7 @@ public class PLSetAlarmView extends PLContentView {
 	public void startAlarm() {
 		if (mAlarmCount == 0) {
 			PLWakeLockManager.getInstance().incrementKeepScreen();
-		} else if (15 <= mAlarmCount) {
+		} else if (7 <= mAlarmCount) {
 			MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
 			stopAlarm();
 			return;
