@@ -23,9 +23,11 @@ public class PLSelectTimeView extends LinearLayout
 	private SeekBar mMinSeekBar;
 	private SeekBar mSecSeekBar;
 	private SeekBar mFocusSeekBar;		// 最後に操作したシークバー
+	private Calendar mCurrentCalendar;	// 表示時刻と選択時刻のベースになる現在時刻
 
 	public PLSelectTimeView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
+		mCurrentCalendar = Calendar.getInstance();
 
 		LayoutInflater.from(context).inflate(R.layout.view_select_time, this);
 		mCurrentTimeText = (TextView)findViewById(R.id.current_time_text);
@@ -59,11 +61,13 @@ public class PLSelectTimeView extends LinearLayout
 		this(context, null);
 	}
 
-	public Calendar getSelectTimeCalendar() {
+	public Calendar getCurrentSelectCalendar() {
 		int hour = mHourSeekBar.getProgress();
 		int min = mMinSeekBar.getProgress();
 		int sec = mSecSeekBar.getProgress();
+
 		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
 		calendar.add(Calendar.HOUR, hour);
 		calendar.add(Calendar.MINUTE, min);
 		calendar.add(Calendar.SECOND, sec);
@@ -77,17 +81,18 @@ public class PLSelectTimeView extends LinearLayout
 		return (hour + "時間" + min + "分" + sec + "秒");
 	}
 
-	public void setPrevCalendar(Calendar prevCalendar) {
+	public void setAllProgressFromCalendar(Calendar prevCalendar) {
 		if (prevCalendar == null) {
 			return;
 		}
-		int[] diffTimes = MYCalendarUtil.getDiffTimesForHms(Calendar.getInstance(), prevCalendar);
+		int[] diffTimes = MYCalendarUtil.getDiffTimesForHms(mCurrentCalendar, prevCalendar);
 		setAllProgress(diffTimes);
 	}
 
 	public void resetAllTime() {
 		int[] progresses = {0, 0, 0};
 		setAllProgress(progresses);
+		mFocusSeekBar = mMinSeekBar;
 	}
 
 	public boolean isZeroAll() {
@@ -104,14 +109,13 @@ public class PLSelectTimeView extends LinearLayout
 		updateNumberText(mHourSeekBar);
 		updateNumberText(mMinSeekBar);
 		updateNumberText(mSecSeekBar);
-		mFocusSeekBar = mMinSeekBar;
 
 		updateTimerText();
 	}
 
 	private void updateNumberText(SeekBar seekBar) {
-		TextView textView = null;
-		String baseText = null;
+		TextView textView;
+		String baseText;
 		switch (seekBar.getId()) {
 			case R.id.hour_seekBar: {
 				textView = (TextView)findViewById(R.id.hour_text);
@@ -128,19 +132,28 @@ public class PLSelectTimeView extends LinearLayout
 				baseText = "秒";
 				break;
 			}
+			default: return;
 		}
 		textView.setText(seekBar.getProgress() + baseText);
 	}
 
+	@SuppressWarnings("ResourceType")
 	private void tuningSeekBar(int plusProgress) {
-		int nextValue = mFocusSeekBar.getProgress() + plusProgress;
-		if (nextValue < 0) {
-			nextValue = 0;
-		} else if (mFocusSeekBar.getMax() < nextValue) {
-			nextValue = mFocusSeekBar.getMax();
+		mCurrentCalendar = Calendar.getInstance();
+		Calendar selectCalendar =  getCurrentSelectCalendar();
+
+		int field = calendarFieldFromSeekBar(mFocusSeekBar);
+		selectCalendar.add(field, plusProgress);
+		setAllProgressFromCalendar(selectCalendar);
+	}
+
+	private int calendarFieldFromSeekBar(SeekBar seekBar) {
+		switch (seekBar.getId()) {
+			case R.id.hour_seekBar: return Calendar.HOUR;
+			case R.id.min_seekBar: return Calendar.MINUTE;
+			case R.id.sec_seekBar: return Calendar.SECOND;
+			default: return -1;
 		}
-		mFocusSeekBar.setProgress(nextValue);
-		updateNumberText(mFocusSeekBar);
 	}
 
 	// For time calendar
@@ -150,9 +163,8 @@ public class PLSelectTimeView extends LinearLayout
 	}
 
 	public void updateTimerText() {
-		Calendar currentCalendar = Calendar.getInstance();
-		setTimeToTextView(mCurrentTimeText, currentCalendar);
-		setTimeToTextView(mSelectTimeText, getSelectTimeCalendar());
+		setTimeToTextView(mCurrentTimeText, mCurrentCalendar);
+		setTimeToTextView(mSelectTimeText, getCurrentSelectCalendar());
 	}
 
 	// OnClickListener
@@ -181,9 +193,11 @@ public class PLSelectTimeView extends LinearLayout
 	// OnSeekBarChangeListener
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		mFocusSeekBar = seekBar;
+		if (fromUser) {
+			mFocusSeekBar = seekBar;
+			mCurrentCalendar = Calendar.getInstance();
+		}
 		updateNumberText(seekBar);
-
 		updateTimerText();
 	}
 

@@ -90,11 +90,7 @@ public class PLSetAlarmView extends PLContentView {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
 				}
-				String timeString = mSelectTimeView.getSelectTimeString();
-				MYLogUtil.showToast(timeString +"後にアラームセット");
-				mCancelButton.setEnabled(true);
-
-				Calendar calendar = mSelectTimeView.getSelectTimeCalendar();
+				Calendar calendar = mSelectTimeView.getCurrentSelectCalendar();
 				Long timeInMillis = calendar.getTimeInMillis();
 				SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 				editor.putLong(KEY_ALARM_TIME, timeInMillis);
@@ -105,8 +101,12 @@ public class PLSetAlarmView extends PLContentView {
 				PendingIntent alarmSender = createPendingIntent();
 				mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
 
+				mCancelButton.setEnabled(true);
 				updateFrontButtonText(calendar);
 				PLCoreService.getNavigationController().goBackView();
+
+				String timeString = mSelectTimeView.getSelectTimeString();
+				MYLogUtil.showToast(timeString +"後にアラーム\n" +snoozeSec + "秒毎に通知");
 			}
 		});
 		mCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +170,7 @@ public class PLSetAlarmView extends PLContentView {
 		Long timeInMillis = pref.getLong(KEY_ALARM_TIME, 0);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(timeInMillis);
-		mSelectTimeView.setPrevCalendar(calendar);
+		mSelectTimeView.setAllProgressFromCalendar(calendar);
 
 		int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, -1);
 		if (0 < snoozeSec) {
