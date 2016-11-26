@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,8 @@ import android.widget.RadioGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
@@ -30,8 +31,9 @@ public class PLSetAlarmView extends PLContentView {
 	private static final String KEY_ALARM_TIME = "AlarmTime";
 	private static final String KEY_SNOOZE_SEC = "SnoozeSec";
 
+	private static Timer sTimer;
+
 	private int mAlarmCount;
-	private Handler mAlarmHandler;
 	private Button mStartButton;
 	private Button mCancelButton;
 	private RadioGroup mSnoozeRadio;
@@ -46,7 +48,6 @@ public class PLSetAlarmView extends PLContentView {
 		mSnoozeRadio = (RadioGroup) findViewById(R.id.snooze_radio_group);
 		mSelectTimeView = (PLSelectTimeView) findViewById(R.id.time_select_view);
 		mAlarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-		mAlarmCount = 0;
 
 		setButtonEvent();
 	}
@@ -59,36 +60,33 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	public void startAlarm() {
-		if (mAlarmCount == 0) {
-			PLWakeLockManager.getInstance().incrementKeepScreen();
-		} else if (7 <= mAlarmCount) {
-			MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
-			stopAlarm();
-			return;
-		}
-		mAlarmCount++;
-		MYLogUtil.showToast("alarm count=" +mAlarmCount);
-
-		Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-		vibrator.vibrate(300);
-
-		// スヌーズ
+		mAlarmCount = 0;
+		PLWakeLockManager.getInstance().incrementKeepScreen();
 		SharedPreferences pref = MYLogUtil.getPreference();
 		int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 1);
-		mAlarmHandler = new Handler();
-		mAlarmHandler.postDelayed(new Runnable() {
+
+		sTimer = new Timer(true);
+		sTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				startAlarm();
+				mAlarmCount++;
+				MYLogUtil.showToast("alarm count=" +mAlarmCount);
+				Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+				vibrator.vibrate(300);
+
+				if (7 <= mAlarmCount) {
+					MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
+					stopAlarm();
+				}
 			}
-		}, snoozeSec * 1000);
+		}, 1, snoozeSec * 1000);
 	}
 
 	private void setButtonEvent() {
 		mStartButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mAlarmHandler != null) {
+				if (sTimer != null) {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
 				}
@@ -107,7 +105,6 @@ public class PLSetAlarmView extends PLContentView {
 				PendingIntent alarmSender = createPendingIntent();
 				mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
 
-				mAlarmCount = 0;
 				updateFrontButtonText(calendar);
 				PLCoreService.getNavigationController().goBackView();
 			}
@@ -119,7 +116,7 @@ public class PLSetAlarmView extends PLContentView {
 					 MYLogUtil.showToast("アラーム未登録");
 					return;
 				}
-				if (mAlarmHandler != null) {
+				if (sTimer != null) {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
 					PLCoreService.getNavigationController().goBackView();
@@ -161,9 +158,8 @@ public class PLSetAlarmView extends PLContentView {
 	private void stopAlarm() {
 		cancelAlarm();
 		PLWakeLockManager.getInstance().decrementKeepScreen();
-		mAlarmHandler.removeCallbacksAndMessages(null);
-		mAlarmHandler = null;
-		mAlarmCount = 0;
+		sTimer.cancel();
+		sTimer = null;
 	}
 
 	private void setDefaultTimeIfNecessary() {
