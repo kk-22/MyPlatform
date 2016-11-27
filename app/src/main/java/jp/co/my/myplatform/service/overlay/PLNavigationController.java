@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.overlay;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 public class PLNavigationController extends PLOverlayView {
 
 	private FrameLayout mFrameLayout;
+	private Button mBackButton;
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
 
@@ -23,6 +25,7 @@ public class PLNavigationController extends PLOverlayView {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
 		mFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+		mBackButton = (Button) findViewById(R.id.back_button);
 
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
 			@Override
@@ -30,15 +33,13 @@ public class PLNavigationController extends PLOverlayView {
 				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationController.this);
 			}
 		});
-		findViewById(R.id.home_button).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.back_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (1 < mViewCache.size()) {
-					goBackView();
-				}
+				goBackView();
 			}
 		});
-		findViewById(R.id.home_button).setOnLongClickListener(new OnLongClickListener() {
+		mBackButton.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLHomeView.class);
@@ -80,13 +81,15 @@ public class PLNavigationController extends PLOverlayView {
 	public <T extends PLContentView> T pushView(T view) {
 		mViewCache.add(view);
 		changeCurrentView(view);
+		updateBackButton();
 		return (T) view;
 	}
 
 	public void goBackView() {
+
 		int count = mViewCache.size();
 		if (count <= 1) {
-			MYLogUtil.showErrorToast("戻り先なし count=" +count);
+			MYLogUtil.showErrorToast("戻り先なし count=" + count);
 			return;
 		}
 		PLContentView prevView = mViewCache.get(count - 2);
@@ -95,6 +98,7 @@ public class PLNavigationController extends PLOverlayView {
 			mCurrentView.viewWillDisappear();
 		}
 		changeCurrentView(prevView);
+		updateBackButton();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -150,5 +154,9 @@ public class PLNavigationController extends PLOverlayView {
 
 		mFrameLayout.addView(view, createMatchParams());
 		mCurrentView = view;
+	}
+
+	private void updateBackButton() {
+		mBackButton.setEnabled(mViewCache.size() > 1);
 	}
 }

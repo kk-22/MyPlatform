@@ -34,6 +34,6 @@
             android:layout_height="match_parent"
             android:textSize="10dp"
             android:text="Back"
-            android:id="@+id/home_button"/>
+            android:id="@+id/back_button"/>
     </FrameLayout>
 </LinearLayout>
