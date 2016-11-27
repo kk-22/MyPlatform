@@ -56,10 +56,13 @@ public class PLSetAlarmView extends PLContentView {
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		setDefaultTimeIfNecessary();
-		mCancelButton.setEnabled(isExistPendingIntent());
 	}
 
 	public void startAlarm() {
+		if (sTimer != null) {
+			MYLogUtil.showErrorToast("すでにアラームが開始しています count=" +mAlarmCount);
+			return;
+		}
 		mAlarmCount = 0;
 		PLWakeLockManager.getInstance().incrementKeepScreen();
 		SharedPreferences pref = MYLogUtil.getPreference();
@@ -72,7 +75,7 @@ public class PLSetAlarmView extends PLContentView {
 				mAlarmCount++;
 				MYLogUtil.showToast("alarm count=" +mAlarmCount);
 				Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-				vibrator.vibrate(300);
+				vibrator.vibrate(400);
 
 				if (7 <= mAlarmCount) {
 					MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
@@ -98,24 +101,23 @@ public class PLSetAlarmView extends PLContentView {
 				editor.putInt(KEY_SNOOZE_SEC, snoozeSec);
 				editor.commit();
 
-				PendingIntent alarmSender = createPendingIntent();
-				mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
-
 				mCancelButton.setEnabled(true);
 				updateFrontButtonText(calendar);
-				PLCoreService.getNavigationController().goBackView();
-
 				String timeString = mSelectTimeView.getSelectTimeString();
 				MYLogUtil.showToast(timeString +"後にアラーム\n" +snoozeSec + "秒毎に通知");
+
+				if (!mSelectTimeView.isZeroAll()) {
+					PendingIntent alarmSender = createPendingIntent();
+					mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
+					PLCoreService.getNavigationController().goBackView();
+				} else {
+					startAlarm();
+				}
 			}
 		});
 		mCancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!isExistPendingIntent()) {
-					 MYLogUtil.showToast("アラーム未登録");
-					return;
-				}
 				if (sTimer != null) {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
@@ -141,10 +143,11 @@ public class PLSetAlarmView extends PLContentView {
 		MYLogUtil.showToast("アラームキャンセル");
 		mCancelButton.setEnabled(false);
 
-		PendingIntent alarmSender = createPendingIntent();
-		mAlarmManager.cancel(alarmSender);
-		alarmSender.cancel();
-
+		if (isExistPendingIntent()) {
+			PendingIntent alarmSender = createPendingIntent();
+			mAlarmManager.cancel(alarmSender);
+			alarmSender.cancel();
+		}
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 		editor.remove(KEY_ALARM_TIME);
 		editor.remove(KEY_SNOOZE_SEC);
@@ -163,14 +166,15 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	private void setDefaultTimeIfNecessary() {
-		if (!isExistPendingIntent()) {
-			return;
-		}
 		SharedPreferences pref = MYLogUtil.getPreference();
 		Long timeInMillis = pref.getLong(KEY_ALARM_TIME, 0);
+		if (timeInMillis == 0) {
+			return;
+		}
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(timeInMillis);
 		mSelectTimeView.setAllProgressFromCalendar(calendar);
+		mCancelButton.setEnabled(true);
 
 		int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, -1);
 		if (0 < snoozeSec) {
