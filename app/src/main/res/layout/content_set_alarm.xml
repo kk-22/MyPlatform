@@ -91,6 +91,7 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:enabled="false"
                 android:text="キャンセル"
                 android:id="@+id/cancel_alarm_button"
                 android:layout_weight="1"/>

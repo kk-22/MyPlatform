@@ -140,7 +140,7 @@ public class PLSetAlarmView extends PLContentView {
 
 	// 予約したアラーム解除
 	private void cancelAlarm() {
-		MYLogUtil.showToast("アラームキャンセル");
+		// TODO: timerからコール時にインスタンスが破棄済みなためクラッシュ
 		mCancelButton.setEnabled(false);
 
 		if (isExistPendingIntent()) {
