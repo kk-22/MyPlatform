@@ -30,6 +30,7 @@ public class PLMainActivity extends Activity {
 		Intent intent = getIntent();
 		if (!intent.getBooleanExtra(KEY_DO_NOT_START_SERVICE, false)) {
 			startServiceIfEnable();
+			finish();
 		}
 	}
 
