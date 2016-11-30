@@ -37,7 +37,6 @@ public class PLSetAlarmView extends PLContentView {
 	private Button mStartButton;
 	private Button mCancelButton;
 	private RadioGroup mSnoozeRadio;
-	private AlarmManager mAlarmManager;
 	private PLSelectTimeView mSelectTimeView;
 
 	public PLSetAlarmView() {
@@ -47,7 +46,6 @@ public class PLSetAlarmView extends PLContentView {
 		mCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
 		mSnoozeRadio = (RadioGroup) findViewById(R.id.snooze_radio_group);
 		mSelectTimeView = (PLSelectTimeView) findViewById(R.id.time_select_view);
-		mAlarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 
 		setButtonEvent();
 	}
@@ -79,6 +77,7 @@ public class PLSetAlarmView extends PLContentView {
 
 				if (7 <= mAlarmCount) {
 					MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
+					mCancelButton.setEnabled(false);
 					stopAlarm();
 				}
 			}
@@ -108,7 +107,8 @@ public class PLSetAlarmView extends PLContentView {
 
 				if (!mSelectTimeView.isZeroAll()) {
 					PendingIntent alarmSender = createPendingIntent();
-					mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
+					AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+					alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
 					PLCoreService.getNavigationController().goBackView();
 				} else {
 					startAlarm();
@@ -120,6 +120,7 @@ public class PLSetAlarmView extends PLContentView {
 			public void onClick(View v) {
 				if (sTimer != null) {
 					// すでにアラームが鳴っている場合
+					mCancelButton.setEnabled(false);
 					stopAlarm();
 					PLCoreService.getNavigationController().goBackView();
 					return;
@@ -130,6 +131,7 @@ public class PLSetAlarmView extends PLContentView {
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 						PLSetAlarmView.this.removeTopPopover();
 						mSelectTimeView.resetAllTime();
+						mCancelButton.setEnabled(false);
 						cancelAlarm();
 						PLCoreService.getNavigationController().goBackView();
 					}
@@ -139,13 +141,12 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	// 予約したアラーム解除
-	private void cancelAlarm() {
+	private static void cancelAlarm() {
 		// TODO: timerからコール時にインスタンスが破棄済みなためクラッシュ
-		mCancelButton.setEnabled(false);
-
 		if (isExistPendingIntent()) {
 			PendingIntent alarmSender = createPendingIntent();
-			mAlarmManager.cancel(alarmSender);
+			AlarmManager alarmManager = (AlarmManager) PLCoreService.getContext().getSystemService(Context.ALARM_SERVICE);
+			alarmManager.cancel(alarmSender);
 			alarmSender.cancel();
 		}
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
@@ -154,21 +155,25 @@ public class PLSetAlarmView extends PLContentView {
 		editor.commit();
 
 		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
-		buttonView.clearText(this.getClass());
+		buttonView.clearText(PLSetAlarmView.class);
 	}
 
 	// 開始したアラーム停止
-	private void stopAlarm() {
+	public static void stopAlarm() {
 		cancelAlarm();
-		PLWakeLockManager.getInstance().decrementKeepScreen();
-		sTimer.cancel();
-		sTimer = null;
+		if (sTimer != null) {
+			PLWakeLockManager.getInstance().decrementKeepScreen();
+			sTimer.cancel();
+			sTimer = null;
+		}
 	}
 
 	private void setDefaultTimeIfNecessary() {
 		SharedPreferences pref = MYLogUtil.getPreference();
 		Long timeInMillis = pref.getLong(KEY_ALARM_TIME, 0);
 		if (timeInMillis == 0) {
+			mSelectTimeView.resetAllTime();
+			mCancelButton.setEnabled(false);
 			return;
 		}
 		Calendar calendar = Calendar.getInstance();
@@ -184,18 +189,18 @@ public class PLSetAlarmView extends PLContentView {
 		}
 	}
 
-	private Boolean isExistPendingIntent() {
+	private static Boolean isExistPendingIntent() {
 		return (getPendingIntent(PendingIntent.FLAG_NO_CREATE) != null);
 	}
 
-	private PendingIntent createPendingIntent() {
+	private static PendingIntent createPendingIntent() {
 		return getPendingIntent(PendingIntent.FLAG_CANCEL_CURRENT);
 	}
 
-	private PendingIntent getPendingIntent(int flags) {
-		Intent intent = new Intent(getContext(), PLBroadcastReceiver.class);
-		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, getClass().getCanonicalName());
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 77, intent, flags);
+	private static PendingIntent getPendingIntent(int flags) {
+		Intent intent = new Intent(PLCoreService.getContext(), PLBroadcastReceiver.class);
+		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, PLSetAlarmView.class.getCanonicalName());
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(PLCoreService.getContext(), 77, intent, flags);
 		return pendingIntent;
 	}
 

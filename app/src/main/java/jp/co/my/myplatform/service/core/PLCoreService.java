@@ -1,12 +1,15 @@
 package jp.co.my.myplatform.service.core;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
+import android.widget.RemoteViews;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
@@ -20,6 +23,7 @@ public class PLCoreService extends Service {
 	public static final String KEY_INTENT_FROM_BROADCAST = "KEY_INTENT_FROM_BROADCAST";
 	public static final String KEY_CONTENT_CLASS_NAME = "KEY_CONTENT_CLASS_NAME";
 	public static final String KEY_ACTION_SHOW = "KEY_ACTION_SHOW";
+	public static final String KEY_CANCELALARM = "KEY_CANCELALARM";
 
 	// シングルトン
 	private static Context sContext;
@@ -106,18 +110,36 @@ public class PLCoreService extends Service {
 			// PLBroadcastReceiver で設定した分を解除
 			PLWakeLockManager.getInstance().decrementKeepCPU();
 		}
+
+		if (intent.getBooleanExtra(KEY_CANCELALARM, false)) {
+			MYLogUtil.showToast("アラームキャンセル");
+			PLSetAlarmView.stopAlarm();
+
+		}
 	}
 
 	private void showNotification() {
 		// ボタン表示アクションつき通知
 		Context context = getApplicationContext();
-		Intent intent = new Intent(context, PLCoreService.class);
-		intent.putExtra(PLCoreService.KEY_ACTION_SHOW, true);
-		PendingIntent pendingIntent = PendingIntent.getService(context, 66, intent, PendingIntent.FLAG_ONE_SHOT);
+//		Intent intent = new Intent(context, PLCoreService.class);
+//		intent.putExtra(PLCoreService.KEY_ACTION_SHOW, true);
+//		PendingIntent pendingIntent = PendingIntent.getService(context, 66, intent, PendingIntent.FLAG_ONE_SHOT);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
 		builder.setSmallIcon(R.mipmap.ic_launcher);
-		builder.setContentIntent(pendingIntent);
+//		builder.setContentIntent(pendingIntent);
+		builder.setVisibility(Notification.VISIBILITY_PUBLIC);	// ロック画面で表示
+		builder.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+		builder.setOngoing(true);	// 削除不可にする
+
+		Intent yepIntent = new Intent(context, PLCoreService.class);
+		yepIntent.putExtra(KEY_CANCELALARM, true);
+		PendingIntent yepPendingIntent = PendingIntent.getService(context, 76, yepIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notification_alarml);
+		view.setOnClickPendingIntent(R.id.notification_layout, yepPendingIntent);
+		builder.setContent(view);
+
 		NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
 		manager.notify(1, builder.build());
 		startForeground(1, builder.build());
