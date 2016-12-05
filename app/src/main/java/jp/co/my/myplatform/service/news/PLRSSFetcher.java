@@ -204,10 +204,12 @@ public class PLRSSFetcher {
 			}
 			String title = page.getTitle();
 			boolean wordResult = true;
-			for (PLBadWordModel badWord : wordList) {
-				if (title.contains(badWord.getWord())) {
-					wordResult = false;
-					break;
+			if (wordList != null) {
+				for (PLBadWordModel badWord : wordList) {
+					if (title.contains(badWord.getWord())) {
+						wordResult = false;
+						break;
+					}
 				}
 			}
 			if (wordResult) {
