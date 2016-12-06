@@ -1,12 +1,14 @@
 package jp.co.my.myplatform.service.overlay;
 
 import android.content.ClipData;
+import android.content.SharedPreferences;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLCoreService;
 
@@ -46,9 +48,14 @@ public class PLFrontButtonView extends PLOverlayView {
 
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
+		SharedPreferences pref = MYLogUtil.getPreference();
+		Float horizontal = pref.getFloat(PLDragDropView.KEY_HORIZONTAL_MARGIN, 0);
+		Float vertical = pref.getFloat(PLDragDropView.KEY_VERTICAL_MARGIN, 0);
+
 		WindowManager.LayoutParams params = getBaseParamsForButtonView();
-		params.gravity = Gravity.TOP | Gravity.RIGHT;
-		params.verticalMargin = 0.4f;
+		params.gravity = Gravity.TOP | Gravity.LEFT;
+		params.horizontalMargin = horizontal;
+		params.verticalMargin = vertical;
 		params.alpha = 0.5f;
 		return params;
 	}

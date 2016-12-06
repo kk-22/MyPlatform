@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.overlay;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.view.DragEvent;
@@ -7,10 +8,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 
 public class PLDragDropView extends PLOverlayView {
+	public static final String KEY_HORIZONTAL_MARGIN = "KEY_HORIZONTAL_MARGIN";
+	public static final String KEY_VERTICAL_MARGIN = "KEY_VERTICAL_MARGIN";
+
 	PLOverlayView mMoveView;
 
 	public PLDragDropView(PLOverlayView view) {
@@ -65,5 +70,10 @@ public class PLDragDropView extends PLOverlayView {
 		PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
 		overlayManager.updateOverlayLayout(mMoveView, params);
 		overlayManager.removeOverlayView(this);
+
+		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+		editor.putFloat(KEY_HORIZONTAL_MARGIN, params.horizontalMargin);
+		editor.putFloat(KEY_VERTICAL_MARGIN, params.verticalMargin);
+		editor.commit();
 	}
 }
