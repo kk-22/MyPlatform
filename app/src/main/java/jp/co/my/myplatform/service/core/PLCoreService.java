@@ -23,7 +23,7 @@ public class PLCoreService extends Service {
 	public static final String KEY_INTENT_FROM_BROADCAST = "KEY_INTENT_FROM_BROADCAST";
 	public static final String KEY_CONTENT_CLASS_NAME = "KEY_CONTENT_CLASS_NAME";
 	public static final String KEY_ACTION_SHOW = "KEY_ACTION_SHOW";
-	public static final String KEY_CANCELALARM = "KEY_CANCELALARM";
+	public static final String KEY_CANCEL_ALARM = "KEY_CANCEL_ALARM";
 
 	// シングルトン
 	private static Context sContext;
@@ -31,6 +31,7 @@ public class PLCoreService extends Service {
 	private static PLAppStrategy sAppStrategy;
 	private static PLOverlayManager sOverlayManager;
 	private static PLNavigationController sNavigationController;
+	private static PLCoreService sCoreService;
 
 	private boolean mIsRunning;					// 多重起動対策
 
@@ -44,9 +45,10 @@ public class PLCoreService extends Service {
 		MYLogUtil.outputLog("onStartCommand");
 		if (!mIsRunning) {
 			mIsRunning = true;
-			showNotification();
+			showDefaultNotification();
 
 			sContext = this;
+			sCoreService = this;
 			sVolleyHelper = new PLVolleyHelper(this);
 			sAppStrategy = new PLAppStrategy();
 			sOverlayManager = new PLOverlayManager(this);
@@ -72,6 +74,7 @@ public class PLCoreService extends Service {
 		sNavigationController = null;
 		sOverlayManager = null;
 		sAppStrategy = null;
+		sCoreService = null;
 		sContext = null;
 
 		mIsRunning = false;
@@ -111,34 +114,32 @@ public class PLCoreService extends Service {
 			PLWakeLockManager.getInstance().decrementKeepCPU();
 		}
 
-		if (intent.getBooleanExtra(KEY_CANCELALARM, false)) {
+		if (intent.getBooleanExtra(KEY_CANCEL_ALARM, false)) {
 			MYLogUtil.showToast("アラームキャンセル");
 			PLSetAlarmView.stopAlarm();
 
 		}
 	}
 
-	private void showNotification() {
-		// ボタン表示アクションつき通知
+	public void showDefaultNotification() {
 		Context context = getApplicationContext();
-//		Intent intent = new Intent(context, PLCoreService.class);
-//		intent.putExtra(PLCoreService.KEY_ACTION_SHOW, true);
-//		PendingIntent pendingIntent = PendingIntent.getService(context, 66, intent, PendingIntent.FLAG_ONE_SHOT);
+		Intent intent = new Intent(context, PLCoreService.class);
+		intent.putExtra(KEY_ACTION_SHOW, true);
+		PendingIntent pendingIntent = PendingIntent.getService(context, 75, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+		RemoteViews remote = new RemoteViews(getPackageName(), R.layout.notification_default);
+		remote.setOnClickPendingIntent(R.id.notification_layout, pendingIntent);
+		showNotification(remote);
+	}
+
+	public void showNotification(RemoteViews remote) {
+		Context context = getApplicationContext();
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
 		builder.setSmallIcon(R.mipmap.ic_launcher);
-//		builder.setContentIntent(pendingIntent);
 		builder.setVisibility(Notification.VISIBILITY_PUBLIC);	// ロック画面で表示
 		builder.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
 		builder.setOngoing(true);	// 削除不可にする
-
-		Intent yepIntent = new Intent(context, PLCoreService.class);
-		yepIntent.putExtra(KEY_CANCELALARM, true);
-		PendingIntent yepPendingIntent = PendingIntent.getService(context, 76, yepIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notification_alarml);
-		view.setOnClickPendingIntent(R.id.notification_layout, yepPendingIntent);
-		builder.setContent(view);
+		builder.setContent(remote);
 
 		NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
 		manager.notify(1, builder.build());
@@ -163,6 +164,10 @@ public class PLCoreService extends Service {
 
 	public static PLNavigationController getNavigationController() {
 		return sNavigationController;
+	}
+
+	public static PLCoreService getCoreService() {
+		return sCoreService;
 	}
 
 	public static Context getContext() {

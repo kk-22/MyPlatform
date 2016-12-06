@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:background="@drawable/selector_list"
+              android:id="@+id/notification_layout"
+              android:layout_width="match_parent"
+              android:layout_height="64dp"
+              android:orientation="horizontal">
+
+
+    <ImageView
+        android:src="@mipmap/ic_launcher"
+        android:layout_margin="17dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
+
+    <TextView
+        android:textColor="#000"
+        android:text="MyPlatform is running"
+        android:gravity="center|left"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

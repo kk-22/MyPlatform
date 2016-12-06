@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.RemoteViews;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,6 +26,8 @@ import jp.co.my.myplatform.service.core.PLWakeLockManager;
 import jp.co.my.myplatform.service.overlay.PLFrontButtonView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.view.PLSelectTimeView;
+
+import static jp.co.my.myplatform.service.core.PLCoreService.KEY_CANCEL_ALARM;
 
 public class PLSetAlarmView extends PLContentView {
 
@@ -102,6 +105,7 @@ public class PLSetAlarmView extends PLContentView {
 
 				mCancelButton.setEnabled(true);
 				updateFrontButtonText(calendar);
+				showAlarmNotifaication();
 				String timeString = mSelectTimeView.getSelectTimeString();
 				MYLogUtil.showToast(timeString +"後にアラーム\n" +snoozeSec + "秒毎に通知");
 
@@ -156,6 +160,8 @@ public class PLSetAlarmView extends PLContentView {
 
 		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
 		buttonView.clearText(PLSetAlarmView.class);
+
+		PLCoreService.getCoreService().showDefaultNotification();
 	}
 
 	// 開始したアラーム停止
@@ -210,6 +216,16 @@ public class PLSetAlarmView extends PLContentView {
 
 		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
 		buttonView.setText(this.getClass(), 8, text);
+	}
+
+	private void showAlarmNotifaication() {
+		Intent intent = new Intent(getContext(), PLCoreService.class);
+		intent.putExtra(KEY_CANCEL_ALARM, true);
+		PendingIntent pendingIntent = PendingIntent.getService(getContext(), 76, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		RemoteViews remote = new RemoteViews(getContext().getPackageName(), R.layout.notification_alarml);
+		remote.setOnClickPendingIntent(R.id.notification_layout, pendingIntent);
+		PLCoreService.getCoreService().showNotification(remote);
 	}
 
 	private int getSelectSnoozeSec() {
