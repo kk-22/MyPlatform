@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,6 @@ import android.widget.RemoteViews;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
@@ -34,7 +33,8 @@ public class PLSetAlarmView extends PLContentView {
 	private static final String KEY_ALARM_TIME = "AlarmTime";
 	private static final String KEY_SNOOZE_SEC = "SnoozeSec";
 
-	private static Timer sTimer;
+	// 画面終了後もキャンセル可能にするためにstatic
+	private static Handler sAlarmHandler;
 
 	private int mAlarmCount;
 	private Button mStartButton;
@@ -60,38 +60,44 @@ public class PLSetAlarmView extends PLContentView {
 	}
 
 	public void startAlarm() {
-		if (sTimer != null) {
+		if (sAlarmHandler != null) {
 			MYLogUtil.showErrorToast("すでにアラームが開始しています count=" +mAlarmCount);
 			return;
 		}
 		mAlarmCount = 0;
 		PLWakeLockManager.getInstance().incrementKeepScreen();
-		SharedPreferences pref = MYLogUtil.getPreference();
-		int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 1);
 
-		sTimer = new Timer(true);
-		sTimer.scheduleAtFixedRate(new TimerTask() {
+		sAlarmHandler = new Handler();
+		sAlarmHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				mAlarmCount++;
-				MYLogUtil.showToast("alarm count=" +mAlarmCount);
 				Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 				vibrator.vibrate(400);
 
-				if (7 <= mAlarmCount) {
-					MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
-					mCancelButton.setEnabled(false);
-					stopAlarm();
+				if (mAlarmCount < 7) {
+					MYLogUtil.showToast("alarm count=" +mAlarmCount);
+					SharedPreferences pref = MYLogUtil.getPreference();
+					int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 1);
+					sAlarmHandler.postDelayed(this, snoozeSec * 1000);
+					return;
 				}
+
+				MYLogUtil.showToast("アラーム強制終了　回数=" +mAlarmCount);
+				if (mCancelButton.getParent() != null) {
+					// Viewが生存しているときのみ実行
+					mCancelButton.setEnabled(false);
+				}
+				stopAlarm();
 			}
-		}, 1, snoozeSec * 1000);
+		}, 1);
 	}
 
 	private void setButtonEvent() {
 		mStartButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (sTimer != null) {
+				if (sAlarmHandler != null) {
 					// すでにアラームが鳴っている場合
 					stopAlarm();
 				}
@@ -122,7 +128,7 @@ public class PLSetAlarmView extends PLContentView {
 		mCancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (sTimer != null) {
+				if (sAlarmHandler != null) {
 					// すでにアラームが鳴っている場合
 					mCancelButton.setEnabled(false);
 					stopAlarm();
@@ -167,10 +173,10 @@ public class PLSetAlarmView extends PLContentView {
 	// 開始したアラーム停止
 	public static void stopAlarm() {
 		cancelAlarm();
-		if (sTimer != null) {
+		if (sAlarmHandler != null) {
 			PLWakeLockManager.getInstance().decrementKeepScreen();
-			sTimer.cancel();
-			sTimer = null;
+			sAlarmHandler.removeCallbacksAndMessages(null);
+			sAlarmHandler = null;
 		}
 	}
 
