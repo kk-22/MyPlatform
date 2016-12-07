@@ -1,5 +1,6 @@
 package jp.co.my.common.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MYCalendarUtil {
@@ -23,5 +24,10 @@ public class MYCalendarUtil {
 		long diffHourMin = diffMin % (60 * 24);
 		int[] diffTimes = {(int)diffHourMin / 60, (int)diffHourMin % 60, (int)diffSec % 60};
 		return diffTimes;
+	}
+
+	public static String getDateTextFromCalendar(Calendar calendar) {
+		SimpleDateFormat format = new SimpleDateFormat("HH時mm分ss秒");
+		return format.format(calendar.getTime());
 	}
 }

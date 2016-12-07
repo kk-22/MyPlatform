@@ -17,6 +17,7 @@ import android.widget.RemoteViews;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import jp.co.my.common.util.MYCalendarUtil;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLBroadcastReceiver;
@@ -112,8 +113,9 @@ public class PLSetAlarmView extends PLContentView {
 				mCancelButton.setEnabled(true);
 				updateFrontButtonText(calendar);
 				showAlarmNotifaication();
+				String dateString = MYCalendarUtil.getDateTextFromCalendar(calendar);
 				String timeString = mSelectTimeView.getSelectTimeString();
-				MYLogUtil.showToast(timeString +"後にアラーム\n" +snoozeSec + "秒毎に通知");
+				MYLogUtil.showLongToast("schedule :" +dateString +"\nremaining:" +timeString +"ago\nschedule :" +snoozeSec +"/sec");
 
 				if (!mSelectTimeView.isZeroAll()) {
 					PendingIntent alarmSender = createPendingIntent();

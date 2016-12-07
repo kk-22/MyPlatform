@@ -8,8 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import jp.co.my.common.util.MYCalendarUtil;
 import jp.co.my.myplatform.R;
@@ -78,7 +78,7 @@ public class PLSelectTimeView extends LinearLayout
 		int hour = mHourSeekBar.getProgress();
 		int min = mMinSeekBar.getProgress();
 		int sec = mSecSeekBar.getProgress();
-		return (hour + "時間" + min + "分" + sec + "秒");
+		return String.format(Locale.JAPAN, "%02d:%02d:%02d", hour, min, sec);
 	}
 
 	public void setAllProgressFromCalendar(Calendar prevCalendar) {
@@ -156,15 +156,9 @@ public class PLSelectTimeView extends LinearLayout
 		}
 	}
 
-	// For time calendar
-	private void setTimeToTextView(TextView textView, Calendar calendar) {
-		SimpleDateFormat format = new SimpleDateFormat("HH時mm分ss秒");
-		textView.setText(format.format(calendar.getTime()));
-	}
-
 	public void updateTimerText() {
-		setTimeToTextView(mCurrentTimeText, mCurrentCalendar);
-		setTimeToTextView(mSelectTimeText, getCurrentSelectCalendar());
+		mCurrentTimeText.setText(MYCalendarUtil.getDateTextFromCalendar(mCurrentCalendar));
+		mSelectTimeText.setText(MYCalendarUtil.getDateTextFromCalendar(getCurrentSelectCalendar()));
 	}
 
 	// OnClickListener
