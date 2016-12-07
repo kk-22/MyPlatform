@@ -86,36 +86,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:text="0時"
-                android:textColor="#000000"
+                android:background="@drawable/selector_list"
                 android:layout_weight="1"
-                android:gravity="center_vertical|right"/>
+                android:gravity="center_vertical|center"/>
 
             <TextView
                 android:id="@+id/min_text"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:text="0分"
-                android:textColor="#000000"
+                android:background="@drawable/selector_list"
                 android:layout_weight="1"
-                android:gravity="center_vertical|right"/>
+                android:gravity="center_vertical|center"/>
 
             <TextView
                 android:id="@+id/sec_text"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:text="0秒"
-                android:textColor="#000000"
+                android:background="@drawable/selector_list"
                 android:layout_weight="1"
-                android:gravity="center_vertical|right"/>
+                android:gravity="center_vertical|center"/>
 
         </LinearLayout>
 
         <FrameLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="14"
             >
 
+            <!--SeekBarが内部で持つマージンと合わせるために左右15dpのマージン-->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

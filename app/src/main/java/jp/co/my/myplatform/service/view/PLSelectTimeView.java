@@ -1,6 +1,8 @@
 package jp.co.my.myplatform.service.view;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +11,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import jp.co.my.common.util.MYCalendarUtil;
 import jp.co.my.myplatform.R;
@@ -23,6 +27,7 @@ public class PLSelectTimeView extends LinearLayout
 	private SeekBar mMinSeekBar;
 	private SeekBar mSecSeekBar;
 	private SeekBar mFocusSeekBar;		// 最後に操作したシークバー
+	private HashMap<SeekBar, TextView> mTextMap;
 	private Calendar mCurrentCalendar;	// 表示時刻と選択時刻のベースになる現在時刻
 
 	public PLSelectTimeView(Context context, AttributeSet attrs, int defStyle){
@@ -49,7 +54,9 @@ public class PLSelectTimeView extends LinearLayout
 			}
 		});
 
-		mFocusSeekBar = mMinSeekBar;
+		initTextViews();
+
+		setFocusSeekBar(mMinSeekBar);
 		updateTimerText();
 	}
 
@@ -59,6 +66,29 @@ public class PLSelectTimeView extends LinearLayout
 
 	public PLSelectTimeView(Context context) {
 		this(context, null);
+	}
+
+	private void initTextViews() {
+		mTextMap = new HashMap<>();
+		mTextMap.put(mHourSeekBar, (TextView) findViewById(R.id.hour_text));
+		mTextMap.put(mMinSeekBar, (TextView) findViewById(R.id.min_text));
+		mTextMap.put(mSecSeekBar, (TextView) findViewById(R.id.sec_text));
+
+		OnClickListener onClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TextView focusText = (TextView) v;
+				for (Map.Entry<SeekBar, TextView> entry : mTextMap.entrySet()) {
+					if (focusText.equals(entry.getValue())) {
+						setFocusSeekBar(entry.getKey());
+						break;
+					}
+				}
+			}
+		};
+		for (final TextView textView : mTextMap.values()) {
+			textView.setOnClickListener(onClickListener);
+		}
 	}
 
 	public Calendar getCurrentSelectCalendar() {
@@ -92,7 +122,7 @@ public class PLSelectTimeView extends LinearLayout
 	public void resetAllTime() {
 		int[] progresses = {0, 0, 0};
 		setAllProgress(progresses);
-		mFocusSeekBar = mMinSeekBar;
+		setFocusSeekBar(mMinSeekBar);
 	}
 
 	public boolean isZeroAll() {
@@ -161,6 +191,23 @@ public class PLSelectTimeView extends LinearLayout
 		mSelectTimeText.setText(MYCalendarUtil.getDateTextFromCalendar(getCurrentSelectCalendar()));
 	}
 
+	private void setFocusSeekBar(SeekBar focusSeekBar) {
+		mFocusSeekBar = focusSeekBar;
+		updateAllText(mTextMap.get(focusSeekBar));
+	}
+
+	private void updateAllText(TextView focusText) {
+		for (TextView textView : mTextMap.values()) {
+			if (textView.equals(focusText)) {
+				textView.setTextColor(Color.BLUE);
+				textView.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+			} else {
+				textView.setTextColor(Color.BLACK);
+				textView.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+			}
+		}
+	}
+
 	// OnClickListener
 	@Override
 	public void onClick(View v) {
@@ -188,7 +235,7 @@ public class PLSelectTimeView extends LinearLayout
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		if (fromUser) {
-			mFocusSeekBar = seekBar;
+			setFocusSeekBar(seekBar);
 			mCurrentCalendar = Calendar.getInstance();
 		}
 		updateNumberText(seekBar);
