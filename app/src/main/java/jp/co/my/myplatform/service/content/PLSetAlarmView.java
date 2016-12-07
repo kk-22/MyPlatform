@@ -66,7 +66,10 @@ public class PLSetAlarmView extends PLContentView {
 			return;
 		}
 		mAlarmCount = 0;
+		PLWakeLockManager.getInstance().incrementKeepCPU();
+		// 1度だけ画面点灯。バックライト点灯時間がスヌーズ秒より短い場合は消灯する。
 		PLWakeLockManager.getInstance().incrementKeepScreen();
+		PLWakeLockManager.getInstance().decrementKeepScreen();
 
 		sAlarmHandler = new Handler();
 		sAlarmHandler.postDelayed(new Runnable() {
@@ -176,7 +179,7 @@ public class PLSetAlarmView extends PLContentView {
 	public static void stopAlarm() {
 		cancelAlarm();
 		if (sAlarmHandler != null) {
-			PLWakeLockManager.getInstance().decrementKeepScreen();
+			PLWakeLockManager.getInstance().decrementKeepCPU();
 			sAlarmHandler.removeCallbacksAndMessages(null);
 			sAlarmHandler = null;
 		}
