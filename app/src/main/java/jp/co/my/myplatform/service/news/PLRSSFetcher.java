@@ -251,11 +251,11 @@ public class PLRSSFetcher {
 				mResultPageArray.get(i).setPositionNo(i);
 			}
 
-			mGroupModel.save();
 			final ArrayList<PLNewsPageModel> savePageArray = new ArrayList<>(mResultPageArray);
 			Transaction transaction = FlowManager.getDatabase(PLDatabase.class).beginTransactionAsync(new ITransaction() {
 				@Override
 				public void execute(DatabaseWrapper databaseWrapper) {
+					mGroupModel.save();
 					for (PLNewsPageModel site : removePageArray) {
 						MYLogUtil.outputLog("delete " + site.getTitle());
 						site.delete();
