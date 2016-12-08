@@ -6,11 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
+
+import java.io.File;
+import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.popover.PLListPopover;
+import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 
 public class PLMemoEditorView extends PLContentView {
 
@@ -110,11 +116,21 @@ public class PLMemoEditorView extends PLContentView {
 	}
 
 	private void initButtonEvent() {
+		// 1行目
 		findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// TODO:入力事に保存でsaveボタン不要にできる
 				mReadWriter.saveToFile();
 				MYLogUtil.showToast("Save to file");
+			}
+		});
+		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// 現在のファイル保存
+				mReadWriter.saveToFile();
+				displayFileList();
 			}
 		});
 		findViewById(R.id.change_button).setOnClickListener(new OnClickListener() {
@@ -129,5 +145,74 @@ public class PLMemoEditorView extends PLContentView {
 				}
 			}
 		});
+
+		// 2行目
+		findViewById(R.id.set_name_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new PLTextFieldPopover(new PLTextFieldPopover.OnEnterListener() {
+					@Override
+					public boolean onEnter(View v, String text) {
+						if (mReadWriter.renameCurrentFile(text)) {
+							MYLogUtil.showToast("リネーム成功");
+						} else {
+							MYLogUtil.showToast("リネームに成功しました");
+						}
+						return true;
+					}
+				}).showPopover();
+			}
+		});
+		findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String[] titles = {"削除する"};
+				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						PLMemoEditorView.this.removeTopPopover();
+						if (mReadWriter.deleteCurrentFile()) {
+							MYLogUtil.showToast("削除成功");
+						} else {
+							MYLogUtil.showToast("削除に失敗しました");
+						}
+						displayFileList();
+					}
+				}).showPopover();
+			}
+		});
+	}
+
+	private void displayFileList() {
+		final File[] files = mReadWriter.memoFiles();
+		ArrayList<String> nameList = new ArrayList<>();
+		for (File file : files) {
+			nameList.add(file.getName());
+		}
+		nameList.add("新規メモ");
+		String[] titles = nameList.toArray(new String[nameList.size()]);
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLMemoEditorView.this.removeTopPopover();
+
+				if (files.length == position) {
+					// 新規ファイル
+					mReadWriter.loadedMemo(null, true);
+					mEditText.setText("");
+					MYLogUtil.showToast("新規メモ");
+					return;
+				}
+
+				File file = files[position];
+				String name = file.getName();
+				if (name.equals(mReadWriter.getCurrentName())) {
+					MYLogUtil.showToast("既に開いています");
+				} else {
+					mReadWriter.loadFromFile(name);
+					mReadWriter.loadedMemo(name, true);
+				}
+			}
+		}).showPopover();
 	}
 }

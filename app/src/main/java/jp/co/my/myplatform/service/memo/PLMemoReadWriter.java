@@ -6,6 +6,7 @@ import android.widget.EditText;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.service.core.PLApplication;
 
 public class PLMemoReadWriter {
@@ -27,6 +29,19 @@ public class PLMemoReadWriter {
 		mEditText = editText;
 	}
 
+	public File[] memoFiles() {
+		String path = getDirectoryPath();
+		File directory = new File(path);
+		return directory.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				String name = pathname.getName();
+				String suffix = MYStringUtil.getSuffix(name);
+				return (suffix != null && suffix.equals("txt"));
+			}
+		});
+	}
+
 	public void loadFirstMemo() {
 		// TODO:async?
 		SharedPreferences pref = MYLogUtil.getPreference();
@@ -34,9 +49,7 @@ public class PLMemoReadWriter {
 		if (lastName != null && loadFromFile(lastName)) {
 			loadedMemo(lastName, false);
 		} else {
-			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
-			String name = format.format(Calendar.getInstance().getTime()) + ".txt";
-			loadedMemo(name, true);
+			loadedMemo(null, true);
 		}
 	}
 
@@ -63,7 +76,7 @@ public class PLMemoReadWriter {
 		}
 	}
 
-	private boolean loadFromFile(String name) {
+	public boolean loadFromFile(String name) {
 		String path = getDirectoryPath();
 		// TODO:Use title of argument
 		File textFile = new File(path + name);
@@ -87,7 +100,11 @@ public class PLMemoReadWriter {
 		return true;
 	}
 
-	private void loadedMemo(String name, boolean savePreferences) {
+	public void loadedMemo(String name, boolean savePreferences) {
+		if (name == null) {
+			// 新規ファイルの読み込み
+			name = newFileName();
+		}
 		mCurrentName = name;
 		if (savePreferences) {
 			SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
@@ -96,7 +113,40 @@ public class PLMemoReadWriter {
 		}
 	}
 
+	public boolean deleteCurrentFile() {
+		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+		editor.remove(KEY_LAST_NAME);
+		editor.commit();
+
+		File file = getCurrentFile();
+		return file.delete();
+	}
+
+	public boolean renameCurrentFile(String title) {
+		// 未作成ファイルの可能性があるため保存
+		saveToFile();
+
+		String nextName = title + ".txt";
+		File nextFile = new File(getDirectoryPath(), nextName);
+		File currentFile = getCurrentFile();
+		loadedMemo(nextName, true);
+		return currentFile.renameTo(nextFile);
+	}
+
+	private String newFileName() {
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
+		return format.format(Calendar.getInstance().getTime()) + ".txt";
+	}
+
 	private String getDirectoryPath() {
 		return PLApplication.appRootPath() + "memo/";
+	}
+
+	public String getCurrentName() {
+		return mCurrentName;
+	}
+
+	private File getCurrentFile() {
+		return new File(getDirectoryPath(), mCurrentName);
 	}
 }
