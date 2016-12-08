@@ -115,10 +115,10 @@ public class PLSetAlarmView extends PLContentView {
 
 				mCancelButton.setEnabled(true);
 				updateFrontButtonText(calendar);
-				showAlarmNotifaication();
 				String dateString = MYCalendarUtil.getDateTextFromCalendar(calendar);
 				String timeString = mSelectTimeView.getSelectTimeString();
 				MYLogUtil.showLongToast("schedule :" +dateString +"\nremaining:" +timeString +"ago\nschedule :" +snoozeSec +"/sec");
+				showAlarmNotification(dateString);
 
 				if (!mSelectTimeView.isZeroAll()) {
 					PendingIntent alarmSender = createPendingIntent();
@@ -229,12 +229,13 @@ public class PLSetAlarmView extends PLContentView {
 		buttonView.setText(this.getClass(), 8, text);
 	}
 
-	private void showAlarmNotifaication() {
+	private void showAlarmNotification(String dateString) {
 		Intent intent = new Intent(getContext(), PLCoreService.class);
 		intent.putExtra(KEY_CANCEL_ALARM, true);
 		PendingIntent pendingIntent = PendingIntent.getService(getContext(), 76, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		RemoteViews remote = new RemoteViews(getContext().getPackageName(), R.layout.notification_alarml);
+		remote.setTextViewText(R.id.date_text, dateString);
 		remote.setOnClickPendingIntent(R.id.notification_layout, pendingIntent);
 		PLCoreService.getCoreService().showNotification(remote);
 	}
