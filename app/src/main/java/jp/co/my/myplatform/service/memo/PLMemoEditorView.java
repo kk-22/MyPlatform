@@ -18,6 +18,8 @@ import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 
+import static jp.co.my.myplatform.service.model.PLNewsSiteModel_Table.memo;
+
 public class PLMemoEditorView extends PLContentView {
 
 	private static final int EDIT_MODE_HEIGHT = 1150;				// 入力モード中のEditTextの高さ
@@ -95,10 +97,9 @@ public class PLMemoEditorView extends PLContentView {
 			@Override
 			public void onGlobalLayout() {
 				mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				int rootHeight = PLMemoEditorView.this.getHeight();
-				mEditText.setHeight(rootHeight - 200);
-
+				changeToEditMode();
 				// ちらつき防止
+				mEditText.setVisibility(View.VISIBLE);
 				findViewById(R.id.button_linear).setVisibility(View.VISIBLE);
 			}
 		});
@@ -141,7 +142,7 @@ public class PLMemoEditorView extends PLContentView {
 					inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 					changeFullMode();
 				} else {
-					mEditText.setHeight(EDIT_MODE_HEIGHT);
+					changeEditMode();
 				}
 			}
 		});
