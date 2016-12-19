@@ -83,6 +83,11 @@ public class PLBrowserView extends PLContentView {
 		}
 	}
 
+	public void hideToolbar() {
+		mToolbar.setVisibility(View.GONE);
+		mShowButton.setVisibility(View.VISIBLE);
+	}
+
 	protected void loadFirstPage() {
 		PLModelContainer<PLWebPageModel> container = new PLModelContainer<>(SQLite.select()
 				.from(PLWebPageModel.class)
@@ -185,11 +190,11 @@ public class PLBrowserView extends PLContentView {
 				onForwardKey();
 			}
 		});
-		findViewById(R.id.hide_toolbar_button).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.stop_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mToolbar.setVisibility(View.GONE);
-				mShowButton.setVisibility(View.VISIBLE);
+				mCurrentWebView.stopLoading();
+				updateArrowButtonImage();
 			}
 		});
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
