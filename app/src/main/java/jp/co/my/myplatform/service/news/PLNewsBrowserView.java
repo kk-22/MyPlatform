@@ -29,7 +29,7 @@ public class PLNewsBrowserView extends PLBrowserView {
 	}
 
 	@Override
-	protected void finishLoadPage() {
+	protected void saveLastPage(String title, String url) {
 		// 最終ページを保存しない
 	}
 

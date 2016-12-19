@@ -1,9 +1,11 @@
 package jp.co.my.myplatform.service.browser;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -41,15 +43,23 @@ public class PLBrowserView extends PLContentView {
 
 		mCurrentWebView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
-				if (mCurrentWebView == null) {
-					return;
+				if (mCurrentWebView != null) {
+					updateProgressBar(mProgressBar, progress);
+					updateArrowButtonImage();
 				}
-				updateProgressBar(mProgressBar, progress);
-				updateArrowButtonImage();
+			}
+		});
+		mCurrentWebView.setWebViewClient(new WebViewClient() {
+			@Override
+			public void onPageStarted(WebView view, String url, Bitmap favicon) {
+				super.onPageStarted(view, url, favicon);
+				saveLastPage("Loading page", url);
+			}
 
-				if (progress == 100) {
-					finishLoadPage();
-				}
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				super.onPageFinished(view, url);
+				saveLastPage(view.getTitle(), url);
 			}
 		});
 		loadFirstPage();
@@ -90,11 +100,12 @@ public class PLBrowserView extends PLContentView {
 		});
 	}
 
-	protected void finishLoadPage() {
+	protected void saveLastPage(String title, String url) {
+		// TODO: 前のモデルを使いまわすべき
 		List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
 				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
 				.queryList();
-		PLWebPageModel model = new PLWebPageModel(mCurrentWebView.getTitle(), mCurrentWebView.getUrl(), null);
+		PLWebPageModel model = new PLWebPageModel(title, url, null);
 		model.save();
 		for (PLWebPageModel pageModel : pageArray) {
 			pageModel.delete();
@@ -108,7 +119,6 @@ public class PLBrowserView extends PLContentView {
 			return true;
 		} if (mCurrentWebView.canGoBack()) {
 			mCurrentWebView.goBack();
-			updateArrowButtonImage();
 			return true;
 		}
 		PLCoreService.getNavigationController().goBackView();
@@ -116,19 +126,26 @@ public class PLBrowserView extends PLContentView {
 	}
 	private void onForwardKey() {
 		mCurrentWebView.goForward();
-		updateArrowButtonImage();
 	}
 
 	private void updateArrowButtonImage() {
-		if (mCurrentWebView.canGoBack()) {
-			mBackButton.setBackgroundResource(R.drawable.back_arrow_on);
-		} else {
-			mBackButton.setBackgroundResource(R.drawable.back_arrow_off);
+		boolean backTag = Boolean.valueOf((String)mBackButton.getTag());
+		if (mCurrentWebView.canGoBack() != backTag) {
+			if (backTag) {
+				mBackButton.setBackgroundResource(R.drawable.back_arrow_off);
+			} else {
+				mBackButton.setBackgroundResource(R.drawable.back_arrow_on);
+			}
+			mBackButton.setTag(String.valueOf(!backTag));
 		}
-		if (mCurrentWebView.canGoForward()) {
-			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_on);
-		} else {
-			mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
+		boolean forwarTag = Boolean.valueOf((String)mForwardButton.getTag());
+		if (mCurrentWebView.canGoForward() != forwarTag) {
+			if (forwarTag) {
+				mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
+			} else {
+				mForwardButton.setBackgroundResource(R.drawable.forward_arrow_on);
+			}
+			mForwardButton.setTag(String.valueOf(!forwarTag));
 		}
 	}
 

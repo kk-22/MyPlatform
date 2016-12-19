@@ -37,6 +37,7 @@
 
         <ImageButton
             style="@style/HighlightImageButton"
+            android:tag="false"
             android:background="@drawable/back_arrow_off"
             android:layout_width="57dp"
             android:layout_height="57dp"
@@ -49,6 +50,7 @@
 
         <ImageButton
             style="@style/HighlightImageButton"
+            android:tag="false"
             android:background="@drawable/forward_arrow_off"
             android:layout_width="57dp"
             android:layout_height="57dp"
