@@ -16,6 +16,7 @@ import jp.co.my.myplatform.service.memo.PLMemoEditorView;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
+import jp.co.my.myplatform.service.wikipedia.PLWikipediaViewer;
 
 public class PLHomeView extends PLContentView {
 
@@ -94,6 +95,12 @@ public class PLHomeView extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
+			}
+		});
+		findViewById(R.id.wikipedia_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
 			}
 		});
 	}

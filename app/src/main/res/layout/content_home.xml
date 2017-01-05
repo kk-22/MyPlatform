@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
@@ -33,8 +32,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="ロック画面"
-                android:id="@+id/lock_button"/>
+                android:text="wikipedia"
+                android:id="@+id/wikipedia_button"/>
         </LinearLayout>
 
         <LinearLayout
@@ -98,13 +97,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-
+>
             <Button
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="New Button"
-                android:id="@+id/home7_button"/>
+                android:text="ロック画面"
+                android:id="@+id/lock_button"/>
 
             <Button
                 android:layout_weight="1"
