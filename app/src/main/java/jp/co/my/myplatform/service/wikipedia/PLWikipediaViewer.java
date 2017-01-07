@@ -1,7 +1,8 @@
 package jp.co.my.myplatform.service.wikipedia;
 
 import android.os.Handler;
-import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
@@ -21,11 +22,12 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLVolleyHelper;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 
-public class PLWikipediaViewer extends PLContentView {
+public class PLWikipediaViewer extends PLContentView implements PLWikipediaHtmlEncoder.PLWikipediaEncodeListener {
 
 	private TextView mTextView;
 	private TextView mLoadingText;
 	private PLWikipediaPageModel mCurrentPageModel;
+	private PLWikipediaHtmlEncoder mEncoder;
 
 	private Handler mMainHandler;
 
@@ -35,8 +37,16 @@ public class PLWikipediaViewer extends PLContentView {
 		mTextView = (TextView) findViewById(R.id.html_text);
 		mLoadingText = (TextView) findViewById(R.id.loading_text);
 		mMainHandler = new Handler();
+		mEncoder = new PLWikipediaHtmlEncoder(this);
 
 		loadFirstPage();
+	}
+
+	@Override
+	public void viewWillDisappear() {
+		super.viewWillDisappear();
+		mEncoder.cancel();
+		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 	}
 
 	private void loadFirstPage() {
@@ -47,13 +57,12 @@ public class PLWikipediaViewer extends PLContentView {
 		container.loadList(new PLModelContainer.PLOnModelLoadThreadListener<PLWikipediaPageModel>() {
 			@Override
 			public void onLoad(List<PLWikipediaPageModel> modelLists) {
-				if (modelLists.size() == 0) {
-					// 開発中コメントアウト。modelを複数作らないため
-//					String url = "https://ja.wikipedia.org/wiki/%E7%B5%90%E5%9F%8E%E7%A7%80%E5%BA%B7";
-//					requestPage(url);
+				if (modelLists.size() > 0) {
+					loadPageModel(modelLists.get(0));
 					return;
 				}
-				loadPageModel(modelLists.get(0));
+				String url = "https://ja.wikipedia.org/wiki/%E7%B5%90%E5%9F%8E%E7%A7%80%E5%BA%B7";
+				requestPage(url);
 			}
 		}, null);
 	}
@@ -63,20 +72,14 @@ public class PLWikipediaViewer extends PLContentView {
 		Response.Listener<String> listener = new Response.Listener<String>() {
 			@Override
 			public void onResponse(final String response) {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-//						MYLogUtil.outputErrorLog("onResponse " + response);
-						PLWikipediaPageModel pageModel = new PLWikipediaPageModel();
-						pageModel.setTitle("title");
-						pageModel.setUrl(url);
-						pageModel.setHtml(response);
-						pageModel.setRegisteredDate(Calendar.getInstance());
-						pageModel.save();
+				PLWikipediaPageModel pageModel = new PLWikipediaPageModel();
+				pageModel.setTitle("title");
+				pageModel.setUrl(url);
+				pageModel.setHtml(response);
+				pageModel.setRegisteredDate(Calendar.getInstance());
+				pageModel.save();
 
-						loadPageModel(pageModel);
-					}
-				}).start();
+				loadPageModel(pageModel);
 			}
 		};
 		Response.ErrorListener error = new Response.ErrorListener() {
@@ -91,46 +94,14 @@ public class PLWikipediaViewer extends PLContentView {
 		volleyHelper.addRequest(request, this.getClass());
 	}
 
-	private void loadPageModel(PLWikipediaPageModel pageModel) {
+	private void loadPageModel(final PLWikipediaPageModel pageModel) {
 		mCurrentPageModel = pageModel;
-		parseHtml(pageModel.getHtml());
-	}
-
-	private void parseHtml(String baseHtml) {
-		MYLogUtil.outputLog("before parse");
-		// 余分の削除
-		// 改行文字削除
-		String htmlStr = baseHtml.replaceAll("\n", "");
-		// ヘッダ～BODYタグ冒頭部分まで削除
-		htmlStr = htmlStr.replaceFirst(".*<h1 id=\"section_0\"(.*?)>", "");
-		// 関連項目以下削除
-		htmlStr = htmlStr.replaceFirst("<span[^<]*関連項目.*", "");
-		// Javascript 削除
-		htmlStr = htmlStr.replaceAll("<script>(.*?)</script>", "");
-		// 編集リンク削除
-		htmlStr = htmlStr.replaceAll("<a[^>]*>編集</a>", "");
-
-		// HTMLタグの代用
-		// li タグを削除して箇条書きに変更
-		htmlStr = htmlStr.replaceAll("<li(.*?)>", "・");
-		htmlStr = htmlStr.replaceAll("</li>", "<br><br>");
-
-		// CSSの代用
-		// 見出しタグの変更
-		htmlStr = htmlStr.replaceAll("<h2 class=\"section-heading in-block(.*?)<span(.*?)>(.*?)</span></h2>"
-				, "<h1>■$3</1>");
-		final String parsedHtml = htmlStr;
-
-		// deprecated のため Android 7 以降で引数にパラメータ追加
-		MYLogUtil.outputLog("after parse");
-
-		mMainHandler.post(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				mTextView.setText(Html.fromHtml(parsedHtml));
-				hideIndicator();
+				mEncoder.encodeHtml(pageModel);
 			}
-		});
+		}).start();
 	}
 
 	private void showIndicator() {
@@ -144,5 +115,18 @@ public class PLWikipediaViewer extends PLContentView {
 
 	private void hideIndicator() {
 		mLoadingText.setVisibility(GONE);
+	}
+
+	// PLWikipediaEncodeListener
+	@Override
+	public void finishedEncode(SpannableStringBuilder strBuilder) {
+		mTextView.setText(strBuilder);
+		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
+		hideIndicator();
+	}
+
+	@Override
+	public void onClickLink(String url) {
+
 	}
 }
