@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -11,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -20,9 +23,13 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLVolleyHelper;
+import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLModelContainer;
+import jp.co.my.myplatform.service.popover.PLActionListPopover;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 
-public class PLWikipediaViewer extends PLContentView implements PLWikipediaHtmlEncoder.PLWikipediaEncodeListener {
+public class PLWikipediaViewer extends PLContentView
+		implements PLWikipediaHtmlEncoder.PLWikipediaEncodeListener, PLActionListPopover.PLActionListListener<PLWikipediaPageModel> {
 
 	private TextView mTextView;
 	private TextView mLoadingText;
@@ -39,6 +46,7 @@ public class PLWikipediaViewer extends PLContentView implements PLWikipediaHtmlE
 		mMainHandler = new Handler();
 		mEncoder = new PLWikipediaHtmlEncoder(this);
 
+		initClickEvent();
 		loadFirstPage();
 	}
 
@@ -104,6 +112,35 @@ public class PLWikipediaViewer extends PLContentView implements PLWikipediaHtmlE
 		}).start();
 	}
 
+	private void initClickEvent() {
+		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				List<PLWikipediaPageModel> pageArray = SQLite.select().from(PLWikipediaPageModel.class)
+						.orderBy(PLWikipediaPageModel_Table.lastReadDate, false)
+						.queryList();
+				List<String> titleArray = new ArrayList<>();
+				for (PLWikipediaPageModel model : pageArray) {
+					titleArray.add(model.getTitle());
+				}
+				new PLActionListPopover<>(titleArray, pageArray, PLWikipediaViewer.this).showPopover(new PLRelativeLayoutController(v));
+			}
+		});
+		findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String[] titles = {"削除"};
+				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						mCurrentPageModel.delete();
+						PLWikipediaViewer.this.removeTopPopover();
+					}
+				}).showPopover();
+			}
+		});
+	}
+
 	private void showIndicator() {
 		MYOtherUtil.runOnUiThread(getContext(), mMainHandler, new Runnable() {
 			@Override
@@ -128,5 +165,27 @@ public class PLWikipediaViewer extends PLContentView implements PLWikipediaHtmlE
 	@Override
 	public void onClickLink(String url) {
 
+	}
+
+	// PLActionListListener of page list
+	@Override
+	public void onItemClick(PLWikipediaPageModel object, PLActionListPopover listPopover) {
+		loadPageModel(object);
+		listPopover.removeFromContentView();
+	}
+
+	@Override
+	public void onActionClick(final PLWikipediaPageModel object, final PLActionListPopover<PLWikipediaPageModel> listPopover, View buttonView) {
+		String[] titles = {"削除"};
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				MYLogUtil.showToast("ページ削除：" +object.getTitle());
+				object.delete();
+				listPopover.removeObject(object);
+				// アクションPopoverだけ削除してリストは残す
+				PLWikipediaViewer.this.removeTopPopover();
+			}
+		}).showPopover(new PLRelativeLayoutController(buttonView));
 	}
 }
