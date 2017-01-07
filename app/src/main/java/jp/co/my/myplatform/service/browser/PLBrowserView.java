@@ -6,12 +6,14 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
@@ -23,8 +25,9 @@ import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.popover.PLActionListPopover;
+import jp.co.my.myplatform.service.popover.PLListPopover;
 
-public class PLBrowserView extends PLContentView {
+public class PLBrowserView extends PLContentView implements PLActionListPopover.PLActionListListener<PLWebPageModel> {
 	private PLWebView mCurrentWebView;
 	private ImageButton mBackButton, mForwardButton, mShowButton;
 	private ProgressBar mProgressBar;
@@ -201,7 +204,15 @@ public class PLBrowserView extends PLContentView {
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLActionListPopover(PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
+				// TODO: 全件表示中。tabNo == -1を表示に変更
+				List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
+						.where(PLWebPageModel_Table.bookmarkDirectoryNo.greaterThanOrEq(PLWebPageModel.BOOKMARK_DIRECTORY_NO_ROOT))
+						.queryList();
+				List<String> titleArray = new ArrayList<>();
+				for (PLWebPageModel model : pageArray) {
+					titleArray.add(model.getTitle());
+				}
+				new PLActionListPopover<>(titleArray, pageArray, PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
@@ -225,5 +236,40 @@ public class PLBrowserView extends PLContentView {
 
 	protected LinearLayout getToolbar() {
 		return mToolbar;
+	}
+
+	// PLActionListListener of bookmark list
+	@Override
+	public void onItemClick(PLWebPageModel object, PLActionListPopover listPopover) {
+		getCurrentWebView().loadPageModel(object);
+		listPopover.removeFromContentView();
+	}
+
+	@Override
+	public void onActionClick(final PLWebPageModel object, final PLActionListPopover<PLWebPageModel> listPopover, View buttonView) {
+		String[] titles = {"編集", "移動", "削除"};
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				switch (position) {
+					case 0: {
+						MYLogUtil.showToast("未実装");
+						break;
+					}
+					case 1: {
+						MYLogUtil.showToast("未実装");
+						break;
+					}
+					case 2: {
+						MYLogUtil.showToast("ブックマーク削除：" +object.getTitle());
+						object.delete();
+						listPopover.removeObject(object);
+						// アクションPopoverだけ削除してリストは残す
+						PLBrowserView.this.removeTopPopover();
+						break;
+					}
+				}
+			}
+		}).showPopover(new PLRelativeLayoutController(buttonView));
 	}
 }

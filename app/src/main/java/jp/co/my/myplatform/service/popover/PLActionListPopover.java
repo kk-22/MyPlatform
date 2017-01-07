@@ -1,70 +1,49 @@
 package jp.co.my.myplatform.service.popover;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.raizlabs.android.dbflow.sql.language.SQLite;
+import android.widget.TextView;
 
 import java.util.List;
 
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.browser.PLBrowserView;
-import jp.co.my.myplatform.service.model.PLWebPageModel;
-import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
-import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
-public class PLActionListPopover extends PLPopoverView {
-
-	private PLBrowserView mBrowserView;
+public class PLActionListPopover<T> extends PLPopoverView {
 
 	private ListView mListView;
+	private PLActionListListener<T> mListener;
+	private List<String> mTitleList;
+	private List<T> mObjectList;
 
-	public PLActionListPopover(PLBrowserView browserView) {
+	public PLActionListPopover(List<String> titleList, List<T> objectList, PLActionListListener<T> listener) {
 		super(R.layout.popover_action_list);
-		mBrowserView = browserView;
-
+		mTitleList = titleList;
+		mObjectList = objectList;
+		mListener = listener;
 		mListView = (ListView) findViewById(R.id.list);
 
 		initClickEvent();
 		updateList();
 	}
 
-	public void updateList() {
-		// TODO: 全件表示中。tabNo == -1を表示に変更
-		PLActionListAdapter adapter = new PLActionListAdapter(getContext(), this);
-		List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
-				.where(PLWebPageModel_Table.bookmarkDirectoryNo.greaterThanOrEq(PLWebPageModel.BOOKMARK_DIRECTORY_NO_ROOT))
-				.queryList();
-		adapter.addAll(pageArray);
-		mListView.setAdapter(adapter);
+	public void removeObject(T ignoreObject) {
+		int index = mObjectList.indexOf(ignoreObject);
+		mObjectList.remove(index);
+		mTitleList.remove(index);
+		updateList();
 	}
 
-	public void displayActionView(final PLWebPageModel pageModel, View buttonView) {
-		String[] titles = {"編集", "移動", "削除"};
-		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				switch (position) {
-					case 0: {
-						MYLogUtil.showToast("未実装");
-						break;
-					}
-					case 1: {
-						MYLogUtil.showToast("未実装");
-						break;
-					}
-					case 2: {
-						MYLogUtil.showToast("ブックマーク削除：" +pageModel.getTitle());
-						pageModel.delete();
-						PLActionListPopover.this.updateList();
-						removeFromContentView();
-						break;
-					}
-				}
-			}
-		}).showPopover(new PLRelativeLayoutController(buttonView));
+	public void updateList() {
+		// TODO: 全件表示中。tabNo == -1を表示に変更
+		PLActionListAdapter adapter = new PLActionListAdapter(getContext());
+		adapter.addAll(mTitleList);
+		mListView.setAdapter(adapter);
 	}
 
 	private void initClickEvent() {
@@ -72,10 +51,8 @@ public class PLActionListPopover extends PLPopoverView {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				ListView listView = (ListView) parent;
-				PLWebPageModel pageModel = (PLWebPageModel) listView.getItemAtPosition(position);
-				mBrowserView.getCurrentWebView().loadPageModel(pageModel);
-
-				removeFromContentView();
+				T object = mObjectList.get(position);
+				mListener.onItemClick(object, PLActionListPopover.this);
 			}
 		});
 
@@ -85,5 +62,41 @@ public class PLActionListPopover extends PLPopoverView {
 				removeFromContentView();
 			}
 		});
+	}
+
+	private class PLActionListAdapter extends ArrayAdapter<String> {
+
+		private LayoutInflater mInflater;
+
+		private PLActionListAdapter(Context context) {
+			super(context, 0);
+			mInflater = LayoutInflater.from(context);
+		}
+
+		@NonNull
+		@Override
+		public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.cell_action, parent, false);
+			}
+			String title = getItem(position);
+			((TextView) convertView.findViewById(R.id.title_text)).setText(title);
+
+			final T object = mObjectList.get(position);
+			convertView.findViewById(R.id.action_button).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mListener.onActionClick(object, PLActionListPopover.this, v);
+				}
+			});
+			return convertView;
+		}
+	}
+
+	public interface PLActionListListener<T> {
+		// Listのセル押下イベント
+		void onItemClick(T object, PLActionListPopover listPopover);
+		// セルのアクションボタン押下イベント
+		void onActionClick(T object, PLActionListPopover<T> listPopover, View buttonView);
 	}
 }
