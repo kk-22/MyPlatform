@@ -16,17 +16,17 @@ import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
-public class PLBookmarkList extends PLPopoverView {
+public class PLActionListPopover extends PLPopoverView {
 
 	private PLBrowserView mBrowserView;
 
 	private ListView mListView;
 
-	public PLBookmarkList(PLBrowserView browserView) {
-		super(R.layout.popover_bookmark_list);
+	public PLActionListPopover(PLBrowserView browserView) {
+		super(R.layout.popover_action_list);
 		mBrowserView = browserView;
 
-		mListView = (ListView) findViewById(R.id.bookmark_list);
+		mListView = (ListView) findViewById(R.id.list);
 
 		initClickEvent();
 		updateList();
@@ -34,7 +34,7 @@ public class PLBookmarkList extends PLPopoverView {
 
 	public void updateList() {
 		// TODO: 全件表示中。tabNo == -1を表示に変更
-		PLBookmarkAdapter adapter = new PLBookmarkAdapter(getContext(), this);
+		PLActionListAdapter adapter = new PLActionListAdapter(getContext(), this);
 		List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
 				.where(PLWebPageModel_Table.bookmarkDirectoryNo.greaterThanOrEq(PLWebPageModel.BOOKMARK_DIRECTORY_NO_ROOT))
 				.queryList();
@@ -59,7 +59,7 @@ public class PLBookmarkList extends PLPopoverView {
 					case 2: {
 						MYLogUtil.showToast("ブックマーク削除：" +pageModel.getTitle());
 						pageModel.delete();
-						PLBookmarkList.this.updateList();
+						PLActionListPopover.this.updateList();
 						removeFromContentView();
 						break;
 					}

@@ -10,13 +10,13 @@ import android.widget.TextView;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 
-public class PLBookmarkAdapter extends ArrayAdapter<PLWebPageModel> {
+public class PLActionListAdapter extends ArrayAdapter<PLWebPageModel> {
 
 	private Context mContext;
 	private LayoutInflater mInflater;
-	private PLBookmarkList mBookmarkList;
+	private PLActionListPopover mBookmarkList;
 
-	public PLBookmarkAdapter(Context context, PLBookmarkList bookmarkList) {
+	public PLActionListAdapter(Context context, PLActionListPopover bookmarkList) {
 		super(context, 0);
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
@@ -26,7 +26,7 @@ public class PLBookmarkAdapter extends ArrayAdapter<PLWebPageModel> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			convertView = mInflater.inflate(R.layout.cell_bookmark, parent, false);
+			convertView = mInflater.inflate(R.layout.cell_action, parent, false);
 		}
 		final PLWebPageModel pageModel = getItem(position);
 		((TextView) convertView.findViewById(R.id.title_text)).setText(pageModel.getTitle());

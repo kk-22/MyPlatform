@@ -200,7 +200,7 @@ public class PLBrowserView extends PLContentView {
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLBookmarkList(PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
+				new PLActionListPopover(PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
