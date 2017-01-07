@@ -6,6 +6,8 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -35,6 +37,7 @@ public class PLWikipediaViewer extends PLContentView
 
 	private TextView mTextView;
 	private TextView mLoadingText;
+	private ScrollView mScrollView;
 	private PLWikipediaPageModel mCurrentPageModel;
 	private PLWikipediaHtmlEncoder mEncoder;
 	private ArrayList<PLWikipediaPageModel> mPageList;
@@ -46,6 +49,7 @@ public class PLWikipediaViewer extends PLContentView
 		LayoutInflater.from(getContext()).inflate(R.layout.content_wikipedia_viewer, this);
 		mTextView = (TextView) findViewById(R.id.html_text);
 		mLoadingText = (TextView) findViewById(R.id.loading_text);
+		mScrollView = (ScrollView) findViewById(R.id.text_scroll);
 		mMainHandler = new Handler();
 		mEncoder = new PLWikipediaHtmlEncoder(this);
 		mPageList = new ArrayList<>();
@@ -59,6 +63,8 @@ public class PLWikipediaViewer extends PLContentView
 		super.viewWillDisappear();
 		mEncoder.cancel();
 		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
+
+		saveScrollPosition();
 	}
 
 	private void loadFirstPage() {
@@ -115,6 +121,10 @@ public class PLWikipediaViewer extends PLContentView
 	}
 
 	private void loadPageModel(final PLWikipediaPageModel pageModel) {
+		if (mCurrentPageModel != null) {
+			saveScrollPosition();
+			showIndicator();
+		}
 		mCurrentPageModel = pageModel;
 		new Thread(new Runnable() {
 			@Override
@@ -124,16 +134,16 @@ public class PLWikipediaViewer extends PLContentView
 		}).start();
 	}
 
+	private void saveScrollPosition() {
+		mCurrentPageModel.setScrollPosition(mScrollView.getScrollY());
+		mCurrentPageModel.save();
+	}
+
 	private void initClickEvent() {
 		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				List<String> titleArray = new ArrayList<>();
-				List<PLWikipediaPageModel> modelList = new ArrayList<>(mPageList);
-				for (PLWikipediaPageModel model : modelList) {
-					titleArray.add(model.getTitle());
-				}
-				new PLActionListPopover<>(titleArray, modelList, PLWikipediaViewer.this).showPopover(new PLRelativeLayoutController(v));
+				displayPageList();
 			}
 		});
 		findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
@@ -145,10 +155,23 @@ public class PLWikipediaViewer extends PLContentView
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 						removePageModel(mCurrentPageModel);
 						PLWikipediaViewer.this.removeTopPopover();
+						displayPageList();
 					}
 				}).showPopover();
 			}
 		});
+	}
+
+	private void displayPageList() {
+		List<String> titleArray = new ArrayList<>();
+		List<PLWikipediaPageModel> modelList = new ArrayList<>(mPageList);
+		for (PLWikipediaPageModel model : modelList) {
+			titleArray.add(model.getTitle());
+		}
+
+		Button listButton = (Button) findViewById(R.id.list_button);
+		new PLActionListPopover<>(titleArray, modelList, PLWikipediaViewer.this)
+				.showPopover(new PLRelativeLayoutController(listButton));
 	}
 
 	private void removePageModel(PLWikipediaPageModel pageModel) {
@@ -174,7 +197,16 @@ public class PLWikipediaViewer extends PLContentView
 	public void finishedEncode(SpannableStringBuilder strBuilder) {
 		mTextView.setText(strBuilder);
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-		hideIndicator();
+		mScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				mScrollView.setScrollY(mCurrentPageModel.getScrollPosition());
+				hideIndicator();
+			}
+		});
+
+		mCurrentPageModel.setLastReadDate(Calendar.getInstance());
+		mCurrentPageModel.save();
 	}
 
 	@Override
