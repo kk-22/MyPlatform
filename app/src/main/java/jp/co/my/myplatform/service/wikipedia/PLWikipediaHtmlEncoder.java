@@ -7,8 +7,6 @@ import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 
-import jp.co.my.common.util.MYLogUtil;
-
 public class PLWikipediaHtmlEncoder {
 
 	private Handler mMainHandler;
@@ -27,7 +25,6 @@ public class PLWikipediaHtmlEncoder {
 	public void encodeHtml(PLWikipediaPageModel model) {
 		String baseHtml = model.getHtml();
 
-		MYLogUtil.outputLog("before parse");
 		// 余分の削除
 		// 改行文字削除
 		String htmlStr = baseHtml.replaceAll("\n", "");
@@ -51,7 +48,6 @@ public class PLWikipediaHtmlEncoder {
 				"<h2 class=\"section-heading in-block(.*?)<span(.*?)>(.*?)</span></h2>"
 				, "<h1>■$3</1>");
 
-		MYLogUtil.outputLog("after parse");
 		createLinkStr(htmlStr);
 	}
 
@@ -93,6 +89,6 @@ public class PLWikipediaHtmlEncoder {
 
 	public interface PLWikipediaEncodeListener {
 		void finishedEncode(SpannableStringBuilder strBuilder);
-		void onClickLink(String url);
+		void onClickLink(String linkUrl);
 	}
 }

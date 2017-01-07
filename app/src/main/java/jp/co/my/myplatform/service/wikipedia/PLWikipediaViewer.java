@@ -13,6 +13,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,6 +37,7 @@ public class PLWikipediaViewer extends PLContentView
 	private TextView mLoadingText;
 	private PLWikipediaPageModel mCurrentPageModel;
 	private PLWikipediaHtmlEncoder mEncoder;
+	private ArrayList<PLWikipediaPageModel> mPageList;
 
 	private Handler mMainHandler;
 
@@ -45,6 +48,7 @@ public class PLWikipediaViewer extends PLContentView
 		mLoadingText = (TextView) findViewById(R.id.loading_text);
 		mMainHandler = new Handler();
 		mEncoder = new PLWikipediaHtmlEncoder(this);
+		mPageList = new ArrayList<>();
 
 		initClickEvent();
 		loadFirstPage();
@@ -60,12 +64,12 @@ public class PLWikipediaViewer extends PLContentView
 	private void loadFirstPage() {
 		PLModelContainer<PLWikipediaPageModel> container = new PLModelContainer<>(SQLite.select()
 				.from(PLWikipediaPageModel.class)
-				.orderBy(PLWikipediaPageModel_Table.lastReadDate, false)
-				.limit(1));
+				.orderBy(PLWikipediaPageModel_Table.lastReadDate, false));
 		container.loadList(new PLModelContainer.PLOnModelLoadThreadListener<PLWikipediaPageModel>() {
 			@Override
 			public void onLoad(List<PLWikipediaPageModel> modelLists) {
 				if (modelLists.size() > 0) {
+					mPageList.addAll(modelLists);
 					loadPageModel(modelLists.get(0));
 					return;
 				}
@@ -81,11 +85,19 @@ public class PLWikipediaViewer extends PLContentView
 			@Override
 			public void onResponse(final String response) {
 				PLWikipediaPageModel pageModel = new PLWikipediaPageModel();
-				pageModel.setTitle("title");
+				try {
+					String title = url.replaceFirst(".*/", "");
+					String decodeTitle = URLDecoder.decode(title, "UTF8");
+					pageModel.setTitle(decodeTitle);
+				} catch (UnsupportedEncodingException e) {
+					MYLogUtil.showExceptionToast(e);
+					pageModel.setTitle("UnsupportedEncodingException error");
+				}
 				pageModel.setUrl(url);
 				pageModel.setHtml(response);
 				pageModel.setRegisteredDate(Calendar.getInstance());
 				pageModel.save();
+				mPageList.add(pageModel);
 
 				loadPageModel(pageModel);
 			}
@@ -116,14 +128,12 @@ public class PLWikipediaViewer extends PLContentView
 		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				List<PLWikipediaPageModel> pageArray = SQLite.select().from(PLWikipediaPageModel.class)
-						.orderBy(PLWikipediaPageModel_Table.lastReadDate, false)
-						.queryList();
 				List<String> titleArray = new ArrayList<>();
-				for (PLWikipediaPageModel model : pageArray) {
+				List<PLWikipediaPageModel> modelList = new ArrayList<>(mPageList);
+				for (PLWikipediaPageModel model : modelList) {
 					titleArray.add(model.getTitle());
 				}
-				new PLActionListPopover<>(titleArray, pageArray, PLWikipediaViewer.this).showPopover(new PLRelativeLayoutController(v));
+				new PLActionListPopover<>(titleArray, modelList, PLWikipediaViewer.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
@@ -133,12 +143,17 @@ public class PLWikipediaViewer extends PLContentView
 				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						mCurrentPageModel.delete();
+						removePageModel(mCurrentPageModel);
 						PLWikipediaViewer.this.removeTopPopover();
 					}
 				}).showPopover();
 			}
 		});
+	}
+
+	private void removePageModel(PLWikipediaPageModel pageModel) {
+		mPageList.remove(pageModel);
+		pageModel.delete();
 	}
 
 	private void showIndicator() {
@@ -163,8 +178,16 @@ public class PLWikipediaViewer extends PLContentView
 	}
 
 	@Override
-	public void onClickLink(String url) {
-
+	public void onClickLink(String linkUrl) {
+		// 保存済みでないかチェック
+		String fullUrl = "https://ja.wikipedia.org" + linkUrl;
+		for (PLWikipediaPageModel model : mPageList) {
+			if (model.getUrl().equals(fullUrl)) {
+				MYLogUtil.showToast("既に登録済み " +model.getTitle());
+				return;
+			}
+		}
+		requestPage(fullUrl);
 	}
 
 	// PLActionListListener of page list
@@ -181,7 +204,7 @@ public class PLWikipediaViewer extends PLContentView
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				MYLogUtil.showToast("ページ削除：" +object.getTitle());
-				object.delete();
+				removePageModel(object);
 				listPopover.removeObject(object);
 				// アクションPopoverだけ削除してリストは残す
 				PLWikipediaViewer.this.removeTopPopover();
