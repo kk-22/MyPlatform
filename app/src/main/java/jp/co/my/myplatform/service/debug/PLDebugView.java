@@ -25,6 +25,7 @@ import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 import jp.co.my.myplatform.service.popover.PLListPopover;
+import jp.co.my.myplatform.service.wikipedia.PLWikipediaPageModel;
 
 public class PLDebugView extends PLContentView {
 
@@ -45,10 +46,50 @@ public class PLDebugView extends PLContentView {
 		ArrayList<PLDebugAbstractItem> itemList = new ArrayList<>();
 		{
 			itemList.add(new PLDebugTitleItem("Database"));
-			itemList.add(new PLDebugButtonItem("delete DB", new OnClickListener() {
+			itemList.add(new PLDebugButtonItem("other DB", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					deleteDatabase();
+					String[] titles = {"データベース消去", "PLNewsPageModel", "Group Site BadWord", "PLBadWordModel"};
+					new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							PLDebugView.this.removeTopPopover();
+							if (position == 0) {
+//								PLCoreService.getNavigationController().pushView(PLAppListView.class);
+//								getContext().deleteDatabase(PLDatabase.NAME + ".db");
+//								MYLogUtil.outputLog("Delete DB. Please restart app");
+								MYLogUtil.outputLog("Can not delete DB");
+								return;
+							}
+
+							ArrayList<Class> classArray = new ArrayList<>();
+							if (position == 1) {
+								classArray.add(PLNewsPageModel.class);
+							} else if (position == 2) {
+								classArray.add(PLBadWordModel.class);
+								classArray.add(PLNewsSiteModel.class);
+								classArray.add(PLNewsGroupModel.class);
+							} else {
+								classArray.add(PLBadWordModel.class);
+							}
+							deleteTable(classArray);
+						}
+					}).showPopover();
+				}
+			}));
+			itemList.add(new PLDebugButtonItem("wikipedia", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String[] titles = {"PLWikipediaPageModel"};
+					new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							PLDebugView.this.removeTopPopover();
+							ArrayList<Class> classAray = new ArrayList<>();
+							classAray.add(PLWikipediaPageModel.class);
+							deleteTable(classAray);
+						}
+					}).showPopover();
 				}
 			}));
 		}
@@ -95,37 +136,12 @@ public class PLDebugView extends PLContentView {
 		mAdapter.renewalAllPage(itemList);
 	}
 
-	private void deleteDatabase() {
-		String[] titles = {"データベース消去", "PLNewsPageModel", "Group Site BadWord", "PLBadWordModel"};
-		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				PLDebugView.this.removeTopPopover();
-				if (position == 0) {
-//					PLCoreService.getNavigationController().pushView(PLAppListView.class);
-//					getContext().deleteDatabase(PLDatabase.NAME + ".db");
-//					MYLogUtil.outputLog("Delete DB. Please restart app");
-					MYLogUtil.outputLog("Can not delete DB");
-					return;
-				}
-
-				ArrayList<Class> klassArray = new ArrayList<>();
-				DatabaseWrapper database = FlowManager.getDatabase(PLDatabase.NAME).getHelper().getDatabase();
-				if (position == 1) {
-					klassArray.add(PLNewsPageModel.class);
-				} else if (position == 2) {
-					klassArray.add(PLBadWordModel.class);
-					klassArray.add(PLNewsSiteModel.class);
-					klassArray.add(PLNewsGroupModel.class);
-				} else {
-					klassArray.add(PLBadWordModel.class);
-				}
-				for (Class klass : klassArray) {
-					ModelAdapter modelAdapter = FlowManager.getModelAdapter(klass);
-					database.execSQL("DROP TABLE IF EXISTS " + modelAdapter.getTableName());
-					database.execSQL(modelAdapter.getCreationQuery());
-				}
-			}
-		}).showPopover();
+	private void deleteTable(ArrayList<Class> classArray) {
+		DatabaseWrapper database = FlowManager.getDatabase(PLDatabase.NAME).getHelper().getDatabase();
+		for (Class klass : classArray) {
+			ModelAdapter modelAdapter = FlowManager.getModelAdapter(klass);
+			database.execSQL("DROP TABLE IF EXISTS " + modelAdapter.getTableName());
+			database.execSQL(modelAdapter.getCreationQuery());
+		}
 	}
 }
