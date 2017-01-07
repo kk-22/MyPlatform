@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.browser;
+package jp.co.my.myplatform.service.popover;
 
 import android.content.Context;
 import android.view.LayoutInflater;

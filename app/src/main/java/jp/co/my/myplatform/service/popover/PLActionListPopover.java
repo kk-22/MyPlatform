@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.browser;
+package jp.co.my.myplatform.service.popover;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,10 +10,9 @@ import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.browser.PLBrowserView;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
-import jp.co.my.myplatform.service.popover.PLListPopover;
-import jp.co.my.myplatform.service.popover.PLPopoverView;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 
 public class PLActionListPopover extends PLPopoverView {

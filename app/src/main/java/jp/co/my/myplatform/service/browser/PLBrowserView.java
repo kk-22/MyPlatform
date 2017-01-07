@@ -22,6 +22,7 @@ import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
+import jp.co.my.myplatform.service.popover.PLActionListPopover;
 
 public class PLBrowserView extends PLContentView {
 	private PLWebView mCurrentWebView;
