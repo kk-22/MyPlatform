@@ -31,6 +31,7 @@ import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.popover.PLActionListPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
+import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 
 public class PLWikipediaViewer extends PLContentView
 		implements PLWikipediaHtmlEncoder.PLWikipediaEncodeListener, PLActionListPopover.PLActionListListener<PLWikipediaPageModel> {
@@ -140,10 +141,24 @@ public class PLWikipediaViewer extends PLContentView
 	}
 
 	private void initClickEvent() {
+		// toolbar
 		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				displayPageList();
+			}
+		});
+		findViewById(R.id.search_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new PLTextFieldPopover(new PLTextFieldPopover.OnEnterListener() {
+					@Override
+					public boolean onEnter(View v, String text) {
+						String url = "https://ja.m.wikipedia.org/w/index.php?search=" +text;
+						requestPage(url);
+						return true;
+					}
+				}).showPopover();
 			}
 		});
 		findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
