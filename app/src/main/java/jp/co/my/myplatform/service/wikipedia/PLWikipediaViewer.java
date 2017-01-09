@@ -10,13 +10,8 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -25,8 +20,6 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
-import jp.co.my.myplatform.service.core.PLCoreService;
-import jp.co.my.myplatform.service.core.PLVolleyHelper;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.popover.PLActionListPopover;
@@ -34,12 +27,15 @@ import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 
 public class PLWikipediaViewer extends PLContentView
-		implements PLWikipediaHtmlEncoder.PLWikipediaEncodeListener, PLActionListPopover.PLActionListListener<PLWikipediaPageModel> {
+		implements PLWikipediaHtmlEncoder.PLWikipediaEncodeListener
+		, PLActionListPopover.PLActionListListener<PLWikipediaPageModel>
+		, PLWikipediaFetcher.PLWikipediaFetcherListener {
 
 	private TextView mTextView;
 	private TextView mLoadingText;
 	private ScrollView mScrollView;
 	private PLWikipediaPageModel mCurrentPageModel;
+	private PLWikipediaFetcher mFetcher;
 	private PLWikipediaHtmlEncoder mEncoder;
 	private ArrayList<PLWikipediaPageModel> mPageList;
 
@@ -52,6 +48,7 @@ public class PLWikipediaViewer extends PLContentView
 		mLoadingText = (TextView) findViewById(R.id.loading_text);
 		mScrollView = (ScrollView) findViewById(R.id.text_scroll);
 		mMainHandler = new Handler();
+		mFetcher = new PLWikipediaFetcher(this);
 		mEncoder = new PLWikipediaHtmlEncoder(this);
 		mPageList = new ArrayList<>();
 
@@ -62,8 +59,8 @@ public class PLWikipediaViewer extends PLContentView
 	@Override
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
+		mFetcher.cancelAllRequest();
 		mEncoder.cancel();
-		PLCoreService.getVolleyHelper().cancelRequest(this.getClass());
 
 		saveScrollPosition();
 	}
@@ -86,39 +83,9 @@ public class PLWikipediaViewer extends PLContentView
 		}, null);
 	}
 
-	private void requestPage(final String url) {
+	private void requestPage(String url) {
 		showIndicator();
-		Response.Listener<String> listener = new Response.Listener<String>() {
-			@Override
-			public void onResponse(final String response) {
-				PLWikipediaPageModel pageModel = new PLWikipediaPageModel();
-				try {
-					String title = url.replaceFirst(".*/", "");
-					String decodeTitle = URLDecoder.decode(title, "UTF8");
-					pageModel.setTitle(decodeTitle);
-				} catch (UnsupportedEncodingException e) {
-					MYLogUtil.showExceptionToast(e);
-					pageModel.setTitle("UnsupportedEncodingException error");
-				}
-				pageModel.setUrl(url);
-				pageModel.setHtml(response);
-				pageModel.setRegisteredDate(Calendar.getInstance());
-				pageModel.save();
-				mPageList.add(pageModel);
-
-				loadPageModel(pageModel);
-			}
-		};
-		Response.ErrorListener error = new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				MYLogUtil.outputErrorLog("Fetch page error " + error.toString());
-				hideIndicator();
-			}
-		};
-		StringRequest request = new StringRequest(url, listener, error);
-		PLVolleyHelper volleyHelper = PLCoreService.getVolleyHelper();
-		volleyHelper.addRequest(request, this.getClass());
+		mFetcher.startFetchPage(url);
 	}
 
 	private void loadPageModel(final PLWikipediaPageModel pageModel) {
@@ -257,5 +224,19 @@ public class PLWikipediaViewer extends PLContentView
 				PLWikipediaViewer.this.removeTopPopover();
 			}
 		}).showPopover(new PLRelativeLayoutController(buttonView));
+	}
+
+	// PLWikipediaFetcherListener
+	@Override
+	public void finishedFetchPage(PLWikipediaPageModel pageModel) {
+		if (pageModel != null) {
+			mPageList.add(pageModel);
+		}
+		hideIndicator();
+	}
+
+	@Override
+	public void openPage(PLWikipediaPageModel pageModel) {
+		loadPageModel(pageModel);
 	}
 }
