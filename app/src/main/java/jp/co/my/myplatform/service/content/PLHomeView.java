@@ -29,10 +29,10 @@ public class PLHomeView extends PLContentView {
 	}
 
 	private void setButtonEvent() {
-		findViewById(R.id.stop_service_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.menu_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stopService();
+				showMenu();
 			}
 		});
 		findViewById(R.id.app_list_button).setOnClickListener(new View.OnClickListener() {
@@ -103,6 +103,26 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
 			}
 		});
+	}
+
+	private void showMenu() {
+		String[] titles = {"サービス終了", "ボタン非表示"};
+		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLHomeView.this.removeTopPopover();
+				switch (position) {
+					case 0: {
+						stopService();
+						break;
+					}
+					case 1: {
+						hideButton();
+						break;
+					}
+				}
+			}
+		}).showPopover();
 	}
 
 	private void stopService() {

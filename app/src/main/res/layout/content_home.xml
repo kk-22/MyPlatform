@@ -18,8 +18,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="サービス終了"
-                android:id="@+id/stop_service_button"/>
+                android:text="メニュー"
+                android:id="@+id/menu_button"/>
 
             <Button
                 android:layout_weight="1"
