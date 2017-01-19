@@ -173,6 +173,12 @@ public class PLSetAlarmView extends PLContentView {
 		buttonView.clearText(PLSetAlarmView.class);
 
 		PLCoreService.getCoreService().showDefaultNotification();
+
+		if (sAlarmHandler == null) {
+			// アラーム開始前なら通知
+			Vibrator vibrator = (Vibrator) PLCoreService.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+			vibrator.vibrate(400);
+		}
 	}
 
 	// 開始したアラーム停止
