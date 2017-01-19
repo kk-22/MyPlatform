@@ -12,13 +12,22 @@ import android.os.Process;
 import android.provider.Settings;
 import android.view.View;
 
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.core.PLApplication;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLDeviceSetting;
 
 public class PLMainActivity extends Activity {
 
 	public static final String KEY_DO_NOT_START_SERVICE = "KEY_DO_NOT_START_SERVICE";
+	public static final String KEY_LOGIN_TWITTER = "KEY_LOGIN_TWITTER";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +37,9 @@ public class PLMainActivity extends Activity {
 		setButtonEvent();
 
 		Intent intent = getIntent();
-		if (!intent.getBooleanExtra(KEY_DO_NOT_START_SERVICE, false)) {
+		if (intent.getBooleanExtra(KEY_LOGIN_TWITTER, false)) {
+			loginToTwitter();
+		} else if (!intent.getBooleanExtra(KEY_DO_NOT_START_SERVICE, false)) {
 			startServiceIfEnable();
 			finish();
 		}
@@ -92,5 +103,29 @@ public class PLMainActivity extends Activity {
 				PLDeviceSetting.revertAllSetting();
 			}
 		});
+	}
+
+	private void loginToTwitter() {
+		TwitterLoginButton button = new TwitterLoginButton(this);
+		button.setCallback(new Callback<TwitterSession>() {
+			@Override
+			public void success(Result<TwitterSession> result) {
+				TwitterSession session = result.data;
+				MYLogUtil.showToast("Login success " +session.getUserName());
+			}
+			@Override
+			public void failure(TwitterException exception) {
+				MYLogUtil.showErrorToast("Login error of twitter");
+			}
+		});
+		button.performClick();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// ツイッター登録画面からの復帰
+		PLCoreService.getNavigationController().displayNavigationIfNeeded();
+		finish();
 	}
 }

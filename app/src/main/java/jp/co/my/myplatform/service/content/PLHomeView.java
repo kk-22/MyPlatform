@@ -1,10 +1,12 @@
 package jp.co.my.myplatform.service.content;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
 import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
@@ -41,10 +43,10 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getNavigationController().pushView(PLAppListView.class);
 			}
 		});
-		findViewById(R.id.hide_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				hideButton();
+				onClickTweetButton();
 			}
 		});
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
@@ -169,5 +171,16 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
 		}).showPopover();
+	}
+
+	private void onClickTweetButton() {
+		// ログイン
+		Intent intent = new Intent();
+		intent.setClassName(getContext().getPackageName(), "jp.co.my.myplatform.activity.controller.PLMainActivity");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(PLMainActivity.KEY_LOGIN_TWITTER, true);
+		getContext().startActivity(intent);
+
+		PLCoreService.getNavigationController().hideNavigationIfNeeded();
 	}
 }

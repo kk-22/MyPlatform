@@ -8,17 +8,27 @@ import android.os.Environment;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import io.fabric.sdk.android.Fabric;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.overlay.PLNavigationController;
 
 public class PLApplication extends Application {
 
+	private static final String TWITTER_KEY = "dummy";
+    private static final String TWITTER_SECRET = "dummy";
+
 	private static Context sContext;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+		Fabric.with(this, new Twitter(authConfig));
+
 		sContext = getApplicationContext();
 
 		MYLogUtil.initLogUtil(sContext, false);
