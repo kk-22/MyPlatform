@@ -25,6 +25,53 @@
         </ScrollView>
 
         <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/download_bar"
+            android:weightSum="0"
+            android:layout_width="match_parent"
+            android:layout_height="44dp">
+
+            <TextView
+                android:text="削除"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+            <Switch
+                android:id="@+id/delete_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+            <!--<Button-->
+                <!--android:id="@+id/cancel_button"-->
+                <!--android:text="Cancel"-->
+                <!--android:layout_weight="5"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="44dp"/>-->
+
+            <TextView
+                android:id="@+id/download_text"
+                android:textColor="#000"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:text="開く"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+            <Switch
+               android:id="@+id/open_switch"
+               android:layout_width="wrap_content"
+               android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_weight="0"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -45,8 +92,8 @@
                 android:layout_height="match_parent"/>
 
             <Button
-                android:id="@+id/temp_button"
-                android:text="TEMP"
+                android:id="@+id/search_button"
+                android:text="Search"
                 android:layout_weight="10"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"/>

@@ -40,7 +40,7 @@ public class PLWikipediaFetcher {
 					pageModel.setTitle("UnsupportedEncodingException error");
 				}
 				pageModel.setUrl(url);
-				pageModel.setHtml(response);
+				pageModel.setOriginHtml(response);
 				pageModel.setRegisteredDate(Calendar.getInstance());
 				pageModel.save();
 

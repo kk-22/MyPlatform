@@ -20,13 +20,17 @@ public class PLWikipediaPageModel extends BaseModel {
 	@Column
 	private String url;
 	@Column
-	private String html;
+	private String originHtml;			// フェッチ直後のHTML
 	@Column
 	private Calendar registeredDate;	// 登録日時
 	@Column
 	private Calendar lastReadDate;		// 最終閲覧日時
 	@Column
 	private int scrollPosition;			// スクロール位置
+	@Column
+	private int encodedVersion;			// エンコード時のバージョン
+	@Column
+	private String encodedHtml;			// エンコード済みHTML
 
 	public PLWikipediaPageModel() {
 		super();
@@ -56,12 +60,12 @@ public class PLWikipediaPageModel extends BaseModel {
 		this.url = url;
 	}
 
-	public String getHtml() {
-		return html;
+	public String getOriginHtml() {
+		return originHtml;
 	}
 
-	public void setHtml(String html) {
-		this.html = html;
+	public void setOriginHtml(String originHtml) {
+		this.originHtml = originHtml;
 	}
 
 	public Calendar getRegisteredDate() {
@@ -86,5 +90,21 @@ public class PLWikipediaPageModel extends BaseModel {
 
 	public void setScrollPosition(int scrollPosition) {
 		this.scrollPosition = scrollPosition;
+	}
+
+	public int getEncodedVersion() {
+		return encodedVersion;
+	}
+
+	public void setEncodedVersion(int encodedVersion) {
+		this.encodedVersion = encodedVersion;
+	}
+
+	public String getEncodedHtml() {
+		return encodedHtml;
+	}
+
+	public void setEncodedHtml(String encodedHtml) {
+		this.encodedHtml = encodedHtml;
 	}
 }

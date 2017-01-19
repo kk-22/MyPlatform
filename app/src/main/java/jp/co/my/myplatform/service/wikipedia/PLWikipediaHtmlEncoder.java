@@ -9,6 +9,8 @@ import android.view.View;
 
 public class PLWikipediaHtmlEncoder {
 
+	private static final int ENCODE_VERSION = 1;
+
 	private Handler mMainHandler;
 	private PLWikipediaEncodeListener mListener;
 
@@ -23,7 +25,7 @@ public class PLWikipediaHtmlEncoder {
 	}
 
 	public void encodeHtml(PLWikipediaPageModel model) {
-		String baseHtml = model.getHtml();
+		String baseHtml = model.getOriginHtml();
 
 		// 余分の削除
 		// 改行文字削除
@@ -48,10 +50,10 @@ public class PLWikipediaHtmlEncoder {
 				"<h2 class=\"section-heading in-block(.*?)<span(.*?)>(.*?)</span></h2>"
 				, "<h1>■$3</1>");
 
-		createLinkStr(htmlStr);
+		createLinkStr(model, htmlStr);
 	}
 
-	private void createLinkStr(String html) {
+	private void createLinkStr(PLWikipediaPageModel pageModel, String html) {
 		// deprecated のため Android 7 以降で引数にパラメータ追加
 		CharSequence sequence = Html.fromHtml(html);
 		final SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
@@ -60,6 +62,8 @@ public class PLWikipediaHtmlEncoder {
 			makeLinkClickable(strBuilder, span);
 		}
 
+		pageModel.setEncodedHtml(strBuilder.toString());
+		pageModel.setEncodedVersion(ENCODE_VERSION);
 		mMainHandler.post(new Runnable() {
 			@Override
 			public void run() {
