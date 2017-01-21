@@ -8,7 +8,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.BaseTweetView;
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
 
@@ -18,6 +23,7 @@ import java.util.regex.Pattern;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLListPopover;
+import retrofit2.Call;
 
 /*
  TweetTimelineListAdapterクラスはタップ時に強制的にActivityを起動するため、
@@ -25,15 +31,17 @@ import jp.co.my.myplatform.service.popover.PLListPopover;
  */
 public class PLTWListAdapter implements ListAdapter {
 
+	private PLTWListView mListView;
 	private TweetTimelineListAdapter mTweetAdapter;
 
-	public PLTWListAdapter(TweetTimelineListAdapter tweetAdapter) {
+	public PLTWListAdapter(PLTWListView listView, TweetTimelineListAdapter tweetAdapter) {
 		super();
+		mListView = listView;
 		mTweetAdapter = tweetAdapter;
 	}
 
 	private void onClickTweet(final Tweet tweet) {
-		String[] titles = {"投稿者", "リンク"};
+		String[] titles = {"投稿者", "リンク", "削除"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -52,6 +60,27 @@ public class PLTWListAdapter implements ListAdapter {
 						String url = matcher.group();
 						MYLogUtil.showToast(url);
 						openBrowser(url);
+						break;
+					}
+					case 2: {
+						if (!tweet.user.screenName.equals("dorann217")) {
+							MYLogUtil.showErrorToast("自分以外のツイート");
+							return;
+						}
+
+						StatusesService statusesService = TwitterCore.getInstance().getApiClient().getStatusesService();
+						Call<Tweet> callTweet = statusesService.destroy(tweet.id, false);
+						callTweet.enqueue(new Callback<Tweet>() {
+							@Override
+							public void success(Result<Tweet> result) {
+								MYLogUtil.showToast("destroy success");
+								mListView.refreshList();
+							}
+							@Override
+							public void failure(TwitterException exception) {
+								MYLogUtil.showErrorToast("destroy error");
+							}
+						});
 						break;
 					}
 				}
@@ -149,5 +178,9 @@ public class PLTWListAdapter implements ListAdapter {
 	@Override
 	public boolean isEmpty() {
 		return mTweetAdapter.isEmpty();
+	}
+
+	public TweetTimelineListAdapter getTweetAdapter() {
+		return mTweetAdapter;
 	}
 }
