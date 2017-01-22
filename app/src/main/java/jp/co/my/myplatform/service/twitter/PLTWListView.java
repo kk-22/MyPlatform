@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.twitter;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,9 @@ import com.twitter.sdk.android.tweetui.TwitterListTimeline;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
 import retrofit2.Call;
 
@@ -69,6 +72,19 @@ public class PLTWListView extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				showTweetForm();
+			}
+		});
+		findViewById(R.id.tweet_button).setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				// ログイン
+				Intent intent = new Intent();
+				intent.setClassName(getContext().getPackageName(), "jp.co.my.myplatform.activity.controller.PLMainActivity");
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.putExtra(PLMainActivity.KEY_LOGIN_TWITTER, true);
+				getContext().startActivity(intent);
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
+				return true;
 			}
 		});
 	}

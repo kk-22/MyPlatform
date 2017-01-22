@@ -125,6 +125,8 @@ public class PLMainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// ツイッター登録画面からの復帰
+		TwitterLoginButton button = new TwitterLoginButton(this);
+		button.onActivityResult(requestCode, resultCode, data);
 		PLCoreService.getNavigationController().displayNavigationIfNeeded();
 		finish();
 	}

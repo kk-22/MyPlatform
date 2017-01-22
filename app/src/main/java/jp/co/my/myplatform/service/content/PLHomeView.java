@@ -1,24 +1,10 @@
 package jp.co.my.myplatform.service.content;
 
-import android.content.Intent;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterApiClient;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.services.StatusesService;
-
-import java.util.Calendar;
-
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
 import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.browser.PLBrowserView;
@@ -32,7 +18,6 @@ import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.twitter.PLTWListView;
 import jp.co.my.myplatform.service.wikipedia.PLWikipediaViewer;
-import retrofit2.Call;
 
 public class PLHomeView extends PLContentView {
 
@@ -185,35 +170,5 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
 		}).showPopover();
-	}
-
-	private void onClickTweetButton() {
-		// 投稿
-		TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-		StatusesService statusesService = twitterApiClient.getStatusesService();
-
-		String message = DateFormat.format("yyyy/MM/dd kk:mm:ss", Calendar.getInstance()).toString() +"てすとです";
-		Call<Tweet> tweet = statusesService.update(message, null, false, null, null, null, false, null, null);
-		tweet.enqueue(new Callback<Tweet>() {
-			@Override
-			public void success(Result<Tweet> result) {
-				MYLogUtil.showToast("tweet success");
-			}
-
-			@Override
-			public void failure(TwitterException exception) {
-				MYLogUtil.showErrorToast("Tweet error");
-			}
-		});
-		MYLogUtil.outputLog("");
-
-		// ログイン
-		Intent intent = new Intent();
-		intent.setClassName(getContext().getPackageName(), "jp.co.my.myplatform.activity.controller.PLMainActivity");
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra(PLMainActivity.KEY_LOGIN_TWITTER, true);
-		getContext().startActivity(intent);
-
-		PLCoreService.getNavigationController().hideNavigationIfNeeded();
 	}
 }
