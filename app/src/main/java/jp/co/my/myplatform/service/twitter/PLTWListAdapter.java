@@ -1,8 +1,6 @@
 package jp.co.my.myplatform.service.twitter;
 
-import android.content.Intent;
 import android.database.DataSetObserver;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.browser.PLBaseBrowserView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import retrofit2.Call;
@@ -45,6 +44,7 @@ public class PLTWListAdapter implements ListAdapter {
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
 				switch (position) {
 					case 0: {
 						String userName = tweet.user.screenName;
@@ -56,9 +56,9 @@ public class PLTWListAdapter implements ListAdapter {
 						Matcher matcher = pattern.matcher(tweet.text);
 						if (!matcher.find()) {
 							MYLogUtil.showErrorToast("リンクなし");
+							return;
 						}
 						String url = matcher.group();
-						MYLogUtil.showToast(url);
 						openBrowser(url);
 						break;
 					}
@@ -84,18 +84,14 @@ public class PLTWListAdapter implements ListAdapter {
 						break;
 					}
 				}
-				PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
 			}
 		}).showPopover();
 	}
 
 	private void openBrowser(String url) {
-		PLCoreService.getNavigationController().hideNavigationIfNeeded();
-		// ブラウザで開く
-		Uri uri = Uri.parse(url);
-		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		PLCoreService.getContext().startActivity(intent);
+		PLBaseBrowserView browserView = new PLBaseBrowserView();
+		browserView.getCurrentWebView().loadUrl(url);
+		PLCoreService.getNavigationController().pushView(browserView);
 	}
 
 	private void removeAllClickListener(ViewGroup baseView) {
