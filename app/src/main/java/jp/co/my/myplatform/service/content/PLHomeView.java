@@ -7,7 +7,7 @@ import android.widget.AdapterView;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
 import jp.co.my.myplatform.service.app.PLYurudoraApp;
-import jp.co.my.myplatform.service.browser.PLBrowserView;
+import jp.co.my.myplatform.service.browser.PLHistoryBrowserView;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.debug.PLDebugView;
@@ -71,7 +71,7 @@ public class PLHomeView extends PLContentView {
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLBrowserView.class);
+				PLCoreService.getNavigationController().pushView(PLHistoryBrowserView.class);
 			}
 		});
 		findViewById(R.id.explorer_button).setOnClickListener(new View.OnClickListener() {

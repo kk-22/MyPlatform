@@ -21,19 +21,18 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
-import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.popover.PLActionListPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 
-public class PLBrowserView extends PLContentView implements PLActionListPopover.PLActionListListener<PLWebPageModel> {
+public class PLBaseBrowserView extends PLContentView implements PLActionListPopover.PLActionListListener<PLWebPageModel> {
 	private PLWebView mCurrentWebView;
 	private ImageButton mBackButton, mForwardButton, mShowButton;
 	private ProgressBar mProgressBar;
 	private LinearLayout mToolbar;
 
-	public PLBrowserView() {
+	public PLBaseBrowserView() {
 		super();
 
 		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
@@ -57,16 +56,15 @@ public class PLBrowserView extends PLContentView implements PLActionListPopover.
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
-				saveLastPage("Loading page", url);
+				willChangePage("Loading page", url);
 			}
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				super.onPageFinished(view, url);
-				saveLastPage(view.getTitle(), url);
+				willChangePage(view.getTitle(), url);
 			}
 		});
-		loadFirstPage();
 	}
 
 	@Override
@@ -92,33 +90,8 @@ public class PLBrowserView extends PLContentView implements PLActionListPopover.
 		mShowButton.setVisibility(View.VISIBLE);
 	}
 
-	protected void loadFirstPage() {
-		PLModelContainer<PLWebPageModel> container = new PLModelContainer<>(SQLite.select()
-				.from(PLWebPageModel.class)
-				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-				.limit(1));
-		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLWebPageModel>() {
-			@Override
-			public void onLoad(List<PLWebPageModel> modelLists) {
-				if (modelLists.size() == 0) {
-					mCurrentWebView.loadUrl("http://news.yahoo.co.jp/");
-					return;
-				}
-				mCurrentWebView.loadUrl(modelLists.get(0).getUrl());
-			}
-		});
-	}
-
-	protected void saveLastPage(String title, String url) {
-		// TODO: 前のモデルを使いまわすべき
-		List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
-				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-				.queryList();
-		PLWebPageModel model = new PLWebPageModel(title, url, null);
-		model.save();
-		for (PLWebPageModel pageModel : pageArray) {
-			pageModel.delete();
-		}
+	protected void willChangePage(String title, String url) {
+		// サブクラスで実装
 	}
 
 	@Override
@@ -212,13 +185,13 @@ public class PLBrowserView extends PLContentView implements PLActionListPopover.
 				for (PLWebPageModel model : pageArray) {
 					titleArray.add(model.getTitle());
 				}
-				new PLActionListPopover<>(titleArray, pageArray, PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
+				new PLActionListPopover<>(titleArray, pageArray, PLBaseBrowserView.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLBrowserFunctionList(PLBrowserView.this).showPopover(new PLRelativeLayoutController(v));
+				new PLBrowserFunctionList(PLBaseBrowserView.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.show_toolbar_button).setOnClickListener(new OnClickListener() {
@@ -265,7 +238,7 @@ public class PLBrowserView extends PLContentView implements PLActionListPopover.
 						object.delete();
 						listPopover.removeObject(object);
 						// アクションPopoverだけ削除してリストは残す
-						PLBrowserView.this.removeTopPopover();
+						PLBaseBrowserView.this.removeTopPopover();
 						break;
 					}
 				}

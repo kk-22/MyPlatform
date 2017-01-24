@@ -29,7 +29,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	}
 
 	private PLWebView mWebView;
-	private PLBrowserView mBrowserView;
+	private PLBaseBrowserView mBrowserView;
 	private PLWebPageModel mSavedPageModel;
 
 	private ListView mListView;
@@ -37,7 +37,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	private ImageButton mScriptButton;
 	private ImageButton mReloadButton;
 
-	public PLBrowserFunctionList(PLBrowserView browserView) {
+	public PLBrowserFunctionList(PLBaseBrowserView browserView) {
 		super(R.layout.popover_browser_function);
 		mBrowserView = browserView;
 		mWebView = browserView.getCurrentWebView();

@@ -5,12 +5,12 @@ import android.graphics.Color;
 import android.webkit.WebSettings;
 
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.service.browser.PLBrowserView;
+import jp.co.my.myplatform.service.browser.PLBaseBrowserView;
 import jp.co.my.myplatform.service.browser.PLWebView;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 
-public class PLNewsBrowserView extends PLBrowserView {
+public class PLNewsBrowserView extends PLBaseBrowserView {
 
 	private PLNewsPageModel mPageModel;
 
@@ -19,21 +19,11 @@ public class PLNewsBrowserView extends PLBrowserView {
 		super();
 		mPageModel = page;
 
-		customizeWebView();
+		loadFirstPage();
 		customizeDesign();
 	}
 
-	@Override
-	protected void loadFirstPage() {
-		// PageModelをセット後にloadする
-	}
-
-	@Override
-	protected void saveLastPage(String title, String url) {
-		// 最終ページを保存しない
-	}
-
-	private void customizeWebView() {
+	private void loadFirstPage() {
 		PLWebView webView = getCurrentWebView();
 		webView.loadUrl(mPageModel.getUrl());
 
