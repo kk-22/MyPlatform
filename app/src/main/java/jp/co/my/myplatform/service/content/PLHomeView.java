@@ -15,6 +15,7 @@ import jp.co.my.myplatform.service.explorer.PLExplorerView;
 import jp.co.my.myplatform.service.memo.PLMemoEditorView;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
+import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.twitter.PLTWListView;
 import jp.co.my.myplatform.service.wikipedia.PLWikipediaViewer;
@@ -118,7 +119,8 @@ public class PLHomeView extends PLContentView {
 						break;
 					}
 					case 1: {
-						hideButton();
+						PLCoreService.getNavigationController().hideNavigationIfNeeded();
+						PLCoreService.getOverlayManager().removeFrontOverlays();
 						break;
 					}
 				}
@@ -127,25 +129,12 @@ public class PLHomeView extends PLContentView {
 	}
 
 	private void stopService() {
-		String[] titles = {"サービス終了"};
-		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
+		new PLConfirmationPopover("サービス終了", new PLConfirmationPopover.PLConfirmationListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onClickButton(boolean isYes) {
 				PLApplication.stopCoreService();
 			}
-		}).showPopover();
-	}
-
-	private void hideButton() {
-		String[] titles = {"ボタン非表示"};
-		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				PLHomeView.this.removeTopPopover();
-				PLCoreService.getNavigationController().hideNavigationIfNeeded();
-				PLCoreService.getOverlayManager().removeFrontOverlays();
-			}
-		}).showPopover();
+		}, null);
 	}
 
 	private void startApp() {
