@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -22,18 +21,20 @@ import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
+import jp.co.my.myplatform.service.view.PLSavePositionListView;
 import retrofit2.Call;
 
 public class PLTWListView extends PLContentView {
 
-	private ListView mListVIew;
+	private PLSavePositionListView mListVIew;
 	private TwitterListTimeline mTimeline;
 	private PLTWListAdapter mAdapter;
 
 	public PLTWListView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_tweet_list, this);
-		mListVIew = (ListView) findViewById(R.id.tweet_list);
+		mListVIew = (PLSavePositionListView) findViewById(R.id.tweet_list);
+		addListView(mListVIew);
 
 		initList();
 		setOnClickEvent();

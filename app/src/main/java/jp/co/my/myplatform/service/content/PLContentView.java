@@ -4,15 +4,18 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
+import jp.co.my.myplatform.service.view.PLSavePositionListView;
 
 public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	private ArrayList<PLPopoverView> mPopoverViews;
+	private ArrayList<WeakReference<PLSavePositionListView>> mListViews;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
@@ -20,6 +23,34 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		setFocusableInTouchMode(true);
 
 		mPopoverViews = new ArrayList<>();
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		if (mListViews != null) {
+			// PLSavePositionListViewクラスの同メソッドでは効かないためここで実行
+			for (WeakReference<PLSavePositionListView> listView : mListViews) {
+				listView.get().loadPosition();
+			}
+		}
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		if (mListViews != null) {
+			for (WeakReference<PLSavePositionListView> listView : mListViews) {
+				listView.get().savePosition();
+			}
+		}
+	}
+
+	public void addListView(PLSavePositionListView listView) {
+		if (mListViews == null) {
+			mListViews = new ArrayList<>();
+		}
+		mListViews.add(new WeakReference<>(listView));
 	}
 
 	public void viewWillDisappear() {
