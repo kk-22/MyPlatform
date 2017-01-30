@@ -10,17 +10,23 @@ import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.models.MediaEntity;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.BaseTweetView;
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
+import com.twitter.sdk.android.tweetui.internal.OverlayImageView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.browser.PLBaseBrowserView;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import retrofit2.Call;
 
@@ -39,51 +45,61 @@ public class PLTWListAdapter implements ListAdapter {
 		mTweetAdapter = tweetAdapter;
 	}
 
-	private void onClickTweet(final Tweet tweet) {
-		String[] titles = {"投稿者", "リンク", "削除"};
+	private void deleteTweet(final Tweet tweet) {
+		if (!tweet.user.screenName.equals("dorann217")) {
+			MYLogUtil.showErrorToast("自分以外のツイート");
+			return;
+		}
+
+		new PLConfirmationPopover("削除", new PLConfirmationPopover.PLConfirmationListener() {
+			@Override
+			public void onClickButton(boolean isYes) {
+				StatusesService statusesService = TwitterCore.getInstance().getApiClient().getStatusesService();
+				Call<Tweet> callTweet = statusesService.destroy(tweet.id, false);
+				callTweet.enqueue(new Callback<Tweet>() {
+					@Override
+					public void success(Result<Tweet> result) {
+						MYLogUtil.showToast("destroy success");
+						mListView.refreshList();
+					}
+					@Override
+					public void failure(TwitterException exception) {
+						MYLogUtil.showErrorToast("destroy error");
+					}
+				});
+			}
+		}, null);
+	}
+
+	private void openTextLink(Tweet tweet) {
+		List<String> textUrlList = new ArrayList<>();
+
+		Pattern pattern = Pattern.compile("http[^ \n]*");
+		Matcher matcher = pattern.matcher(tweet.text);
+		while (matcher.find()) {
+			String url = matcher.group();
+			textUrlList.add(url);
+		}
+		if (textUrlList.size() > 0 && !entityUrls(tweet).isEmpty()) {
+			// 添付画像と重複するURLは除く
+			textUrlList.remove(textUrlList.size() - 1);
+		}
+
+		if (textUrlList.isEmpty()) {
+			MYLogUtil.showToast("リンクなし");
+			return;
+		}
+		if (textUrlList.size() == 1) {
+			String url = textUrlList.get(0);
+			openBrowser(url);
+			return;
+		}
+		final String[] titles = textUrlList.toArray(new String[0]);
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
-				switch (position) {
-					case 0: {
-						String userName = tweet.user.screenName;
-						openBrowser("https://mobile.twitter.com/" +userName);
-						break;
-					}
-					case 1: {
-						Pattern pattern = Pattern.compile("http[^ \n]*");
-						Matcher matcher = pattern.matcher(tweet.text);
-						if (!matcher.find()) {
-							MYLogUtil.showErrorToast("リンクなし");
-							return;
-						}
-						String url = matcher.group();
-						openBrowser(url);
-						break;
-					}
-					case 2: {
-						if (!tweet.user.screenName.equals("dorann217")) {
-							MYLogUtil.showErrorToast("自分以外のツイート");
-							return;
-						}
-
-						StatusesService statusesService = TwitterCore.getInstance().getApiClient().getStatusesService();
-						Call<Tweet> callTweet = statusesService.destroy(tweet.id, false);
-						callTweet.enqueue(new Callback<Tweet>() {
-							@Override
-							public void success(Result<Tweet> result) {
-								MYLogUtil.showToast("destroy success");
-								mListView.refreshList();
-							}
-							@Override
-							public void failure(TwitterException exception) {
-								MYLogUtil.showErrorToast("destroy error");
-							}
-						});
-						break;
-					}
-				}
+				openBrowser(titles[position]);
 			}
 		}).showPopover();
 	}
@@ -94,15 +110,84 @@ public class PLTWListAdapter implements ListAdapter {
 		PLCoreService.getNavigationController().pushView(browserView);
 	}
 
-	private void removeAllClickListener(ViewGroup baseView) {
-		// クラッシュ防止のため全イベントを削除
+	private List<String> entityUrls(Tweet tweet) {
+		ArrayList<String> urlList = new ArrayList<>();
+		if (tweet.extendedEtities == null || tweet.extendedEtities.media == null) {
+			return urlList;
+		}
+		List<MediaEntity> entityList = tweet.extendedEtities.media;
+		for (int i = 0; i < entityList.size(); i++) {
+			MediaEntity entity = entityList.get(i);
+			urlList.add(entity.mediaUrl);
+		}
+		return urlList;
+	}
+
+	private void customizeEvent(ViewGroup baseView, final Tweet tweet) {
+		baseView.setOnClickListener(null);
+
 		int childCount = baseView.getChildCount();
 		for (int i = 0; i < childCount; i++) {
 			View view = baseView.getChildAt(i);
-			view.setOnTouchListener(null);
-			view.setClickable(false);
-			if (view instanceof ViewGroup) {
-				removeAllClickListener((ViewGroup) view);
+			int id = view.getId();
+			// 開発時の調査用コード
+//			String className = view.getClass().getSimpleName();
+//			if (id == -1) {
+//				MYLogUtil.outputLog(" " +className +" no_id");
+//			} else {
+//				String resourceName = PLCoreService.getContext().getResources().getResourceEntryName(view.getId());
+//				MYLogUtil.outputLog(" " +className +" " +resourceName);
+//			}
+
+			if (id == R.id.tw__tweet_author_avatar) {
+				// ユーザ画像
+				view.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						String userName = tweet.user.screenName;
+						openBrowser("https://mobile.twitter.com/" + userName);
+					}
+				});
+			} else if (view instanceof OverlayImageView) {
+				// 添付画像
+				List<String> urlList = entityUrls(tweet);
+				if (urlList.isEmpty()) {
+					continue;
+				}
+				int currentIndex = Math.min(i, urlList.size() - 1);
+				final String entityUrl = urlList.get(currentIndex);
+				view.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						openBrowser(entityUrl);
+					}
+				});
+			} else if (id == R.id.tw__tweet_text) {
+				// ツイート本文
+				view.setOnTouchListener(null);
+				view.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						openTextLink(tweet);
+					}
+				});
+			} else if (id == R.id.tw__tweet_like_button) {
+				// お気に入りボタンのイベントは流用
+			} else if (id == R.id.tw__tweet_share_button) {
+				// シェアボタン
+				view.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						deleteTweet(tweet);
+					}
+				});
+			} else if (view instanceof ViewGroup) {
+				// 再帰処理
+				customizeEvent((ViewGroup) view, tweet);
+			} else {
+				// ActivityでないContextを渡す影響で起こる、タップ字のクラッシュ防止のためイベント削除
+				// onClickTweetに流す
+				view.setClickable(false);
 			}
 		}
 	}
@@ -110,14 +195,8 @@ public class PLTWListAdapter implements ListAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		BaseTweetView tweetView = (BaseTweetView) mTweetAdapter.getView(position, convertView, parent);
-		removeAllClickListener(tweetView);
-		tweetView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Tweet tweet = (Tweet) getItem(position);
-				onClickTweet(tweet);
-			}
-		});
+		Tweet tweet = (Tweet) getItem(position);
+		customizeEvent(tweetView, tweet);
 		return tweetView;
 	}
 
