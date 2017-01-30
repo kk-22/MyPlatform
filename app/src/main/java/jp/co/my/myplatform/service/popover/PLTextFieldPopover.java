@@ -9,6 +9,11 @@ import android.widget.EditText;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 
+/*
+ Android 5.0.2 でメモリリーク
+ Android 6.0.1 では未再現。OSのバグとのこと
+ 情報元　https://code.google.com/p/android/issues/detail?id=171190
+ */
 public class PLTextFieldPopover extends PLPopoverView {
 
 	private EditText mEditText;
