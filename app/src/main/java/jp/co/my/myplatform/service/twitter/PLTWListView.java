@@ -28,7 +28,7 @@ import retrofit2.Call;
 
 public class PLTWListView extends PLContentView {
 
-	private PLSavePositionListView mListVIew;
+	private PLSavePositionListView mListView;
 	private TwitterListTimeline mTimeline;
 	private PLTWListAdapter mAdapter;
 	private PLFlickGestureRegistrant mFlickRegistrant;
@@ -36,8 +36,8 @@ public class PLTWListView extends PLContentView {
 	public PLTWListView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_tweet_list, this);
-		mListVIew = (PLSavePositionListView) findViewById(R.id.tweet_list);
-		addListView(mListVIew);
+		mListView = (PLSavePositionListView) findViewById(R.id.tweet_list);
+		addListView(mListView);
 
 		initList();
 		setOnClickEvent();
@@ -57,7 +57,7 @@ public class PLTWListView extends PLContentView {
 						.setViewStyle(R.style.tw__TweetDarkWithActionsStyle)
 						.build();
 				mAdapter = new PLTWListAdapter(PLTWListView.this, tweetAdapter);
-				mListVIew.setAdapter(mAdapter);
+				mListView.setAdapter(mAdapter);
 			}
 			@Override
 			public void failure(TwitterException e) {
@@ -97,7 +97,7 @@ public class PLTWListView extends PLContentView {
 			}
 		});
 
-		mListVIew.setOnTouchListener(new OnTouchListener() {
+		mListView.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				MYLogUtil.outputLog("onTouchEvent in twitter");
@@ -148,7 +148,7 @@ public class PLTWListView extends PLContentView {
 		mAdapter.getTweetAdapter().refresh(new Callback<TimelineResult<Tweet>>() {
 			@Override
 			public void success(Result<TimelineResult<Tweet>> result) {
-				mListVIew.setAdapter(mAdapter);
+				mListView.setAdapter(mAdapter);
 			}
 			@Override
 			public void failure(TwitterException e) {
