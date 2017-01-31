@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.twitter;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.twitter.sdk.android.core.Callback;
@@ -86,6 +87,14 @@ public class PLTWListView extends PLContentView {
 				getContext().startActivity(intent);
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 				return true;
+			}
+		});
+
+		mListVIew.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				MYLogUtil.outputLog("onTouchEvent in twitter");
+				return false;
 			}
 		});
 	}

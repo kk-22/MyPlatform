@@ -25,8 +25,12 @@ import jp.co.my.myplatform.service.model.PLWebPageModel;
 import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 import jp.co.my.myplatform.service.popover.PLActionListPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
+import jp.co.my.myplatform.service.view.PLFlickGestureRegistrant;
 
 public class PLBaseBrowserView extends PLContentView implements PLActionListPopover.PLActionListListener<PLWebPageModel> {
+	private final String[] DISABLE_URLS = {"https://drive.google.com/"
+			, "https://docs.google.com/spreadsheets/", "https://docs.google.com/document/"};
+
 	private PLWebView mCurrentWebView;
 	private ImageButton mBackButton, mForwardButton, mShowButton;
 	private ProgressBar mProgressBar;
@@ -143,15 +147,31 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 		setOnKeyListener(this);
 		mCurrentWebView.setOnKeyListener(this);
 
-		mCurrentWebView.setListener(new PLWebView.PLWebViewGestureListener() {
+		new PLFlickGestureRegistrant(getContext(), mCurrentWebView, new PLFlickGestureRegistrant.PLFlickGestureListener() {
 			@Override
-			public void swipeToRight() {
+			public void flickToRight() {
 				onBackKey();
 			}
 
 			@Override
-			public void swipeToLeft() {
+			public void flickToLeft() {
 				onForwardKey();
+			}
+
+			@Override
+			public boolean cancelFlickEvent(int direction) {
+				String currentUrl = mCurrentWebView.getUrl();
+				for (String url: DISABLE_URLS) {
+					if (currentUrl.startsWith(url)) {
+						// スクロールを使用するサイトを除く
+						return true;
+					}
+				}
+				if (mCurrentWebView.canScrollHorizontally(direction)) {
+					// ページ内の横スクロールが可能
+					return true;
+				}
+				return false;
 			}
 		});
 

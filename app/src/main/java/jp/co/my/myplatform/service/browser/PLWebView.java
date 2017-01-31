@@ -3,8 +3,6 @@ package jp.co.my.myplatform.service.browser;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -14,9 +12,6 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLWebPageModel;
 
 public class PLWebView extends WebView {
-
-	private GestureDetector mGestureDetector;
-	private PLWebViewGestureListener mListener;
 
 	public PLWebView(Context context) {
 		this(context, null);
@@ -31,7 +26,6 @@ public class PLWebView extends WebView {
 			return;
 		}
 
-		mGestureDetector = new GestureDetector(context, mOnGestureListener);
 		initWebView();
 	}
 
@@ -102,11 +96,6 @@ public class PLWebView extends WebView {
 		});
 	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		return (mGestureDetector.onTouchEvent(event) || super.onTouchEvent(event));
-	}
-
 	private boolean canLoadUrl(String url) {
 		if (url.startsWith("http:") || url.startsWith("https:")) {
 			// WebView内で開く
@@ -114,76 +103,5 @@ public class PLWebView extends WebView {
 		}
 		MYLogUtil.showToast("リンクストップ\n" + url);
 		return true;
-	}
-
-	// タッチイベントのリスナー
-	private final GestureDetector.SimpleOnGestureListener mOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
-		private final String[] DISABLE_URLS = {"https://drive.google.com/"
-				, "https://docs.google.com/spreadsheets/", "https://docs.google.com/document/"};
-		private static final int DIRECTION_RIGHT		= -1;
-		private static final int DIRECTION_LEFT		= 1;
-		// 右スワイプ
-		private static final int MIN_DISTANCE_RIGHT		= 250;
-		private static final int MIN_SPEED_RIGHT		= 3000;
-		// 左スワイプ
-		private static final int MIN_DISTANCE_LEFT		= 150;
-		private static final int MIN_SPEED_LEFT			= 3000;
-		// Y軸の許容移動距離
-		private static final int MAX_Y_DISTANCE			= 150;
-
-		@Override
-		public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-			if (Math.abs(event1.getY() - event2.getY()) > MAX_Y_DISTANCE) {
-				// 縦のスクロール
-				return false;
-			}
-			// スクロールを使用するサイトを除く
-			String currentUrl = PLWebView.this.getUrl();
-			for (String url: DISABLE_URLS) {
-				if (currentUrl.startsWith(url)) {
-					return false;
-				}
-			}
-
-			int direction, minDistance, minSpeed;
-			if ((event2.getX() - event1.getX()) > 0) {
-				direction = DIRECTION_RIGHT;
-				minDistance = MIN_DISTANCE_RIGHT;
-				minSpeed = MIN_SPEED_RIGHT;
-			} else {
-				direction = DIRECTION_LEFT;
-				minDistance = MIN_DISTANCE_LEFT;
-				minSpeed = MIN_SPEED_LEFT;
-			}
-
-			if (PLWebView.this.canScrollHorizontally(direction)) {
-				// ページ内スクロールが可能
-				return false;
-			}
-			float distance = Math.abs((event1.getX() - event2.getX()));
-			float speed = Math.abs(velocityX);
-			//MYLogUtil.outputLog("横の移動距離：" + distance + " 横の移動スピード：" + speed);
-			if (distance < minDistance || speed < minSpeed) {
-				// 移動量・速度が足りない
-				return false;
-			}
-
-			// ページ切り替え
-			if (direction == DIRECTION_RIGHT) {
-				mListener.swipeToRight();
-			} else {
-				mListener.swipeToLeft();
-			}
-			return false;
-		}
-	};
-
-	public void setListener(PLWebViewGestureListener listener) {
-		mListener = listener;
-	}
-
-	public static abstract class PLWebViewGestureListener {
-		public abstract void swipeToRight();
-		public abstract void swipeToLeft();
 	}
 }
