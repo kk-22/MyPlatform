@@ -22,6 +22,7 @@ import jp.co.my.myplatform.activity.controller.PLMainActivity;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLTextFieldPopover;
+import jp.co.my.myplatform.service.view.PLFlickGestureRegistrant;
 import jp.co.my.myplatform.service.view.PLSavePositionListView;
 import retrofit2.Call;
 
@@ -30,6 +31,7 @@ public class PLTWListView extends PLContentView {
 	private PLSavePositionListView mListVIew;
 	private TwitterListTimeline mTimeline;
 	private PLTWListAdapter mAdapter;
+	private PLFlickGestureRegistrant mFlickRegistrant;
 
 	public PLTWListView() {
 		super();
@@ -39,6 +41,11 @@ public class PLTWListView extends PLContentView {
 
 		initList();
 		setOnClickEvent();
+	}
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		return mFlickRegistrant.transmitTapEvent(ev) ||  super.dispatchTouchEvent(ev);
 	}
 
 	private void initList() {
@@ -94,6 +101,21 @@ public class PLTWListView extends PLContentView {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				MYLogUtil.outputLog("onTouchEvent in twitter");
+				return false;
+			}
+		});
+		mFlickRegistrant = new PLFlickGestureRegistrant(getContext(), null, new PLFlickGestureRegistrant.PLFlickGestureListener() {
+			@Override
+			public void flickToRight() {
+				PLCoreService.getNavigationController().goBackView();
+			}
+
+			@Override
+			public void flickToLeft() {
+			}
+
+			@Override
+			public boolean cancelFlickEvent(int direction) {
 				return false;
 			}
 		});

@@ -54,6 +54,10 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 	}
 
 	public void viewWillDisappear() {
+		if (mListViews != null) {
+			// 解放するListViewのスクロール位置は保存しない
+			mListViews.clear();
+		}
 		removeAllViews();
 		mPopoverViews.clear();
 	}

@@ -7,19 +7,26 @@ import android.view.View;
 
 public class PLFlickGestureRegistrant {
 
-	PLFlickGestureListener mListener;
+	private PLFlickGestureListener mListener;
+	private GestureDetector mGestureDetector;
 
 	public PLFlickGestureRegistrant(Context context, View view, PLFlickGestureListener listener) {
 		super();
 		mListener = listener;
 
-		final GestureDetector gestureDetector = new GestureDetector(context, mOnGestureListener);
-		view.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return (gestureDetector.onTouchEvent(event));
-			}
-		});
+		mGestureDetector = new GestureDetector(context, mOnGestureListener);
+		if (view != null) {
+			view.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					return transmitTapEvent(event);
+				}
+			});
+		}
+	}
+
+	public boolean transmitTapEvent(MotionEvent event) {
+		return mGestureDetector.onTouchEvent(event);
 	}
 
 	public static abstract class PLFlickGestureListener {
