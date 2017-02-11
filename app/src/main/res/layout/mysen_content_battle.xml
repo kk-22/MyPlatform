@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <jp.co.my.myplatform.service.mysen.PLMSInformationView
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+    </jp.co.my.myplatform.service.mysen.PLMSInformationView>
+
+    <jp.co.my.myplatform.service.mysen.PLMSFieldView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+    </jp.co.my.myplatform.service.mysen.PLMSFieldView>
+
+    <jp.co.my.myplatform.service.mysen.PLMSToolbarView
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+    </jp.co.my.myplatform.service.mysen.PLMSToolbarView>
+</LinearLayout>

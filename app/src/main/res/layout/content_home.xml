@@ -25,8 +25,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="アプリ一覧"
-                android:id="@+id/app_list_button"/>
+                android:text="MySen"
+                android:id="@+id/mysen_button"/>
 
             <Button
                 android:layout_weight="1"

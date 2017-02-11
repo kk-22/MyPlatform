@@ -14,6 +14,7 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.debug.PLDebugView;
 import jp.co.my.myplatform.service.explorer.PLExplorerView;
 import jp.co.my.myplatform.service.memo.PLMemoEditorView;
+import jp.co.my.myplatform.service.mysen.PLMSBattleView;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
@@ -38,10 +39,10 @@ public class PLHomeView extends PLContentView {
 				showMenu();
 			}
 		});
-		findViewById(R.id.app_list_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.mysen_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLAppListView.class);
+				PLCoreService.getNavigationController().pushView(PLMSBattleView.class);
 			}
 		});
 		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
@@ -109,7 +110,7 @@ public class PLHomeView extends PLContentView {
 	}
 
 	private void showMenu() {
-		String[] titles = {"サービス終了", "ボタン非表示"};
+		String[] titles = {"サービス終了", "ボタン非表示", "アプリ一覧"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -122,6 +123,10 @@ public class PLHomeView extends PLContentView {
 					case 1: {
 						PLCoreService.getNavigationController().hideNavigationIfNeeded();
 						PLCoreService.getOverlayManager().removeFrontOverlays();
+						break;
+					}
+					case 2: {
+						PLCoreService.getNavigationController().pushView(PLAppListView.class);
 						break;
 					}
 				}
