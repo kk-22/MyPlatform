@@ -5,11 +5,13 @@
               android:layout_height="match_parent">
 
     <jp.co.my.myplatform.service.mysen.PLMSInformationView
+        android:id="@+id/information_view"
         android:layout_width="match_parent"
         android:layout_height="70dp">
     </jp.co.my.myplatform.service.mysen.PLMSInformationView>
 
     <jp.co.my.myplatform.service.mysen.PLMSFieldView
+        android:id="@+id/field_view"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp">

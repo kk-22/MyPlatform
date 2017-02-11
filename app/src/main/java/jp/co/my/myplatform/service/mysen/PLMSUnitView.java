@@ -14,40 +14,35 @@ import java.io.InputStream;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
+public class PLMSUnitView extends FrameLayout {
 
-public class PLMSLandView extends FrameLayout {
+	private PLMSUnitModel mUnit;
+	private Point mCurrentPoint;
 
-	private ImageView mLandImage;
-	private Point mPoint;
-
-	public PLMSLandView(Context context) {
+	public PLMSUnitView(Context context) {
 		super(context);
-		LayoutInflater.from(context).inflate(R.layout.mysen_view_land, this);
-		mLandImage = (ImageView) findViewById(R.id.image_view);
+		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
+		mUnit = new PLMSUnitModel();
+
+		// ダミー
+		mCurrentPoint = new Point(1, 1);
 
 		loadImage();
 	}
 
 	private void loadImage() {
+		ImageView imageView = (ImageView) findViewById(R.id.image_view);
 		try {
-			String path = "land/" +getImageName();
+			String path = mUnit.getSmallImagePath();
 			InputStream inputStream = getResources().getAssets().open(path);
 			Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-			mLandImage.setImageBitmap(bitmap);
+			imageView.setImageBitmap(bitmap);
 		} catch (IOException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
 	}
 
-	protected String getImageName() {
-		return "grassland.gif";
-	}
-
-	public Point getPoint() {
-		return mPoint;
-	}
-
-	public void setPoint(Point point) {
-		mPoint = point;
+	public Point getCurrentPoint() {
+		return mCurrentPoint;
 	}
 }
