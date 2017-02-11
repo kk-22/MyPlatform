@@ -6,7 +6,7 @@
 
     <jp.co.my.myplatform.service.mysen.PLMSInformationView
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="70dp">
     </jp.co.my.myplatform.service.mysen.PLMSInformationView>
 
     <jp.co.my.myplatform.service.mysen.PLMSFieldView
@@ -14,9 +14,4 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
     </jp.co.my.myplatform.service.mysen.PLMSFieldView>
-
-    <jp.co.my.myplatform.service.mysen.PLMSToolbarView
-        android:layout_width="match_parent"
-        android:layout_height="44dp">
-    </jp.co.my.myplatform.service.mysen.PLMSToolbarView>
 </LinearLayout>
