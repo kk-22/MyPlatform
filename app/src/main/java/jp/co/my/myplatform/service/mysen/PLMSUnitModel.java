@@ -8,7 +8,7 @@ public class PLMSUnitModel extends Object {
 	public PLMSUnitModel() {
 		// ダミー
 		mName = "ルキナ";
-		mSmallImageName = "rukina.gif";
+		mSmallImageName = "rukina.png";
 	}
 
 	public String getSmallImagePath() {
