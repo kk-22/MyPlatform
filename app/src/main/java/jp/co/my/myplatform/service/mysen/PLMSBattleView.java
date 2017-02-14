@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.view.LayoutInflater;
+import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ public class PLMSBattleView extends PLContentView {
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
+	private PLMSUserInterface mUserInterface;
 
 	private ArrayList<PLMSUnitView> mUnitArray;
 
@@ -22,9 +24,16 @@ public class PLMSBattleView extends PLContentView {
 		mField = (PLMSFieldView) findViewById(R.id.field_view);
 
 		mUnitArray = new ArrayList<>();
-
 		createUnitView();
-		mField.setUnitArray(mUnitArray);
+
+		getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				mField.putChildViews(mUnitArray);
+				mUserInterface = new PLMSUserInterface(mInformation, mField, mUnitArray);
+			}
+		});
 	}
 
 	public void createUnitView() {

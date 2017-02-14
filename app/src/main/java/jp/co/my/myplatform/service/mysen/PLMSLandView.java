@@ -19,6 +19,7 @@ public class PLMSLandView extends FrameLayout {
 
 	private ImageView mLandImage;
 	private Point mPoint;
+	private PLMSUnitView mUnitView;
 
 	public PLMSLandView(Context context) {
 		super(context);
@@ -26,6 +27,10 @@ public class PLMSLandView extends FrameLayout {
 		mLandImage = (ImageView) findViewById(R.id.image_view);
 
 		loadImage();
+	}
+
+	public void putUnitView(PLMSUnitView unitView) {
+		mUnitView = unitView;
 	}
 
 	private void loadImage() {

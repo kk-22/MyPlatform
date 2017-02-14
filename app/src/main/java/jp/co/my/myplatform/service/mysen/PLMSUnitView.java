@@ -30,6 +30,10 @@ public class PLMSUnitView extends FrameLayout {
 		loadImage();
 	}
 
+	public void moveToLand(PLMSLandView landView) {
+		landView.putUnitView(this);
+	}
+
 	private void loadImage() {
 		ImageView imageView = (ImageView) findViewById(R.id.image_view);
 		try {
