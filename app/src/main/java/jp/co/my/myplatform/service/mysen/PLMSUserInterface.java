@@ -15,6 +15,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
+	private PLMYAreaManager mAreaManager;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
 	private PLMSUnitView mMovingUnit;
@@ -23,6 +24,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mInformation = information;
 		mField = field;
 		mUnitArray = unitArray;
+		mAreaManager = new PLMYAreaManager(field, mUnitArray);
 
 		initEvent();
 	}
@@ -38,12 +40,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				unitView.setVisibility(View.GONE);
 
 				mMovingUnit = unitView;
+				mAreaManager.showMoveArea(unitView);
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
 				// タップ直後に指を話すと呼ばれる。キャンセル扱い。
 				mMovingUnit.setVisibility(View.VISIBLE);
 				mMovingUnit = null;
+				mAreaManager.hideAllMoveArea();
 				break;
 			}
 		}
@@ -78,7 +82,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 						mMovingUnit, holderX, holderY);
 				objectAnimator.setDuration(100);
 				objectAnimator.start();
+
 				mMovingUnit = null;
+				mAreaManager.hideAllMoveArea();
 				return true;
 			}
 			default:

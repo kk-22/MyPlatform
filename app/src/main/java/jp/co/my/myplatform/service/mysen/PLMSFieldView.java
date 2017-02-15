@@ -15,6 +15,7 @@ import jp.co.my.myplatform.R;
 
 
 public class PLMSFieldView extends FrameLayout {
+	static final int MIN_XY = 0;
 	static final int MAX_X = 6;
 	static final int MAX_Y = 8;
 
@@ -26,7 +27,7 @@ public class PLMSFieldView extends FrameLayout {
 
 	private ArrayList<PLMSLandView> mLandArray;
 	private ArrayList<PLMSUnitView> mUnitArray;
-
+	
 	public PLMSFieldView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_field, this);
