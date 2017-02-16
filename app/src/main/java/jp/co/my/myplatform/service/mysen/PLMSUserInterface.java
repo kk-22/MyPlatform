@@ -11,7 +11,9 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 
-public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener {
+import static android.view.View.GONE;
+
+public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
@@ -19,6 +21,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private ArrayList<PLMSUnitView> mUnitArray;
 
 	private PLMSUnitView mMovingUnit;
+	private PLMSLandView mPrevLandView;
+	private PointF mFirstTouchPointF;
 
 	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mInformation = information;
@@ -31,23 +35,33 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		MYLogUtil.outputLog(" touch=" +event.getAction() +" x=" +event.getX() +" y=" +event.getY());
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
-				PLMSUnitView unitView = (PLMSUnitView) v;
-				View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
-				// API24 から startDragAndDrop
-				unitView.startDrag(null, shadow, unitView, 0);
-				unitView.setVisibility(View.GONE);
-
-				mMovingUnit = unitView;
-				mAreaManager.showMoveArea(unitView);
+				mFirstTouchPointF = new PointF(event.getX(), event.getY());
+				beginMoveEvent((PLMSUnitView) v);
+			}
+			case MotionEvent.ACTION_MOVE: {
+				if (mMovingUnit.getVisibility() == GONE) {
+					// 既にドラッグ中
+					break;
+				}
+				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
+				// ACTION_UP をクリックと判定するために閾値で判定
+				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 10) {
+					PLMSUnitView unitView = (PLMSUnitView) v;
+					View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
+					// API24 から startDragAndDrop
+					unitView.startDrag(null, shadow, unitView, 0);
+					unitView.setVisibility(GONE);
+				}
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
-				// タップ直後に指を話すと呼ばれる。キャンセル扱い。
-				mMovingUnit.setVisibility(View.VISIBLE);
-				mMovingUnit = null;
-				mAreaManager.hideAllMoveArea();
+				if (!mPrevLandView.equals(mMovingUnit.getLandView())) {
+					// 移動後のクリック時のみ移動確定
+					movedUnit();
+				}
 				break;
 			}
 		}
@@ -64,27 +78,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			case DragEvent.ACTION_DRAG_EXITED:
 				return true;
 			case DragEvent.ACTION_DROP: {
-				MYLogUtil.outputLog("finish");
-
-				float halfSize = mMovingUnit.getWidth() / 2;
 				PointF landPoint = mField.pointOfLandView(landView);
-				mMovingUnit.setVisibility(View.VISIBLE);
-				// 指を離した位置からLandの位置へ移動
-				PropertyValuesHolder holderX = PropertyValuesHolder.ofFloat(
-						"x",
+				// 指を離した位置からアニメーション移動
+				float halfSize = mMovingUnit.getWidth() / 2;
+				PointF touchPointF = new PointF(
 						landPoint.x + event.getX() - halfSize,
-						landPoint.x);
-				PropertyValuesHolder holderY = PropertyValuesHolder.ofFloat(
-						"y",
-						landPoint.y + event.getY() - halfSize,
-						landPoint.y);
-				ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
-						mMovingUnit, holderX, holderY);
-				objectAnimator.setDuration(100);
-				objectAnimator.start();
-
-				mMovingUnit = null;
-				mAreaManager.hideAllMoveArea();
+						landPoint.y + event.getY() - halfSize);
+				moveUnitWithAnimation(touchPointF, landView);
 				return true;
 			}
 			default:
@@ -93,12 +93,81 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		return false;
 	}
 
+	@Override
+	public void onClick(View v) {
+		MYLogUtil.outputLog("onClick");
+		PLMSLandView landView = (PLMSLandView) v;
+		if (mMovingUnit == null) {
+			return;
+		}
+		moveUnitWithAnimation(mPrevLandView, landView);
+	}
+
+	private void beginMoveEvent(PLMSUnitView unitView) {
+		if (mMovingUnit != null) {
+			return;
+		}
+		mMovingUnit = unitView;
+		mPrevLandView = unitView.getLandView();
+		mAreaManager.showMoveArea(unitView);
+	}
+
+	private void finishMoveEvent() {
+		if (mMovingUnit == null) {
+			return;
+		}
+		mMovingUnit.setVisibility(View.VISIBLE);
+		mMovingUnit = null;
+		mPrevLandView = null;
+		mAreaManager.hideAllMoveArea();
+	}
+
+	private void moveUnitWithAnimation(PLMSLandView fromLandView, PLMSLandView toLandView) {
+		PointF fromPointF = mField.pointOfLandView(fromLandView);
+		moveUnitWithAnimation(fromPointF, toLandView);
+	}
+
+	private void moveUnitWithAnimation(PointF fromPointF, PLMSLandView toLandView) {
+		PLMSLandView targetLandView;
+		if (toLandView.isShowingMoveArea()) {
+			// 離した地形に仮配置
+			targetLandView = toLandView;
+		} else {
+			// 元の位置に戻す
+			targetLandView = mMovingUnit.getLandView();
+		}
+
+		PointF targetPointF = mField.pointOfLandView(targetLandView);
+		PropertyValuesHolder holderX = PropertyValuesHolder.ofFloat(
+				"x", fromPointF.x, targetPointF.x);
+		PropertyValuesHolder holderY = PropertyValuesHolder.ofFloat(
+				"y", fromPointF.y, targetPointF.y);
+		ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
+				mMovingUnit, holderX, holderY);
+		objectAnimator.setDuration(100);
+		objectAnimator.start();
+
+		if (toLandView.isShowingMoveArea()) {
+			// イベント継続
+			mPrevLandView = toLandView;
+			mMovingUnit.setVisibility(View.VISIBLE);
+		} else {
+			finishMoveEvent();
+		}
+	}
+
+	private void movedUnit() {
+		mMovingUnit.moveToLand(mPrevLandView);
+		finishMoveEvent();
+	}
+
 	private void initEvent() {
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(this);
 		}
 		for (PLMSLandView landView : mField.getLandArray()) {
 			landView.setOnDragListener(this);
+			landView.setOnClickListener(this);
 		}
 	}
 }

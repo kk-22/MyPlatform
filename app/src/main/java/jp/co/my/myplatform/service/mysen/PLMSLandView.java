@@ -41,6 +41,10 @@ public class PLMSLandView extends FrameLayout {
 		mUnitView = unitView;
 	}
 
+	public void removeUnitView() {
+		mUnitView = null;
+	}
+
 	private void loadImage() {
 		try {
 			String path = "land/" +getImageName();
@@ -90,5 +94,13 @@ public class PLMSLandView extends FrameLayout {
 
 	public PLMSUnitView getUnitView() {
 		return mUnitView;
+	}
+
+	// Debug
+	public void debugLog(String message) {
+		if (message == null) {
+			message = "";
+		}
+		MYLogUtil.outputLog(" LandView x=" +mPoint.x +" y=" +mPoint.y +" " +message);
 	}
 }

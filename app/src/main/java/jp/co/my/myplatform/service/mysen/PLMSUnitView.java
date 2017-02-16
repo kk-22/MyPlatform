@@ -32,6 +32,10 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	public void moveToLand(PLMSLandView landView) {
+		if (mLandView != null) {
+			mLandView.removeUnitView();
+		}
+
 		mLandView = landView;
 		mCurrentPoint = landView.getPoint();
 		landView.putUnitView(this);
