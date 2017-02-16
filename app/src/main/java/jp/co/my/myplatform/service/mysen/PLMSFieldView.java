@@ -82,6 +82,8 @@ public class PLMSFieldView extends FrameLayout {
 
 		for (PLMSUnitView unitView : mUnitArray) {
 			Point point = unitView.getCurrentPoint();
+			PLMSLandView landView = getLandViewForPoint(point);
+			unitView.moveToLand(landView);
 			unitView.setX(mLeftMargin + point.x * mLandSize);
 			unitView.setY(mTopMargin + point.y * mLandSize);
 			addView(unitView, params);

@@ -17,6 +17,7 @@ import jp.co.my.myplatform.R;
 public class PLMSUnitView extends FrameLayout {
 
 	private PLMSUnitModel mUnitModel;
+	private PLMSLandView mLandView;
 	private Point mCurrentPoint;
 
 	public PLMSUnitView(Context context) {
@@ -31,6 +32,7 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	public void moveToLand(PLMSLandView landView) {
+		mLandView = landView;
 		mCurrentPoint = landView.getPoint();
 		landView.putUnitView(this);
 	}
@@ -53,5 +55,9 @@ public class PLMSUnitView extends FrameLayout {
 
 	public Point getCurrentPoint() {
 		return mCurrentPoint;
+	}
+
+	public PLMSLandView getLandView() {
+		return mLandView;
 	}
 }
