@@ -20,7 +20,7 @@ public class PLMYAreaManager {
 
 	public void showMoveArea(PLMSUnitView unitView) {
 		ArrayList<PLMSLandView> landArray = adjacentLandArray(unitView.getCurrentPoint());
-		int movementForce = unitView.getUnitModel().getBranch().getMovementForce();
+		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		for (PLMSLandView landView : landArray) {
 			showAdjacentMoveArea(unitView, landView, movementForce);
 		}
@@ -37,7 +37,7 @@ public class PLMYAreaManager {
 			// 移動不可
 			return;
 		}
-		int nextRemainingMove = remainingMove - unitView.getUnitModel().moveCost(landView.getLandData());
+		int nextRemainingMove = remainingMove - unitView.getUnitData().moveCost(landView.getLandData());
 		if (nextRemainingMove < 0) {
 			// 移動不可
 			return;
