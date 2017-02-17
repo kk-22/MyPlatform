@@ -48,7 +48,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				}
 				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
 				// ACTION_UP をクリックと判定するために閾値で判定
-				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 10) {
+				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 50) {
 					PLMSUnitView unitView = (PLMSUnitView) v;
 					View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
 					// API24 から startDragAndDrop
@@ -84,7 +84,15 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				PointF touchPointF = new PointF(
 						landPoint.x + event.getX() - halfSize,
 						landPoint.y + event.getY() - halfSize);
-				moveUnitWithAnimation(touchPointF, landView);
+				PLMSLandView targetLandView;
+				if (landView.isShowingMoveArea() || landView.equals(mMovingUnit.getLandView())) {
+					// 離した地形に仮配置
+					targetLandView = landView;
+				} else {
+					// 元の位置に戻す
+					targetLandView = mPrevLandView;
+				}
+				moveUnitWithAnimation(touchPointF, targetLandView);
 				return true;
 			}
 			default:
@@ -100,7 +108,15 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		if (mMovingUnit == null) {
 			return;
 		}
-		moveUnitWithAnimation(mPrevLandView, landView);
+		PLMSLandView targetLandView;
+		if (landView.isShowingMoveArea()) {
+			// クリック地形に仮配置
+			targetLandView = landView;
+		} else {
+			// 元の位置に戻す
+			targetLandView = mMovingUnit.getLandView();
+		}
+		moveUnitWithAnimation(mPrevLandView, targetLandView);
 	}
 
 	private void beginMoveEvent(PLMSUnitView unitView) {
@@ -128,16 +144,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void moveUnitWithAnimation(PointF fromPointF, PLMSLandView toLandView) {
-		PLMSLandView targetLandView;
-		if (toLandView.isShowingMoveArea()) {
-			// 離した地形に仮配置
-			targetLandView = toLandView;
-		} else {
-			// 元の位置に戻す
-			targetLandView = mMovingUnit.getLandView();
-		}
-
-		PointF targetPointF = mField.pointOfLandView(targetLandView);
+		PointF targetPointF = mField.pointOfLandView(toLandView);
 		PropertyValuesHolder holderX = PropertyValuesHolder.ofFloat(
 				"x", fromPointF.x, targetPointF.x);
 		PropertyValuesHolder holderY = PropertyValuesHolder.ofFloat(
