@@ -63,6 +63,6 @@ public class PLMSBattleView extends PLContentView {
 			return;
 		}
 		mField.layoutChildViews(mUnitModelArray);
-		mUserInterface = new PLMSUserInterface(mInformation, mField, mField.getUnitArray());
+		mUserInterface = new PLMSUserInterface(mInformation, mField, mField.getUnitViewArray());
 	}
 }

@@ -25,15 +25,15 @@ public class PLMSFieldView extends FrameLayout {
 	private int mLeftMargin;	// mVerticalLinearの左の余白
 	private int mTopMargin;		// mVerticalLinearの上の余白
 
-	private ArrayList<PLMSLandView> mLandArray;
-	private ArrayList<PLMSUnitView> mUnitArray;
+	private ArrayList<PLMSLandView> mLandViewArray;
+	private ArrayList<PLMSUnitView> mUnitViewArray;
 	
 	public PLMSFieldView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_field, this);
 		mVerticalLinear = (LinearLayout) findViewById(R.id.vertical_linear);
-		mLandArray = new ArrayList<>();
-		mUnitArray = new ArrayList<>();
+		mLandViewArray = new ArrayList<>();
+		mUnitViewArray = new ArrayList<>();
 	}
 
 	public PLMSFieldView(Context context, AttributeSet attrs){
@@ -45,16 +45,16 @@ public class PLMSFieldView extends FrameLayout {
 	}
 
 	public void layoutChildViews(ArrayList<PLMSUnitModel> unitModelArray) {
-		mUnitArray = new ArrayList<>();
+		mUnitViewArray = new ArrayList<>();
 		for (PLMSUnitModel unitModel : unitModelArray) {
 			PLMSUnitView unitView = new PLMSUnitView(getContext(), unitModel);
-			mUnitArray.add(unitView);
+			mUnitViewArray.add(unitView);
 		}
-		loadField();
-		loadUnit();
+		loadFieldView();
+		loadUnitView();
 	}
 
-	private void loadField() {
+	private void loadFieldView() {
 		mLandSize = Math.min(getHeight() / MAX_Y, getWidth() / MAX_X);
 		mLeftMargin = (getWidth() - mLandSize * MAX_X) / 2;
 		mTopMargin = (getHeight() - mLandSize * MAX_Y) / 2;
@@ -73,18 +73,18 @@ public class PLMSFieldView extends FrameLayout {
 				PLMSLandView landView = new PLMSLandView(getContext());
 				landView.setPoint(new Point(x, y));
 				horizontalLayout.addView(landView, landParams);
-				mLandArray.add(landView);
+				mLandViewArray.add(landView);
 			}
 		}
 	}
 
-	private void loadUnit() {
+	private void loadUnitView() {
 		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
 				FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
 		params.height = mLandSize;
 		params.width = mLandSize;
 
-		for (PLMSUnitView unitView : mUnitArray) {
+		for (PLMSUnitView unitView : mUnitViewArray) {
 			Point point = unitView.getCurrentPoint();
 			PLMSLandView landView = getLandViewForPoint(point);
 			unitView.moveToLand(landView);
@@ -101,15 +101,15 @@ public class PLMSFieldView extends FrameLayout {
 	}
 
 	public PLMSLandView getLandViewForPoint(Point point) {
-		return mLandArray.get(point.x + point.y * MAX_X);
+		return mLandViewArray.get(point.x + point.y * MAX_X);
 	}
 
 	// getter and setter
-	public ArrayList<PLMSLandView> getLandArray() {
-		return mLandArray;
+	public ArrayList<PLMSLandView> getLandViewArray() {
+		return mLandViewArray;
 	}
 
-	public ArrayList<PLMSUnitView> getUnitArray() {
-		return mUnitArray;
+	public ArrayList<PLMSUnitView> getUnitViewArray() {
+		return mUnitViewArray;
 	}
 }

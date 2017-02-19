@@ -27,7 +27,7 @@ public class PLMYAreaManager {
 	}
 
 	public void hideAllMoveArea() {
-		for (PLMSLandView landView : mField.getLandArray()) {
+		for (PLMSLandView landView : mField.getLandViewArray()) {
 			landView.hideMoveArea();
 		}
 	}

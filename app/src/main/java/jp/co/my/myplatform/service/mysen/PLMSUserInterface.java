@@ -171,7 +171,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(this);
 		}
-		for (PLMSLandView landView : mField.getLandArray()) {
+		for (PLMSLandView landView : mField.getLandViewArray()) {
 			landView.setOnDragListener(this);
 			landView.setOnClickListener(this);
 		}
