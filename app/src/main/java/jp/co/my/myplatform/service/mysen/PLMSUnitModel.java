@@ -40,18 +40,8 @@ public class PLMSUnitModel extends PLBaseModel {
 	@Column
 	private int branchType;
 
-	// TODO: use "no" for image.
-	private String mSmallImageName;
-
 	public PLMSUnitModel() {
 		super();
-		// ダミー
-		name = "ルキナ";
-		mSmallImageName = "rukina.png";
-	}
-
-	public String getSmallImageName() {
-		return mSmallImageName;
 	}
 
 	@Override

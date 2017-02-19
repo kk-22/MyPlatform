@@ -19,6 +19,6 @@ public class PLMSUnitData {
 	}
 
 	public String getSmallImagePath() {
-		return "unit/" +mUnitModel.getSmallImageName();
+		return "unit/" +mUnitModel.getNo() +".png";
 	}
 }
