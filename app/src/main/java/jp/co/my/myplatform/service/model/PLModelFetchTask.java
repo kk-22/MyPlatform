@@ -15,18 +15,20 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 
-public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Void, ArrayList<T>> {
+public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Void, ArrayList<PLBaseModel>> {
 
 	private Class<T> mKlass;
+	private PLModelFetchTaskListener mListener;
 
-	public PLModelFetchTask(Class<T> klass) {
+	public PLModelFetchTask(Class<T> klass, PLModelFetchTaskListener listener) {
 		super();
 		mKlass = klass;
+		mListener = listener;
 	}
 
 	@Override
-	protected ArrayList<T> doInBackground(Void... params) {
-		T dummyModel = createModel();
+	protected ArrayList<PLBaseModel> doInBackground(Void... params) {
+		PLBaseModel dummyModel = createModel();
 		if (dummyModel == null) {
 			MYLogUtil.showErrorToast("con't create instance. class=" +mKlass.getName());
 			return null;
@@ -37,18 +39,20 @@ public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Voi
 			return null;
 		}
 		ByteArrayOutputStream responseArray = fetchJsonData(urlStr);
-		return createModelArray(responseArray);
+		ArrayList<PLBaseModel> modelArray = createModelArray(responseArray);
+		PLDatabase.saveModelList(modelArray, true);
+		return modelArray;
 	}
 
 	@Override
-	protected void onPostExecute(ArrayList<T> modelArray) {
-
+	protected void onPostExecute(ArrayList<PLBaseModel> modelArray) {
+		mListener.finishedFetchModels(modelArray);
 	}
 
-	private T createModel() {
+	private PLBaseModel createModel() {
 		try {
 			String className = mKlass.getName();
-			return (T) Class.forName(className).getConstructor().newInstance();
+			return (PLBaseModel) Class.forName(className).getConstructor().newInstance();
 		} catch (Exception e) {
 			MYLogUtil.showExceptionToast(e);
 			return null;
@@ -80,25 +84,33 @@ public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Voi
 		}
 	}
 
-	private ArrayList<T> createModelArray(ByteArrayOutputStream responseArray) {
+	private ArrayList<PLBaseModel> createModelArray(ByteArrayOutputStream responseArray) {
 		try {
-			ArrayList<T> modelArray = new ArrayList<>();
+			ArrayList<PLBaseModel> modelArray = new ArrayList<>();
 			JSONArray jsonArray = new JSONArray(new String(responseArray.toByteArray()));
 			int length = jsonArray.length();
 			for (int i = 0; i < length; i++) {
 				JSONObject jsonObject = jsonArray.getJSONObject(i);
-				// TODO: Execute break if id is null
-				T model = createModel();
+				if (jsonObject.get("no") instanceof String) {
+					// 未入力セル
+					continue;
+				}
+
+				PLBaseModel model = createModel();
+				if (model == null) {
+					return null;
+				}
 				model.initFromJson(jsonObject);
+				modelArray.add(model);
 			}
 			return modelArray;
 		} catch (JSONException e) {
-			e.printStackTrace();
+			MYLogUtil.showExceptionToast(e);
 			return null;
 		}
 	}
 
-	public interface PLModelFetchTaskListener<T> {
-		void finishedFetchModels(ArrayList<T> modelArray);
+	public interface PLModelFetchTaskListener {
+		void finishedFetchModels(ArrayList<PLBaseModel> modelArray);
 	}
 }

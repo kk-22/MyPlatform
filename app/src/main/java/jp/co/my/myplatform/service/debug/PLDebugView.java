@@ -20,10 +20,14 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
 import jp.co.my.myplatform.service.model.PLBadWordModel;
+import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
+import jp.co.my.myplatform.service.model.PLModelFetchTask;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
+import jp.co.my.myplatform.service.mysen.PLMSUnitModel;
+import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.wikipedia.PLWikipediaPageModel;
 
@@ -90,6 +94,31 @@ public class PLDebugView extends PLContentView {
 							deleteTable(classAray);
 						}
 					}).showPopover();
+				}
+			}));
+			itemList.add(new PLDebugButtonItem("MySen", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new PLConfirmationPopover("MySen UnitModel 削除", new PLConfirmationPopover.PLConfirmationListener() {
+						@Override
+						public void onClickButton(boolean isYes) {
+							ArrayList<Class> classAray = new ArrayList<>();
+							classAray.add(PLMSUnitModel.class);
+							deleteTable(classAray);
+
+							PLModelFetchTask<PLMSUnitModel> fetchTask = new PLModelFetchTask<>(PLMSUnitModel.class, new PLModelFetchTask.PLModelFetchTaskListener() {
+								@Override
+								public void finishedFetchModels(ArrayList<PLBaseModel> modelArray) {
+									if (modelArray == null) {
+										MYLogUtil.showErrorToast("UnitModelの取得に失敗");
+									} else {
+										MYLogUtil.showToast("UnitModelを保存 count=" +modelArray.size());
+									}
+								}
+							});
+							fetchTask.execute();
+						}
+					}, null);
 				}
 			}));
 		}
