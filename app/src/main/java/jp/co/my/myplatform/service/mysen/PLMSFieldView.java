@@ -84,8 +84,11 @@ public class PLMSFieldView extends FrameLayout {
 		params.height = mLandSize;
 		params.width = mLandSize;
 
+		// TODO: UnitView の初期座標は PLMSBattleView から受け取る
+		int i = 1;
 		for (PLMSUnitView unitView : mUnitViewArray) {
-			Point point = unitView.getCurrentPoint();
+			Point point = new Point(i, 0);
+			i++;
 			PLMSLandView landView = getLandViewForPoint(point);
 			unitView.moveToLand(landView);
 			unitView.setX(mLeftMargin + point.x * mLandSize);

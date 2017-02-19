@@ -25,9 +25,6 @@ public class PLMSUnitView extends FrameLayout {
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
 		mUnitData = new PLMSUnitData(unitModel);
 
-		// ダミー
-		mCurrentPoint = new Point(1, 1);
-
 		loadImage();
 	}
 
