@@ -6,7 +6,6 @@
 
     <ImageView
         android:id="@+id/image_view"
-        android:background="@null"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
