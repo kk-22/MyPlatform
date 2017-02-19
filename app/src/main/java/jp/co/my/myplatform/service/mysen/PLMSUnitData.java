@@ -5,8 +5,8 @@ public class PLMSUnitData {
 	private PLMSUnitModel mUnitModel;
 	private PLMSABranchData mBranch;
 
-	public PLMSUnitData() {
-		mUnitModel = new PLMSUnitModel();
+	public PLMSUnitData(PLMSUnitModel unitModel) {
+		mUnitModel = unitModel;
 		mBranch = new PLMSABranchData();
 	}
 

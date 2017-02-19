@@ -20,10 +20,10 @@ public class PLMSUnitView extends FrameLayout {
 	private PLMSLandView mLandView;
 	private Point mCurrentPoint;
 
-	public PLMSUnitView(Context context) {
+	public PLMSUnitView(Context context, PLMSUnitModel unitModel) {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
-		mUnitData = new PLMSUnitData();
+		mUnitData = new PLMSUnitData(unitModel);
 
 		// ダミー
 		mCurrentPoint = new Point(1, 1);

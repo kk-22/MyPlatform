@@ -44,8 +44,12 @@ public class PLMSFieldView extends FrameLayout {
 		this(context, null);
 	}
 
-	public void putChildViews(ArrayList<PLMSUnitView> unitArray) {
-		mUnitArray = unitArray;
+	public void layoutChildViews(ArrayList<PLMSUnitModel> unitModelArray) {
+		mUnitArray = new ArrayList<>();
+		for (PLMSUnitModel unitModel : unitModelArray) {
+			PLMSUnitView unitView = new PLMSUnitView(getContext(), unitModel);
+			mUnitArray.add(unitView);
+		}
 		loadField();
 		loadUnit();
 	}
@@ -100,7 +104,12 @@ public class PLMSFieldView extends FrameLayout {
 		return mLandArray.get(point.x + point.y * MAX_X);
 	}
 
+	// getter and setter
 	public ArrayList<PLMSLandView> getLandArray() {
 		return mLandArray;
+	}
+
+	public ArrayList<PLMSUnitView> getUnitArray() {
+		return mUnitArray;
 	}
 }
