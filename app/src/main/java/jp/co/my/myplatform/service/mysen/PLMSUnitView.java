@@ -16,6 +16,8 @@ import jp.co.my.myplatform.R;
 
 public class PLMSUnitView extends FrameLayout {
 
+	private ImageView mUnitImageView;
+
 	private PLMSUnitData mUnitData;
 	private PLMSLandView mLandView;
 	private Point mCurrentPoint;
@@ -23,6 +25,7 @@ public class PLMSUnitView extends FrameLayout {
 	public PLMSUnitView(Context context, PLMSUnitModel unitModel) {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
+		mUnitImageView = (ImageView) findViewById(R.id.image_view);
 		mUnitData = new PLMSUnitData(unitModel);
 
 		loadImage();
@@ -39,12 +42,11 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	private void loadImage() {
-		ImageView imageView = (ImageView) findViewById(R.id.image_view);
 		try {
 			String path = mUnitData.getSmallImagePath();
 			InputStream inputStream = getResources().getAssets().open(path);
 			Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-			imageView.setImageBitmap(bitmap);
+			mUnitImageView.setImageBitmap(bitmap);
 		} catch (IOException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
@@ -60,5 +62,9 @@ public class PLMSUnitView extends FrameLayout {
 
 	public PLMSLandView getLandView() {
 		return mLandView;
+	}
+
+	public ImageView getUnitImageView() {
+		return mUnitImageView;
 	}
 }

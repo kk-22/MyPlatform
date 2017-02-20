@@ -71,12 +71,18 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	@Override
 	public boolean onDrag(View v, DragEvent event) {
 		PLMSLandView landView = (PLMSLandView) v;
+		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
-			case DragEvent.ACTION_DRAG_STARTED:
-			case DragEvent.ACTION_DRAG_ENTERED:
-			case DragEvent.ACTION_DRAG_LOCATION:
-			case DragEvent.ACTION_DRAG_EXITED:
-				return true;
+			case DragEvent.ACTION_DRAG_ENTERED: {
+				if (unitView != null) {
+					mInformation.updateForUnitData(unitView);
+				}
+				break;
+			}
+			case DragEvent.ACTION_DRAG_EXITED: {
+				mInformation.updateForUnitData(mMovingUnitView);
+				break;
+			}
 			case DragEvent.ACTION_DROP: {
 				PointF landPoint = mField.pointOfLandView(landView);
 				// 指を離した位置からアニメーション移動
@@ -93,12 +99,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					targetLandView = mPrevLandView;
 				}
 				moveUnitWithAnimation(touchPointF, targetLandView);
-				return true;
+				break;
 			}
 			default:
 				break;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -125,6 +131,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mMovingUnitView = unitView;
 		mPrevLandView = unitView.getLandView();
 		mAreaManager.showMoveArea(unitView);
+
+		mInformation.updateForUnitData(unitView);
 	}
 
 	private void finishMoveEvent() {
