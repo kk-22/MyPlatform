@@ -10,6 +10,10 @@ public class PLMSUnitData {
 		mBranch = new PLMSABranchData();
 	}
 
+	public PLMSUnitModel getUnitModel() {
+		return mUnitModel;
+	}
+
 	public PLMSABranchData getBranch() {
 		return mBranch;
 	}
