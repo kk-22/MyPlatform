@@ -75,7 +75,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
 				if (unitView != null) {
-					mInformation.updateForUnitData(unitView);
+					// TODO:敵か味方かで分岐
+//					mInformation.updateForUnitData(unitView);
+					mInformation.updateForBattleData(mMovingUnitView, unitView);
 				}
 				break;
 			}

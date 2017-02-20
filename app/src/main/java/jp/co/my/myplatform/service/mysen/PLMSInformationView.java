@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +19,9 @@ public class PLMSInformationView extends LinearLayout {
 	private PLMSUnitView mLeftUnitView;
 	private PLMSUnitView mRightUnitView;
 
+	private LinearLayout mUnitDataLinear;
+	private LinearLayout mBattleDataLinear;
+
 	private ImageView mLeftImageView;
 	private TextView mLeftNameTextView;
 	private TextView mHPTextView;
@@ -26,9 +30,14 @@ public class PLMSInformationView extends LinearLayout {
 	private TextView mDefenseTextView;
 	private TextView mMagicDefenseTextView;
 
+	private ImageView mRightImageView;
+
 	public PLMSInformationView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_information, this);
+		mUnitDataLinear = (LinearLayout) findViewById(R.id.unit_data_linear);
+		mBattleDataLinear = (LinearLayout) findViewById(R.id.battle_data_linear);
+
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
 		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
 		mHPTextView = (TextView) findViewById(R.id.hp_text);
@@ -36,6 +45,8 @@ public class PLMSInformationView extends LinearLayout {
 		mSpeedTextView = (TextView) findViewById(R.id.speed_text);
 		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
 		mMagicDefenseTextView = (TextView) findViewById(R.id.magic_defense_text);
+
+		mRightImageView = (ImageView) findViewById(R.id.right_image);
 	}
 
 	public PLMSInformationView(Context context, AttributeSet attrs){
@@ -51,9 +62,10 @@ public class PLMSInformationView extends LinearLayout {
 			return;
 		}
 		mLeftUnitView = unitView;
+		mUnitDataLinear.setVisibility(View.VISIBLE);
+		mBattleDataLinear.setVisibility(View.GONE);
 
-		mLeftImageView.setImageBitmap(unitImageFromUnitView(unitView));
-		animateUnitImage(mLeftImageView);
+		animateUnitImage(mLeftImageView, unitView);
 		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
 		mHPTextView.setText("40  /  40");
 		mAttackTextView.setText("30");
@@ -66,6 +78,11 @@ public class PLMSInformationView extends LinearLayout {
 	public void updateForBattleData(PLMSUnitView leftUnitView, PLMSUnitView rightUnitView) {
 		mLeftUnitView = leftUnitView;
 		mRightUnitView = rightUnitView;
+		mUnitDataLinear.setVisibility(View.GONE);
+		mBattleDataLinear.setVisibility(View.VISIBLE);
+
+		// 左画像はupdateForUnitDataで設定済みのためスキップ
+		animateUnitImage(mRightImageView, rightUnitView);
 	}
 
 	private Bitmap unitImageFromUnitView(PLMSUnitView unitView) {
@@ -73,10 +90,19 @@ public class PLMSInformationView extends LinearLayout {
 		return drawable.getBitmap();
 	}
 
-	private void animateUnitImage(ImageView imageView) {
-		float baseX = 0;
+	private void animateUnitImage(ImageView imageView, PLMSUnitView unitView) {
+		imageView.setImageBitmap(unitImageFromUnitView(unitView));
+
 		int width = imageView.getWidth();
-		float startX = baseX - width * 3 / 4;
+		int moveWidth = width * 3 / 4;
+		float baseX, startX;
+		if (imageView.equals(mLeftImageView)) {
+			baseX = 0;
+			startX = baseX - moveWidth;
+		} else {
+			baseX = mBattleDataLinear.getWidth() - width;
+			startX = baseX + moveWidth;
+		}
 		ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "x", startX, baseX);
 		objectAnimator.setDuration(100);
 		objectAnimator.start();

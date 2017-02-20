@@ -19,7 +19,7 @@
         <!-- ユニット単独時の表示 -->
         <LinearLayout
             android:orientation="horizontal"
-            android:id="@+id/unit_info_linear"
+            android:id="@+id/unit_data_linear"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -146,10 +146,21 @@
         <!-- 戦闘時の表示 -->
         <LinearLayout
             android:orientation="horizontal"
-            android:visibility="gone"
-            android:id="@+id/battle_info_linear"
+            android:id="@+id/battle_data_linear"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_weight="7"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/right_image"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
         </LinearLayout>
 
     </FrameLayout>
