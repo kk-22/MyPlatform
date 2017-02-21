@@ -58,12 +58,15 @@ public class PLMSInformationView extends LinearLayout {
 	}
 
 	public void updateForUnitData(PLMSUnitView unitView) {
+		if (mRightUnitView != null) {
+			mUnitDataLinear.setVisibility(View.VISIBLE);
+			mBattleDataLinear.setVisibility(View.GONE);
+			mRightUnitView = null;
+		}
 		if (unitView.equals(mLeftUnitView)) {
 			return;
 		}
 		mLeftUnitView = unitView;
-		mUnitDataLinear.setVisibility(View.VISIBLE);
-		mBattleDataLinear.setVisibility(View.GONE);
 
 		animateUnitImage(mLeftImageView, unitView);
 		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
@@ -76,10 +79,12 @@ public class PLMSInformationView extends LinearLayout {
 
 	// TODO: バトルのダメージデータは内部で計算？ BattleResultクラスを引数で受け取る？
 	public void updateForBattleData(PLMSUnitView leftUnitView, PLMSUnitView rightUnitView) {
+		if (mRightUnitView == null) {
+			mUnitDataLinear.setVisibility(View.GONE);
+			mBattleDataLinear.setVisibility(View.VISIBLE);
+		}
 		mLeftUnitView = leftUnitView;
 		mRightUnitView = rightUnitView;
-		mUnitDataLinear.setVisibility(View.GONE);
-		mBattleDataLinear.setVisibility(View.VISIBLE);
 
 		// 左画像はupdateForUnitDataで設定済みのためスキップ
 		animateUnitImage(mRightImageView, rightUnitView);

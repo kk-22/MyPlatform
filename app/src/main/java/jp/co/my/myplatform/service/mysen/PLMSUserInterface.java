@@ -21,7 +21,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private ArrayList<PLMSUnitView> mUnitArray;
 
 	private PLMSUnitView mMovingUnitView;
-	private PLMSLandView mPrevLandView;
+	private PLMSLandView mPrevLandView;			// mMovingUnitView の現在の仮位置
 	private PointF mFirstTouchPointF;
 
 	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
@@ -36,20 +36,25 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		MYLogUtil.outputLog(" touch=" +event.getAction() +" x=" +event.getX() +" y=" +event.getY());
+		PLMSUnitView unitView = (PLMSUnitView) v;
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
 				mFirstTouchPointF = new PointF(event.getX(), event.getY());
-				beginMoveEvent((PLMSUnitView) v);
+				mInformation.updateForUnitData(unitView);
 			}
 			case MotionEvent.ACTION_MOVE: {
-				if (mMovingUnitView.getVisibility() == GONE) {
-					// 既にドラッグイベント中
+				if (unitView.getVisibility() == GONE) {
+					// 同ユニットを既にドラッグイベント中
 					break;
 				}
 				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
 				// ACTION_UP をクリックと判定するために閾値で判定
-				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 50) {
-					PLMSUnitView unitView = (PLMSUnitView) v;
+				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 10) {
+					if (mMovingUnitView != null) {
+						cancelMoveEvent();
+					}
+					beginMoveEvent(unitView);
+
 					View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
 					// API24 から startDragAndDrop
 					unitView.startDrag(null, shadow, unitView, 0);
@@ -58,8 +63,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
-				if (!mPrevLandView.equals(mMovingUnitView.getLandView())) {
-					// 移動後のクリック時のみ移動確定
+				if (mMovingUnitView == null) {
+					beginMoveEvent(unitView);
+				} else if (!unitView.equals(mMovingUnitView)) {
+					// ACTION_DOWN の information 更新のみ
+				} else if (mPrevLandView.equals(mMovingUnitView.getLandView())) {
+					finishMoveEvent();
+				} else {
+					// 移動後のユニットクリック時のみ移動確定
 					movedUnit();
 				}
 				break;
@@ -74,7 +85,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
-				if (unitView != null) {
+				if (unitView == null || unitView.equals(mMovingUnitView)) {
+					// ユニット不在、もしくは移動前のユニット位置を通過
+				} else {
 					// TODO:敵か味方かで分岐
 //					mInformation.updateForUnitData(unitView);
 					mInformation.updateForBattleData(mMovingUnitView, unitView);
@@ -112,29 +125,30 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	@Override
 	public void onClick(View v) {
 		PLMSLandView landView = (PLMSLandView) v;
+		MYLogUtil.outputLog(" onClick x=" +landView.getPoint().x +" y=" +landView.getPoint().y);
 		if (mMovingUnitView == null) {
 			return;
 		}
-		PLMSLandView targetLandView;
+		mInformation.updateForUnitData(mMovingUnitView);
 		if (landView.isShowingMoveArea()) {
 			// クリック地形に仮配置
-			targetLandView = landView;
+			moveUnitWithAnimation(mPrevLandView, landView);
 		} else {
 			// 元の位置に戻す
-			targetLandView = mMovingUnitView.getLandView();
+			cancelMoveEvent();
 		}
-		moveUnitWithAnimation(mPrevLandView, targetLandView);
 	}
 
 	private void beginMoveEvent(PLMSUnitView unitView) {
-		if (mMovingUnitView != null) {
-			return;
-		}
 		mMovingUnitView = unitView;
 		mPrevLandView = unitView.getLandView();
 		mAreaManager.showMoveArea(unitView);
 
 		mInformation.updateForUnitData(unitView);
+	}
+
+	private void cancelMoveEvent() {
+		moveUnitWithAnimation(mPrevLandView, mMovingUnitView.getLandView());
 	}
 
 	private void finishMoveEvent() {
