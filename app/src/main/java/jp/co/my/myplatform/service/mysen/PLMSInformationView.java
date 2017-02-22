@@ -69,12 +69,12 @@ public class PLMSInformationView extends LinearLayout {
 		mLeftUnitView = unitView;
 
 		animateUnitImage(mLeftImageView, unitView);
-		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
-		mHPTextView.setText("40  /  40");
-		mAttackTextView.setText("30");
-		mSpeedTextView.setText("23");
-		mDefenseTextView.setText("20");
-		mMagicDefenseTextView.setText("15");
+		mHPTextView.setText(unitView.getUnitData().getUnitModel().getName());
+		setIntToText(unitView.getUnitData().getCurrentHP(), mHPTextView);
+		setIntToText(unitView.getUnitData().getCurrentAttack(), mAttackTextView);
+		setIntToText(unitView.getUnitData().getCurrentSpeed(), mSpeedTextView);
+		setIntToText(unitView.getUnitData().getCurrentDefense(), mDefenseTextView);
+		setIntToText(unitView.getUnitData().getCurrentMagicDefense(), mMagicDefenseTextView);
 	}
 
 	// TODO: バトルのダメージデータは内部で計算？ BattleResultクラスを引数で受け取る？
@@ -111,5 +111,9 @@ public class PLMSInformationView extends LinearLayout {
 		ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "x", startX, baseX);
 		objectAnimator.setDuration(100);
 		objectAnimator.start();
+	}
+
+	private void setIntToText(int number, TextView textView) {
+		textView.setText(Integer.toString(number));
 	}
 }
