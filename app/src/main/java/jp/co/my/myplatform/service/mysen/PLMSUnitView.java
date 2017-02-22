@@ -22,11 +22,11 @@ public class PLMSUnitView extends FrameLayout {
 	private PLMSLandView mLandView;
 	private Point mCurrentPoint;
 
-	public PLMSUnitView(Context context, PLMSUnitModel unitModel) {
+	public PLMSUnitView(Context context, PLMSUnitData unitData) {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
 		mUnitImageView = (ImageView) findViewById(R.id.image_view);
-		mUnitData = new PLMSUnitData(unitModel);
+		mUnitData = unitData;
 
 		loadImage();
 	}

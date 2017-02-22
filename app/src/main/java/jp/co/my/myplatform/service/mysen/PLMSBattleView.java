@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.ViewTreeObserver;
 
@@ -20,7 +21,7 @@ public class PLMSBattleView extends PLContentView {
 	private PLMSFieldView mField;
 	private PLMSUserInterface mUserInterface;
 
-	private ArrayList<PLMSUnitModel> mUnitModelArray;
+	private ArrayList<PLMSUnitData> mUnitDataArray;
 	private boolean mFinishedLayout;			// OnGlobalLayoutListener が呼ばれたら true
 
 	public PLMSBattleView() {
@@ -52,17 +53,28 @@ public class PLMSBattleView extends PLContentView {
 					MYLogUtil.showErrorToast("unit model array is null");
 					return;
 				}
-				mUnitModelArray = new ArrayList<>(modelLists);
+
+				// TODO: delete dummy code
+				int x = 0, y = 0;
+				mUnitDataArray = new ArrayList<>();
+				for (PLMSUnitModel unitModel : modelLists) {
+					int army = x %2 + 1;
+					Point point = new Point(x, y);
+					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, army);
+					x += 1;
+					y = x / 2;
+					mUnitDataArray.add(unitData);
+				}
 				startChildLayoutIfNeeded();
 			}
 		});
 	}
 
 	private void startChildLayoutIfNeeded() {
-		if (mUnitModelArray == null || !mFinishedLayout) {
+		if (mUnitDataArray == null || !mFinishedLayout) {
 			return;
 		}
-		mField.layoutChildViews(mUnitModelArray);
+		mField.layoutChildViews(mUnitDataArray);
 		mUserInterface = new PLMSUserInterface(mInformation, mField, mField.getUnitViewArray());
 	}
 }

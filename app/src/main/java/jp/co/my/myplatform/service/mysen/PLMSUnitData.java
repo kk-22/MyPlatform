@@ -1,8 +1,13 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.graphics.Point;
+
 public class PLMSUnitData {
 
 	private PLMSUnitModel mUnitModel;
+	private Point mFirstPoint;				// 初期位置
+	private int mArmyNo;
+
 	private PLMSABranchData mBranch;
 
 	private int mMaxHP;
@@ -12,11 +17,13 @@ public class PLMSUnitData {
 	private int mCurrentDefense;
 	private int mCurrentMagicDefense;
 
-	private int mArmyNo;
 	private int mMoveCount;					// 同一ターン内での移動回数
 
-	public PLMSUnitData(PLMSUnitModel unitModel) {
+	public PLMSUnitData(PLMSUnitModel unitModel, Point firstPoint, int armyNo) {
 		mUnitModel = unitModel;
+		mFirstPoint = firstPoint;
+		mArmyNo = armyNo;
+
 		mBranch = new PLMSABranchData();
 		resetAllStatus();
 	}
@@ -79,5 +86,9 @@ public class PLMSUnitData {
 
 	public int getMoveCount() {
 		return mMoveCount;
+	}
+
+	public Point getFirstPoint() {
+		return mFirstPoint;
 	}
 }

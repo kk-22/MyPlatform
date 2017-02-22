@@ -44,10 +44,10 @@ public class PLMSFieldView extends FrameLayout {
 		this(context, null);
 	}
 
-	public void layoutChildViews(ArrayList<PLMSUnitModel> unitModelArray) {
+	public void layoutChildViews(ArrayList<PLMSUnitData> unitDataArray) {
 		mUnitViewArray = new ArrayList<>();
-		for (PLMSUnitModel unitModel : unitModelArray) {
-			PLMSUnitView unitView = new PLMSUnitView(getContext(), unitModel);
+		for (PLMSUnitData unitData : unitDataArray) {
+			PLMSUnitView unitView = new PLMSUnitView(getContext(), unitData);
 			mUnitViewArray.add(unitView);
 		}
 		loadFieldView();
@@ -85,10 +85,8 @@ public class PLMSFieldView extends FrameLayout {
 		params.width = mLandSize;
 
 		// TODO: UnitView の初期座標は PLMSBattleView から受け取る
-		int i = 1;
 		for (PLMSUnitView unitView : mUnitViewArray) {
-			Point point = new Point(i, 0);
-			i++;
+			Point point = unitView.getUnitData().getFirstPoint();
 			PLMSLandView landView = getLandViewForPoint(point);
 			unitView.moveToLand(landView);
 			unitView.setX(mLeftMargin + point.x * mLandSize);
