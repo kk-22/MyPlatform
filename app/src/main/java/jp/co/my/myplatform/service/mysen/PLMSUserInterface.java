@@ -50,10 +50,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
 				// ACTION_UP をクリックと判定するために閾値で判定
 				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 10) {
-					if (mMovingUnitView != null) {
-						cancelMoveEvent();
+					if (!unitView.equals(mMovingUnitView)) {
+						if (mMovingUnitView != null) {
+							cancelMoveEvent();
+						}
+						beginMoveEvent(unitView);
 					}
-					beginMoveEvent(unitView);
 
 					View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
 					// API24 から startDragAndDrop
