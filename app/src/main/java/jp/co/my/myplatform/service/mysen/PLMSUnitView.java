@@ -17,6 +17,7 @@ import jp.co.my.myplatform.R;
 public class PLMSUnitView extends FrameLayout {
 
 	private ImageView mUnitImageView;
+	private PLMSHitPointBar mHPBar;
 
 	private PLMSUnitData mUnitData;
 	private PLMSLandView mLandView;
@@ -26,9 +27,11 @@ public class PLMSUnitView extends FrameLayout {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
 		mUnitImageView = (ImageView) findViewById(R.id.image_view);
+		mHPBar = (PLMSHitPointBar) findViewById(R.id.hp_bar);
+
 		mUnitData = unitData;
 
-		loadImage();
+		initChildView();
 	}
 
 	public void moveToLand(PLMSLandView landView) {
@@ -39,6 +42,16 @@ public class PLMSUnitView extends FrameLayout {
 		mLandView = landView;
 		mCurrentPoint = landView.getPoint();
 		landView.putUnitView(this);
+	}
+
+	private void updateChildView() {
+	}
+
+	private void initChildView() {
+		loadImage();
+		mHPBar.initFromUnitView(this);
+
+		updateChildView();
 	}
 
 	private void loadImage() {
