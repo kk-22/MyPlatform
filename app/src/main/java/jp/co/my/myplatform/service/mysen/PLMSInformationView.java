@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,7 +21,7 @@ public class PLMSInformationView extends LinearLayout {
 	private PLMSUnitView mRightUnitView;
 
 	private LinearLayout mUnitDataLinear;
-	private LinearLayout mBattleDataLinear;
+	private FrameLayout mBattleDataFrame;
 
 	private ImageView mLeftImageView;
 	private TextView mLeftNameTextView;
@@ -30,13 +31,14 @@ public class PLMSInformationView extends LinearLayout {
 	private TextView mDefenseTextView;
 	private TextView mMagicDefenseTextView;
 
+	private View mRightBackgroundView;
 	private ImageView mRightImageView;
 
 	public PLMSInformationView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_information, this);
 		mUnitDataLinear = (LinearLayout) findViewById(R.id.unit_data_linear);
-		mBattleDataLinear = (LinearLayout) findViewById(R.id.battle_data_linear);
+		mBattleDataFrame = (FrameLayout) findViewById(R.id.battle_data_frame);
 
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
 		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
@@ -46,6 +48,7 @@ public class PLMSInformationView extends LinearLayout {
 		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
 		mMagicDefenseTextView = (TextView) findViewById(R.id.magic_defense_text);
 
+		mRightBackgroundView = findViewById(R.id.right_background_view);
 		mRightImageView = (ImageView) findViewById(R.id.right_image);
 	}
 
@@ -60,7 +63,7 @@ public class PLMSInformationView extends LinearLayout {
 	public void updateForUnitData(PLMSUnitView unitView) {
 		if (mRightUnitView != null) {
 			mUnitDataLinear.setVisibility(View.VISIBLE);
-			mBattleDataLinear.setVisibility(View.GONE);
+			mBattleDataFrame.setVisibility(View.GONE);
 			mRightUnitView = null;
 		}
 		if (unitView.equals(mLeftUnitView)) {
@@ -69,25 +72,32 @@ public class PLMSInformationView extends LinearLayout {
 		mLeftUnitView = unitView;
 
 		animateUnitImage(mLeftImageView, unitView);
-		mHPTextView.setText(unitView.getUnitData().getUnitModel().getName());
+		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
 		setIntToText(unitView.getUnitData().getCurrentHP(), mHPTextView);
 		setIntToText(unitView.getUnitData().getCurrentAttack(), mAttackTextView);
 		setIntToText(unitView.getUnitData().getCurrentSpeed(), mSpeedTextView);
 		setIntToText(unitView.getUnitData().getCurrentDefense(), mDefenseTextView);
 		setIntToText(unitView.getUnitData().getCurrentMagicDefense(), mMagicDefenseTextView);
+
+		// 背景色設定
+		setBackgroundColor(unitView.getUnitData().getArmyStrategy().getInformationColor());
 	}
 
 	// TODO: バトルのダメージデータは内部で計算？ BattleResultクラスを引数で受け取る？
 	public void updateForBattleData(PLMSUnitView leftUnitView, PLMSUnitView rightUnitView) {
 		if (mRightUnitView == null) {
 			mUnitDataLinear.setVisibility(View.GONE);
-			mBattleDataLinear.setVisibility(View.VISIBLE);
+			mBattleDataFrame.setVisibility(View.VISIBLE);
 		}
 		mLeftUnitView = leftUnitView;
 		mRightUnitView = rightUnitView;
 
 		// 左画像はupdateForUnitDataで設定済みのためスキップ
 		animateUnitImage(mRightImageView, rightUnitView);
+
+		// 背景色設定
+		setBackgroundColor(leftUnitView.getUnitData().getArmyStrategy().getInformationColor());
+		mRightBackgroundView.setBackgroundColor(rightUnitView.getUnitData().getArmyStrategy().getInformationColor());
 	}
 
 	private Bitmap unitImageFromUnitView(PLMSUnitView unitView) {
@@ -105,7 +115,7 @@ public class PLMSInformationView extends LinearLayout {
 			baseX = 0;
 			startX = baseX - moveWidth;
 		} else {
-			baseX = mBattleDataLinear.getWidth() - width;
+			baseX = mBattleDataFrame.getWidth() - width;
 			startX = baseX + moveWidth;
 		}
 		ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "x", startX, baseX);
