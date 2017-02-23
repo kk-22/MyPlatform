@@ -13,6 +13,9 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.model.PLModelContainer;
+import jp.co.my.myplatform.service.mysen.Branch.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.Branch.PLMSBlueArmy;
+import jp.co.my.myplatform.service.mysen.Branch.PLMSRedArmy;
 
 
 public class PLMSBattleView extends PLContentView {
@@ -57,10 +60,12 @@ public class PLMSBattleView extends PLContentView {
 				// TODO: delete dummy code
 				int x = 0, y = 0;
 				mUnitDataArray = new ArrayList<>();
+				PLMSBlueArmy blueArmy = new PLMSBlueArmy();
+				PLMSRedArmy redArmy = new PLMSRedArmy();
 				for (PLMSUnitModel unitModel : modelLists) {
-					int army = x %2 + 1;
 					Point point = new Point(x, y);
-					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, army);
+					PLMSArmyStrategy armyStrategy = (x %2 == 0) ? blueArmy : redArmy;
+					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, armyStrategy);
 					x += 1;
 					y = x / 2;
 					mUnitDataArray.add(unitData);
