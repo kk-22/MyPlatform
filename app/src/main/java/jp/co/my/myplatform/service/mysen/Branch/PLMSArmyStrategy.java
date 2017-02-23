@@ -4,4 +4,7 @@ public abstract class PLMSArmyStrategy {
 
 	public PLMSArmyStrategy() {
 	}
+
+	public abstract int getHitPointColor();
+	public abstract int getInformationColor();
 }

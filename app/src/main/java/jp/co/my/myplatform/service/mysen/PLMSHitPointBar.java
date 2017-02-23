@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.Branch.PLMSArmyStrategy;
 
 
 public class PLMSHitPointBar extends LinearLayout {
@@ -34,6 +35,11 @@ public class PLMSHitPointBar extends LinearLayout {
 	}
 
 	public void initFromUnitView(PLMSUnitView unitView) {
+		PLMSArmyStrategy armyStrategy = unitView.getUnitData().getArmyStrategy();
+		int color = armyStrategy.getHitPointColor();
+		mNumberText.setTextColor(color);
+		mBarView.setBackgroundColor(color);
+
 		updateFromUnitView(unitView);
 	}
 
