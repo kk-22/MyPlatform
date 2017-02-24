@@ -28,12 +28,12 @@ public class PLMYAreaManager {
 
 	public void hideAllMoveArea() {
 		for (PLMSLandView landView : mField.getLandViewArray()) {
-			landView.hideMoveArea();
+			landView.getMoveAreaCover().hideCoverView();
 		}
 	}
 
 	private void showAdjacentMoveArea(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
-		if (landView.isShowingMoveArea() || landView.getUnitView() != null) {
+		if (landView.getMoveAreaCover().isShowingMoveArea() || landView.getUnitView() != null) {
 			// 移動不可
 			return;
 		}
@@ -42,7 +42,7 @@ public class PLMYAreaManager {
 			// 移動不可
 			return;
 		}
-		landView.showMoveArea();
+		landView.getMoveAreaCover().showCoverView();
 
 		ArrayList<PLMSLandView> landArray = adjacentLandArray(landView.getPoint());
 		for (PLMSLandView adjacentLandView : landArray) {

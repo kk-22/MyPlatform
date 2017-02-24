@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -16,12 +14,13 @@ import java.io.InputStream;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.Land.PLLandCover;
 
 
 public class PLMSLandView extends FrameLayout {
 
 	private ImageView mLandImage;
-	private View mMoveAreaView;				// 移動可能マスを表す
+	private PLLandCover mMoveAreaCover;				// 移動可能マスを表す
 
 	private Point mPoint;
 	private PLMSUnitView mUnitView;
@@ -33,6 +32,7 @@ public class PLMSLandView extends FrameLayout {
 		mLandImage = (ImageView) findViewById(R.id.image_view);
 
 		mLandData = new PLMSLandData();
+		mMoveAreaCover = new PLLandCover(this, Color.argb(128, 0, 0, 255));
 
 		loadImage();
 	}
@@ -56,30 +56,11 @@ public class PLMSLandView extends FrameLayout {
 		}
 	}
 
-	public void showMoveArea() {
-		if (mMoveAreaView == null) {
-			mMoveAreaView = new View(getContext());
-			mMoveAreaView.setBackgroundColor(Color.argb(128, 0, 0, 255));
-			addView(mMoveAreaView, new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-		}
-		mMoveAreaView.setVisibility(VISIBLE);
-	}
-
-	public void hideMoveArea() {
-		if (mMoveAreaView != null) {
-			mMoveAreaView.setVisibility(GONE);
-		}
-	}
-
-	public boolean isShowingMoveArea() {
-		return (mMoveAreaView != null && mMoveAreaView.getVisibility() == View.VISIBLE);
-	}
-
 	protected String getImageName() {
 		return "grassland.gif";
 	}
 
+	// getter and setter
 	public Point getPoint() {
 		return mPoint;
 	}
@@ -94,6 +75,10 @@ public class PLMSLandView extends FrameLayout {
 
 	public PLMSUnitView getUnitView() {
 		return mUnitView;
+	}
+
+	public PLLandCover getMoveAreaCover() {
+		return mMoveAreaCover;
 	}
 
 	// Debug

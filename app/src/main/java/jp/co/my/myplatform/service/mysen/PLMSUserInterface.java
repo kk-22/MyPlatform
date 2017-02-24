@@ -108,7 +108,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 						landPoint.x + event.getX() - halfSize,
 						landPoint.y + event.getY() - halfSize);
 				PLMSLandView targetLandView;
-				if (landView.isShowingMoveArea() || landView.equals(mMovingUnitView.getLandView())) {
+				if (landView.getMoveAreaCover().isShowingMoveArea() || landView.equals(mMovingUnitView.getLandView())) {
 					// 離した地形に仮配置
 					targetLandView = landView;
 				} else {
@@ -132,7 +132,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			return;
 		}
 		mInformation.updateForUnitData(mMovingUnitView);
-		if (landView.isShowingMoveArea()) {
+		if (landView.getMoveAreaCover().isShowingMoveArea()) {
 			// クリック地形に仮配置
 			moveUnitWithAnimation(mPrevLandView, landView);
 		} else {
@@ -179,7 +179,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		objectAnimator.setDuration(100);
 		objectAnimator.start();
 
-		if (toLandView.isShowingMoveArea()) {
+		if (toLandView.getMoveAreaCover().isShowingMoveArea()) {
 			// イベント継続
 			mPrevLandView = toLandView;
 			mMovingUnitView.setVisibility(View.VISIBLE);
