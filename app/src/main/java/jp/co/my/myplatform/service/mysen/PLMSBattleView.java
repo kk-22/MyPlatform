@@ -13,9 +13,9 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.model.PLModelContainer;
-import jp.co.my.myplatform.service.mysen.Branch.PLMSArmyStrategy;
-import jp.co.my.myplatform.service.mysen.Branch.PLMSBlueArmy;
-import jp.co.my.myplatform.service.mysen.Branch.PLMSRedArmy;
+import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.Army.PLMSBlueArmy;
+import jp.co.my.myplatform.service.mysen.Army.PLMSRedArmy;
 
 
 public class PLMSBattleView extends PLContentView {

@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.mysen.Branch.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
 
 
 public class PLMSHitPointBar extends LinearLayout {

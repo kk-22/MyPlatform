@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.mysen.Branch;
+package jp.co.my.myplatform.service.mysen.Army;
 
 import android.graphics.Color;
 

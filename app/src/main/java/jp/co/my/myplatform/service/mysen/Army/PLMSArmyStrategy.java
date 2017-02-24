@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.mysen.Branch;
+package jp.co.my.myplatform.service.mysen.Army;
 
 public abstract class PLMSArmyStrategy {
 

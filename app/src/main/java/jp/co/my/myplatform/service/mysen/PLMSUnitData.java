@@ -2,7 +2,7 @@ package jp.co.my.myplatform.service.mysen;
 
 import android.graphics.Point;
 
-import jp.co.my.myplatform.service.mysen.Branch.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
 
 public class PLMSUnitData {
 
