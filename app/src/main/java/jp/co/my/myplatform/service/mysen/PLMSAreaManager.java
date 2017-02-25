@@ -49,7 +49,7 @@ public class PLMSAreaManager {
 		for (PLMSLandView moveLandView : movableLandArray) {
 			ArrayList<PLMSLandView> rangeLandArray = getAroundLandView(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
-				if (rangeLandView.getMoveAreaCover().isShowingMoveArea()
+				if (rangeLandView.getMoveAreaCover().isShowingCover()
 						|| unitView.equals(rangeLandView.getUnitView())) {
 					// 攻撃不可
 					continue;

@@ -36,7 +36,7 @@ public class PLMSLandCover {
 		mCoverView.setVisibility(View.GONE);
 	}
 
-	public boolean isShowingMoveArea() {
+	public boolean isShowingCover() {
 		return (mCoverView != null && mCoverView.getVisibility() == View.VISIBLE);
 	}
 }
