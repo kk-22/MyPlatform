@@ -19,10 +19,12 @@ public class PLMYAreaManager {
 	}
 
 	public void showMoveArea(PLMSUnitView unitView) {
-		ArrayList<PLMSLandView> landArray = adjacentLandArray(unitView.getCurrentPoint(), 1);
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
-		for (PLMSLandView landView : landArray) {
-			showAdjacentMoveArea(unitView, landView, movementForce);
+		ArrayList<PLMSLandView> movableLandArray = new ArrayList<>();
+		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
+
+		for (PLMSLandView landView : movableLandArray) {
+			landView.getMoveAreaCover().showCoverView();
 		}
 	}
 
@@ -32,8 +34,17 @@ public class PLMYAreaManager {
 		}
 	}
 
-	private void showAdjacentMoveArea(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
-		if (landView.getMoveAreaCover().isShowingMoveArea() || landView.getUnitView() != null) {
+	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView,
+										   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
+		ArrayList<PLMSLandView> adjacentLandArray = adjacentLandArray(point, 1);
+		for (PLMSLandView adjacentLandView : adjacentLandArray) {
+			searchMovableArea(unitView, adjacentLandView, remainingMove, movableLandArray);
+		}
+	}
+
+	private void searchMovableArea(PLMSUnitView unitView, PLMSLandView landView,
+								   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
+		if (movableLandArray.contains(landView) || landView.getUnitView() != null) {
 			// 移動不可
 			return;
 		}
@@ -42,12 +53,8 @@ public class PLMYAreaManager {
 			// 移動不可
 			return;
 		}
-		landView.getMoveAreaCover().showCoverView();
-
-		ArrayList<PLMSLandView> moveLandArray = adjacentLandArray(landView.getPoint(), 1);
-		for (PLMSLandView adjacentLandView : moveLandArray) {
-			showAdjacentMoveArea(unitView, adjacentLandView, nextRemainingMove);
-		}
+		movableLandArray.add(landView);
+		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
 	}
 
 	private ArrayList<PLMSLandView> adjacentLandArray(Point point, int range) {
