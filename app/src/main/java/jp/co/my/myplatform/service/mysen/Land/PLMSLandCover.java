@@ -8,13 +8,13 @@ import jp.co.my.myplatform.service.mysen.PLMSLandView;
 
 import static android.view.View.VISIBLE;
 
-public class PLLandCover {
+public class PLMSLandCover {
 
 	private View mCoverView;
 	private PLMSLandView mLandView;
 	private int mCoverColor;
 
-	public PLLandCover(PLMSLandView landView, int coverColor) {
+	public PLMSLandCover(PLMSLandView landView, int coverColor) {
 		mLandView = landView;
 		mCoverColor = coverColor;
 	}

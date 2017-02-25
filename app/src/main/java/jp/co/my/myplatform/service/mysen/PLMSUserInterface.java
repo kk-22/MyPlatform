@@ -17,7 +17,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
-	private PLMYAreaManager mAreaManager;
+	private PLMSAreaManager mAreaManager;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
 	private PLMSUnitView mMovingUnitView;
@@ -28,7 +28,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mInformation = information;
 		mField = field;
 		mUnitArray = unitArray;
-		mAreaManager = new PLMYAreaManager(field, mUnitArray);
+		mAreaManager = new PLMSAreaManager(field, mUnitArray);
 
 		initEvent();
 	}

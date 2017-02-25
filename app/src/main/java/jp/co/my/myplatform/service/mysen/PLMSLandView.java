@@ -14,14 +14,14 @@ import java.io.InputStream;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.mysen.Land.PLLandCover;
+import jp.co.my.myplatform.service.mysen.Land.PLMSLandCover;
 
 
 public class PLMSLandView extends FrameLayout {
 
 	private ImageView mLandImage;
-	private PLLandCover mMoveAreaCover;				// 移動可能マス
-	private PLLandCover mAttackAreaCover;			// 攻撃可能マス
+	private PLMSLandCover mMoveAreaCover;				// 移動可能マス
+	private PLMSLandCover mAttackAreaCover;			// 攻撃可能マス
 
 	private Point mPoint;
 	private PLMSUnitView mUnitView;
@@ -33,8 +33,8 @@ public class PLMSLandView extends FrameLayout {
 		mLandImage = (ImageView) findViewById(R.id.image_view);
 
 		mLandData = new PLMSLandData();
-		mMoveAreaCover = new PLLandCover(this, Color.argb(128, 0, 0, 255));
-		mAttackAreaCover = new PLLandCover(this, Color.argb(128, 255, 0, 0));
+		mMoveAreaCover = new PLMSLandCover(this, Color.argb(128, 0, 0, 255));
+		mAttackAreaCover = new PLMSLandCover(this, Color.argb(128, 255, 0, 0));
 
 		loadImage();
 	}
@@ -79,11 +79,11 @@ public class PLMSLandView extends FrameLayout {
 		return mUnitView;
 	}
 
-	public PLLandCover getMoveAreaCover() {
+	public PLMSLandCover getMoveAreaCover() {
 		return mMoveAreaCover;
 	}
 
-	public PLLandCover getAttackAreaCover() {
+	public PLMSLandCover getAttackAreaCover() {
 		return mAttackAreaCover;
 	}
 

@@ -10,12 +10,12 @@ import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MIN_XY;
 
-public class PLMYAreaManager {
+public class PLMSAreaManager {
 
 	private PLMSFieldView mField;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
-	public PLMYAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
+	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mField = field;
 		mUnitArray = unitArray;
 	}
