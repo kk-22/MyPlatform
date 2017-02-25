@@ -21,14 +21,19 @@ public class PLMYAreaManager {
 	}
 
 	public void showMoveAndAttackArea(PLMSUnitView unitView) {
-		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
-		ArrayList<PLMSLandView> movableLandArray = new ArrayList<>();
-		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
+		ArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
 
 		for (PLMSLandView landView : movableLandArray) {
 			landView.getMoveAreaCover().showCoverView();
 		}
 		showAttackArea(movableLandArray, unitView);
+	}
+
+	public ArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
+		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
+		ArrayList<PLMSLandView> movableLandArray = new ArrayList<>();
+		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
+		return movableLandArray;
 	}
 
 	public void hideAllMoveAndAttackArea() {
@@ -42,7 +47,7 @@ public class PLMYAreaManager {
 		int range = unitView.getUnitData().getBranch().getAttackRange();
 		PLMSArmyStrategy attackerArmy = unitView.getUnitData().getArmyStrategy();
 		for (PLMSLandView moveLandView : movableLandArray) {
-			ArrayList<PLMSLandView> rangeLandArray = adjacentLandArray(moveLandView.getPoint(), range);
+			ArrayList<PLMSLandView> rangeLandArray = getAroundLandView(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
 				if (rangeLandView.getMoveAreaCover().isShowingMoveArea()
 						|| unitView.equals(rangeLandView.getUnitView())) {
@@ -59,7 +64,7 @@ public class PLMYAreaManager {
 
 	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView,
 										   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
-		ArrayList<PLMSLandView> adjacentLandArray = adjacentLandArray(point, 1);
+		ArrayList<PLMSLandView> adjacentLandArray = getAroundLandView(point, 1);
 		for (PLMSLandView adjacentLandView : adjacentLandArray) {
 			searchMovableArea(unitView, adjacentLandView, remainingMove, movableLandArray);
 		}
@@ -80,7 +85,7 @@ public class PLMYAreaManager {
 		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
 	}
 
-	private ArrayList<PLMSLandView> adjacentLandArray(Point point, int range) {
+	public ArrayList<PLMSLandView> getAroundLandView(Point point, int range) {
 		ArrayList<PLMSLandView> landArray = new ArrayList<>();
 		// 上右下左 の順番
 		ArrayList<Point> pointArray = new ArrayList<>();
