@@ -19,7 +19,7 @@ public class PLMYAreaManager {
 	}
 
 	public void showMoveArea(PLMSUnitView unitView) {
-		ArrayList<PLMSLandView> landArray = adjacentLandArray(unitView.getCurrentPoint());
+		ArrayList<PLMSLandView> landArray = adjacentLandArray(unitView.getCurrentPoint(), 1);
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		for (PLMSLandView landView : landArray) {
 			showAdjacentMoveArea(unitView, landView, movementForce);
@@ -44,20 +44,26 @@ public class PLMYAreaManager {
 		}
 		landView.getMoveAreaCover().showCoverView();
 
-		ArrayList<PLMSLandView> landArray = adjacentLandArray(landView.getPoint());
-		for (PLMSLandView adjacentLandView : landArray) {
+		ArrayList<PLMSLandView> moveLandArray = adjacentLandArray(landView.getPoint(), 1);
+		for (PLMSLandView adjacentLandView : moveLandArray) {
 			showAdjacentMoveArea(unitView, adjacentLandView, nextRemainingMove);
 		}
 	}
 
-	private ArrayList<PLMSLandView> adjacentLandArray(Point point) {
+	private ArrayList<PLMSLandView> adjacentLandArray(Point point, int range) {
 		ArrayList<PLMSLandView> landArray = new ArrayList<>();
 		// 上右下左 の順番
-		int[] adjacentXs = {point.x - 1, point.x, point.x + 1, point.x};
-		int[] adjacentYs = {point.y, point.y + 1, point.y, point.y -1};
-		for (int i = 0; i < 4; i++) {
-			int x = adjacentXs[i];
-			int y = adjacentYs[i];
+		ArrayList<Point> pointArray = new ArrayList<>();
+		for (int i = - range; i <= range; i++) {
+			int y = range - Math.abs(i);
+			pointArray.add(new Point(point.x + i, point.y + y));
+			if (y != 0) {
+				pointArray.add(new Point(point.x + i, point.y + y * -1));
+			}
+		}
+		for (Point targetPoint : pointArray) {
+			int x = targetPoint.x;
+			int y = targetPoint.y;
 			if (MIN_XY <= x && x < MAX_X && MIN_XY <= y && y < MAX_Y) {
 				PLMSLandView landView = mField.getLandViewForPoint(new Point(x, y));
 				landArray.add(landView);
