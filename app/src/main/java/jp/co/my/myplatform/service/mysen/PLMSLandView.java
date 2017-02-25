@@ -20,7 +20,8 @@ import jp.co.my.myplatform.service.mysen.Land.PLLandCover;
 public class PLMSLandView extends FrameLayout {
 
 	private ImageView mLandImage;
-	private PLLandCover mMoveAreaCover;				// 移動可能マスを表す
+	private PLLandCover mMoveAreaCover;				// 移動可能マス
+	private PLLandCover mAttackAreaCover;			// 攻撃可能マス
 
 	private Point mPoint;
 	private PLMSUnitView mUnitView;
@@ -33,6 +34,7 @@ public class PLMSLandView extends FrameLayout {
 
 		mLandData = new PLMSLandData();
 		mMoveAreaCover = new PLLandCover(this, Color.argb(128, 0, 0, 255));
+		mAttackAreaCover = new PLLandCover(this, Color.argb(128, 255, 0, 0));
 
 		loadImage();
 	}
@@ -79,6 +81,10 @@ public class PLMSLandView extends FrameLayout {
 
 	public PLLandCover getMoveAreaCover() {
 		return mMoveAreaCover;
+	}
+
+	public PLLandCover getAttackAreaCover() {
+		return mAttackAreaCover;
 	}
 
 	// Debug

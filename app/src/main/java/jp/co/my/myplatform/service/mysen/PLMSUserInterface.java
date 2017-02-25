@@ -144,7 +144,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private void beginMoveEvent(PLMSUnitView unitView) {
 		mMovingUnitView = unitView;
 		mPrevLandView = unitView.getLandView();
-		mAreaManager.showMoveArea(unitView);
+		mAreaManager.showMoveAndAttackArea(unitView);
 
 		mInformation.updateForUnitData(unitView);
 	}
@@ -160,7 +160,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mMovingUnitView.setVisibility(View.VISIBLE);
 		mMovingUnitView = null;
 		mPrevLandView = null;
-		mAreaManager.hideAllMoveArea();
+		mAreaManager.hideAllMoveAndAttackArea();
 	}
 
 	private void moveUnitWithAnimation(PLMSLandView fromLandView, PLMSLandView toLandView) {

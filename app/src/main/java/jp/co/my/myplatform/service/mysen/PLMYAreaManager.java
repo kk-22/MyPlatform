@@ -4,6 +4,8 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
+import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
+
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MIN_XY;
@@ -18,7 +20,7 @@ public class PLMYAreaManager {
 		mUnitArray = unitArray;
 	}
 
-	public void showMoveArea(PLMSUnitView unitView) {
+	public void showMoveAndAttackArea(PLMSUnitView unitView) {
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		ArrayList<PLMSLandView> movableLandArray = new ArrayList<>();
 		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
@@ -26,11 +28,32 @@ public class PLMYAreaManager {
 		for (PLMSLandView landView : movableLandArray) {
 			landView.getMoveAreaCover().showCoverView();
 		}
+		showAttackArea(movableLandArray, unitView);
 	}
 
-	public void hideAllMoveArea() {
+	public void hideAllMoveAndAttackArea() {
 		for (PLMSLandView landView : mField.getLandViewArray()) {
 			landView.getMoveAreaCover().hideCoverView();
+			landView.getAttackAreaCover().hideCoverView();
+		}
+	}
+
+	private void showAttackArea(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
+		int range = unitView.getUnitData().getBranch().getAttackRange();
+		PLMSArmyStrategy attackerArmy = unitView.getUnitData().getArmyStrategy();
+		for (PLMSLandView moveLandView : movableLandArray) {
+			ArrayList<PLMSLandView> rangeLandArray = adjacentLandArray(moveLandView.getPoint(), range);
+			for (PLMSLandView rangeLandView : rangeLandArray) {
+				if (rangeLandView.getMoveAreaCover().isShowingMoveArea()
+						|| unitView.equals(rangeLandView.getUnitView())) {
+					// 攻撃不可
+					continue;
+				}
+				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
+				if (rangeUnitView == null || attackerArmy.isEnemy(rangeUnitView)) {
+					rangeLandView.getAttackAreaCover().showCoverView();
+				}
+			}
 		}
 	}
 

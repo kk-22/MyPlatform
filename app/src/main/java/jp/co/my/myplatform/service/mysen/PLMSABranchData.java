@@ -10,4 +10,8 @@ public class PLMSABranchData {
 	public int getMovementForce() {
 		return movementForce;
 	}
+
+	public int getAttackRange() {
+		return 1;
+	}
 }
