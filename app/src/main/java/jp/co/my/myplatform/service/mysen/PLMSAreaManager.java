@@ -44,6 +44,9 @@ public class PLMSAreaManager {
 	}
 
 	private void showAttackArea(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
+		// 現在地も追加
+		movableLandArray.add(unitView.getLandView());
+
 		int range = unitView.getUnitData().getBranch().getAttackRange();
 		PLMSArmyStrategy attackerArmy = unitView.getUnitData().getArmyStrategy();
 		for (PLMSLandView moveLandView : movableLandArray) {

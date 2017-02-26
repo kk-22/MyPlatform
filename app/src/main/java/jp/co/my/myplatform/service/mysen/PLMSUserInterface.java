@@ -70,7 +70,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				} else if (!unitView.equals(mMovingUnitView)) {
 					PLMSLandView touchLandView = unitView.getLandView();
 					if (touchLandView.getAttackAreaCover().isShowingCover()) {
-						moveUnitForAttack(mMovingUnitView, touchLandView);
+						moveUnitForAttack(touchLandView);
 					} else {
 						// ACTION_DOWN の information 更新のみ
 					}
@@ -200,13 +200,16 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		finishMoveEvent();
 	}
 
-	private void moveUnitForAttack(PLMSUnitView moveUnitView, PLMSLandView targetLandView) {
-		ArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(moveUnitView);
-		// 元の位置も追加
-		movableLandArray.add(moveUnitView.getLandView());
-
-		int range = moveUnitView.getUnitData().getBranch().getAttackRange();
+	private void moveUnitForAttack(PLMSLandView targetLandView) {
+		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandView(targetLandView.getPoint(), range);
+		if (targetAroundLandArray.contains(mPrevLandView)) {
+			// 移動の必要なし
+			return;
+		}
+
+		ArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(mMovingUnitView);
+		movableLandArray.add(mMovingUnitView.getLandView());
 
 		ArrayList<PLMSLandView> moveLandArray = new ArrayList<>();		// 移動先候補
 		for (PLMSLandView aroundLandView : targetAroundLandArray) {
