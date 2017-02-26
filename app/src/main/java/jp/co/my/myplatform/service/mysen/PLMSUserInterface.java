@@ -207,7 +207,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	private void moveUnitForAttack(PLMSLandView targetLandView) {
 		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
-		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandView(targetLandView.getPoint(), range);
+		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 		if (targetAroundLandArray.contains(mPrevLandView)) {
 			// 移動の必要なし
 			return;

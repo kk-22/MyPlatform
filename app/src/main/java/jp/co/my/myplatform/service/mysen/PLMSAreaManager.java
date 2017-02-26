@@ -50,7 +50,7 @@ public class PLMSAreaManager {
 		int range = unitView.getUnitData().getBranch().getAttackRange();
 		PLMSArmyStrategy attackerArmy = unitView.getUnitData().getArmyStrategy();
 		for (PLMSLandView moveLandView : movableLandArray) {
-			ArrayList<PLMSLandView> rangeLandArray = getAroundLandView(moveLandView.getPoint(), range);
+			ArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
 				if (rangeLandView.getMoveAreaCover().isShowingCover()
 						|| unitView.equals(rangeLandView.getUnitView())) {
@@ -67,7 +67,7 @@ public class PLMSAreaManager {
 
 	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView,
 										   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
-		ArrayList<PLMSLandView> adjacentLandArray = getAroundLandView(point, 1);
+		ArrayList<PLMSLandView> adjacentLandArray = getAroundLandArray(point, 1);
 		for (PLMSLandView adjacentLandView : adjacentLandArray) {
 			searchMovableArea(unitView, adjacentLandView, remainingMove, movableLandArray);
 		}
@@ -88,11 +88,11 @@ public class PLMSAreaManager {
 		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
 	}
 
-	public ArrayList<PLMSLandView> getAroundLandView(Point point, int range) {
+	public ArrayList<PLMSLandView> getAroundLandArray(Point point, int range) {
 		ArrayList<PLMSLandView> landArray = new ArrayList<>();
 		// 上右下左 の順番
 		ArrayList<Point> pointArray = new ArrayList<>();
-		for (int i = - range; i <= range; i++) {
+		for (int i = -range; i <= range; i++) {
 			int y = range - Math.abs(i);
 			pointArray.add(new Point(point.x + i, point.y + y));
 			if (y != 0) {
