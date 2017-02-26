@@ -67,7 +67,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			case MotionEvent.ACTION_UP: {
 				if (mMovingUnitView == null) {
 					beginMoveEvent(unitView);
-				} else if (!unitView.equals(mMovingUnitView)) {
+					break;
+				}
+
+				mMovingUnitView.setVisibility(View.VISIBLE);
+				if (!unitView.equals(mMovingUnitView)) {
 					PLMSLandView touchLandView = unitView.getLandView();
 					if (touchLandView.getAttackAreaCover().isShowingCover()) {
 						moveUnitForAttack(touchLandView);
@@ -106,6 +110,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				break;
 			}
 			case DragEvent.ACTION_DROP: {
+				mMovingUnitView.setVisibility(View.VISIBLE);
+
 				PointF landPoint = mField.pointOfLandView(landView);
 				// 指を離した位置からアニメーション移動
 				float halfSize = mMovingUnitView.getWidth() / 2;
@@ -121,6 +127,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					targetLandView = mPrevLandView;
 				}
 				moveUnitWithAnimation(touchPointF, targetLandView);
+				if (targetLandView.getMoveAreaCover().isShowingCover()) {
+					// 移動イベント継続
+					mPrevLandView = targetLandView;
+				} else {
+					finishMoveEvent();
+				}
 				break;
 			}
 			default:
@@ -140,6 +152,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		if (landView.getMoveAreaCover().isShowingCover()) {
 			// クリック地形に仮配置
 			moveUnitWithAnimation(mPrevLandView, landView);
+			mPrevLandView = landView;
 		} else if (landView.getAttackAreaCover().isShowingCover()) {
 			// 何もしない
 		} else {
@@ -158,13 +171,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	private void cancelMoveEvent() {
 		moveUnitWithAnimation(mPrevLandView, mMovingUnitView.getLandView());
+		finishMoveEvent();
 	}
 
 	private void finishMoveEvent() {
 		if (mMovingUnitView == null) {
 			return;
 		}
-		mMovingUnitView.setVisibility(View.VISIBLE);
 		mMovingUnitView = null;
 		mPrevLandView = null;
 		mAreaManager.hideAllMoveAndAttackArea();
@@ -185,14 +198,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				mMovingUnitView, holderX, holderY);
 		objectAnimator.setDuration(100);
 		objectAnimator.start();
-
-		if (toLandView.getMoveAreaCover().isShowingCover()) {
-			// イベント継続
-			mPrevLandView = toLandView;
-			mMovingUnitView.setVisibility(View.VISIBLE);
-		} else {
-			finishMoveEvent();
-		}
 	}
 
 	private void movedUnit() {
@@ -217,7 +222,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				moveLandArray.add(aroundLandView);
 			}
 		}
-		moveUnitWithAnimation(mPrevLandView, moveLandArray.get(0));
+		PLMSLandView nextLandView = moveLandArray.get(0);
+		moveUnitWithAnimation(mPrevLandView, nextLandView);
+		mPrevLandView = nextLandView;
 	}
 
 	private void initEvent() {
