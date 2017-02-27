@@ -75,7 +75,7 @@ public class PLMSAreaManager {
 	private void searchMovableArea(PLMSUnitView unitView, PLMSLandView landView,
 								   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
 		if (movableLandArray.contains(landView)) {
-			// 移動不可
+			// 直前のLand
 			return;
 		}
 		int nextRemainingMove = getRemainingMoveCost(unitView, landView, remainingMove);
@@ -125,5 +125,53 @@ public class PLMSAreaManager {
 			}
 		}
 		return landArray;
+	}
+
+	public ArrayList<PLMSLandView> getRouteLandArray(PLMSUnitView unitView,
+													 PLMSLandView targetLandView,
+													 ArrayList<PLMSLandView> prevRouteLandArray) {
+		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
+		ArrayList<PLMSLandView> baseRouteLandArray = new ArrayList<>();
+		baseRouteLandArray.add(unitView.getLandView());
+		ArrayList<ArrayList<PLMSLandView>> resultLandArrays = new ArrayList<>();
+
+		searchAdjacentRoute(unitView, targetLandView, unitView.getLandView(),
+				movementForce, baseRouteLandArray, resultLandArrays);
+
+		// TODO: 各ルートの長さとprevRouteLandArrayを使ってルート絞り込み
+		return resultLandArrays.get(0);
+	}
+
+	private void searchAdjacentRoute(PLMSUnitView unitView, PLMSLandView targetLandView,
+									 PLMSLandView focusLandView,
+									 int remainingMove, ArrayList<PLMSLandView> focusRouteLandArray,
+									 ArrayList<ArrayList<PLMSLandView>> resultLandArrays) {
+		ArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusLandView.getPoint(), 1);
+		for (PLMSLandView aroundLand : aroundLandArray) {
+			ArrayList<PLMSLandView> copyFocusRouteLandArray = new ArrayList<>(focusRouteLandArray);
+			searchRoute(unitView, targetLandView, aroundLand, remainingMove, copyFocusRouteLandArray, resultLandArrays);
+		}
+	}
+
+	private void searchRoute(PLMSUnitView unitView, PLMSLandView targetLandView,
+							 PLMSLandView focusLandView,
+							 int remainingMove, ArrayList<PLMSLandView> focusRouteLandArray,
+							 ArrayList<ArrayList<PLMSLandView>> resultLandArrays) {
+		if (focusRouteLandArray.contains(focusLandView)) {
+			// 直前のLand
+			return;
+		}
+		int nextRemainingMove = getRemainingMoveCost(unitView, focusLandView, remainingMove);
+		if (nextRemainingMove < 0) {
+			// 移動不可
+			return;
+		}
+		focusRouteLandArray.add(focusLandView);
+		if (focusLandView.equals(targetLandView)) {
+			// 目標に到達
+			resultLandArrays.add(focusRouteLandArray);
+			return;
+		}
+		searchAdjacentRoute(unitView, targetLandView, focusLandView, nextRemainingMove, focusRouteLandArray, resultLandArrays);
 	}
 }

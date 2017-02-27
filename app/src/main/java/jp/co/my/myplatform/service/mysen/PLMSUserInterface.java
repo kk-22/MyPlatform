@@ -96,6 +96,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
+				if (landView.getMoveAreaCover().isShowingCover()) {
+					mAreaManager.getRouteLandArray(mMovingUnitView, landView, null);
+				}
+
 				if (unitView == null || unitView.equals(mMovingUnitView)) {
 					// ユニット不在、もしくは移動前のユニット位置を通過
 				} else {
