@@ -4,13 +4,13 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
-import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
-
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MIN_XY;
 
 public class PLMSAreaManager {
+
+	private static final int DO_NOT_ENTER = -99;
 
 	private PLMSFieldView mField;
 	private ArrayList<PLMSUnitView> mUnitArray;
@@ -48,7 +48,6 @@ public class PLMSAreaManager {
 		movableLandArray.add(unitView.getLandView());
 
 		int range = unitView.getUnitData().getBranch().getAttackRange();
-		PLMSArmyStrategy attackerArmy = unitView.getUnitData().getArmyStrategy();
 		for (PLMSLandView moveLandView : movableLandArray) {
 			ArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
@@ -58,7 +57,7 @@ public class PLMSAreaManager {
 					continue;
 				}
 				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
-				if (rangeUnitView == null || attackerArmy.isEnemy(rangeUnitView)) {
+				if (rangeUnitView == null || unitView.isEnemy(rangeUnitView)) {
 					rangeLandView.getAttackAreaCover().showCoverView();
 				}
 			}
@@ -75,17 +74,35 @@ public class PLMSAreaManager {
 
 	private void searchMovableArea(PLMSUnitView unitView, PLMSLandView landView,
 								   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
-		if (movableLandArray.contains(landView) || landView.getUnitView() != null) {
+		if (movableLandArray.contains(landView)) {
 			// 移動不可
 			return;
 		}
-		int nextRemainingMove = remainingMove - unitView.getUnitData().moveCost(landView.getLandData());
+		int nextRemainingMove = getRemainingMoveCost(unitView, landView, remainingMove);
 		if (nextRemainingMove < 0) {
 			// 移動不可
 			return;
 		}
-		movableLandArray.add(landView);
+		if (landView.getUnitView() == null) {
+			movableLandArray.add(landView);
+		}
 		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
+	}
+
+	// 移動不可の場合は負の値を返す
+	private int getRemainingMoveCost(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
+		PLMSUnitView landUnitView = landView.getUnitView();
+		if (landUnitView != null &&
+				(landUnitView.equals(unitView) || landUnitView.isEnemy(unitView))) {
+			// 移動不可
+			return DO_NOT_ENTER;
+		}
+		int nextRemainingMove = remainingMove - unitView.getUnitData().moveCost(landView.getLandData());
+		if (nextRemainingMove < 0) {
+			// 移動不可
+			return DO_NOT_ENTER;
+		}
+		return nextRemainingMove;
 	}
 
 	public ArrayList<PLMSLandView> getAroundLandArray(Point point, int range) {

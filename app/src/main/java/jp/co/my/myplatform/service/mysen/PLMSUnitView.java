@@ -13,6 +13,7 @@ import java.io.InputStream;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
 
 public class PLMSUnitView extends FrameLayout {
 
@@ -65,6 +66,17 @@ public class PLMSUnitView extends FrameLayout {
 		}
 	}
 
+	// 便利メソッド
+	public boolean isEnemy(PLMSUnitView targetUnitView) {
+		if (targetUnitView == null) {
+			return false;
+		}
+		PLMSArmyStrategy myArmy = mUnitData.getArmyStrategy();
+		PLMSArmyStrategy targetArmy = targetUnitView.getUnitData().getArmyStrategy();
+		return !myArmy.equals(targetArmy);
+	}
+
+	// getter and setter
 	public PLMSUnitData getUnitData() {
 		return mUnitData;
 	}
