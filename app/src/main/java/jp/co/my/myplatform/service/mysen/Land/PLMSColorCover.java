@@ -4,31 +4,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import jp.co.my.myplatform.service.mysen.PLMSLandView;
-
 import static android.view.View.VISIBLE;
 
-public class PLMSLandCover {
+public class PLMSColorCover implements PLMSCoverInterface {
 
 	private View mCoverView;
-	private PLMSLandView mLandView;
+	private ViewGroup mTargetView;
 	private int mCoverColor;
 
-	public PLMSLandCover(PLMSLandView landView, int coverColor) {
-		mLandView = landView;
+	public PLMSColorCover(ViewGroup targetView, int coverColor) {
+		mTargetView = targetView;
 		mCoverColor = coverColor;
 	}
 
+	@Override
 	public void showCoverView() {
 		if (mCoverView == null) {
-			mCoverView = new View(mLandView.getContext());
+			mCoverView = new View(mTargetView.getContext());
 			mCoverView.setBackgroundColor(mCoverColor);
-			mLandView.addView(mCoverView, new FrameLayout.LayoutParams(
+			mTargetView.addView(mCoverView, new FrameLayout.LayoutParams(
 					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		}
 		mCoverView.setVisibility(VISIBLE);
 	}
 
+	@Override
 	public void hideCoverView() {
 		if (mCoverView == null) {
 			return;
@@ -36,6 +36,7 @@ public class PLMSLandCover {
 		mCoverView.setVisibility(View.GONE);
 	}
 
+	@Override
 	public boolean isShowingCover() {
 		return (mCoverView != null && mCoverView.getVisibility() == View.VISIBLE);
 	}
