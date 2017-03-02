@@ -19,9 +19,9 @@ public class PLMSAreaManager {
 	private PLMSFieldView mField;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
-	private PLMSColorCover mMoveAreaCover;                // 移動可能マス
-	private PLMSColorCover mAttackAreaCover;            // 攻撃可能マス
-	private PLMSImageCover mPositionCover;                // 初期位置と仮位置
+	private PLMSColorCover mMoveAreaCover;                    // 移動可能マス
+	private PLMSColorCover mAttackAreaCover;                // 攻撃可能マス
+	private PLMSImageCover mPositionCover;                    // 初期位置と仮位置
 
 	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mField = field;
@@ -36,7 +36,8 @@ public class PLMSAreaManager {
 		ArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
 		mMoveAreaCover.showCoverViews(movableLandArray);
 
-		showAttackArea(movableLandArray, unitView);
+		ArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView);
+		mAttackAreaCover.showCoverViews(attackableLandArray);
 	}
 
 	public ArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
@@ -51,7 +52,9 @@ public class PLMSAreaManager {
 		mAttackAreaCover.hideCoverViews();
 	}
 
-	private void showAttackArea(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
+	private ArrayList<PLMSLandView> getAttackableLandArray(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
+		ArrayList<PLMSLandView> resultArray = new ArrayList<>();
+
 		// 現在地も追加
 		movableLandArray.add(unitView.getLandView());
 
@@ -59,20 +62,21 @@ public class PLMSAreaManager {
 		for (PLMSLandView moveLandView : movableLandArray) {
 			ArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
-				if (mMoveAreaCover.isShowingCover(rangeLandView)
-						|| unitView.equals(rangeLandView.getUnitView())) {
+				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
+				if (movableLandArray.contains(rangeLandView) || unitView.equals(rangeUnitView)) {
 					// 攻撃不可
 					continue;
 				}
-				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
+				if (resultArray.contains(rangeLandView)) {
+					// 登録済み
+					continue;
+				}
 				if (rangeUnitView == null || unitView.isEnemy(rangeUnitView)) {
-					// TODO: まとめてセット
-					ArrayList<PLMSLandView> landArray = new ArrayList<>();
-					landArray.add(rangeLandView);
-					mAttackAreaCover.showCoverViews(landArray);
+					resultArray.add(rangeLandView);
 				}
 			}
 		}
+		return resultArray;
 	}
 
 	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView,
