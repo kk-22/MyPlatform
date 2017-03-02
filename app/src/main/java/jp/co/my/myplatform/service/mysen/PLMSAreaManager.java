@@ -1,8 +1,12 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.graphics.Color;
 import android.graphics.Point;
 
 import java.util.ArrayList;
+
+import jp.co.my.myplatform.service.mysen.Land.PLMSColorCover;
+import jp.co.my.myplatform.service.mysen.Land.PLMSImageCover;
 
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;
@@ -15,17 +19,23 @@ public class PLMSAreaManager {
 	private PLMSFieldView mField;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
+	private PLMSColorCover mMoveAreaCover;                // 移動可能マス
+	private PLMSColorCover mAttackAreaCover;            // 攻撃可能マス
+	private PLMSImageCover mPositionCover;                // 初期位置と仮位置
+
 	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mField = field;
 		mUnitArray = unitArray;
+
+		mMoveAreaCover = new PLMSColorCover(Color.argb(128, 0, 0, 255));
+		mAttackAreaCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
+		mPositionCover = new PLMSImageCover("cover/position.png");
 	}
 
 	public void showMoveAndAttackArea(PLMSUnitView unitView) {
 		ArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
+		mMoveAreaCover.showCoverViews(movableLandArray);
 
-		for (PLMSLandView landView : movableLandArray) {
-			landView.getMoveAreaCover().showCoverView();
-		}
 		showAttackArea(movableLandArray, unitView);
 	}
 
@@ -37,10 +47,8 @@ public class PLMSAreaManager {
 	}
 
 	public void hideAllMoveAndAttackArea() {
-		for (PLMSLandView landView : mField.getLandViewArray()) {
-			landView.getMoveAreaCover().hideCoverView();
-			landView.getAttackAreaCover().hideCoverView();
-		}
+		mMoveAreaCover.hideCoverViews();
+		mAttackAreaCover.hideCoverViews();
 	}
 
 	private void showAttackArea(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
@@ -51,14 +59,17 @@ public class PLMSAreaManager {
 		for (PLMSLandView moveLandView : movableLandArray) {
 			ArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
-				if (rangeLandView.getMoveAreaCover().isShowingCover()
+				if (mMoveAreaCover.isShowingCover(rangeLandView)
 						|| unitView.equals(rangeLandView.getUnitView())) {
 					// 攻撃不可
 					continue;
 				}
 				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
 				if (rangeUnitView == null || unitView.isEnemy(rangeUnitView)) {
-					rangeLandView.getAttackAreaCover().showCoverView();
+					// TODO: まとめてセット
+					ArrayList<PLMSLandView> landArray = new ArrayList<>();
+					landArray.add(rangeLandView);
+					mAttackAreaCover.showCoverViews(landArray);
 				}
 			}
 		}
@@ -138,8 +149,13 @@ public class PLMSAreaManager {
 		searchAdjacentRoute(unitView, targetLandView, unitView.getLandView(),
 				movementForce, baseRouteLandArray, resultLandArrays);
 
+		// TODO: 適切な位置へ移動
+		mPositionCover.hideCoverViews();
+
 		// TODO: 各ルートの長さとprevRouteLandArrayを使ってルート絞り込み
-		return resultLandArrays.get(0);
+		ArrayList<PLMSLandView> routeLandArray = resultLandArrays.get(0);
+		mPositionCover.showCoverViews(routeLandArray);
+		return routeLandArray;
 	}
 
 	private void searchAdjacentRoute(PLMSUnitView unitView, PLMSLandView targetLandView,
@@ -173,5 +189,18 @@ public class PLMSAreaManager {
 			return;
 		}
 		searchAdjacentRoute(unitView, targetLandView, focusLandView, nextRemainingMove, focusRouteLandArray, resultLandArrays);
+	}
+
+	// getter and setter
+	public PLMSColorCover getMoveAreaCover() {
+		return mMoveAreaCover;
+	}
+
+	public PLMSColorCover getAttackAreaCover() {
+		return mAttackAreaCover;
+	}
+
+	public PLMSImageCover getPositionCover() {
+		return mPositionCover;
 	}
 }

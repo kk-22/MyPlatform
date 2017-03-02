@@ -3,7 +3,6 @@ package jp.co.my.myplatform.service.mysen;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -14,14 +13,11 @@ import java.io.InputStream;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.mysen.Land.PLMSColorCover;
 
 
 public class PLMSLandView extends FrameLayout {
 
 	private ImageView mLandImage;
-	private PLMSColorCover mMoveAreaCover;                // 移動可能マス
-	private PLMSColorCover mAttackAreaCover;            // 攻撃可能マス
 
 	private Point mPoint;
 	private PLMSUnitView mUnitView;
@@ -33,8 +29,6 @@ public class PLMSLandView extends FrameLayout {
 		mLandImage = (ImageView) findViewById(R.id.image_view);
 
 		mLandData = new PLMSLandData();
-		mMoveAreaCover = new PLMSColorCover(this, Color.argb(128, 0, 0, 255));
-		mAttackAreaCover = new PLMSColorCover(this, Color.argb(128, 255, 0, 0));
 
 		loadImage();
 	}
@@ -77,14 +71,6 @@ public class PLMSLandView extends FrameLayout {
 
 	public PLMSUnitView getUnitView() {
 		return mUnitView;
-	}
-
-	public PLMSColorCover getMoveAreaCover() {
-		return mMoveAreaCover;
-	}
-
-	public PLMSColorCover getAttackAreaCover() {
-		return mAttackAreaCover;
 	}
 
 	// Debug

@@ -73,7 +73,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				mMovingUnitView.setVisibility(View.VISIBLE);
 				if (!unitView.equals(mMovingUnitView)) {
 					PLMSLandView touchLandView = unitView.getLandView();
-					if (touchLandView.getAttackAreaCover().isShowingCover()) {
+					if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
 						moveUnitForAttack(touchLandView);
 					} else {
 						// ACTION_DOWN の information 更新のみ
@@ -96,7 +96,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
-				if (landView.getMoveAreaCover().isShowingCover()) {
+				if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 					mAreaManager.getRouteLandArray(mMovingUnitView, landView, null);
 				}
 
@@ -123,7 +123,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 						landPoint.x + event.getX() - halfSize,
 						landPoint.y + event.getY() - halfSize);
 				PLMSLandView targetLandView;
-				if (landView.getMoveAreaCover().isShowingCover() || landView.equals(mMovingUnitView.getLandView())) {
+				if (mAreaManager.getMoveAreaCover().isShowingCover(landView) || landView.equals(mMovingUnitView.getLandView())) {
 					// 離した地形に仮配置
 					targetLandView = landView;
 				} else {
@@ -131,7 +131,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					targetLandView = mPrevLandView;
 				}
 				moveUnitWithAnimation(touchPointF, targetLandView);
-				if (targetLandView.getMoveAreaCover().isShowingCover()) {
+				if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)) {
 					// 移動イベント継続
 					mPrevLandView = targetLandView;
 				} else {
@@ -153,11 +153,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			return;
 		}
 		mInformation.updateForUnitData(mMovingUnitView);
-		if (landView.getMoveAreaCover().isShowingCover()) {
+		if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 			// クリック地形に仮配置
 			moveUnitWithAnimation(mPrevLandView, landView);
 			mPrevLandView = landView;
-		} else if (landView.getAttackAreaCover().isShowingCover()) {
+		} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
 			// 何もしない
 		} else {
 			// 元の位置に戻す
