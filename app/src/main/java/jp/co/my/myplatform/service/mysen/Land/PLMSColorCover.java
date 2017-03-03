@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.mysen.Land;
 
-import android.content.Context;
 import android.view.View;
 
 public class PLMSColorCover extends PLMSAbstractCover {
@@ -13,8 +12,8 @@ public class PLMSColorCover extends PLMSAbstractCover {
 	}
 
 	@Override
-	protected View createCoverView(Context context) {
-		View view = new View(context);
+	protected View createCoverView() {
+		View view = new View(getContext());
 		view.setBackgroundColor(mCoverColor);
 		return view;
 	}
