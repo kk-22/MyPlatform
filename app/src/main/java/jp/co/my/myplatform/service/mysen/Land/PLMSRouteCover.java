@@ -2,8 +2,6 @@ package jp.co.my.myplatform.service.mysen.Land;
 
 import android.graphics.Point;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -22,17 +20,14 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 	private static final int DIRECTION_LEFT = 3;
 
 	private ImageView mBeginImageView;
-	private FrameLayout mEndViewFrameLayout;
+	private ImageView mEndImageView;
 	private ArrayList<ImageView> mStraightViewArray;        // ストレート
 	private ArrayList<ImageView> mCurveViewArray;            // カーブ
 
 	public PLMSRouteCover() {
 		super();
 		mBeginImageView = MYImageUtil.getImageViewFromImagePath("cover/arrow_begin.png", getContext());
-
-		mEndViewFrameLayout = new FrameLayout(getContext());
-		addImageViewOnFrameLayout(mEndViewFrameLayout, "cover/position.png");
-		addImageViewOnFrameLayout(mEndViewFrameLayout, "cover/arrow_end.png");
+		mEndImageView = MYImageUtil.getImageViewFromImagePath("cover/arrow_end.png", getContext());
 
 		mStraightViewArray = new ArrayList<>();
 		mCurveViewArray = new ArrayList<>();
@@ -53,7 +48,7 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 			coverView = mBeginImageView;
 		} else if (index == landViews.size() - 1) {
 			direction = directionOfLand(landViews.get(index - 1), currentLandView);
-			coverView = mEndViewFrameLayout;
+			coverView = mEndImageView;
 		} else {
 			int nextDirection = directionOfLand(currentLandView, landViews.get(index + 1));
 			int prevDirection = directionOfLand(landViews.get(index - 1), currentLandView);
@@ -80,7 +75,7 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 	@Override
 	public void hideCoverViews() {
 		MYViewUtil.removeFromSuperView(mBeginImageView);
-		MYViewUtil.removeFromSuperView(mEndViewFrameLayout);
+		MYViewUtil.removeFromSuperView(mEndImageView);
 		for (View view : mStraightViewArray) {
 			MYViewUtil.removeFromSuperView(view);
 		}
@@ -88,12 +83,6 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 			MYViewUtil.removeFromSuperView(view);
 		}
 		getParentViewArray().clear();
-	}
-
-	private void addImageViewOnFrameLayout(FrameLayout frameLayout, String imagePath) {
-		ImageView imageView = MYImageUtil.getImageViewFromImagePath(imagePath, getContext());
-		frameLayout.addView(imageView, new FrameLayout.LayoutParams(
-				ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 
 	private ImageView getRouteView(int index, boolean isStraight) {
