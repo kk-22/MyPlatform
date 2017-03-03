@@ -1,16 +1,12 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
@@ -42,14 +38,8 @@ public class PLMSLandView extends FrameLayout {
 	}
 
 	private void loadImage() {
-		try {
-			String path = "land/" +getImageName();
-			InputStream inputStream = getResources().getAssets().open(path);
-			Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-			mLandImage.setImageBitmap(bitmap);
-		} catch (IOException e) {
-			MYLogUtil.showExceptionToast(e);
-		}
+		String path = "land/" + getImageName();
+		mLandImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(path, getContext()));
 	}
 
 	protected String getImageName() {
