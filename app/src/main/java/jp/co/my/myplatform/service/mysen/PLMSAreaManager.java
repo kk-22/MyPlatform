@@ -6,7 +6,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 
 import jp.co.my.myplatform.service.mysen.Land.PLMSColorCover;
-import jp.co.my.myplatform.service.mysen.Land.PLMSImageCover;
+import jp.co.my.myplatform.service.mysen.Land.PLMSRouteCover;
 
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;
@@ -21,7 +21,7 @@ public class PLMSAreaManager {
 
 	private PLMSColorCover mMoveAreaCover;                    // 移動可能マス
 	private PLMSColorCover mAttackAreaCover;                // 攻撃可能マス
-	private PLMSImageCover mPositionCover;                    // 初期位置と仮位置
+	private PLMSRouteCover mRouteCover;                        // 初期位置と仮位置
 
 	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mField = field;
@@ -29,7 +29,7 @@ public class PLMSAreaManager {
 
 		mMoveAreaCover = new PLMSColorCover(Color.argb(128, 0, 0, 255));
 		mAttackAreaCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
-		mPositionCover = new PLMSImageCover("cover/position.png");
+		mRouteCover = new PLMSRouteCover();
 	}
 
 	public void showMoveAndAttackArea(PLMSUnitView unitView) {
@@ -154,11 +154,11 @@ public class PLMSAreaManager {
 				movementForce, baseRouteLandArray, resultLandArrays);
 
 		// TODO: 適切な位置へ移動
-		mPositionCover.hideCoverViews();
+		mRouteCover.hideCoverViews();
 
 		// TODO: 各ルートの長さとprevRouteLandArrayを使ってルート絞り込み
 		ArrayList<PLMSLandView> routeLandArray = resultLandArrays.get(0);
-		mPositionCover.showCoverViews(routeLandArray);
+		mRouteCover.showCoverViews(routeLandArray);
 		return routeLandArray;
 	}
 
@@ -204,7 +204,7 @@ public class PLMSAreaManager {
 		return mAttackAreaCover;
 	}
 
-	public PLMSImageCover getPositionCover() {
-		return mPositionCover;
+	public PLMSRouteCover getRouteCover() {
+		return mRouteCover;
 	}
 }
