@@ -238,25 +238,37 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	// 移動先のLandViewを返す
 	private PLMSLandView moveUnitForAttack(PLMSLandView targetLandView) {
+		PLMSLandView moveLandView = getAttackLandView(targetLandView);
+		moveUnitWithAnimation(mTempLandView, moveLandView);
+		return moveLandView;
+	}
+
+	private PLMSLandView getAttackLandView(PLMSLandView targetLandView) {
+		// 攻撃可能地点の取得
 		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
-		if (targetAroundLandArray.contains(mTempLandView)) {
-			// 移動の必要なし
-			return mTempLandView;
+
+		if (mPrevRoute != null) {
+			// 直前の位置により近い地点を優先する
+			for (int i = mPrevRoute.size() - 1; 0 <= i; i--) {
+				PLMSLandView moveLandView = mPrevRoute.get(i);
+				if (targetAroundLandArray.contains(moveLandView)) {
+					return moveLandView;
+				}
+			}
 		}
 
+		// 移動可能範囲取得
 		ArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(mMovingUnitView);
-		movableLandArray.add(mMovingUnitView.getLandView());
-
-		ArrayList<PLMSLandView> moveLandArray = new ArrayList<>();		// 移動先候補
+		movableLandArray.add(mMovingUnitView.getLandView());            // 現在地も追加
+		// 攻撃可能かつ移動可能な地点の絞り込み
+		ArrayList<PLMSLandView> moveLandArray = new ArrayList<>();        // 移動先候補
 		for (PLMSLandView aroundLandView : targetAroundLandArray) {
 			if (movableLandArray.contains(aroundLandView)) {
 				moveLandArray.add(aroundLandView);
 			}
 		}
-		PLMSLandView nextLandView = moveLandArray.get(0);
-		moveUnitWithAnimation(mTempLandView, nextLandView);
-		return nextLandView;
+		return moveLandArray.get(0);
 	}
 
 	private void initEvent() {

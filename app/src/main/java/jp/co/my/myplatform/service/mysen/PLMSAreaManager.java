@@ -154,7 +154,9 @@ public class PLMSAreaManager {
 
 	public PLMSLandRoute showRouteArea(PLMSLandRoute landRoute) {
 		mRouteCover.hideCoverViews();
-		mRouteCover.showCoverViews(landRoute);
+		if (landRoute != null) {
+			mRouteCover.showCoverViews(landRoute);
+		}
 		return landRoute;
 	}
 
