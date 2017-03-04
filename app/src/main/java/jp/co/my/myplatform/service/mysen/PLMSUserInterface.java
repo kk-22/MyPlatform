@@ -21,7 +21,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private ArrayList<PLMSUnitView> mUnitArray;
 
 	private PLMSUnitView mMovingUnitView;
-	private PLMSLandView mPrevLandView;			// mMovingUnitView の現在の仮位置
+	private PLMSLandView mTempLandView;            // mMovingUnitView の現在の仮位置
 	private PointF mFirstTouchPointF;
 
 	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
@@ -78,7 +78,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					} else {
 						// ACTION_DOWN の information 更新のみ
 					}
-				} else if (mPrevLandView.equals(mMovingUnitView.getLandView())) {
+				} else if (mTempLandView.equals(mMovingUnitView.getLandView())) {
 					finishMoveEvent();
 				} else {
 					// 移動後のユニットクリック時のみ移動確定
@@ -128,12 +128,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					targetLandView = landView;
 				} else {
 					// 元の位置に戻す
-					targetLandView = mPrevLandView;
+					targetLandView = mTempLandView;
 				}
 				moveUnitWithAnimation(touchPointF, targetLandView);
 				if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)) {
 					// 移動イベント継続
-					mPrevLandView = targetLandView;
+					mTempLandView = targetLandView;
 				} else {
 					finishMoveEvent();
 				}
@@ -155,8 +155,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mInformation.updateForUnitData(mMovingUnitView);
 		if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 			// クリック地形に仮配置
-			moveUnitWithAnimation(mPrevLandView, landView);
-			mPrevLandView = landView;
+			moveUnitWithAnimation(mTempLandView, landView);
+			mTempLandView = landView;
 		} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
 			// 何もしない
 		} else {
@@ -167,14 +167,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	private void beginMoveEvent(PLMSUnitView unitView) {
 		mMovingUnitView = unitView;
-		mPrevLandView = unitView.getLandView();
+		mTempLandView = unitView.getLandView();
 		mAreaManager.showMoveAndAttackArea(unitView);
 
 		mInformation.updateForUnitData(unitView);
 	}
 
 	private void cancelMoveEvent() {
-		moveUnitWithAnimation(mPrevLandView, mMovingUnitView.getLandView());
+		moveUnitWithAnimation(mTempLandView, mMovingUnitView.getLandView());
 		finishMoveEvent();
 	}
 
@@ -183,7 +183,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			return;
 		}
 		mMovingUnitView = null;
-		mPrevLandView = null;
+		mTempLandView = null;
 		mAreaManager.hideAllMoveAndAttackArea();
 	}
 
@@ -205,14 +205,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void movedUnit() {
-		mMovingUnitView.moveToLand(mPrevLandView);
+		mMovingUnitView.moveToLand(mTempLandView);
 		finishMoveEvent();
 	}
 
 	private void moveUnitForAttack(PLMSLandView targetLandView) {
 		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
-		if (targetAroundLandArray.contains(mPrevLandView)) {
+		if (targetAroundLandArray.contains(mTempLandView)) {
 			// 移動の必要なし
 			return;
 		}
@@ -227,8 +227,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			}
 		}
 		PLMSLandView nextLandView = moveLandArray.get(0);
-		moveUnitWithAnimation(mPrevLandView, nextLandView);
-		mPrevLandView = nextLandView;
+		moveUnitWithAnimation(mTempLandView, nextLandView);
+		mTempLandView = nextLandView;
 	}
 
 	private void initEvent() {
