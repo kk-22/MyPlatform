@@ -10,6 +10,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.mysen.Land.PLMSLandRoute;
 
 import static android.view.View.GONE;
 
@@ -23,8 +24,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PointF mFirstTouchPointF;
 	private PLMSUnitView mMovingUnitView;
 	private PLMSLandView mTempLandView;            // mMovingUnitView の現在の仮位置
-	private ArrayList<PLMSLandView> mTempRouteLandArray;
-	private ArrayList<PLMSLandView> mPrevRouteLandArray;
+	private PLMSLandRoute mTempRoute;
+	private PLMSLandRoute mPrevRoute;
 
 	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mInformation = information;
@@ -99,7 +100,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
-					mPrevRouteLandArray = mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRouteLandArray);
+					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRoute);
 				}
 
 				if (unitView == null || unitView.equals(mMovingUnitView)) {

@@ -6,6 +6,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 
 import jp.co.my.myplatform.service.mysen.Land.PLMSColorCover;
+import jp.co.my.myplatform.service.mysen.Land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.Land.PLMSRouteCover;
 
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
@@ -142,47 +143,46 @@ public class PLMSAreaManager {
 		return landArray;
 	}
 
-	public ArrayList<PLMSLandView> showRouteArea(PLMSUnitView unitView,
-												 PLMSLandView targetLandView,
-												 ArrayList<PLMSLandView> prevRouteLandArray) {
+	public PLMSLandRoute showRouteArea(PLMSUnitView unitView,
+									   PLMSLandView targetLandView,
+									   PLMSLandRoute prevRoute) {
 		mRouteCover.hideCoverViews();
 
-		ArrayList<PLMSLandView> routeLandArray = getRouteLandArray(unitView, targetLandView, prevRouteLandArray);
-		mRouteCover.showCoverViews(routeLandArray);
-		return routeLandArray;
+		PLMSLandRoute landRoute = getRouteOfUnit(unitView, targetLandView, prevRoute);
+		mRouteCover.showCoverViews(landRoute);
+		return landRoute;
 	}
 
-	public ArrayList<PLMSLandView> getRouteLandArray(PLMSUnitView unitView,
-													 PLMSLandView targetLandView,
-													 ArrayList<PLMSLandView> prevRouteLandArray) {
+	private PLMSLandRoute getRouteOfUnit(PLMSUnitView unitView,
+										 PLMSLandView targetLandView,
+										 PLMSLandRoute prevRoute) {
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
-		ArrayList<PLMSLandView> baseRouteLandArray = new ArrayList<>();
-		baseRouteLandArray.add(unitView.getLandView());
-		ArrayList<ArrayList<PLMSLandView>> resultLandArrays = new ArrayList<>();
+		PLMSLandRoute baseRoute = new PLMSLandRoute(unitView.getLandView());
+		ArrayList<PLMSLandRoute> resultRouteArray = new ArrayList<>();
 		searchAdjacentRoute(unitView, targetLandView, unitView.getLandView(),
-				movementForce, baseRouteLandArray, resultLandArrays);
+				movementForce, baseRoute, resultRouteArray);
 
 		// 前のルートと同じ経路に絞り込む
-		ArrayList<ArrayList<PLMSLandView>> candidateLandArrays = resultLandArrays;
-		if (prevRouteLandArray != null) {
-			for (int i = 0; i < prevRouteLandArray.size(); i++) {
-				ArrayList<ArrayList<PLMSLandView>> filteredArray =
-						filterRouteLandArrays(resultLandArrays, prevRouteLandArray, i);
+		ArrayList<PLMSLandRoute> candidateRouteArray = resultRouteArray;
+		if (prevRoute != null) {
+			for (int i = 0; i < prevRoute.size(); i++) {
+				ArrayList<PLMSLandRoute> filteredArray =
+						filterRouteArray(resultRouteArray, prevRoute, i);
 				if (filteredArray.size() == 0) {
 					break;
 				}
-				candidateLandArrays = filteredArray;
+				candidateRouteArray = filteredArray;
 			}
 		}
 
 		// 最短ルートに絞り込む
 		int shortestSize = 99;
-		ArrayList<PLMSLandView> shortestRoute = null;
-		for (ArrayList<PLMSLandView> landArray : candidateLandArrays) {
-			int size = landArray.size();
+		PLMSLandRoute shortestRoute = null;
+		for (PLMSLandRoute landRoute : candidateRouteArray) {
+			int size = landRoute.size();
 			if (size < shortestSize) {
 				shortestSize = size;
-				shortestRoute = landArray;
+				shortestRoute = landRoute;
 			}
 		}
 		return shortestRoute;
@@ -190,20 +190,20 @@ public class PLMSAreaManager {
 
 	private void searchAdjacentRoute(PLMSUnitView unitView, PLMSLandView targetLandView,
 									 PLMSLandView focusLandView,
-									 int remainingMove, ArrayList<PLMSLandView> focusRouteLandArray,
-									 ArrayList<ArrayList<PLMSLandView>> resultLandArrays) {
+									 int remainingMove, PLMSLandRoute focusRoute,
+									 ArrayList<PLMSLandRoute> resultRouteArray) {
 		ArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusLandView.getPoint(), 1);
 		for (PLMSLandView aroundLand : aroundLandArray) {
-			ArrayList<PLMSLandView> copyFocusRouteLandArray = new ArrayList<>(focusRouteLandArray);
-			searchRoute(unitView, targetLandView, aroundLand, remainingMove, copyFocusRouteLandArray, resultLandArrays);
+			PLMSLandRoute copyFocusRoute = focusRoute.clone();
+			searchRoute(unitView, targetLandView, aroundLand, remainingMove, copyFocusRoute, resultRouteArray);
 		}
 	}
 
 	private void searchRoute(PLMSUnitView unitView, PLMSLandView targetLandView,
 							 PLMSLandView focusLandView,
-							 int remainingMove, ArrayList<PLMSLandView> focusRouteLandArray,
-							 ArrayList<ArrayList<PLMSLandView>> resultLandArrays) {
-		if (focusRouteLandArray.contains(focusLandView)) {
+							 int remainingMove, PLMSLandRoute focusRoute,
+							 ArrayList<PLMSLandRoute> resultRouteArray) {
+		if (focusRoute.contains(focusLandView)) {
 			// 直前のLand
 			return;
 		}
@@ -212,23 +212,23 @@ public class PLMSAreaManager {
 			// 移動不可
 			return;
 		}
-		focusRouteLandArray.add(focusLandView);
+		focusRoute.add(focusLandView);
 		if (focusLandView.equals(targetLandView)) {
 			// 目標に到達
-			resultLandArrays.add(focusRouteLandArray);
+			resultRouteArray.add(focusRoute);
 			return;
 		}
-		searchAdjacentRoute(unitView, targetLandView, focusLandView, nextRemainingMove, focusRouteLandArray, resultLandArrays);
+		searchAdjacentRoute(unitView, targetLandView, focusLandView, nextRemainingMove, focusRoute, resultRouteArray);
 	}
 
-	private ArrayList<ArrayList<PLMSLandView>> filterRouteLandArrays(ArrayList<ArrayList<PLMSLandView>> baseLandArrays,
-																	 ArrayList<PLMSLandView> needLandArray,
-																	 int index) {
-		ArrayList<ArrayList<PLMSLandView>> filteredArray = new ArrayList<>();
-		PLMSLandView needLandView = needLandArray.get(index);
-		for (ArrayList<PLMSLandView> landArray : baseLandArrays) {
-			if (index < landArray.size() && needLandView.equals(landArray.get(index))) {
-				filteredArray.add(landArray);
+	private ArrayList<PLMSLandRoute> filterRouteArray(ArrayList<PLMSLandRoute> baseRouteArray,
+													  PLMSLandRoute needRoute,
+													  int index) {
+		ArrayList<PLMSLandRoute> filteredArray = new ArrayList<>();
+		PLMSLandView needLandView = needRoute.get(index);
+		for (PLMSLandRoute landRoute : baseRouteArray) {
+			if (index < landRoute.size() && needLandView.equals(landRoute.get(index))) {
+				filteredArray.add(landRoute);
 			}
 		}
 		return filteredArray;
