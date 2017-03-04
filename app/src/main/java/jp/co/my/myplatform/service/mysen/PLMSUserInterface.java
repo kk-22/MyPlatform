@@ -20,9 +20,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSAreaManager mAreaManager;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
+	private PointF mFirstTouchPointF;
 	private PLMSUnitView mMovingUnitView;
 	private PLMSLandView mTempLandView;            // mMovingUnitView の現在の仮位置
-	private PointF mFirstTouchPointF;
+	private ArrayList<PLMSLandView> mTempRouteLandArray;
+	private ArrayList<PLMSLandView> mPrevRouteLandArray;
 
 	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mInformation = information;
@@ -97,7 +99,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
-					mAreaManager.getRouteLandArray(mMovingUnitView, landView, null);
+					mPrevRouteLandArray = mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRouteLandArray);
 				}
 
 				if (unitView == null || unitView.equals(mMovingUnitView)) {
