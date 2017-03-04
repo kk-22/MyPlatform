@@ -48,9 +48,10 @@ public class PLMSAreaManager {
 		return movableLandArray;
 	}
 
-	public void hideAllMoveAndAttackArea() {
+	public void hideAllAreaCover() {
 		mMoveAreaCover.hideCoverViews();
 		mAttackAreaCover.hideCoverViews();
+		mRouteCover.hideCoverViews();
 	}
 
 	private ArrayList<PLMSLandView> getAttackableLandArray(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
@@ -146,9 +147,13 @@ public class PLMSAreaManager {
 	public PLMSLandRoute showRouteArea(PLMSUnitView unitView,
 									   PLMSLandView targetLandView,
 									   PLMSLandRoute prevRoute) {
-		mRouteCover.hideCoverViews();
-
 		PLMSLandRoute landRoute = getRouteOfUnit(unitView, targetLandView, prevRoute);
+		showRouteArea(landRoute);
+		return landRoute;
+	}
+
+	public PLMSLandRoute showRouteArea(PLMSLandRoute landRoute) {
+		mRouteCover.hideCoverViews();
 		mRouteCover.showCoverViews(landRoute);
 		return landRoute;
 	}
@@ -167,7 +172,7 @@ public class PLMSAreaManager {
 		if (prevRoute != null) {
 			for (int i = 0; i < prevRoute.size(); i++) {
 				ArrayList<PLMSLandRoute> filteredArray =
-						filterRouteArray(resultRouteArray, prevRoute, i);
+						filterRouteArray(candidateRouteArray, prevRoute, i);
 				if (filteredArray.size() == 0) {
 					break;
 				}
@@ -232,6 +237,10 @@ public class PLMSAreaManager {
 			}
 		}
 		return filteredArray;
+	}
+
+	public boolean canAttackToLandView(PLMSLandView landView) {
+		return (mAttackAreaCover.isShowingCover(landView) && landView.getUnitView() != null);
 	}
 
 	// getter and setter

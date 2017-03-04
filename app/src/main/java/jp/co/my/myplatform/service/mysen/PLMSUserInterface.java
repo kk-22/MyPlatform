@@ -77,7 +77,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				if (!unitView.equals(mMovingUnitView)) {
 					PLMSLandView touchLandView = unitView.getLandView();
 					if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-						moveUnitForAttack(touchLandView);
+						// 攻撃範囲内の敵タップ
+						PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
+						moveToTempLand(nextLandView);
 					} else {
 						// ACTION_DOWN の information 更新のみ
 					}
@@ -101,6 +103,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			case DragEvent.ACTION_DRAG_ENTERED: {
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRoute);
+				} else if (mAreaManager.canAttackToLandView(landView)) {
+					PLMSLandView nextLandView = moveUnitForAttack(landView);
+					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRoute);
+				} else if (mTempRoute != null) {
+					mPrevRoute = mAreaManager.showRouteArea(mTempRoute);
+				} else {
+					mAreaManager.getRouteCover().hideCoverViews();
 				}
 
 				if (unitView == null || unitView.equals(mMovingUnitView)) {
@@ -129,6 +138,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView) || landView.equals(mMovingUnitView.getLandView())) {
 					// 離した地形に仮配置
 					targetLandView = landView;
+				} else if (mAreaManager.canAttackToLandView(landView)) {
+					// TODO: 攻撃可能マスへ移動確定し、攻撃処理
+					targetLandView = mTempLandView;
 				} else {
 					// 元の位置に戻す
 					targetLandView = mTempLandView;
@@ -136,7 +148,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				moveUnitWithAnimation(touchPointF, targetLandView);
 				if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)) {
 					// 移動イベント継続
-					mTempLandView = targetLandView;
+					moveToTempLand(targetLandView);
 				} else {
 					finishMoveEvent();
 				}
@@ -159,9 +171,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 			// クリック地形に仮配置
 			moveUnitWithAnimation(mTempLandView, landView);
-			mTempLandView = landView;
+			moveToTempLand(landView);
 		} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
-			// 何もしない
+			// ユニットがいればOnTouchListenerが呼ばれる。このLandView上にユニットはいないので動作なし
 		} else {
 			// 元の位置に戻す
 			cancelMoveEvent();
@@ -187,7 +199,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		}
 		mMovingUnitView = null;
 		mTempLandView = null;
-		mAreaManager.hideAllMoveAndAttackArea();
+		mTempRoute = null;
+		mPrevRoute = null;
+		mAreaManager.hideAllAreaCover();
 	}
 
 	private void moveUnitWithAnimation(PLMSLandView fromLandView, PLMSLandView toLandView) {
@@ -207,17 +221,28 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		objectAnimator.start();
 	}
 
+	private void moveToTempLand(PLMSLandView tempLandView) {
+		mTempLandView = tempLandView;
+
+		// 移動先が同じ場合は経路を更新しいない
+		if (mPrevRoute == null || !tempLandView.equals(mPrevRoute.getLastLandView())) {
+			mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, tempLandView, mPrevRoute);
+		}
+		mTempRoute = mPrevRoute;
+	}
+
 	private void movedUnit() {
 		mMovingUnitView.moveToLand(mTempLandView);
 		finishMoveEvent();
 	}
 
-	private void moveUnitForAttack(PLMSLandView targetLandView) {
+	// 移動先のLandViewを返す
+	private PLMSLandView moveUnitForAttack(PLMSLandView targetLandView) {
 		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 		if (targetAroundLandArray.contains(mTempLandView)) {
 			// 移動の必要なし
-			return;
+			return mTempLandView;
 		}
 
 		ArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(mMovingUnitView);
@@ -231,7 +256,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		}
 		PLMSLandView nextLandView = moveLandArray.get(0);
 		moveUnitWithAnimation(mTempLandView, nextLandView);
-		mTempLandView = nextLandView;
+		return nextLandView;
 	}
 
 	private void initEvent() {
