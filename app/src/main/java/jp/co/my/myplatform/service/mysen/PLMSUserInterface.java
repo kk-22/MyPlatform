@@ -43,7 +43,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
 				mFirstTouchPointF = new PointF(event.getX(), event.getY());
-				mInformation.updateForUnitData(unitView);
+				if (!mAreaManager.getAttackAreaCover().isShowingCover(unitView.getLandView())) {
+					// 攻撃対象の敵ならACTION_UP時にバトル表示するため更新しない
+					mInformation.updateForUnitData(unitView);
+				}
 			}
 			case MotionEvent.ACTION_MOVE: {
 				if (unitView.getVisibility() == GONE) {
@@ -80,6 +83,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 						// 攻撃範囲内の敵タップ
 						PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
 						moveToTempLand(nextLandView);
+						mInformation.updateForBattleData(mMovingUnitView, unitView);
 					} else {
 						// ACTION_DOWN の information 更新のみ
 					}
@@ -114,10 +118,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 				if (unitView == null || unitView.equals(mMovingUnitView)) {
 					// ユニット不在、もしくは移動前のユニット位置を通過
-				} else {
-					// TODO:敵か味方かで分岐
-//					mInformation.updateForUnitData(unitView);
+				} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
+					// 敵かつ攻撃範囲内
 					mInformation.updateForBattleData(mMovingUnitView, unitView);
+				} else {
+					// 味方もしくは攻撃範囲外の敵
+					mInformation.updateForUnitData(unitView);
 				}
 				break;
 			}
@@ -184,8 +190,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
 		mAreaManager.showMoveAndAttackArea(unitView);
-
-		mInformation.updateForUnitData(unitView);
 	}
 
 	private void cancelMoveEvent() {
@@ -255,6 +259,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				if (targetAroundLandArray.contains(moveLandView)) {
 					return moveLandView;
 				}
+			}
+		} else {
+			// 初期値から移動していない時
+			if (targetAroundLandArray.contains(mMovingUnitView.getLandView())) {
+				// 移動の必要なし
+				return mMovingUnitView.getLandView();
 			}
 		}
 

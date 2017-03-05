@@ -89,10 +89,13 @@ public class PLMSInformationView extends LinearLayout {
 			mUnitDataLinear.setVisibility(View.GONE);
 			mBattleDataFrame.setVisibility(View.VISIBLE);
 		}
-		mLeftUnitView = leftUnitView;
-		mRightUnitView = rightUnitView;
 
-		// 左画像はupdateForUnitDataで設定済みのためスキップ
+		if (!leftUnitView.equals(mLeftUnitView)) {
+			animateUnitImage(mLeftImageView, leftUnitView);
+			mLeftUnitView = leftUnitView;
+		}
+
+		mRightUnitView = rightUnitView;
 		animateUnitImage(mRightImageView, rightUnitView);
 
 		// 背景色設定
@@ -125,5 +128,14 @@ public class PLMSInformationView extends LinearLayout {
 
 	private void setIntToText(int number, TextView textView) {
 		textView.setText(Integer.toString(number));
+	}
+
+	// getter and setter
+	public PLMSUnitView getRightUnitView() {
+		return mRightUnitView;
+	}
+
+	public PLMSUnitView getLeftUnitView() {
+		return mLeftUnitView;
 	}
 }
