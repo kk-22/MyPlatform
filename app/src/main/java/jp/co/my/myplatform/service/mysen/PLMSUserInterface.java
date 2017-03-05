@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.Land.PLMSLandRoute;
 
+import static android.animation.Animator.AnimatorListener;
 import static android.view.View.GONE;
 
 public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
@@ -167,7 +168,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// 元の位置に戻す
 					targetLandView = mTempLandView;
 				}
-				moveUnitWithAnimation(touchPointF, targetLandView);
+				moveUnitWithAnimation(touchPointF, targetLandView, null);
 				if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)) {
 					// 移動イベント継続
 					moveToTempLand(targetLandView);
@@ -192,7 +193,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mInformation.updateForUnitData(mMovingUnitView);
 		if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 			// クリック地形に仮配置
-			moveUnitWithAnimation(mTempLandView, landView);
+			moveUnitWithAnimation(mTempLandView, landView, null);
 			moveToTempLand(landView);
 		} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
 			// ユニットがいればOnTouchListenerが呼ばれる。このLandView上にユニットはいないので動作なし
@@ -210,7 +211,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void cancelMoveEvent() {
-		moveUnitWithAnimation(mTempLandView, mMovingUnitView.getLandView());
+		moveUnitWithAnimation(mTempLandView, mMovingUnitView.getLandView(), null);
 		finishMoveEvent();
 	}
 
@@ -225,12 +226,16 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mAreaManager.hideAllAreaCover();
 	}
 
-	private void moveUnitWithAnimation(PLMSLandView fromLandView, PLMSLandView toLandView) {
+	private void moveUnitWithAnimation(PLMSLandView fromLandView,
+									   PLMSLandView toLandView,
+									   AnimatorListener animatorListener) {
 		PointF fromPointF = mField.pointOfLandView(fromLandView);
-		moveUnitWithAnimation(fromPointF, toLandView);
+		moveUnitWithAnimation(fromPointF, toLandView, animatorListener);
 	}
 
-	private void moveUnitWithAnimation(PointF fromPointF, PLMSLandView toLandView) {
+	private void moveUnitWithAnimation(PointF fromPointF,
+									   PLMSLandView toLandView,
+									   AnimatorListener animatorListener) {
 		PointF targetPointF = mField.pointOfLandView(toLandView);
 		PropertyValuesHolder holderX = PropertyValuesHolder.ofFloat(
 				"x", fromPointF.x, targetPointF.x);
@@ -239,6 +244,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
 				mMovingUnitView, holderX, holderY);
 		objectAnimator.setDuration(100);
+		if (animatorListener != null) {
+			objectAnimator.addListener(animatorListener);
+		}
 		objectAnimator.start();
 	}
 
@@ -264,7 +272,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	// 移動先のLandViewを返す
 	private PLMSLandView moveUnitForAttack(PLMSLandView targetLandView) {
 		PLMSLandView moveLandView = getAttackLandView(targetLandView);
-		moveUnitWithAnimation(mTempLandView, moveLandView);
+		moveUnitWithAnimation(mTempLandView, moveLandView, null);
 		return moveLandView;
 	}
 
