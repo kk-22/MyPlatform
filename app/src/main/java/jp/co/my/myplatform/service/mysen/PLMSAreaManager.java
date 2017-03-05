@@ -163,6 +163,11 @@ public class PLMSAreaManager {
 	private PLMSLandRoute getRouteOfUnit(PLMSUnitView unitView,
 										 PLMSLandView targetLandView,
 										 PLMSLandRoute prevRoute) {
+		if (unitView.getLandView().equals(targetLandView)) {
+			// 移動の必要なし
+			return new PLMSLandRoute(targetLandView);
+		}
+
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		PLMSLandRoute baseRoute = new PLMSLandRoute(unitView.getLandView());
 		ArrayList<PLMSLandRoute> resultRouteArray = new ArrayList<>();

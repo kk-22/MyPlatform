@@ -73,6 +73,15 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 	}
 
 	@Override
+	public void showCoverViews(ArrayList<PLMSLandView> landViews) {
+		if (landViews.size() <= 1) {
+			// ルート表示なし
+			return;
+		}
+		super.showCoverViews(landViews);
+	}
+
+	@Override
 	public void hideCoverViews() {
 		MYViewUtil.removeFromSuperView(mBeginImageView);
 		MYViewUtil.removeFromSuperView(mEndImageView);

@@ -83,7 +83,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 						// 攻撃範囲内の敵タップ
 						PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
 						moveToTempLand(nextLandView);
-						mInformation.updateForBattleData(mMovingUnitView, unitView);
+						if (unitView.equals(mInformation.getRightUnitView())) {
+							// 攻撃
+							attackToUnit(unitView, nextLandView);
+						} else {
+							// 初回タップ時は Info の更新のみ
+							mInformation.updateForBattleData(mMovingUnitView, unitView);
+						}
 					} else {
 						// ACTION_DOWN の information 更新のみ
 					}
@@ -91,7 +97,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					finishMoveEvent();
 				} else {
 					// 移動後のユニットクリック時のみ移動確定
-					movedUnit();
+					movedUnit(mTempLandView);
 				}
 				break;
 			}
@@ -105,21 +111,31 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
+				// ルート表示更新
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
+					// ドラッグ地点へのルート表示
 					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRoute);
 				} else if (mAreaManager.canAttackToLandView(landView)) {
+					// 攻撃可能地点へのルート表示
 					PLMSLandView nextLandView = moveUnitForAttack(landView);
 					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRoute);
+				} else if (landView.equals(mMovingUnitView.getLandView())) {
+					// 攻撃時の位置が変わるため、ルートを更新
+					mPrevRoute = new PLMSLandRoute(landView);
+					mAreaManager.getRouteCover().hideCoverViews();
 				} else if (mTempRoute != null) {
+					// 移動不可地点のため仮位置へのルート表示
 					mPrevRoute = mAreaManager.showRouteArea(mTempRoute);
 				} else {
+					// 移動不可地点かつ仮位置がないためルート非表示
 					mAreaManager.getRouteCover().hideCoverViews();
 				}
 
+				// Infoの更新
 				if (unitView == null || unitView.equals(mMovingUnitView)) {
 					// ユニット不在、もしくは移動前のユニット位置を通過
 				} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
-					// 敵かつ攻撃範囲内
+					// 攻撃範囲内の敵
 					mInformation.updateForBattleData(mMovingUnitView, unitView);
 				} else {
 					// 味方もしくは攻撃範囲外の敵
@@ -145,8 +161,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// 離した地形に仮配置
 					targetLandView = landView;
 				} else if (mAreaManager.canAttackToLandView(landView)) {
-					// TODO: 攻撃可能マスへ移動確定し、攻撃処理
-					targetLandView = mTempLandView;
+					targetLandView = mPrevRoute.getLastLandView();
+					attackToUnit(landView.getUnitView(), targetLandView);
 				} else {
 					// 元の位置に戻す
 					targetLandView = mTempLandView;
@@ -189,6 +205,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private void beginMoveEvent(PLMSUnitView unitView) {
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
+		mPrevRoute = new PLMSLandRoute(unitView.getLandView());
 		mAreaManager.showMoveAndAttackArea(unitView);
 	}
 
@@ -235,8 +252,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mTempRoute = mPrevRoute;
 	}
 
-	private void movedUnit() {
-		mMovingUnitView.moveToLand(mTempLandView);
+	private void attackToUnit(PLMSUnitView targetUnitView, PLMSLandView positionLandView) {
+		movedUnit(positionLandView);
+	}
+
+	private void movedUnit(PLMSLandView targetLandView) {
+		mMovingUnitView.moveToLand(targetLandView);
 		finishMoveEvent();
 	}
 
@@ -252,19 +273,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 
-		if (mPrevRoute != null) {
-			// 直前の位置により近い地点を優先する
-			for (int i = mPrevRoute.size() - 1; 0 <= i; i--) {
-				PLMSLandView moveLandView = mPrevRoute.get(i);
-				if (targetAroundLandArray.contains(moveLandView)) {
-					return moveLandView;
-				}
-			}
-		} else {
-			// 初期値から移動していない時
-			if (targetAroundLandArray.contains(mMovingUnitView.getLandView())) {
-				// 移動の必要なし
-				return mMovingUnitView.getLandView();
+		// 直前の位置により近い地点を優先する
+		for (int i = mPrevRoute.size() - 1; 0 <= i; i--) {
+			PLMSLandView moveLandView = mPrevRoute.get(i);
+			if (targetAroundLandArray.contains(moveLandView)) {
+				return moveLandView;
 			}
 		}
 
