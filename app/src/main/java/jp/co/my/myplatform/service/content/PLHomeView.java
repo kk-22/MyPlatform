@@ -7,7 +7,6 @@ import android.widget.AdapterView;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
 import jp.co.my.myplatform.service.app.PLFireEmblemApp;
-import jp.co.my.myplatform.service.app.PLYurudoraApp;
 import jp.co.my.myplatform.service.browser.PLHistoryBrowserView;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
@@ -144,17 +143,13 @@ public class PLHomeView extends PLContentView {
 	}
 
 	private void startApp() {
-		String[] titles = {"ゆるドラシル", "FEヒーローズ"};
+		String[] titles = {"FEヒーローズ"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLAppStrategy appStrategy = null;
 				switch (position) {
 					case 0: {
-						appStrategy = new PLYurudoraApp();
-						break;
-					}
-					case 1: {
 						appStrategy = new PLFireEmblemApp();
 						break;
 					}
