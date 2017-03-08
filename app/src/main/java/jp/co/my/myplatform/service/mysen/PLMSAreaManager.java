@@ -60,7 +60,7 @@ public class PLMSAreaManager {
 		// 現在地も追加
 		movableLandArray.add(unitView.getLandView());
 
-		int range = unitView.getUnitData().getBranch().getAttackRange();
+		int range = unitView.getUnitData().getWeapon().getAttackRange();
 		for (PLMSLandView moveLandView : movableLandArray) {
 			ArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {

@@ -10,7 +10,8 @@ public class PLMSUnitData {
 	private Point mFirstPoint;				// 初期位置
 	private PLMSArmyStrategy mArmyStrategy;
 
-	private PLMSABranchData mBranch;
+	private PLMSBranchData mBranch;
+	private PLMSWeaponData mWeapon;
 
 	private int mMaxHP;
 	private int mCurrentHP;
@@ -26,7 +27,9 @@ public class PLMSUnitData {
 		mFirstPoint = firstPoint;
 		mArmyStrategy = armyStrategy;
 
-		mBranch = new PLMSABranchData();
+		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
+		mWeapon = new PLMSWeaponData(mUnitModel.getWeaponType());
+
 		resetAllStatus();
 	}
 
@@ -54,7 +57,7 @@ public class PLMSUnitData {
 		return mUnitModel;
 	}
 
-	public PLMSABranchData getBranch() {
+	public PLMSBranchData getBranch() {
 		return mBranch;
 	}
 
@@ -92,5 +95,9 @@ public class PLMSUnitData {
 
 	public Point getFirstPoint() {
 		return mFirstPoint;
+	}
+
+	public PLMSWeaponData getWeapon() {
+		return mWeapon;
 	}
 }
