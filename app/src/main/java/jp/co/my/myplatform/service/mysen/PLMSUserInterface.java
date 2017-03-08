@@ -15,6 +15,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.Land.PLMSLandRoute;
 
 import static android.animation.Animator.AnimatorListener;
+import static android.animation.PropertyValuesHolder.ofFloat;
 import static android.view.View.GONE;
 
 public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
@@ -243,9 +244,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 									   PLMSLandView toLandView,
 									   AnimatorListener animatorListener) {
 		PointF targetPointF = mField.pointOfLandView(toLandView);
-		PropertyValuesHolder holderX = PropertyValuesHolder.ofFloat(
+		PropertyValuesHolder holderX = ofFloat(
 				"x", fromPointF.x, targetPointF.x);
-		PropertyValuesHolder holderY = PropertyValuesHolder.ofFloat(
+		PropertyValuesHolder holderY = ofFloat(
 				"y", fromPointF.y, targetPointF.y);
 		ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
 				mMovingUnitView, holderX, holderY);
@@ -280,26 +281,37 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		Point defenderPoint = defenderLandView.getPoint();
 		PointF currentPointF = mField.pointOfLandView(attackerLandView);
 
-		ObjectAnimator objectAnimator = new ObjectAnimator();
-		objectAnimator.setDuration(300).setTarget(attackerUnitView);
 		int moveWidth = attackerUnitView.getWidth();
+		PropertyValuesHolder holderX = null, holderY = null;
 		if (attackerPoint.x != defenderPoint.x) {
 			int diffX = (attackerPoint.x < defenderPoint.x) ? moveWidth : -moveWidth;
-			objectAnimator.setValues(PropertyValuesHolder.ofFloat(
+			holderX = PropertyValuesHolder.ofFloat(
 					"x",
 					currentPointF.x,
 					currentPointF.x + diffX,
-					currentPointF.x));
+					currentPointF.x);
 		}
 		if (attackerPoint.y != defenderPoint.y) {
 			int diffY = (attackerPoint.y < defenderPoint.y) ? moveWidth : -moveWidth;
-			objectAnimator.setValues(PropertyValuesHolder.ofFloat(
+			holderY = PropertyValuesHolder.ofFloat(
 					"y",
 					currentPointF.y,
 					currentPointF.y + diffY,
-					currentPointF.y));
+					currentPointF.y);
 		}
-		objectAnimator.start();
+		if (holderX == null) {
+			ObjectAnimator.ofPropertyValuesHolder(
+					attackerUnitView, holderY)
+					.setDuration(300).start();
+		} else if (holderY == null) {
+			ObjectAnimator.ofPropertyValuesHolder(
+					attackerUnitView, holderX)
+					.setDuration(300).start();
+		} else {
+			ObjectAnimator.ofPropertyValuesHolder(
+					attackerUnitView, holderX, holderY)
+					.setDuration(300).start();
+		}
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {
