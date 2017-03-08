@@ -64,10 +64,12 @@ public class PLMSLandView extends FrameLayout {
 	}
 
 	// Debug
-	public void debugLog(String message) {
+	public String debugLog(String message) {
 		if (message == null) {
 			message = "";
 		}
-		MYLogUtil.outputLog(" LandView x=" +mPoint.x +" y=" +mPoint.y +" " +message);
+		String debugText = " LandView " + message + " x=" + mPoint.x + " y=" + mPoint.y;
+		MYLogUtil.outputLog(debugText);
+		return debugText;
 	}
 }
