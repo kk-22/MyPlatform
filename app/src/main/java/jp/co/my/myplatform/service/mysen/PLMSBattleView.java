@@ -63,10 +63,10 @@ public class PLMSBattleView extends PLContentView {
 				PLMSBlueArmy blueArmy = new PLMSBlueArmy();
 				PLMSRedArmy redArmy = new PLMSRedArmy();
 				for (PLMSUnitModel unitModel : modelLists) {
-					Point point = new Point(x, y);
+					Point point = new Point((x % 6), y);
 					PLMSArmyStrategy armyStrategy = (x %2 == 0) ? blueArmy : redArmy;
 					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, armyStrategy);
-					x += 1;
+					x = x + 1;
 					y = x / 2;
 					mUnitDataArray.add(unitData);
 				}
