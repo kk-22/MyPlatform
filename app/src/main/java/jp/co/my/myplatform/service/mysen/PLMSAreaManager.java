@@ -91,16 +91,12 @@ public class PLMSAreaManager {
 
 	private void searchMovableArea(PLMSUnitView unitView, PLMSLandView landView,
 								   int remainingMove, ArrayList<PLMSLandView> movableLandArray) {
-		if (movableLandArray.contains(landView)) {
-			// 直前のLand
-			return;
-		}
 		int nextRemainingMove = getRemainingMoveCost(unitView, landView, remainingMove);
 		if (nextRemainingMove < 0) {
 			// 移動不可
 			return;
 		}
-		if (landView.getUnitView() == null) {
+		if (landView.getUnitView() == null && !movableLandArray.contains(landView)) {
 			movableLandArray.add(landView);
 		}
 		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
