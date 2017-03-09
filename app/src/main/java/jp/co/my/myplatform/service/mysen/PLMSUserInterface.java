@@ -340,20 +340,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		int range = mMovingUnitView.getUnitData().getWeapon().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 
-		// 直前の位置により近い地点を優先する
-		for (int i = mPrevRouteArray.size() - 1; 0 < i; i--) {
-			// 1番目の仮位置は除く
+		for (int i = mPrevRouteArray.size() - 1; 0 <= i; i--) {
 			PLMSLandRoute lastRoute = mPrevRouteArray.get(i);
-			for (int j = lastRoute.size() - 1; 0 <= j; j--) {
-				PLMSLandView moveLandView = lastRoute.get(j);
-				if (targetAroundLandArray.contains(moveLandView)) {
-					return moveLandView;
-				}
+			PLMSLandView moveLandView = lastRoute.getLastLandView();
+			if (targetAroundLandArray.contains(moveLandView)) {
+				// ドラッグ時に通ったルートを使用
+				return moveLandView;
 			}
-		}
-		if (targetAroundLandArray.contains(mTempLandView)) {
-			// 仮位置から攻撃可能
-			return mTempLandView;
 		}
 
 		// 移動可能範囲取得

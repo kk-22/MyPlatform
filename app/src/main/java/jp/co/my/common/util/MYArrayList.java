@@ -1,9 +1,18 @@
 package jp.co.my.common.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class MYArrayList<E> extends ArrayList<E> {
+
+	public MYArrayList() {
+		super();
+	}
+
+	public MYArrayList(Collection<? extends E> c) {
+		super(c);
+	}
 
 	public E getLast() {
 		int size = size();
