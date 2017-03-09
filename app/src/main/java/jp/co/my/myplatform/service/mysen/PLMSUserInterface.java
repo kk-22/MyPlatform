@@ -29,13 +29,15 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSUnitView mMovingUnitView;
 	private PLMSLandView mTempLandView;            // mMovingUnitView の現在の仮位置
 	private PLMSLandRoute mTempRoute;
-	private PLMSLandRoute mPrevRoute;
+	private ArrayList<PLMSLandRoute> mPrevRouteArray;
 
 	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
 		mInformation = information;
 		mField = field;
 		mUnitArray = unitArray;
 		mAreaManager = new PLMSAreaManager(field, mUnitArray);
+
+		mPrevRouteArray = new ArrayList<>();
 
 		initEvent();
 	}
@@ -118,18 +120,18 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				// ルート表示更新
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 					// ドラッグ地点へのルート表示
-					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRoute);
+					updateRoute(mAreaManager.showRouteArea(mMovingUnitView, landView, lastRoute()));
 				} else if (mAreaManager.canAttackToLandView(landView)) {
 					// 攻撃可能地点へのルート表示
 					PLMSLandView nextLandView = moveUnitForAttack(landView);
-					mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRoute);
+					updateRoute(mAreaManager.showRouteArea(mMovingUnitView, nextLandView, lastRoute()));
 				} else if (landView.equals(mMovingUnitView.getLandView())) {
 					// 攻撃時の位置が変わるため、ルートを更新
-					mPrevRoute = new PLMSLandRoute(landView);
+					updateRoute(new PLMSLandRoute(landView));
 					mAreaManager.getRouteCover().hideCoverViews();
 				} else if (mTempRoute != null) {
 					// 移動不可地点のため仮位置へのルート表示
-					mPrevRoute = mAreaManager.showRouteArea(mTempRoute);
+					updateRoute(mAreaManager.showRouteArea(mTempRoute));
 				} else {
 					// 移動不可地点かつ仮位置がないためルート非表示
 					mAreaManager.getRouteCover().hideCoverViews();
@@ -168,7 +170,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// 離した地形に仮配置
 					targetLandView = landView;
 				} else if (mAreaManager.canAttackToLandView(landView)) {
-					targetLandView = mPrevRoute.getLastLandView();
+					targetLandView = lastRoute().getLastLandView();
 					animatorListener = makeAttackListener(targetLandView, landView.getUnitView());
 				} else {
 					// 元の位置に戻す
@@ -213,7 +215,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private void beginMoveEvent(PLMSUnitView unitView) {
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
-		mPrevRoute = new PLMSLandRoute(unitView.getLandView());
+		updateRoute(new PLMSLandRoute(unitView.getLandView()));
 		mAreaManager.showMoveAndAttackArea(unitView);
 	}
 
@@ -229,7 +231,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mMovingUnitView = null;
 		mTempLandView = null;
 		mTempRoute = null;
-		mPrevRoute = null;
+		mPrevRouteArray.clear();
 		mAreaManager.hideAllAreaCover();
 	}
 
@@ -260,11 +262,17 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private void moveToTempLand(PLMSLandView tempLandView) {
 		mTempLandView = tempLandView;
 
-		// 移動先が同じ場合は経路を更新しいない
-		if (mPrevRoute == null || !tempLandView.equals(mPrevRoute.getLastLandView())) {
-			mPrevRoute = mAreaManager.showRouteArea(mMovingUnitView, tempLandView, mPrevRoute);
+		PLMSLandRoute nextRoute;
+		PLMSLandRoute lastRoute = lastRoute();
+		if (lastRoute == null || !tempLandView.equals(lastRoute.getLastLandView())) {
+			nextRoute = mAreaManager.showRouteArea(mMovingUnitView, tempLandView, lastRoute);
+		} else {
+			// 移動先が同じ場合は表示を更新しいない
+			nextRoute = lastRoute;
 		}
-		mTempRoute = mPrevRoute;
+		mPrevRouteArray.clear();
+		updateRoute(nextRoute);
+		mTempRoute = nextRoute;
 	}
 
 	private void attackToUnit(PLMSLandView attackerLandView,
@@ -332,11 +340,19 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 
 		// 直前の位置により近い地点を優先する
-		for (int i = mPrevRoute.size() - 1; 0 <= i; i--) {
-			PLMSLandView moveLandView = mPrevRoute.get(i);
-			if (targetAroundLandArray.contains(moveLandView)) {
-				return moveLandView;
+		for (int i = mPrevRouteArray.size() - 1; 0 < i; i--) {
+			// 1番目の仮位置は除く
+			PLMSLandRoute lastRoute = mPrevRouteArray.get(i);
+			for (int j = lastRoute.size() - 1; 0 <= j; j--) {
+				PLMSLandView moveLandView = lastRoute.get(j);
+				if (targetAroundLandArray.contains(moveLandView)) {
+					return moveLandView;
+				}
 			}
+		}
+		if (targetAroundLandArray.contains(mTempLandView)) {
+			// 仮位置から攻撃可能
+			return mTempLandView;
 		}
 
 		// 移動可能範囲取得
@@ -350,6 +366,17 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			}
 		}
 		return moveLandArray.get(0);
+	}
+
+	private void updateRoute(PLMSLandRoute nextRoute) {
+		if (mPrevRouteArray.contains(nextRoute)) {
+			mPrevRouteArray.remove(nextRoute);
+		}
+		mPrevRouteArray.add(nextRoute);
+	}
+
+	private PLMSLandRoute lastRoute() {
+		return mPrevRouteArray.get(mPrevRouteArray.size() - 1);
 	}
 
 	private void initEvent() {
