@@ -15,17 +15,4 @@ public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 		super();
 		add(landView);
 	}
-
-	@Override
-	public PLMSLandRoute clone() {
-		return new PLMSLandRoute(this);
-	}
-
-	public PLMSLandView getLastLandView() {
-		int size = size();
-		if (0 < size) {
-			return get(size - 1);
-		}
-		return null;
-	}
 }

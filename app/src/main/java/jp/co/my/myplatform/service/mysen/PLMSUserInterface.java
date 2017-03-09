@@ -171,7 +171,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// 離した地形に仮配置
 					targetLandView = landView;
 				} else if (mAreaManager.canAttackToLandView(landView)) {
-					targetLandView = mPrevRouteArray.getLast().getLastLandView();
+					targetLandView = mPrevRouteArray.getLast().getLast();
 					animatorListener = makeAttackListener(targetLandView, landView.getUnitView());
 				} else {
 					// 元の位置に戻す
@@ -265,7 +265,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 		PLMSLandRoute nextRoute;
 		PLMSLandRoute lastRoute = mPrevRouteArray.getLast();
-		if (lastRoute == null || !tempLandView.equals(lastRoute.getLastLandView())) {
+		if (lastRoute == null || !tempLandView.equals(lastRoute.getLast())) {
 			nextRoute = mAreaManager.showRouteArea(mMovingUnitView, tempLandView, lastRoute);
 		} else {
 			// 移動先が同じ場合は表示を更新しいない
@@ -340,9 +340,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		int range = mMovingUnitView.getUnitData().getWeapon().getAttackRange();
 		ArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 
-		for (int i = mPrevRouteArray.size() - 1; 0 <= i; i--) {
+		for (int i = mPrevRouteArray.indexOfLast(); 0 <= i; i--) {
 			PLMSLandRoute lastRoute = mPrevRouteArray.get(i);
-			PLMSLandView moveLandView = lastRoute.getLastLandView();
+			PLMSLandView moveLandView = lastRoute.getLast();
 			if (targetAroundLandArray.contains(moveLandView)) {
 				// ドラッグ時に通ったルートを使用
 				return moveLandView;

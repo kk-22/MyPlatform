@@ -30,4 +30,8 @@ public class MYArrayList<E> extends ArrayList<E> {
 		add(object);
 		return exist;
 	}
+
+	public int indexOfLast() {
+		return size() - 1;
+	}
 }

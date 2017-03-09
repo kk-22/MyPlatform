@@ -202,7 +202,7 @@ public class PLMSAreaManager {
 									 ArrayList<PLMSLandRoute> resultRouteArray) {
 		ArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusLandView.getPoint(), 1);
 		for (PLMSLandView aroundLand : aroundLandArray) {
-			PLMSLandRoute copyFocusRoute = focusRoute.clone();
+			PLMSLandRoute copyFocusRoute = (PLMSLandRoute) focusRoute.clone();
 			searchRoute(unitView, targetLandView, aroundLand, remainingMove, copyFocusRoute, resultRouteArray);
 		}
 	}
