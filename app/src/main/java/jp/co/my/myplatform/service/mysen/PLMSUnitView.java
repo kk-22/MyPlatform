@@ -40,14 +40,13 @@ public class PLMSUnitView extends FrameLayout {
 		landView.putUnitView(this);
 	}
 
-	private void updateChildView() {
+	public void updateHPView() {
+		mHPBar.updateFromUnitView(this);
 	}
 
 	private void initChildView() {
 		loadImage();
 		mHPBar.initFromUnitView(this);
-
-		updateChildView();
 	}
 
 	private void loadImage() {

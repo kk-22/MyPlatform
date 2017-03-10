@@ -284,6 +284,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		// 攻撃で敵 UnitView の裏に隠れないように最前面へ
 		attackerUnitView.bringToFront();
 
+		// ダメージ表示
+		defenderUnitView.updateHPView();
+
 		// 攻撃アニメーション
 		PLMSLandView defenderLandView = defenderUnitView.getLandView();
 		Point attackerPoint = attackerLandView.getPoint();

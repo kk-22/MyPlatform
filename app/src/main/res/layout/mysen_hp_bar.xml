@@ -1,37 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/hp_text"
-        android:textSize="14sp"
+        android:id="@+id/damage_text"
+        android:alpha="0"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#0097DB"
-        android:shadowColor="#000"
-        android:shadowDx="5"
-        android:shadowDy="5"
-        android:shadowRadius="5"
+        android:textColor="#f00"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <FrameLayout
-        android:id="@+id/hp_frame"
-        android:background="#000"
+    <LinearLayout
         android:layout_gravity="bottom"
-        android:padding="1dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="4dp">
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/hp_view"
-            android:background="#0097DB"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/hp_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#0097DB"
+            android:shadowColor="#000"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowRadius="5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    </FrameLayout>
-</LinearLayout>
+        <FrameLayout
+            android:id="@+id/hp_frame"
+            android:background="#000"
+            android:layout_gravity="bottom"
+            android:padding="1dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="4dp">
+
+            <View
+                android:id="@+id/hp_view"
+                android:background="#0097DB"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>
