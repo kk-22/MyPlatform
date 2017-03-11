@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.mysen.Army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 public class PLMSUnitView extends FrameLayout {
 

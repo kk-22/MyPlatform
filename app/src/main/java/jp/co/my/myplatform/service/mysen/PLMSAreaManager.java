@@ -5,9 +5,9 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
-import jp.co.my.myplatform.service.mysen.Land.PLMSColorCover;
-import jp.co.my.myplatform.service.mysen.Land.PLMSLandRoute;
-import jp.co.my.myplatform.service.mysen.Land.PLMSRouteCover;
+import jp.co.my.myplatform.service.mysen.land.PLMSColorCover;
+import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
+import jp.co.my.myplatform.service.mysen.land.PLMSRouteCover;
 
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;

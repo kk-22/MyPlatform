@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.mysen.Land;
+package jp.co.my.myplatform.service.mysen.land;
 
 import java.util.ArrayList;
 

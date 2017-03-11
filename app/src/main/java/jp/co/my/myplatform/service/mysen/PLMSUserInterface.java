@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.service.mysen.Land.PLMSLandRoute;
+import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 
 import static android.animation.Animator.AnimatorListener;
 import static android.animation.PropertyValuesHolder.ofFloat;
