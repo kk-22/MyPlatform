@@ -22,6 +22,8 @@ public class PLMSHitPointBar extends FrameLayout {
 	private View mBarView;
 	private FrameLayout mHPFrame;
 
+	private PLMSUnitView mUnitView;
+
 	public PLMSHitPointBar(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		LayoutInflater.from(context).inflate(R.layout.mysen_hp_bar, this);
@@ -40,16 +42,18 @@ public class PLMSHitPointBar extends FrameLayout {
 	}
 
 	public void initFromUnitView(PLMSUnitView unitView) {
+		mUnitView = unitView;
+
 		PLMSArmyStrategy armyStrategy = unitView.getUnitData().getArmyStrategy();
 		int color = armyStrategy.getHitPointColor();
 		mNumberText.setTextColor(color);
 		mBarView.setBackgroundColor(color);
 
-		updateFromUnitView(unitView, 0);
+		updateFromUnitView(0);
 	}
 
-	public void updateFromUnitView(PLMSUnitView unitView, int diffHP) {
-		PLMSUnitData unitData = unitView.getUnitData();
+	public void updateFromUnitView(int diffHP) {
+		PLMSUnitData unitData = mUnitView.getUnitData();
 		int currentHP = unitData.getCurrentHP();
 		if (diffHP < 0) {
 			// 初期設定時以外はダメージ表示
@@ -65,6 +69,7 @@ public class PLMSHitPointBar extends FrameLayout {
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		float currentY = mDamageText.getY();
 		float topY = currentY - getHeight() / 4;
+		boolean willRemove = (mUnitView.getUnitData().getCurrentHP() <= 0);
 
 		// 上へ
 		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mDamageText, "y", currentY, topY);
@@ -78,8 +83,15 @@ public class PLMSHitPointBar extends FrameLayout {
 
 		// だんだん消える
 		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mDamageText, "alpha", 1f, 0f);
-		alphaAnimator.setDuration(500);
+		alphaAnimator.setDuration(300);
 		animatorArray.add(alphaAnimator);
+
+		if (willRemove) {
+			// 敗走
+			ObjectAnimator removeAnimator = ObjectAnimator.ofFloat(mUnitView, "alpha", 1f, 0f);
+			removeAnimator.setDuration(300);
+			animatorArray.add(removeAnimator);
+		}
 
 		AnimatorSet animatorSet = new AnimatorSet();
 		animatorSet.playSequentially(animatorArray);

@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import jp.co.my.common.util.MYImageUtil;
+import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
@@ -40,11 +41,21 @@ public class PLMSUnitView extends FrameLayout {
 		landView.putUnitView(this);
 	}
 
+	// マップからの離脱
+	private void removeFromField() {
+		mLandView.removeUnitView();
+		MYViewUtil.removeFromSuperView(this);
+	}
+
 	public void updateHitPoint(int diffHP) {
 		int prevHP = mUnitData.getCurrentHP();
 		int nextHP = Math.max(0, prevHP + diffHP);
 		mUnitData.setCurrentHP(nextHP);
-		mHPBar.updateFromUnitView(this, diffHP);
+		mHPBar.updateFromUnitView(diffHP);
+
+		if (nextHP <= 0) {
+			removeFromField();
+		}
 	}
 
 	private void initChildView() {
