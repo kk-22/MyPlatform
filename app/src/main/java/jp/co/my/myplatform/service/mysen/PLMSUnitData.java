@@ -52,7 +52,7 @@ public class PLMSUnitData {
 		mMoveCount = 0;
 	}
 
-	// getter and setter
+	// getter
 	public PLMSUnitModel getUnitModel() {
 		return mUnitModel;
 	}
@@ -99,5 +99,10 @@ public class PLMSUnitData {
 
 	public PLMSWeaponData getWeapon() {
 		return mWeapon;
+	}
+
+	// setter
+	public void setCurrentHP(int currentHP) {
+		mCurrentHP = currentHP;
 	}
 }

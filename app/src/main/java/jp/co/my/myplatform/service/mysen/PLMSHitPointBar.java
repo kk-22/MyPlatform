@@ -22,8 +22,6 @@ public class PLMSHitPointBar extends FrameLayout {
 	private View mBarView;
 	private FrameLayout mHPFrame;
 
-	int prevHP;
-
 	public PLMSHitPointBar(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		LayoutInflater.from(context).inflate(R.layout.mysen_hp_bar, this);
@@ -47,18 +45,17 @@ public class PLMSHitPointBar extends FrameLayout {
 		mNumberText.setTextColor(color);
 		mBarView.setBackgroundColor(color);
 
-		updateFromUnitView(unitView);
+		updateFromUnitView(unitView, 0);
 	}
 
-	public void updateFromUnitView(PLMSUnitView unitView) {
+	public void updateFromUnitView(PLMSUnitView unitView, int diffHP) {
 		PLMSUnitData unitData = unitView.getUnitData();
 		int currentHP = unitData.getCurrentHP();
-		if (prevHP > 0) {
+		if (diffHP < 0) {
 			// 初期設定時以外はダメージ表示
-			showDamageText(currentHP - prevHP);
+			showDamageText(diffHP * 1);
 		}
-		prevHP = currentHP;
-		mNumberText.setText(String.valueOf(prevHP));
+		mNumberText.setText(String.valueOf(currentHP));
 	}
 
 	private void showDamageText(int damagePoint) {

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleScene;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 
 import static android.animation.Animator.AnimatorListener;
@@ -285,7 +287,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		attackerUnitView.bringToFront();
 
 		// ダメージ表示
-		defenderUnitView.updateHPView();
+		PLMSBattleResult result = new PLMSBattleResult(attackerUnitView, attackerLandView,
+				defenderUnitView, defenderUnitView.getLandView(), mField);
+		PLMSBattleScene scene = result.getSceneArray().get(0);
+		defenderUnitView.updateHitPoint(scene.getDamagePoint());
 
 		// 攻撃アニメーション
 		PLMSLandView defenderLandView = defenderUnitView.getLandView();
