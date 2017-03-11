@@ -18,7 +18,7 @@ import jp.co.my.myplatform.service.mysen.Army.PLMSBlueArmy;
 import jp.co.my.myplatform.service.mysen.Army.PLMSRedArmy;
 
 
-public class PLMSBattleView extends PLContentView {
+public class PLMSWarContent extends PLContentView {
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
@@ -27,7 +27,7 @@ public class PLMSBattleView extends PLContentView {
 	private ArrayList<PLMSUnitData> mUnitDataArray;
 	private boolean mFinishedLayout;			// OnGlobalLayoutListener が呼ばれたら true
 
-	public PLMSBattleView() {
+	public PLMSWarContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_battle, this);
 		mInformation = (PLMSInformationView) findViewById(R.id.information_view);

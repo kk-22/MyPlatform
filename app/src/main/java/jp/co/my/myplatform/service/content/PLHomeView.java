@@ -13,7 +13,7 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.debug.PLDebugView;
 import jp.co.my.myplatform.service.explorer.PLExplorerView;
 import jp.co.my.myplatform.service.memo.PLMemoEditorView;
-import jp.co.my.myplatform.service.mysen.PLMSBattleView;
+import jp.co.my.myplatform.service.mysen.PLMSWarContent;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
@@ -41,7 +41,7 @@ public class PLHomeView extends PLContentView {
 		findViewById(R.id.mysen_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLMSBattleView.class);
+				PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
 			}
 		});
 		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
