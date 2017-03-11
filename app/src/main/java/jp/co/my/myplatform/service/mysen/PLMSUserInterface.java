@@ -3,7 +3,6 @@ package jp.co.my.myplatform.service.mysen;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
-import jp.co.my.myplatform.service.mysen.battle.PLMSBattleScene;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 
 import static android.animation.Animator.AnimatorListener;
@@ -28,6 +26,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSAreaManager mAreaManager;
 	private ArrayList<PLMSUnitView> mUnitArray;
 
+	private PLMSAnimationManager mAnimationManager;
+
 	private PointF mFirstTouchPointF;
 	private PLMSUnitView mMovingUnitView;
 	private PLMSLandView mTempLandView;            // mMovingUnitView の現在の仮位置
@@ -40,6 +40,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mUnitArray = unitArray;
 		mAreaManager = new PLMSAreaManager(field, mUnitArray);
 
+		mAnimationManager = new PLMSAnimationManager(mField);
 		mPrevRouteArray = new MYArrayList<>();
 
 		initEvent();
@@ -283,52 +284,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		PLMSUnitView attackerUnitView = mMovingUnitView;
 		movedUnit(attackerLandView);
 
-		// 攻撃で敵 UnitView の裏に隠れないように最前面へ
-		attackerUnitView.bringToFront();
-
 		// ダメージ表示
-		PLMSBattleResult result = new PLMSBattleResult(attackerUnitView, attackerLandView,
-				defenderUnitView, defenderUnitView.getLandView(), mField);
-		PLMSBattleScene scene = result.getSceneArray().get(0);
-		defenderUnitView.updateHitPoint(scene.getDamagePoint());
-
-		// 攻撃アニメーション
-		PLMSLandView defenderLandView = defenderUnitView.getLandView();
-		Point attackerPoint = attackerLandView.getPoint();
-		Point defenderPoint = defenderLandView.getPoint();
-		PointF currentPointF = mField.pointOfLandView(attackerLandView);
-
-		int moveWidth = attackerUnitView.getWidth();
-		PropertyValuesHolder holderX = null, holderY = null;
-		if (attackerPoint.x != defenderPoint.x) {
-			int diffX = (attackerPoint.x < defenderPoint.x) ? moveWidth : -moveWidth;
-			holderX = PropertyValuesHolder.ofFloat(
-					"x",
-					currentPointF.x,
-					currentPointF.x + diffX,
-					currentPointF.x);
-		}
-		if (attackerPoint.y != defenderPoint.y) {
-			int diffY = (attackerPoint.y < defenderPoint.y) ? moveWidth : -moveWidth;
-			holderY = PropertyValuesHolder.ofFloat(
-					"y",
-					currentPointF.y,
-					currentPointF.y + diffY,
-					currentPointF.y);
-		}
-		if (holderX == null) {
-			ObjectAnimator.ofPropertyValuesHolder(
-					attackerUnitView, holderY)
-					.setDuration(300).start();
-		} else if (holderY == null) {
-			ObjectAnimator.ofPropertyValuesHolder(
-					attackerUnitView, holderX)
-					.setDuration(300).start();
-		} else {
-			ObjectAnimator.ofPropertyValuesHolder(
-					attackerUnitView, holderX, holderY)
-					.setDuration(300).start();
-		}
+		PLMSBattleResult result = new PLMSBattleResult(mField,
+				attackerUnitView, attackerLandView,
+				defenderUnitView, defenderUnitView.getLandView());
+		mAnimationManager.addBattleAnimation(result);
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {

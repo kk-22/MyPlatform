@@ -14,6 +14,13 @@ public class MYArrayList<E> extends ArrayList<E> {
 		super(c);
 	}
 
+	public E getFirst() {
+		if (size() == 0) {
+			return null;
+		}
+		return get(0);
+	}
+
 	public E getLast() {
 		int size = size();
 		if (size == 0) {

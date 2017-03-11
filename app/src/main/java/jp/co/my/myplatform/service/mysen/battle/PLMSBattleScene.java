@@ -21,6 +21,14 @@ public class PLMSBattleScene {
 	}
 
 	// getter
+	public PLMSBattleUnit getAttackerUnit() {
+		return mAttackerUnit;
+	}
+
+	public PLMSBattleUnit getDefenderUnit() {
+		return mDefenderUnit;
+	}
+
 	public int getDamagePoint() {
 		return mDamagePoint;
 	}

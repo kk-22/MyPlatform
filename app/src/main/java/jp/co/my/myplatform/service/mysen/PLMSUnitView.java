@@ -42,7 +42,7 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	// マップからの離脱
-	private void removeFromField() {
+	public void removeFromField() {
 		mLandView.removeUnitView();
 		MYViewUtil.removeFromSuperView(this);
 	}
@@ -52,10 +52,6 @@ public class PLMSUnitView extends FrameLayout {
 		int nextHP = Math.max(0, prevHP + diffHP);
 		mUnitData.setCurrentHP(nextHP);
 		mHPBar.updateFromUnitView(diffHP);
-
-		if (nextHP <= 0) {
-			removeFromField();
-		}
 	}
 
 	private void initChildView() {

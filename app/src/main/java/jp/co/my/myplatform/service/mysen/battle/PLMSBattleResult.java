@@ -12,9 +12,9 @@ public class PLMSBattleResult {
 	private PLMSFieldView mFieldView;
 	private MYArrayList<PLMSBattleScene> mSceneArray;
 
-	public PLMSBattleResult(PLMSUnitView leftUnitView, PLMSLandView leftLandView,
-							PLMSUnitView rightUnitView, PLMSLandView rightLandView,
-							PLMSFieldView fieldView) {
+	public PLMSBattleResult(PLMSFieldView fieldView,
+							PLMSUnitView leftUnitView, PLMSLandView leftLandView,
+							PLMSUnitView rightUnitView, PLMSLandView rightLandView) {
 		mLeftUnit = new PLMSBattleUnit(leftUnitView, leftLandView);
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 		mFieldView = fieldView;
@@ -37,7 +37,7 @@ public class PLMSBattleResult {
 					defenderUnit.getUnitView().getUnitData().getMaxHP());
 			attackerUnit.setResultHP(attackerHP);
 			defenderUnit.setResultHP(defenderHP);
-			if (attackerHP <= 0) {
+			if (defenderHP <= 0) {
 				 break;
 			}
 		}
