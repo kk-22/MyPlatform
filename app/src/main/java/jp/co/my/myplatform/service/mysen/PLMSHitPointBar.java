@@ -49,17 +49,15 @@ public class PLMSHitPointBar extends FrameLayout {
 		mNumberText.setTextColor(color);
 		mBarView.setBackgroundColor(color);
 
-		updateFromUnitView(0);
+		updateFromUnitView(mUnitView.getUnitData().getCurrentHP(), 0);
 	}
 
-	public void updateFromUnitView(int diffHP) {
-		PLMSUnitData unitData = mUnitView.getUnitData();
-		int currentHP = unitData.getCurrentHP();
+	public void updateFromUnitView(int nextHP, int diffHP) {
 		if (diffHP < 0) {
 			// 初期設定時以外はダメージ表示
-			showDamageText(diffHP * 1);
+			showDamageText(diffHP * -1);
 		}
-		mNumberText.setText(String.valueOf(currentHP));
+		mNumberText.setText(String.valueOf(nextHP));
 	}
 
 	private void showDamageText(int damagePoint) {

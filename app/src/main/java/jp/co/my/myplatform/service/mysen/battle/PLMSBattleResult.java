@@ -32,12 +32,11 @@ public class PLMSBattleResult {
 			PLMSBattleScene scene = new PLMSBattleScene(attackerUnit, defenderUnit);
 			mSceneArray.add(scene);
 
-			int attackerHP = Math.max(attackerUnit.getResultHP() + scene.getDamagePoint(), 0);
-			int defenderHP = Math.min(defenderUnit.getResultHP() + scene.getRecoveryPoint(),
-					defenderUnit.getUnitView().getUnitData().getMaxHP());
+			int attackerHP = scene.getAttackerRemainingHP();
+			int defenderHP = scene.getDefenderRemainingHP();
 			attackerUnit.setResultHP(attackerHP);
 			defenderUnit.setResultHP(defenderHP);
-			if (defenderHP <= 0) {
+			if (attackerHP <= 0 || defenderHP <= 0) {
 				 break;
 			}
 		}

@@ -5,8 +5,10 @@ public class PLMSBattleScene {
 	private PLMSBattleUnit mAttackerUnit;
 	private PLMSBattleUnit mDefenderUnit;
 
-	private int mDamagePoint;			// 負の値
-	private int mRecoveryPoint;			// 正の値。奥義などによる回復値
+	private int mAttackerDiffHP;
+	private int mDefenderDiffHP;
+	private int mAttackerRemainingHP;
+	private int mDefenderRemainingHP;
 
 	public PLMSBattleScene(PLMSBattleUnit attackerUnit, PLMSBattleUnit defenderUnit) {
 		mAttackerUnit = attackerUnit;
@@ -16,8 +18,18 @@ public class PLMSBattleScene {
 	}
 
 	private void calculateDamage() {
-		int damage = mAttackerUnit.getBattleAttack() - mDefenderUnit.getBattleDefense();
-		mDamagePoint = (damage > 0) ? damage * -1 : 0;
+		int damage = Math.max(0, mAttackerUnit.getBattleAttack() - mDefenderUnit.getBattleDefense());
+		mDefenderDiffHP = damage * -1;
+		mDefenderRemainingHP = calculateRemainingHP(mDefenderUnit, mDefenderDiffHP);
+
+		mAttackerDiffHP = 0;
+		mAttackerRemainingHP = calculateRemainingHP(mAttackerUnit, mAttackerDiffHP);
+	}
+
+	private int calculateRemainingHP(PLMSBattleUnit battleUnit, int diffHP) {
+		int maxHP = battleUnit.getUnitView().getUnitData().getMaxHP();
+		int prevHP = battleUnit.getResultHP();
+		return Math.max(0, Math.min(maxHP, prevHP + diffHP));
 	}
 
 	// getter
@@ -29,11 +41,19 @@ public class PLMSBattleScene {
 		return mDefenderUnit;
 	}
 
-	public int getDamagePoint() {
-		return mDamagePoint;
+	public int getAttackerDiffHP() {
+		return mAttackerDiffHP;
 	}
 
-	public int getRecoveryPoint() {
-		return mRecoveryPoint;
+	public int getDefenderDiffHP() {
+		return mDefenderDiffHP;
+	}
+
+	public int getAttackerRemainingHP() {
+		return mAttackerRemainingHP;
+	}
+
+	public int getDefenderRemainingHP() {
+		return mDefenderRemainingHP;
 	}
 }

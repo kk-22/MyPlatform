@@ -47,11 +47,9 @@ public class PLMSUnitView extends FrameLayout {
 		MYViewUtil.removeFromSuperView(this);
 	}
 
-	public void updateHitPoint(int diffHP) {
-		int prevHP = mUnitData.getCurrentHP();
-		int nextHP = Math.max(0, prevHP + diffHP);
+	public void updateHitPoint(int nextHP, int diffHP) {
 		mUnitData.setCurrentHP(nextHP);
-		mHPBar.updateFromUnitView(diffHP);
+		mHPBar.updateFromUnitView(nextHP, diffHP);
 	}
 
 	private void initChildView() {

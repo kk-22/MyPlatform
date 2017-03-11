@@ -72,13 +72,13 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 					// 攻撃で敵 UnitView の裏に隠れないように最前面へ
 					attackerUnitView.bringToFront();
 					// ダメージアニメーション
-					defenderUnitView.updateHitPoint(scene.getDamagePoint());
+					defenderUnitView.updateHitPoint(scene.getDefenderRemainingHP(), scene.getDefenderDiffHP());
 				}
 
 				@Override
 				public void onAnimationEnd(Animator animation) {
-					if (attackerUnitView.getUnitData().getCurrentHP() <= 0) {
-						attackerUnitView.removeFromField();
+					if (defenderUnitView.getUnitData().getCurrentHP() <= 0) {
+						defenderUnitView.removeFromField();
 					}
 				}
 			});
