@@ -12,6 +12,8 @@ public class PLMSBattleResult {
 	private PLMSFieldView mFieldView;
 	private MYArrayList<PLMSBattleScene> mSceneArray;
 
+	private int mDistance;
+
 	public PLMSBattleResult(PLMSFieldView fieldView,
 							PLMSUnitView leftUnitView, PLMSLandView leftLandView,
 							PLMSUnitView rightUnitView, PLMSLandView rightLandView) {
@@ -19,6 +21,7 @@ public class PLMSBattleResult {
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 		mFieldView = fieldView;
 
+		mDistance = leftUnitView.getUnitData().getWeapon().getAttackRange();
 		mSceneArray = new MYArrayList<>();
 		createScene();
 	}
@@ -47,12 +50,18 @@ public class PLMSBattleResult {
 		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
 		PLMSBattleUnit firstAttacker = mLeftUnit;
 		PLMSBattleUnit secondAttacker = getEnemyUnitFromUnit(firstAttacker);
+		boolean canAttackSecondAttacker = secondAttacker.canAttackWithDistance(mDistance);
+
 		attackerArray.add(firstAttacker);
-		attackerArray.add(secondAttacker);
+		if (canAttackSecondAttacker) {
+			attackerArray.add(secondAttacker);
+		}
+
+		// 追撃判定
 		if (firstAttacker.canChaseAttack(secondAttacker)) {
 			attackerArray.add(firstAttacker);
 		}
-		if (secondAttacker.canChaseAttack(firstAttacker)) {
+		if (canAttackSecondAttacker && secondAttacker.canChaseAttack(firstAttacker)) {
 			attackerArray.add(secondAttacker);
 		}
 		return attackerArray;

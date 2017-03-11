@@ -25,6 +25,11 @@ public class PLMSBattleUnit {
 		mBattleMagicDefense = mUnitView.getUnitData().getCurrentMagicDefense();
 	}
 
+	public boolean canAttackWithDistance(int distance) {
+		int myRange = mUnitView.getUnitData().getWeapon().getAttackRange();
+		return (myRange == distance);
+	}
+
 	public boolean canChaseAttack(PLMSBattleUnit enemyUnit) {
 		if (enemyUnit.getBattleSpeed() + 5 <= mBattleSpeed) {
 			return true;
