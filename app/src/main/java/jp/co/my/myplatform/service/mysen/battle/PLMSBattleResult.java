@@ -24,9 +24,11 @@ public class PLMSBattleResult {
 	}
 
 	private void createScene() {
-		for (int i = 0; i < 1; i++) {
-			PLMSBattleUnit attackerUnit = mLeftUnit;
-			PLMSBattleUnit defenderUnit = mRightUnit;
+		MYArrayList<PLMSBattleUnit> attackerArray = createAttackerArray();
+		int maxScene = attackerArray.size();
+		for (int i = 0; i < maxScene; i++) {
+			PLMSBattleUnit attackerUnit = attackerArray.get(i);
+			PLMSBattleUnit defenderUnit = getEnemyUnitFromUnit(attackerUnit);
 			PLMSBattleScene scene = new PLMSBattleScene(attackerUnit, defenderUnit);
 			mSceneArray.add(scene);
 
@@ -39,6 +41,30 @@ public class PLMSBattleResult {
 				 break;
 			}
 		}
+	}
+
+	// 攻撃順を返す
+	private MYArrayList<PLMSBattleUnit> createAttackerArray() {
+		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
+		PLMSBattleUnit firstAttacker = mLeftUnit;
+		PLMSBattleUnit secondAttacker = getEnemyUnitFromUnit(firstAttacker);
+		attackerArray.add(firstAttacker);
+		attackerArray.add(secondAttacker);
+		if (firstAttacker.canChaseAttack(secondAttacker)) {
+			attackerArray.add(firstAttacker);
+		}
+		if (secondAttacker.canChaseAttack(firstAttacker)) {
+			attackerArray.add(secondAttacker);
+		}
+		return attackerArray;
+	}
+
+	// 引数に渡したユニットとは別のユニットを返す
+	private PLMSBattleUnit getEnemyUnitFromUnit(PLMSBattleUnit battleUnit) {
+		if (battleUnit.equals(mLeftUnit)) {
+			return mRightUnit;
+		}
+		return mLeftUnit;
 	}
 
 	// getter
