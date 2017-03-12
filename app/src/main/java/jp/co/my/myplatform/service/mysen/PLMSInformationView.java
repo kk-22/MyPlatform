@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.mysen;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -59,6 +60,8 @@ public class PLMSInformationView extends LinearLayout {
 		mRightBattleInfo = (PLMSBattleInfoView) findViewById(R.id.right_battle_info);
 		mRightBattleInfo.initWithIsLeft(false);
 		mRightImageView = (ImageView) findViewById(R.id.right_image);
+
+		clearInformation();
 	}
 
 	public PLMSInformationView(Context context, AttributeSet attrs){
@@ -67,6 +70,15 @@ public class PLMSInformationView extends LinearLayout {
 
 	public PLMSInformationView(Context context) {
 		this(context, null);
+	}
+
+	public void clearInformation() {
+		setBackgroundColor(Color.WHITE);
+
+		mUnitDataLinear.setVisibility(View.GONE);
+		mBattleDataFrame.setVisibility(View.GONE);
+		mRightUnitView = null;
+		mLeftUnitView = null;
 	}
 
 	public void updateForUnitData(PLMSUnitView unitView) {
@@ -128,14 +140,15 @@ public class PLMSInformationView extends LinearLayout {
 	private void animateUnitImage(ImageView imageView, PLMSUnitView unitView) {
 		imageView.setImageBitmap(unitImageFromUnitView(unitView));
 
-		int width = imageView.getWidth();
+		// 初回時は mRightImageView が非表示のために width が0なので代わりにleftのサイズを使用
+		int width = mLeftImageView.getWidth();
 		int moveWidth = width * 3 / 4;
 		float baseX, startX;
 		if (imageView.equals(mLeftImageView)) {
 			baseX = 0;
 			startX = baseX - moveWidth;
 		} else {
-			baseX = mBattleDataFrame.getWidth() - width;
+			baseX = getWidth() - width * 2;
 			startX = baseX + moveWidth;
 		}
 		ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "x", startX, baseX);
