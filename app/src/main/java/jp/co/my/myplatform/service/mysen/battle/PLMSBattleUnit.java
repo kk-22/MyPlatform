@@ -14,6 +14,8 @@ public class PLMSBattleUnit {
 	private int mBattleDefense;
 	private int mBattleMagicDefense;
 
+	private int mTotalAttack;					// 3すくみ・スキル補正後の値（奥義スキルは除く）
+
 	public PLMSBattleUnit(PLMSUnitView unitView, PLMSLandView landView) {
 		mUnitView = unitView;
 		mLandView = landView;
@@ -35,6 +37,11 @@ public class PLMSBattleUnit {
 			return true;
 		}
 		return false;
+	}
+
+	public int getDefenseForEnemyAttack(PLMSBattleUnit enemyUnit) {
+		// TODO: 敵の武器の物理/魔法によって分岐
+		return mBattleDefense;
 	}
 
 	// getter
@@ -66,8 +73,16 @@ public class PLMSBattleUnit {
 		return mBattleMagicDefense;
 	}
 
+	public int getTotalAttack() {
+		return mTotalAttack;
+	}
+
 	// setter
 	public void setResultHP(int resultHP) {
 		mResultHP = resultHP;
+	}
+
+	public void setTotalAttack(int totalAttack) {
+		mTotalAttack = totalAttack;
 	}
 }

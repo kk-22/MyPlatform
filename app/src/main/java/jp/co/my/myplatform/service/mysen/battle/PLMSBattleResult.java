@@ -22,10 +22,23 @@ public class PLMSBattleResult {
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 		mFieldView = fieldView;
 
+		initBattleUnit();
 		mDistance = leftUnitView.getUnitData().getWeapon().getAttackRange();
 		mAttackerArray = createAttackerArray();
 		mSceneArray = new MYArrayList<>();
 		createScene();
+	}
+
+	// 戦闘 Info に表示するダメージ値
+	public int givingDamageOfBattleUnit(PLMSBattleUnit battleUnit) {
+		PLMSBattleUnit enemyUnit = getEnemyUnitFromUnit(battleUnit);
+		int damage = battleUnit.getTotalAttack() - enemyUnit.getDefenseForEnemyAttack(battleUnit);
+		return Math.max(0, damage);
+	}
+
+	private void initBattleUnit() {
+		mLeftUnit.setTotalAttack(mLeftUnit.getBattleAttack());
+		mRightUnit.setTotalAttack(mRightUnit.getBattleAttack());
 	}
 
 	private void createScene() {
@@ -36,11 +49,7 @@ public class PLMSBattleResult {
 			PLMSBattleScene scene = new PLMSBattleScene(attackerUnit, defenderUnit);
 			mSceneArray.add(scene);
 
-			int attackerHP = scene.getAttackerRemainingHP();
-			int defenderHP = scene.getDefenderRemainingHP();
-			attackerUnit.setResultHP(attackerHP);
-			defenderUnit.setResultHP(defenderHP);
-			if (attackerHP <= 0 || defenderHP <= 0) {
+			if (scene.getAttackerRemainingHP() <= 0 || scene.getDefenderRemainingHP() <= 0) {
 				 break;
 			}
 		}

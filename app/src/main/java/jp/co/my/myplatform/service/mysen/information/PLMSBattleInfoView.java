@@ -57,12 +57,16 @@ public class PLMSBattleInfoView extends LinearLayout {
 		}
 		setIntToText(0, mSecretCountTextView);
 
-		// TODO: 実ダメージではなく基本ダメージをresultから受け取る。反撃不可なら"-"にする
-		StringBuilder damageText = new StringBuilder("10");
+		StringBuilder damageText =new StringBuilder();
 		int attackCount = battleResult.getAttackerArray().countObject(battleUnit);
-		if (attackCount > 1) {
-			damageText.append("×");
-			damageText.append(attackCount);
+		if (attackCount == 0) {
+			damageText.append("-");
+		} else {
+			damageText.append(battleResult.givingDamageOfBattleUnit(battleUnit));
+			if (attackCount > 1) {
+				damageText.append("×");
+				damageText.append(attackCount);
+			}
 		}
 		mDamageTextView.setText(damageText.toString());
 	}
