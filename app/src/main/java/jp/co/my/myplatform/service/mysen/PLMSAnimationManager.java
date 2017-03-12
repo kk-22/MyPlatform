@@ -26,6 +26,32 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		mAnimatorArray = new MYArrayList<>();
 	}
 
+	public void addMoveAnimation(PLMSUnitView moveUnitView,
+								 PLMSLandView fromLandView,
+								 PLMSLandView toLandView,
+								 Animator.AnimatorListener animatorListener) {
+		PointF fromPointF = mFieldView.pointOfLandView(fromLandView);
+		addMoveAnimation(moveUnitView, fromPointF, toLandView, animatorListener);
+	}
+
+	public void addMoveAnimation(PLMSUnitView moveUnitView,
+								 PointF fromPointF,
+								 PLMSLandView toLandView,
+								 Animator.AnimatorListener animatorListener) {
+		PointF targetPointF = mFieldView.pointOfLandView(toLandView);
+		PropertyValuesHolder holderX = ofFloat(
+				"x", fromPointF.x, targetPointF.x);
+		PropertyValuesHolder holderY = ofFloat(
+				"y", fromPointF.y, targetPointF.y);
+		ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
+				moveUnitView, holderX, holderY);
+		objectAnimator.setDuration(100);
+		if (animatorListener != null) {
+			objectAnimator.addListener(animatorListener);
+		}
+		addAnimator(objectAnimator);
+	}
+
 	public void addBattleAnimation(PLMSBattleResult battleResult) {
 		for (final PLMSBattleScene scene : battleResult.getSceneArray()) {
 			final PLMSUnitView attackerUnitView = scene.getAttackerUnit().getUnitView();

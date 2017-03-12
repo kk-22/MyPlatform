@@ -1,8 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
+import android.animation.AnimatorListenerAdapter;
 import android.graphics.PointF;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -16,7 +15,6 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 
 import static android.animation.Animator.AnimatorListener;
-import static android.animation.PropertyValuesHolder.ofFloat;
 import static android.view.View.GONE;
 
 public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
@@ -117,7 +115,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	@Override
 	public boolean onDrag(View v, DragEvent event) {
-		PLMSLandView landView = (PLMSLandView) v;
+		final PLMSLandView landView = (PLMSLandView) v;
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
 			case DragEvent.ACTION_DRAG_ENTERED: {
@@ -168,19 +166,24 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				PointF touchPointF = new PointF(
 						landPoint.x + event.getX() - halfSize,
 						landPoint.y + event.getY() - halfSize);
-				PLMSLandView targetLandView;
+				final PLMSLandView targetLandView;
 				AnimatorListener animatorListener = null;
 				if (mAreaManager.getMoveAreaCover().isShowingCover(landView) || landView.equals(mMovingUnitView.getLandView())) {
 					// 離した地形に仮配置
 					targetLandView = landView;
 				} else if (mAreaManager.canAttackToLandView(landView)) {
 					targetLandView = mPrevRouteArray.getLast().getLast();
-					animatorListener = makeAttackListener(targetLandView, landView.getUnitView());
+					animatorListener = new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							attackToUnit(targetLandView, landView.getUnitView());
+						}
+					};
 				} else {
 					// 元の位置に戻す
 					targetLandView = mTempLandView;
 				}
-				moveUnitWithAnimation(touchPointF, targetLandView, animatorListener);
+				mAnimationManager.addMoveAnimation(mMovingUnitView, touchPointF, targetLandView, animatorListener);
 				if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)
 						|| mAreaManager.canAttackToLandView(landView)) {
 					// 移動イベント継続
@@ -206,7 +209,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mInformation.updateForUnitData(mMovingUnitView);
 		if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 			// クリック地形に仮配置
-			moveUnitWithAnimation(mTempLandView, landView, null);
+			mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, landView, null);
 			moveToTempLand(landView);
 		} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
 			// ユニットがいればOnTouchListenerが呼ばれる。このLandView上にユニットはいないので動作なし
@@ -224,7 +227,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void cancelMoveEvent() {
-		moveUnitWithAnimation(mTempLandView, mMovingUnitView.getLandView(), null);
+		mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, mMovingUnitView.getLandView(), null);
 		finishMoveEvent();
 	}
 
@@ -237,30 +240,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mTempRoute = null;
 		mPrevRouteArray.clear();
 		mAreaManager.hideAllAreaCover();
-	}
-
-	private void moveUnitWithAnimation(PLMSLandView fromLandView,
-									   PLMSLandView toLandView,
-									   AnimatorListener animatorListener) {
-		PointF fromPointF = mField.pointOfLandView(fromLandView);
-		moveUnitWithAnimation(fromPointF, toLandView, animatorListener);
-	}
-
-	private void moveUnitWithAnimation(PointF fromPointF,
-									   PLMSLandView toLandView,
-									   AnimatorListener animatorListener) {
-		PointF targetPointF = mField.pointOfLandView(toLandView);
-		PropertyValuesHolder holderX = ofFloat(
-				"x", fromPointF.x, targetPointF.x);
-		PropertyValuesHolder holderY = ofFloat(
-				"y", fromPointF.y, targetPointF.y);
-		ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(
-				mMovingUnitView, holderX, holderY);
-		objectAnimator.setDuration(100);
-		if (animatorListener != null) {
-			objectAnimator.addListener(animatorListener);
-		}
-		objectAnimator.start();
 	}
 
 	private void moveToTempLand(PLMSLandView tempLandView) {
@@ -299,7 +278,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	// 移動先のLandViewを返す
 	private PLMSLandView moveUnitForAttack(PLMSLandView targetLandView) {
 		PLMSLandView moveLandView = getAttackLandView(targetLandView);
-		moveUnitWithAnimation(mTempLandView, moveLandView, null);
+		mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, moveLandView, null);
 		return moveLandView;
 	}
 
@@ -338,27 +317,5 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			landView.setOnDragListener(this);
 			landView.setOnClickListener(this);
 		}
-	}
-
-	private AnimatorListener makeAttackListener(final PLMSLandView attackerLandView,
-												final PLMSUnitView defenderUnitView) {
-		return new AnimatorListener() {
-			@Override
-			public void onAnimationStart(Animator animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				attackToUnit(attackerLandView, defenderUnitView);
-			}
-
-			@Override
-			public void onAnimationCancel(Animator animation) {
-			}
-
-			@Override
-			public void onAnimationRepeat(Animator animation) {
-			}
-		};
 	}
 }
