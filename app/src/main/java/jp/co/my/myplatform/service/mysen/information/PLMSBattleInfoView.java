@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen.information;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,6 +50,11 @@ public class PLMSBattleInfoView extends LinearLayout {
 		mNameTextView.setText(battleUnit.getUnitView().getUnitData().getUnitModel().getName());
 		setIntToText(battleUnit.getUnitView().getUnitData().getCurrentHP(), mCurrentHPTextView);
 		setIntToText(battleUnit.getResultHP(), mResultHPTextView);
+		if (battleUnit.getResultHP() == 0) {
+			mResultHPTextView.setTextColor(Color.parseColor("#ff0000"));
+		} else {
+			mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
+		}
 		setIntToText(0, mSecretCountTextView);
 
 		// TODO: 実ダメージではなく基本ダメージをresultから受け取る。反撃不可なら"-"にする

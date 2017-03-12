@@ -35,11 +35,9 @@ public class PLMSInformationView extends LinearLayout {
 	private TextView mDefenseTextView;
 	private TextView mMagicDefenseTextView;
 
-	private View mRightBackgroundView;
-	private ImageView mRightImageView;
-
 	private PLMSBattleInfoView mLeftBattleInfo;
 	private PLMSBattleInfoView mRightBattleInfo;
+	private ImageView mRightImageView;
 
 	public PLMSInformationView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
@@ -56,13 +54,11 @@ public class PLMSInformationView extends LinearLayout {
 		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
 		mMagicDefenseTextView = (TextView) findViewById(R.id.magic_defense_text);
 
-		mRightBackgroundView = findViewById(R.id.right_background_view);
-		mRightImageView = (ImageView) findViewById(R.id.right_image);
-
 		mLeftBattleInfo = (PLMSBattleInfoView) findViewById(R.id.left_battle_info);
 		mLeftBattleInfo.initWithIsLeft(true);
 		mRightBattleInfo = (PLMSBattleInfoView) findViewById(R.id.right_battle_info);
 		mRightBattleInfo.initWithIsLeft(false);
+		mRightImageView = (ImageView) findViewById(R.id.right_image);
 	}
 
 	public PLMSInformationView(Context context, AttributeSet attrs){
@@ -98,8 +94,6 @@ public class PLMSInformationView extends LinearLayout {
 	}
 
 	public void updateForBattleData(PLMSBattleResult battleResult) {
-		PLMSUnitView leftUnitView = battleResult.getLeftUnit().getUnitView();
-		PLMSUnitView rightUnitView = battleResult.getRightUnit().getUnitView();
 		if (mRightUnitView == null) {
 			mUnitDataLinear.setVisibility(View.GONE);
 			mBattleDataFrame.setVisibility(View.VISIBLE);
@@ -107,21 +101,23 @@ public class PLMSInformationView extends LinearLayout {
 		if (battleResult.equals(mBattleResult)) {
 			return;
 		}
+		mBattleResult = battleResult;
 
+		// 左の設定
+		PLMSUnitView leftUnitView = battleResult.getLeftUnit().getUnitView();
 		if (!leftUnitView.equals(mLeftUnitView)) {
 			animateUnitImage(mLeftImageView, leftUnitView);
 			mLeftUnitView = leftUnitView;
+			setBackgroundColor(leftUnitView.getUnitData().getArmyStrategy().getInformationColor());
 		}
 
-		mRightUnitView = rightUnitView;
-		animateUnitImage(mRightImageView, rightUnitView);
+		// 右の設定
+		mRightUnitView = battleResult.getRightUnit().getUnitView();;
+		animateUnitImage(mRightImageView, mRightUnitView);
+		mBattleDataFrame.setBackgroundColor(mRightUnitView.getUnitData().getArmyStrategy().getInformationColor());
 
 		mLeftBattleInfo.updateInfo(battleResult, battleResult.getLeftUnit());
 		mRightBattleInfo.updateInfo(battleResult, battleResult.getRightUnit());
-
-		// 背景色設定
-		setBackgroundColor(leftUnitView.getUnitData().getArmyStrategy().getInformationColor());
-		mRightBackgroundView.setBackgroundColor(rightUnitView.getUnitData().getArmyStrategy().getInformationColor());
 	}
 
 	private Bitmap unitImageFromUnitView(PLMSUnitView unitView) {
