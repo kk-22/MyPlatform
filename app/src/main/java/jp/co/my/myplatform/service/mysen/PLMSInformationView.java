@@ -25,7 +25,8 @@ public class PLMSInformationView extends LinearLayout {
 
 	private ImageView mLeftImageView;
 	private TextView mLeftNameTextView;
-	private TextView mHPTextView;
+	private TextView mCurrentHPTextView;
+	private TextView mMaxHPTextView;
 	private TextView mAttackTextView;
 	private TextView mSpeedTextView;
 	private TextView mDefenseTextView;
@@ -42,7 +43,8 @@ public class PLMSInformationView extends LinearLayout {
 
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
 		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
-		mHPTextView = (TextView) findViewById(R.id.hp_text);
+		mCurrentHPTextView = (TextView) findViewById(R.id.current_hp_text);
+		mMaxHPTextView = (TextView) findViewById(R.id.max_hp_text);
 		mAttackTextView = (TextView) findViewById(R.id.attack_text);
 		mSpeedTextView = (TextView) findViewById(R.id.speed_text);
 		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
@@ -73,7 +75,8 @@ public class PLMSInformationView extends LinearLayout {
 
 		animateUnitImage(mLeftImageView, unitView);
 		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
-		setIntToText(unitView.getUnitData().getCurrentHP(), mHPTextView);
+		setIntToText(unitView.getUnitData().getCurrentHP(), mCurrentHPTextView);
+		setIntToText(unitView.getUnitData().getMaxHP(), mMaxHPTextView);
 		setIntToText(unitView.getUnitData().getCurrentAttack(), mAttackTextView);
 		setIntToText(unitView.getUnitData().getCurrentSpeed(), mSpeedTextView);
 		setIntToText(unitView.getUnitData().getCurrentDefense(), mDefenseTextView);

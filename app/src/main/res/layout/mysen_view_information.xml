@@ -43,14 +43,28 @@
                     <TextView
                         android:text="HP"
                         android:textAlignment="center"
+                        android:layout_weight="3"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"/>
+
+                    <TextView
+                        android:id="@+id/current_hp_text"
+                        android:textAlignment="center"
+                        android:layout_weight="4"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"/>
+
+                    <TextView
+                        android:text="/"
+                        android:textAlignment="center"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
 
                     <TextView
-                        android:id="@+id/hp_text"
+                        android:id="@+id/max_hp_text"
                         android:textAlignment="center"
-                        android:layout_weight="3"
+                        android:layout_weight="4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
                 </LinearLayout>
