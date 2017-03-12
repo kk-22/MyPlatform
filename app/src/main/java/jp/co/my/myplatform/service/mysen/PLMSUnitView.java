@@ -49,12 +49,12 @@ public class PLMSUnitView extends FrameLayout {
 
 	public void updateHitPoint(int nextHP, int diffHP) {
 		mUnitData.setCurrentHP(nextHP);
-		mHPBar.updateFromUnitView(nextHP, diffHP);
+		mHPBar.updateHitPoint(nextHP, diffHP);
 	}
 
 	private void initChildView() {
 		loadImage();
-		mHPBar.initFromUnitView(this);
+		mHPBar.initWithUnitView(this);
 	}
 
 	private void loadImage() {
@@ -87,5 +87,9 @@ public class PLMSUnitView extends FrameLayout {
 
 	public ImageView getUnitImageView() {
 		return mUnitImageView;
+	}
+
+	public PLMSHitPointBar getHPBar() {
+		return mHPBar;
 	}
 }

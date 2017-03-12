@@ -29,6 +29,14 @@ public class MYArrayList<E> extends ArrayList<E> {
 		return get(size - 1);
 	}
 
+	public boolean addIfNotNull(E object) {
+		if (object != null) {
+			add(object);
+			return true;
+		}
+		return false;
+	}
+
 	public boolean addOrMoveLast(E object) {
 		boolean exist = contains(object);
 		if (exist) {

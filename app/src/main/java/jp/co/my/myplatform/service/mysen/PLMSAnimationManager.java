@@ -90,6 +90,13 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 				animator.setDuration(300);
 				animatorArray.add(animator);
 			}
+
+			// ダメージアニメーション
+			final boolean willRemoveUnit = (scene.getDefenderRemainingHP() <= 0);
+			AnimatorSet damageAnimator = defenderLandView.getUnitView().getHPBar()
+					.getDamageAnimatorArray(willRemoveUnit, scene.getDefenderDiffHP());
+			animatorArray.addIfNotNull(damageAnimator);
+
 			AnimatorSet animatorSet = new AnimatorSet();
 			animatorSet.playTogether(animatorArray);
 			animatorSet.addListener(new AnimatorListenerAdapter() {
@@ -97,13 +104,13 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 				public void onAnimationStart(Animator animation) {
 					// 攻撃で敵 UnitView の裏に隠れないように最前面へ
 					attackerUnitView.bringToFront();
-					// ダメージアニメーション
+					// HP更新
 					defenderUnitView.updateHitPoint(scene.getDefenderRemainingHP(), scene.getDefenderDiffHP());
 				}
 
 				@Override
 				public void onAnimationEnd(Animator animation) {
-					if (defenderUnitView.getUnitData().getCurrentHP() <= 0) {
+					if (willRemoveUnit) {
 						defenderUnitView.removeFromField();
 					}
 				}

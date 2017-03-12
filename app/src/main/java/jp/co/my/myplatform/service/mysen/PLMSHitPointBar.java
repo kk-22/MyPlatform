@@ -41,7 +41,7 @@ public class PLMSHitPointBar extends FrameLayout {
 		this(context, null);
 	}
 
-	public void initFromUnitView(PLMSUnitView unitView) {
+	public void initWithUnitView(PLMSUnitView unitView) {
 		mUnitView = unitView;
 
 		PLMSArmyStrategy armyStrategy = unitView.getUnitData().getArmyStrategy();
@@ -49,25 +49,29 @@ public class PLMSHitPointBar extends FrameLayout {
 		mNumberText.setTextColor(color);
 		mBarView.setBackgroundColor(color);
 
-		updateFromUnitView(mUnitView.getUnitData().getCurrentHP(), 0);
+		updateHitPoint(mUnitView.getUnitData().getCurrentHP(), 0);
 	}
 
-	public void updateFromUnitView(int nextHP, int diffHP) {
-		if (diffHP < 0) {
+	public void updateHitPoint(int nextHP, int diffHP) {
+		if (needDamageText(diffHP)) {
 			// 初期設定時以外はダメージ表示
-			showDamageText(diffHP * -1);
+			mDamageText.setText(String.valueOf(diffHP * -1));
+			mDamageText.setAlpha(1f);
 		}
 		mNumberText.setText(String.valueOf(nextHP));
 	}
 
-	private void showDamageText(int damagePoint) {
-		mDamageText.setText(String.valueOf(damagePoint));
-		mDamageText.setAlpha(1f);
+	private boolean needDamageText(int diffHP) {
+		return (diffHP < 0);
+	}
 
+	public AnimatorSet getDamageAnimatorArray(boolean willRemoveUnit, int diffHP) {
+		if (!needDamageText(diffHP)) {
+			return null;
+		}
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		float currentY = mDamageText.getY();
 		float topY = currentY - getHeight() / 4;
-		boolean willRemove = (mUnitView.getUnitData().getCurrentHP() <= 0);
 
 		// 上へ
 		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mDamageText, "y", currentY, topY);
@@ -79,20 +83,20 @@ public class PLMSHitPointBar extends FrameLayout {
 		downAnimation.setDuration(100);
 		animatorArray.add(downAnimation);
 
-		// だんだん消える
-		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mDamageText, "alpha", 1f, 0f);
-		alphaAnimator.setDuration(300);
-		animatorArray.add(alphaAnimator);
-
-		if (willRemove) {
+		if (willRemoveUnit) {
 			// 敗走
 			ObjectAnimator removeAnimator = ObjectAnimator.ofFloat(mUnitView, "alpha", 1f, 0f);
-			removeAnimator.setDuration(300);
+			removeAnimator.setDuration(500);
 			animatorArray.add(removeAnimator);
+		} else {
+			// ダメージ表示が消える
+			ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mDamageText, "alpha", 1f, 0f);
+			alphaAnimator.setDuration(300);
+			animatorArray.add(alphaAnimator);
 		}
 
 		AnimatorSet animatorSet = new AnimatorSet();
 		animatorSet.playSequentially(animatorArray);
-		animatorSet.start();
+		return animatorSet;
 	}
 }
