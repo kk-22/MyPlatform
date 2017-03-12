@@ -96,7 +96,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 							attackToUnit(nextLandView, unitView);
 						} else {
 							// 初回タップ時は Info の更新のみ
-							mInformation.updateForBattleData(mMovingUnitView, unitView);
+							PLMSBattleResult result = new PLMSBattleResult(mField,
+									mMovingUnitView, nextLandView,
+									unitView, unitView.getLandView());
+							mInformation.updateForBattleData(result);
 						}
 					} else {
 						// ACTION_DOWN の information 更新のみ
@@ -144,7 +147,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// ユニット不在、もしくは移動前のユニット位置を通過
 				} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
 					// 攻撃範囲内の敵
-					mInformation.updateForBattleData(mMovingUnitView, unitView);
+					// TODO:moveUnitForAttackメソッドが上の処理と重複
+					PLMSLandView nextLandView = moveUnitForAttack(landView);
+					PLMSBattleResult result = new PLMSBattleResult(mField,
+							mMovingUnitView, nextLandView,
+							unitView, unitView.getLandView());
+					mInformation.updateForBattleData(result);
 				} else {
 					// 味方もしくは攻撃範囲外の敵
 					mInformation.updateForUnitData(unitView);

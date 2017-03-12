@@ -41,4 +41,14 @@ public class MYArrayList<E> extends ArrayList<E> {
 	public int indexOfLast() {
 		return size() - 1;
 	}
+
+	public int countObject(E object) {
+		int count = 0;
+		for (E obj : this) {
+			if (obj.equals(object)) {
+				count++;
+			}
+		}
+		return count;
+	}
 }

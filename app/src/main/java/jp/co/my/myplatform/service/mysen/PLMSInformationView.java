@@ -13,12 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView;
 
 
 public class PLMSInformationView extends LinearLayout {
 
 	private PLMSUnitView mLeftUnitView;
 	private PLMSUnitView mRightUnitView;
+	private PLMSBattleResult mBattleResult;
 
 	private LinearLayout mUnitDataLinear;
 	private FrameLayout mBattleDataFrame;
@@ -35,6 +38,9 @@ public class PLMSInformationView extends LinearLayout {
 	private View mRightBackgroundView;
 	private ImageView mRightImageView;
 
+	private PLMSBattleInfoView mLeftBattleInfo;
+	private PLMSBattleInfoView mRightBattleInfo;
+
 	public PLMSInformationView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_information, this);
@@ -44,7 +50,7 @@ public class PLMSInformationView extends LinearLayout {
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
 		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
 		mCurrentHPTextView = (TextView) findViewById(R.id.current_hp_text);
-		mMaxHPTextView = (TextView) findViewById(R.id.max_hp_text);
+		mMaxHPTextView = (TextView) findViewById(R.id.result_hp_text);
 		mAttackTextView = (TextView) findViewById(R.id.attack_text);
 		mSpeedTextView = (TextView) findViewById(R.id.speed_text);
 		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
@@ -52,6 +58,11 @@ public class PLMSInformationView extends LinearLayout {
 
 		mRightBackgroundView = findViewById(R.id.right_background_view);
 		mRightImageView = (ImageView) findViewById(R.id.right_image);
+
+		mLeftBattleInfo = (PLMSBattleInfoView) findViewById(R.id.left_battle_info);
+		mLeftBattleInfo.initWithIsLeft(true);
+		mRightBattleInfo = (PLMSBattleInfoView) findViewById(R.id.right_battle_info);
+		mRightBattleInfo.initWithIsLeft(false);
 	}
 
 	public PLMSInformationView(Context context, AttributeSet attrs){
@@ -86,11 +97,15 @@ public class PLMSInformationView extends LinearLayout {
 		setBackgroundColor(unitView.getUnitData().getArmyStrategy().getInformationColor());
 	}
 
-	// TODO: バトルのダメージデータは内部で計算？ BattleResultクラスを引数で受け取る？
-	public void updateForBattleData(PLMSUnitView leftUnitView, PLMSUnitView rightUnitView) {
+	public void updateForBattleData(PLMSBattleResult battleResult) {
+		PLMSUnitView leftUnitView = battleResult.getLeftUnit().getUnitView();
+		PLMSUnitView rightUnitView = battleResult.getRightUnit().getUnitView();
 		if (mRightUnitView == null) {
 			mUnitDataLinear.setVisibility(View.GONE);
 			mBattleDataFrame.setVisibility(View.VISIBLE);
+		}
+		if (battleResult.equals(mBattleResult)) {
+			return;
 		}
 
 		if (!leftUnitView.equals(mLeftUnitView)) {
@@ -100,6 +115,9 @@ public class PLMSInformationView extends LinearLayout {
 
 		mRightUnitView = rightUnitView;
 		animateUnitImage(mRightImageView, rightUnitView);
+
+		mLeftBattleInfo.updateInfo(battleResult, battleResult.getLeftUnit());
+		mRightBattleInfo.updateInfo(battleResult, battleResult.getRightUnit());
 
 		// 背景色設定
 		setBackgroundColor(leftUnitView.getUnitData().getArmyStrategy().getInformationColor());

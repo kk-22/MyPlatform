@@ -10,6 +10,7 @@ public class PLMSBattleResult {
 	private PLMSBattleUnit mLeftUnit;
 	private PLMSBattleUnit mRightUnit;
 	private PLMSFieldView mFieldView;
+	private MYArrayList<PLMSBattleUnit> mAttackerArray;		// 攻撃順配列
 	private MYArrayList<PLMSBattleScene> mSceneArray;
 
 	private int mDistance;
@@ -22,15 +23,15 @@ public class PLMSBattleResult {
 		mFieldView = fieldView;
 
 		mDistance = leftUnitView.getUnitData().getWeapon().getAttackRange();
+		mAttackerArray = createAttackerArray();
 		mSceneArray = new MYArrayList<>();
 		createScene();
 	}
 
 	private void createScene() {
-		MYArrayList<PLMSBattleUnit> attackerArray = createAttackerArray();
-		int maxScene = attackerArray.size();
+		int maxScene = mAttackerArray.size();
 		for (int i = 0; i < maxScene; i++) {
-			PLMSBattleUnit attackerUnit = attackerArray.get(i);
+			PLMSBattleUnit attackerUnit = mAttackerArray.get(i);
 			PLMSBattleUnit defenderUnit = getEnemyUnitFromUnit(attackerUnit);
 			PLMSBattleScene scene = new PLMSBattleScene(attackerUnit, defenderUnit);
 			mSceneArray.add(scene);
@@ -86,5 +87,9 @@ public class PLMSBattleResult {
 
 	public MYArrayList<PLMSBattleScene> getSceneArray() {
 		return mSceneArray;
+	}
+
+	public MYArrayList<PLMSBattleUnit> getAttackerArray() {
+		return mAttackerArray;
 	}
 }
