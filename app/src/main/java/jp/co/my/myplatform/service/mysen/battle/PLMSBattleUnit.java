@@ -41,9 +41,13 @@ public class PLMSBattleUnit {
 		return false;
 	}
 
-	public int getDefenseForEnemyAttack(PLMSBattleUnit enemyUnit) {
-		// TODO: 敵の武器の物理/魔法によって分岐
-		return mBattleDefense;
+	// TODO: 敵の武器種類（物理/魔法）によって分岐
+	public int getDefenseForEnemyAttack() {
+		if (mEnemyUnit.getUnitView().getUnitData().getWeapon().isPhysicalAttack()) {
+			return mBattleDefense;
+		} else {
+			return mBattleMagicDefense;
+		}
 	}
 
 	public void initParamsWithEnemyUnit(PLMSBattleUnit enemyUnit) {
@@ -85,6 +89,10 @@ public class PLMSBattleUnit {
 
 	public int getTotalAttack() {
 		return mTotalAttack;
+	}
+
+	public PLMSBattleUnit getEnemyUnit() {
+		return mEnemyUnit;
 	}
 
 	// setter

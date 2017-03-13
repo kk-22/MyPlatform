@@ -33,8 +33,8 @@ public class PLMSBattleResult {
 
 	// 戦闘 Info に表示するダメージ値
 	public int givingDamageOfBattleUnit(PLMSBattleUnit battleUnit) {
-		PLMSBattleUnit enemyUnit = getEnemyUnitFromUnit(battleUnit);
-		int damage = battleUnit.getTotalAttack() - enemyUnit.getDefenseForEnemyAttack(battleUnit);
+		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+		int damage = battleUnit.getTotalAttack() - enemyUnit.getDefenseForEnemyAttack();
 		return Math.max(0, damage);
 	}
 
@@ -42,7 +42,7 @@ public class PLMSBattleResult {
 		int maxScene = mAttackerArray.size();
 		for (int i = 0; i < maxScene; i++) {
 			PLMSBattleUnit attackerUnit = mAttackerArray.get(i);
-			PLMSBattleUnit defenderUnit = getEnemyUnitFromUnit(attackerUnit);
+			PLMSBattleUnit defenderUnit = attackerUnit.getEnemyUnit();
 			PLMSBattleScene scene = new PLMSBattleScene(attackerUnit, defenderUnit);
 			mSceneArray.add(scene);
 
@@ -56,7 +56,7 @@ public class PLMSBattleResult {
 	private MYArrayList<PLMSBattleUnit> createAttackerArray() {
 		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
 		PLMSBattleUnit firstAttacker = mLeftUnit;
-		PLMSBattleUnit secondAttacker = getEnemyUnitFromUnit(firstAttacker);
+		PLMSBattleUnit secondAttacker = firstAttacker.getEnemyUnit();
 		boolean canAttackSecondAttacker = secondAttacker.canAttackWithDistance(mDistance);
 
 		attackerArray.add(firstAttacker);
@@ -72,14 +72,6 @@ public class PLMSBattleResult {
 			attackerArray.add(secondAttacker);
 		}
 		return attackerArray;
-	}
-
-	// 引数に渡したユニットとは別のユニットを返す
-	private PLMSBattleUnit getEnemyUnitFromUnit(PLMSBattleUnit battleUnit) {
-		if (battleUnit.equals(mLeftUnit)) {
-			return mRightUnit;
-		}
-		return mLeftUnit;
 	}
 
 	// getter

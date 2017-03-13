@@ -22,6 +22,7 @@ public class PLMSWeaponData {
 
 	private Type mWeaponType;
 	private int mAttackRange;
+	private boolean mIsPhysicalAttack;
 
 	public PLMSWeaponData(int no) {
 		mWeaponType = getType(no);
@@ -45,6 +46,23 @@ public class PLMSWeaponData {
 				mAttackRange = 2;
 				break;
 		}
+
+		switch (mWeaponType) {
+			case SWORD:
+			case SPEAR:
+			case AXE:
+			case BOW:
+			case SHURIKEN:
+				mIsPhysicalAttack = true;
+				break;
+			case RED_MAGIC:
+			case BLUE_MAGIC:
+			case GREEN_MAGIC:
+			case STAFF:
+			case BREATH:
+				mIsPhysicalAttack = false;
+				break;
+		}
 	}
 
 	private Type getType(int no) {
@@ -60,5 +78,9 @@ public class PLMSWeaponData {
 	// getter
 	public int getAttackRange() {
 		return mAttackRange;
+	}
+
+	public boolean isPhysicalAttack() {
+		return mIsPhysicalAttack;
 	}
 }

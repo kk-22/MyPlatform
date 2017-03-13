@@ -19,7 +19,7 @@ public class PLMSBattleScene {
 
 	private void calculateDamage() {
 		int attack = mAttackerUnit.getTotalAttack();
-		int defense = mDefenderUnit.getDefenseForEnemyAttack(mAttackerUnit);
+		int defense = mDefenderUnit.getDefenseForEnemyAttack();
 		int damage = Math.max(0, attack - defense);
 		mDefenderDiffHP = damage * -1;
 		mDefenderRemainingHP = calculateRemainingHP(mDefenderUnit, mDefenderDiffHP);
