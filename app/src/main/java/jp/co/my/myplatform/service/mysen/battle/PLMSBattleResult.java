@@ -22,7 +22,9 @@ public class PLMSBattleResult {
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 		mFieldView = fieldView;
 
-		initBattleUnit();
+		mLeftUnit.initParamsWithEnemyUnit(mRightUnit);
+		mRightUnit.initParamsWithEnemyUnit(mLeftUnit);
+
 		mDistance = leftUnitView.getUnitData().getWeapon().getAttackRange();
 		mAttackerArray = createAttackerArray();
 		mSceneArray = new MYArrayList<>();
@@ -34,11 +36,6 @@ public class PLMSBattleResult {
 		PLMSBattleUnit enemyUnit = getEnemyUnitFromUnit(battleUnit);
 		int damage = battleUnit.getTotalAttack() - enemyUnit.getDefenseForEnemyAttack(battleUnit);
 		return Math.max(0, damage);
-	}
-
-	private void initBattleUnit() {
-		mLeftUnit.setTotalAttack(mLeftUnit.getBattleAttack());
-		mRightUnit.setTotalAttack(mRightUnit.getBattleAttack());
 	}
 
 	private void createScene() {

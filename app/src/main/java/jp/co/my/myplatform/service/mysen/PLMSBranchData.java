@@ -7,6 +7,7 @@ public class PLMSBranchData {
 		ARMOR(11),
 		CAVALRY(21),
 		FLYING(31);
+
 		final int id;
 
 		Type(final int id) {

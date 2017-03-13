@@ -10,8 +10,9 @@ public class PLMSUnitData {
 	private Point mFirstPoint;				// 初期位置
 	private PLMSArmyStrategy mArmyStrategy;
 
-	private PLMSBranchData mBranch;
+	private PLMSColorData mColor;
 	private PLMSWeaponData mWeapon;
+	private PLMSBranchData mBranch;
 
 	private int mMaxHP;
 	private int mCurrentHP;
@@ -27,8 +28,9 @@ public class PLMSUnitData {
 		mFirstPoint = firstPoint;
 		mArmyStrategy = armyStrategy;
 
-		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
+		mColor = new PLMSColorData((mUnitModel.getColorType()));
 		mWeapon = new PLMSWeaponData(mUnitModel.getWeaponType());
+		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
 
 		resetAllStatus();
 	}
@@ -99,6 +101,10 @@ public class PLMSUnitData {
 
 	public PLMSWeaponData getWeapon() {
 		return mWeapon;
+	}
+
+	public PLMSColorData getColor() {
+		return mColor;
 	}
 
 	// setter

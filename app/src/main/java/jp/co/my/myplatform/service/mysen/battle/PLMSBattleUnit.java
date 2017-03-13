@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
+import jp.co.my.myplatform.service.mysen.PLMSColorData;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 
@@ -7,6 +8,7 @@ public class PLMSBattleUnit {
 
 	private PLMSUnitView mUnitView;
 	private PLMSLandView mLandView;
+	private PLMSBattleUnit mEnemyUnit;
 
 	private int mResultHP;
 	private int mBattleAttack;
@@ -42,6 +44,14 @@ public class PLMSBattleUnit {
 	public int getDefenseForEnemyAttack(PLMSBattleUnit enemyUnit) {
 		// TODO: 敵の武器の物理/魔法によって分岐
 		return mBattleDefense;
+	}
+
+	public void initParamsWithEnemyUnit(PLMSBattleUnit enemyUnit) {
+		mEnemyUnit = enemyUnit;
+
+		PLMSColorData enemyColor = enemyUnit.getUnitView().getUnitData().getColor();
+		double ratio = mUnitView.getUnitData().getColor().damageRatio(enemyColor);
+		mTotalAttack = (int)Math.floor(mBattleAttack * ratio);
 	}
 
 	// getter
@@ -80,9 +90,5 @@ public class PLMSBattleUnit {
 	// setter
 	public void setResultHP(int resultHP) {
 		mResultHP = resultHP;
-	}
-
-	public void setTotalAttack(int totalAttack) {
-		mTotalAttack = totalAttack;
 	}
 }
