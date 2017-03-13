@@ -82,7 +82,8 @@ public class PLMSInformationView extends LinearLayout {
 	}
 
 	public void updateForUnitData(PLMSUnitView unitView) {
-		if (mRightUnitView != null) {
+		if (mRightUnitView != null || mLeftUnitView == null) {
+			// バトルinfo後の表示 or 初回表示時
 			mUnitDataLinear.setVisibility(View.VISIBLE);
 			mBattleDataFrame.setVisibility(View.GONE);
 			mRightUnitView = null;
