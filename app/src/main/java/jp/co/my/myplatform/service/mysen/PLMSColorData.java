@@ -2,8 +2,8 @@ package jp.co.my.myplatform.service.mysen;
 
 public class PLMSColorData {
 
-	private static final double ADVANTAGE_DAMAGE_RATIO = 1.2;
-	private static final double DISADVANTAGE_DAMAGE_RATIO = 0.8;
+	private static final double ADVANTAGE_DAMAGE_RATIO = 0.2;
+	private static final double DISADVANTAGE_DAMAGE_RATIO = -0.2;
 
 	private enum Type {
 		RED(1), BLUE(2), GREEN(3),
@@ -52,7 +52,7 @@ public class PLMSColorData {
 			case WHITE:
 				break;
 		}
-		return 1.0;
+		return 0.0;
 	}
 
 	private Type getType(int no) {

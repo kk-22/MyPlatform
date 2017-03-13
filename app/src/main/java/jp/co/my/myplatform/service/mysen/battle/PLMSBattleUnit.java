@@ -55,7 +55,10 @@ public class PLMSBattleUnit {
 
 		PLMSColorData enemyColor = enemyUnit.getUnitView().getUnitData().getColor();
 		double ratio = mUnitView.getUnitData().getColor().damageRatio(enemyColor);
-		mTotalAttack = (int)Math.floor(mBattleAttack * ratio);
+		// 正負どちらでも0に近い値を採用する
+		// Math.floor は負の値の時にも低い値を採用するため使用不可
+		int plusDamage = (int)(mBattleAttack * ratio);
+		mTotalAttack = mBattleAttack + plusDamage;
 	}
 
 	// getter
