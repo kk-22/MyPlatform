@@ -7,4 +7,5 @@ public abstract class PLMSArmyStrategy {
 
 	public abstract int getHitPointColor();
 	public abstract int getInformationColor();
+	public abstract int getIconGravity();
 }

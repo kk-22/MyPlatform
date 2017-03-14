@@ -7,7 +7,7 @@ public class PLMSWeaponData {
 		BOW(11), SHURIKEN(16),
 		RED_MAGIC(21), BLUE_MAGIC(22), GREEN_MAGIC(23),
 		STAFF(26),
-		BREATH(31),;
+		RED_BREATH(31), BLUE_BREATH(32), GREEN_BREATH(33);
 
 		final int id;
 
@@ -34,7 +34,9 @@ public class PLMSWeaponData {
 			case SWORD:
 			case SPEAR:
 			case AXE:
-			case BREATH:
+			case RED_BREATH:
+			case BLUE_BREATH:
+			case GREEN_BREATH:
 				mAttackRange = 1;
 				break;
 			case BOW:
@@ -59,7 +61,9 @@ public class PLMSWeaponData {
 			case BLUE_MAGIC:
 			case GREEN_MAGIC:
 			case STAFF:
-			case BREATH:
+			case RED_BREATH:
+			case BLUE_BREATH:
+			case GREEN_BREATH:
 				mIsPhysicalAttack = false;
 				break;
 		}
@@ -72,7 +76,11 @@ public class PLMSWeaponData {
 				return type;
 			}
 		}
-		return Type.BREATH;
+		return Type.GREEN_BREATH;
+	}
+
+	public String getWeaponImagePath() {
+		return "weapon/" + mWeaponType.getInt() + ".png";
 	}
 
 	// getter

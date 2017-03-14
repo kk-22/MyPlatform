@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen.army;
 
 import android.graphics.Color;
+import android.view.Gravity;
 
 public class PLMSRedArmy extends PLMSArmyStrategy {
 	@Override
@@ -11,5 +12,10 @@ public class PLMSRedArmy extends PLMSArmyStrategy {
 	@Override
 	public int getInformationColor() {
 		return Color.parseColor("#EA5532");
+	}
+
+	@Override
+	public int getIconGravity() {
+		return Gravity.RIGHT;
 	}
 }

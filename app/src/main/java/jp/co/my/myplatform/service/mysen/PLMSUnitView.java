@@ -28,6 +28,13 @@ public class PLMSUnitView extends FrameLayout {
 
 		mUnitData = unitData;
 
+		ImageView weaponImage = (ImageView) findViewById(R.id.weapon_image);
+		String weaponPath = mUnitData.getWeapon().getWeaponImagePath();
+		weaponImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(weaponPath, getContext()));
+
+		FrameLayout.LayoutParams layoutParams = (LayoutParams) weaponImage.getLayoutParams();
+		layoutParams.gravity = mUnitData.getArmyStrategy().getIconGravity();
+
 		initChildView();
 	}
 
