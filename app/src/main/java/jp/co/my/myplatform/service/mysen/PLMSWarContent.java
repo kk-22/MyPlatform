@@ -29,7 +29,7 @@ public class PLMSWarContent extends PLContentView {
 
 	public PLMSWarContent() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_battle, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_war, this);
 		mInformation = (PLMSInformationView) findViewById(R.id.information_view);
 		mField = (PLMSFieldView) findViewById(R.id.field_view);
 
