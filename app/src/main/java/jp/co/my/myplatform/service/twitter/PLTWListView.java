@@ -107,7 +107,7 @@ public class PLTWListView extends PLContentView {
 		mFlickRegistrant = new PLFlickGestureRegistrant(getContext(), null, new PLFlickGestureRegistrant.PLFlickGestureListener() {
 			@Override
 			public void flickToRight() {
-				PLCoreService.getNavigationController().goBackView();
+				PLCoreService.getNavigationController().popView();
 			}
 
 			@Override

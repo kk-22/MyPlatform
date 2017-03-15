@@ -39,7 +39,7 @@ public class PLNavigationController extends PLOverlayView {
 		mBackButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				goBackView();
+				popView();
 			}
 		});
 		mBackButton.setOnLongClickListener(new OnLongClickListener() {
@@ -88,8 +88,7 @@ public class PLNavigationController extends PLOverlayView {
 		return (T) view;
 	}
 
-	public void goBackView() {
-
+	public void popView() {
 		int count = mViewCache.size();
 		if (count <= 1) {
 			MYLogUtil.showErrorToast("戻り先なし count=" + count);

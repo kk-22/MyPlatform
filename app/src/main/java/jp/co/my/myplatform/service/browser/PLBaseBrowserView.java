@@ -85,7 +85,7 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 		super.onAttachedToWindow();
 		if (mCurrentWebView == null) {
 			MYLogUtil.showErrorToast("viewが開放済み");
-			PLCoreService.getNavigationController().goBackView();
+			PLCoreService.getNavigationController().popView();
 		}
 	}
 
@@ -107,7 +107,7 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 			mCurrentWebView.goBack();
 			return true;
 		}
-		PLCoreService.getNavigationController().goBackView();
+		PLCoreService.getNavigationController().popView();
 		return true;
 	}
 	private void onForwardKey() {

@@ -124,7 +124,7 @@ public class PLSetAlarmView extends PLContentView {
 					PendingIntent alarmSender = createPendingIntent();
 					AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 					alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
-					PLCoreService.getNavigationController().goBackView();
+					PLCoreService.getNavigationController().popView();
 				} else {
 					startAlarm();
 				}
@@ -137,7 +137,7 @@ public class PLSetAlarmView extends PLContentView {
 					// すでにアラームが鳴っている場合
 					mCancelButton.setEnabled(false);
 					stopAlarm();
-					PLCoreService.getNavigationController().goBackView();
+					PLCoreService.getNavigationController().popView();
 					return;
 				}
 				String[] titles = {"アラーム解除"};
@@ -148,7 +148,7 @@ public class PLSetAlarmView extends PLContentView {
 						mSelectTimeView.resetAllTime();
 						mCancelButton.setEnabled(false);
 						cancelAlarm();
-						PLCoreService.getNavigationController().goBackView();
+						PLCoreService.getNavigationController().popView();
 					}
 				}).showPopover();
 			}
