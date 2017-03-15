@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen;
 
 import android.graphics.Point;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.army.PLMSBlueArmy;
@@ -51,6 +53,13 @@ public class PLMSWarContent extends PLContentView {
 		LinearLayout naviBar = new LinearLayout(getContext());
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_war_navibar, naviBar);
 		setNavigationBar(naviBar);
+
+		naviBar.findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().popView();
+			}
+		});
 	}
 
 	private void loadUnitModels() {
