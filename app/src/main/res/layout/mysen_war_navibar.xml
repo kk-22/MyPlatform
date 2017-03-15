@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/function_button"
+        android:text="機能"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/danger_area_button"
+        android:text="危険\n範囲"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/turn_end_button"
+        android:text="ターン\n終了"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

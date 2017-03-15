@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.content.PLHomeView;
@@ -16,7 +17,8 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 
 public class PLNavigationController extends PLOverlayView {
 
-	private FrameLayout mFrameLayout;
+	private FrameLayout mContentFrameLayout;
+	private FrameLayout mNaviBarFrameLayout;
 	private Button mBackButton;
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
@@ -24,8 +26,9 @@ public class PLNavigationController extends PLOverlayView {
 	public PLNavigationController() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
-		mFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+		mContentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
 		mBackButton = (Button) findViewById(R.id.back_button);
+		mNaviBarFrameLayout = (FrameLayout) findViewById(R.id.navigation_bar_frame);
 
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
 			@Override
@@ -33,7 +36,7 @@ public class PLNavigationController extends PLOverlayView {
 				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationController.this);
 			}
 		});
-		findViewById(R.id.back_button).setOnClickListener(new OnClickListener() {
+		mBackButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				goBackView();
@@ -131,7 +134,7 @@ public class PLNavigationController extends PLOverlayView {
 		for (PLContentView view : mViewCache) {
 			view.viewWillDisappear();
 		}
-		mFrameLayout.removeAllViews();
+		mContentFrameLayout.removeAllViews();
 		removeAllViews();
 		mCurrentView = null;
 
@@ -140,23 +143,40 @@ public class PLNavigationController extends PLOverlayView {
 		}
 	}
 
-	public PLContentView getCurrentView() {
-		return mCurrentView;
+	public void putNavigationBar(View navigationBar) {
+		View prevNaviBar = mNaviBarFrameLayout.findViewWithTag("navigationBar");
+		if (prevNaviBar != null) {
+			mNaviBarFrameLayout.removeView(prevNaviBar);
+		}
+		if (navigationBar != null) {
+			MYViewUtil.removeFromSuperView(mBackButton);
+			navigationBar.setTag("navigationBar");
+			mNaviBarFrameLayout.addView(navigationBar);
+		} else if (mBackButton.getParent() == null) {
+			mNaviBarFrameLayout.addView(mBackButton);
+		}
 	}
 
 	private void changeCurrentView(PLContentView view) {
 		// フォーカスが前のViewに残らないように移動
 		view.requestFocus();
 		if (mCurrentView != null) {
-			mFrameLayout.removeAllViews();
+			mContentFrameLayout.removeAllViews();
 			mCurrentView = null;
 		}
 
-		mFrameLayout.addView(view, createMatchParams());
+		mContentFrameLayout.addView(view, createMatchParams());
 		mCurrentView = view;
+
+		putNavigationBar(view.getNavigationBar());
 	}
 
 	private void updateBackButton() {
 		mBackButton.setEnabled(mViewCache.size() > 1);
+	}
+
+	// getter
+	public PLContentView getCurrentView() {
+		return mCurrentView;
 	}
 }

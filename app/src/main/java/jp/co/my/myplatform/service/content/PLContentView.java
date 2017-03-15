@@ -12,10 +12,13 @@ import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
 import jp.co.my.myplatform.service.view.PLSavePositionListView;
 
+import static jp.co.my.myplatform.service.core.PLCoreService.getNavigationController;
+
 public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	private ArrayList<PLPopoverView> mPopoverViews;
 	private ArrayList<WeakReference<PLSavePositionListView>> mListViews;
+	private View mNavigationBar;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
@@ -86,6 +89,10 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		popoverView.addedPopover(this);
 	}
 
+	public boolean isCurrentContentView() {
+		return equals(getNavigationController().getCurrentView());
+	}
+
 	@Override
 	public boolean onKey(View view, int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
@@ -96,5 +103,17 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	public boolean onBackKey() {
 		return false;
+	}
+
+	// getter and setter
+	public View getNavigationBar() {
+		return mNavigationBar;
+	}
+
+	public void setNavigationBar(View navigationBar) {
+		mNavigationBar = navigationBar;
+		if (isCurrentContentView()) {
+			getNavigationController().putNavigationBar(mNavigationBar);
+		}
 	}
 }

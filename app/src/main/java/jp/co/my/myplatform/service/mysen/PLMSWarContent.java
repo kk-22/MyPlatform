@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.mysen;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
@@ -42,7 +43,14 @@ public class PLMSWarContent extends PLContentView {
 			}
 		});
 
+		initNaviBar();
 		loadUnitModels();
+	}
+
+	private void initNaviBar() {
+		LinearLayout naviBar = new LinearLayout(getContext());
+		LayoutInflater.from(getContext()).inflate(R.layout.mysen_war_navibar, naviBar);
+		setNavigationBar(naviBar);
 	}
 
 	private void loadUnitModels() {
