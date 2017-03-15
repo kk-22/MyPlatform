@@ -19,6 +19,7 @@ public class PLMSUnitView extends FrameLayout {
 	private PLMSUnitData mUnitData;
 	private PLMSLandView mLandView;
 	private Point mCurrentPoint;
+	private boolean mIsAlreadyAction;			// 現在のターン内での行動有無
 
 	public PLMSUnitView(Context context, PLMSUnitData unitData) {
 		super(context);
@@ -27,20 +28,19 @@ public class PLMSUnitView extends FrameLayout {
 		mHPBar = (PLMSHitPointBar) findViewById(R.id.hp_bar);
 
 		mUnitData = unitData;
-
-		ImageView weaponImage = (ImageView) findViewById(R.id.weapon_image);
-		String weaponPath = mUnitData.getWeapon().getWeaponImagePath();
-		weaponImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(weaponPath, getContext()));
-
-		FrameLayout.LayoutParams layoutParams = (LayoutParams) weaponImage.getLayoutParams();
-		layoutParams.gravity = mUnitData.getArmyStrategy().getIconGravity();
+		mUnitData.getArmyStrategy().addUnitView(this);
 
 		initChildView();
+	}
+
+	public void resetForNewTurn() {
+		mIsAlreadyAction = false;
 	}
 
 	public void moveToLand(PLMSLandView landView) {
 		if (mLandView != null) {
 			mLandView.removeUnitView();
+			mIsAlreadyAction = true;
 		}
 
 		mLandView = landView;
@@ -60,6 +60,13 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	private void initChildView() {
+		ImageView weaponImage = (ImageView) findViewById(R.id.weapon_image);
+		String weaponPath = mUnitData.getWeapon().getWeaponImagePath();
+		weaponImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(weaponPath, getContext()));
+
+		FrameLayout.LayoutParams layoutParams = (LayoutParams) weaponImage.getLayoutParams();
+		layoutParams.gravity = mUnitData.getArmyStrategy().getIconGravity();
+
 		loadImage();
 		mHPBar.initWithUnitView(this);
 	}
