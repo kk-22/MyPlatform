@@ -137,7 +137,6 @@ public class PLSetAlarmView extends PLContentView {
 					// すでにアラームが鳴っている場合
 					mCancelButton.setEnabled(false);
 					stopAlarm();
-					PLCoreService.getNavigationController().popView();
 					return;
 				}
 				String[] titles = {"アラーム解除"};
@@ -148,7 +147,6 @@ public class PLSetAlarmView extends PLContentView {
 						mSelectTimeView.resetAllTime();
 						mCancelButton.setEnabled(false);
 						cancelAlarm();
-						PLCoreService.getNavigationController().popView();
 					}
 				}).showPopover();
 			}
@@ -173,6 +171,7 @@ public class PLSetAlarmView extends PLContentView {
 		buttonView.clearText(PLSetAlarmView.class);
 
 		PLCoreService.getCoreService().showDefaultNotification();
+		PLCoreService.getNavigationController().popView();
 
 		if (sAlarmHandler == null) {
 			// アラーム開始前なら通知
