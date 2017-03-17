@@ -1,8 +1,11 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -15,6 +18,7 @@ public class PLMSUnitView extends FrameLayout {
 
 	private ImageView mUnitImageView;
 	private PLMSHitPointBar mHPBar;
+	private View mAlreadyActionView;
 
 	private PLMSUnitData mUnitData;
 	private PLMSLandView mLandView;
@@ -33,14 +37,17 @@ public class PLMSUnitView extends FrameLayout {
 		initChildView();
 	}
 
-	public void resetForNewTurn() {
-		mIsAlreadyAction = false;
+	public void resetForNewTurn(int numberOfTurn) {
+		if (mAlreadyActionView != null) {
+			mAlreadyActionView.setVisibility(GONE);
+		}
 	}
 
 	public void moveToLand(PLMSLandView landView) {
 		if (mLandView != null) {
+			// 初回配置以外
 			mLandView.removeUnitView();
-			mIsAlreadyAction = true;
+			showAlreadyActionView();
 		}
 
 		mLandView = landView;
@@ -59,6 +66,10 @@ public class PLMSUnitView extends FrameLayout {
 		mHPBar.updateHitPoint(nextHP, diffHP);
 	}
 
+	public boolean isAlreadyAction() {
+		return (mAlreadyActionView != null && mAlreadyActionView.getVisibility() == VISIBLE);
+	}
+
 	private void initChildView() {
 		ImageView weaponImage = (ImageView) findViewById(R.id.weapon_image);
 		String weaponPath = mUnitData.getWeapon().getWeaponImagePath();
@@ -74,6 +85,17 @@ public class PLMSUnitView extends FrameLayout {
 	private void loadImage() {
 		String path = mUnitData.getSmallImagePath();
 		mUnitImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath(path, getContext()));
+	}
+
+	private void showAlreadyActionView() {
+		if (mAlreadyActionView == null) {
+			mAlreadyActionView = new View(getContext());
+			mAlreadyActionView.setBackgroundColor(Color.parseColor("#80A9A9A9"));
+			addView(mAlreadyActionView,
+					new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		} else {
+			mAlreadyActionView.setVisibility(VISIBLE);
+		}
 	}
 
 	// 便利メソッド

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 
@@ -23,12 +24,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSFieldView mField;
 	private PLMSAreaManager mAreaManager;
 	private ArrayList<PLMSUnitView> mUnitArray;
+	private PLMSArmyStrategy mTargetArmy;				// 操作対象のArmy
 
 	private PLMSAnimationManager mAnimationManager;
 
 	private PointF mFirstTouchPointF;
 	private PLMSUnitView mMovingUnitView;
-	private PLMSLandView mTempLandView;            // mMovingUnitView の現在の仮位置
+	private PLMSLandView mTempLandView;					// mMovingUnitView の現在の仮位置
 	private PLMSLandRoute mTempRoute;
 	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
 
@@ -42,6 +44,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mPrevRouteArray = new MYArrayList<>();
 
 		initEvent();
+	}
+
+	public void enableInterfaceForArmy(PLMSArmyStrategy armyStrategy) {
+		mTargetArmy = armyStrategy;
 	}
 
 	@Override

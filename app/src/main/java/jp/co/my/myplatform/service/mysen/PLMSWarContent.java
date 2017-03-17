@@ -19,13 +19,14 @@ import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.army.PLMSBlueArmy;
 import jp.co.my.myplatform.service.mysen.army.PLMSRedArmy;
+import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 
 
 public class PLMSWarContent extends PLContentView {
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
-	private PLMSUserInterface mUserInterface;
+	private PLMSTurnManager mTurnManager;
 
 	private ArrayList<PLMSUnitData> mUnitDataArray;
 	private boolean mFinishedLayout;			// OnGlobalLayoutListener が呼ばれたら true
@@ -58,6 +59,20 @@ public class PLMSWarContent extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().popView();
+			}
+		});
+		naviBar.findViewById(R.id.turn_end_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mTurnManager == null) {
+					return;
+				}
+				new PLConfirmationPopover("ターンを終了しますか？", new PLConfirmationPopover.PLConfirmationListener() {
+					@Override
+					public void onClickButton(boolean isYes) {
+						mTurnManager.startNextTurn();
+					}
+				}, null);
 			}
 		});
 	}
@@ -97,6 +112,6 @@ public class PLMSWarContent extends PLContentView {
 			return;
 		}
 		mField.layoutChildViews(mUnitDataArray);
-		mUserInterface = new PLMSUserInterface(mInformation, mField, mField.getUnitViewArray());
+		mTurnManager = new PLMSTurnManager(mInformation, mField);
 	}
 }

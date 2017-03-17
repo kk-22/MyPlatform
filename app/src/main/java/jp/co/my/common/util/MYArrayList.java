@@ -46,6 +46,18 @@ public class MYArrayList<E> extends ArrayList<E> {
 		return exist;
 	}
 
+	public E getNextOfObject(E object) {
+		int index = indexOf(object);
+		if (index == -1) {
+			return null;
+		}
+		int nextIndex = index + 1;
+		if (nextIndex < size()) {
+			return get(nextIndex);
+		}
+		return get(0);
+	}
+
 	public int indexOfLast() {
 		return size() - 1;
 	}
