@@ -15,6 +15,10 @@ public abstract class PLMSArmyStrategy {
 		mUnitViewArray.add(unitView);
 	}
 
+	public boolean hasUnitView(PLMSUnitView unitView) {
+		return mUnitViewArray.contains(unitView);
+	}
+
 	public abstract int getHitPointColor();
 	public abstract int getInformationColor();
 	public abstract int getIconGravity();

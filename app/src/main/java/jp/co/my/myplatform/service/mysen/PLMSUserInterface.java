@@ -63,8 +63,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				}
 			}
 			case MotionEvent.ACTION_MOVE: {
-				if (unitView.getVisibility() == GONE) {
-					// 同ユニットを既にドラッグイベント中
+				if (unitView.getVisibility() == GONE || !isMovableUnitView(unitView)) {
+					// 同ユニットを既にドラッグイベント中 or 移動対象でないユニット
 					break;
 				}
 				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
@@ -86,7 +86,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			}
 			case MotionEvent.ACTION_UP: {
 				if (mMovingUnitView == null) {
-					beginMoveEvent(unitView);
+					if (isMovableUnitView(unitView)) {
+						beginMoveEvent(unitView);
+					}
+					break;
+				}
+				if (event.getX() < 0 || unitView.getWidth() < event.getX()
+						|| event.getY() < 0 || unitView.getHeight() < event.getY()) {
+					// タップ位置から指を動かして UnitView 外に移動した場合は何もしない
 					break;
 				}
 
@@ -231,6 +238,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			// 元の位置に戻す
 			cancelMoveEvent();
 		}
+	}
+
+	private boolean isMovableUnitView(PLMSUnitView unitView) {
+		return mTargetArmy.hasUnitView(unitView) && !unitView.isAlreadyAction();
 	}
 
 	private void beginMoveEvent(PLMSUnitView unitView) {
