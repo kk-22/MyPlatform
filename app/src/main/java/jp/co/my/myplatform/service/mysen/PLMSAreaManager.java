@@ -5,6 +5,8 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
+import jp.co.my.common.util.MYArrayList;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.land.PLMSColorCover;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.land.PLMSRouteCover;
@@ -19,18 +21,30 @@ public class PLMSAreaManager {
 
 	private PLMSFieldView mField;
 	private ArrayList<PLMSUnitView> mUnitArray;
+	private PLMSArmyStrategy mTargetArmy; // 操作対象のArmy
 
-	private PLMSColorCover mMoveAreaCover;                    // 移動可能マス
-	private PLMSColorCover mAttackAreaCover;                // 攻撃可能マス
-	private PLMSRouteCover mRouteCover;                        // 初期位置と仮位置
+	private PLMSColorCover mAvailableAreaCover; // 操作可能ユニットの配置マス
+	private PLMSColorCover mMoveAreaCover; // 移動可能マス
+	private PLMSColorCover mAttackAreaCover; // 攻撃可能マス
+	private PLMSRouteCover mRouteCover; // 初期位置と仮位置
 
-	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
+	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray, PLMSArmyStrategy armyStrategy) {
 		mField = field;
 		mUnitArray = unitArray;
+		mTargetArmy = armyStrategy;
 
+		mAvailableAreaCover = new PLMSColorCover(mTargetArmy.getAvailableAreaColor());
 		mMoveAreaCover = new PLMSColorCover(Color.argb(128, 0, 0, 255));
 		mAttackAreaCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
 		mRouteCover = new PLMSRouteCover();
+	}
+
+	public void showAvailableArea() {
+		MYArrayList<PLMSLandView> availableLandViewArray = new MYArrayList<>();
+		for (PLMSUnitView unitView : mTargetArmy.getUnitViewArray()) {
+			availableLandViewArray.add(unitView.getLandView());
+		}
+		mAvailableAreaCover.showCoverViews(availableLandViewArray);
 	}
 
 	public void showMoveAndAttackArea(PLMSUnitView unitView) {
@@ -247,6 +261,10 @@ public class PLMSAreaManager {
 	}
 
 	// getter and setter
+	public PLMSColorCover getAvailableAreaCover() {
+		return mAvailableAreaCover;
+	}
+
 	public PLMSColorCover getMoveAreaCover() {
 		return mMoveAreaCover;
 	}

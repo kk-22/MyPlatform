@@ -34,20 +34,38 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSLandRoute mTempRoute;
 	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
 
-	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field, ArrayList<PLMSUnitView> unitArray) {
+	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field,
+							 ArrayList<PLMSUnitView> unitArray, PLMSArmyStrategy armyStrategy) {
 		mInformation = information;
 		mField = field;
 		mUnitArray = unitArray;
-		mAreaManager = new PLMSAreaManager(field, mUnitArray);
+		mAreaManager = new PLMSAreaManager(field, mUnitArray, armyStrategy);
+		mTargetArmy = armyStrategy;
 
 		mAnimationManager = new PLMSAnimationManager(mField);
 		mPrevRouteArray = new MYArrayList<>();
-
-		initEvent();
 	}
 
-	public void enableInterfaceForArmy(PLMSArmyStrategy armyStrategy) {
-		mTargetArmy = armyStrategy;
+	public void enableInterface() {
+		mAreaManager.showAvailableArea();
+		for (PLMSUnitView unitView : mUnitArray) {
+			unitView.setOnTouchListener(this);
+		}
+		for (PLMSLandView landView : mField.getLandViewArray()) {
+			landView.setOnDragListener(this);
+			landView.setOnClickListener(this);
+		}
+	}
+
+	public void disableInterface() {
+		mAreaManager.getAvailableAreaCover().hideCoverViews();
+		for (PLMSUnitView unitView : mUnitArray) {
+			unitView.setOnTouchListener(null);
+		}
+		for (PLMSLandView landView : mField.getLandViewArray()) {
+			landView.setOnDragListener(null);
+			landView.setOnClickListener(null);
+		}
 	}
 
 	@Override
@@ -63,7 +81,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				}
 			}
 			case MotionEvent.ACTION_MOVE: {
-				if (unitView.getVisibility() == GONE || !isMovableUnitView(unitView)) {
+				if (unitView.getVisibility() == GONE || !mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 					// 同ユニットを既にドラッグイベント中 or 移動対象でないユニット
 					break;
 				}
@@ -86,7 +104,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			}
 			case MotionEvent.ACTION_UP: {
 				if (mMovingUnitView == null) {
-					if (isMovableUnitView(unitView)) {
+					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 						beginMoveEvent(unitView);
 					}
 					break;
@@ -240,10 +258,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		}
 	}
 
-	private boolean isMovableUnitView(PLMSUnitView unitView) {
-		return mTargetArmy.hasUnitView(unitView) && !unitView.isAlreadyAction();
-	}
-
 	private void beginMoveEvent(PLMSUnitView unitView) {
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
@@ -296,6 +310,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {
+		mAreaManager.getAvailableAreaCover().hideTargetCoverView(mMovingUnitView.getLandView());
 		mMovingUnitView.moveToLand(targetLandView);
 		finishMoveEvent();
 	}
@@ -332,15 +347,5 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			}
 		}
 		return moveLandArray.get(0);
-	}
-
-	private void initEvent() {
-		for (PLMSUnitView unitView : mUnitArray) {
-			unitView.setOnTouchListener(this);
-		}
-		for (PLMSLandView landView : mField.getLandViewArray()) {
-			landView.setOnDragListener(this);
-			landView.setOnClickListener(this);
-		}
 	}
 }

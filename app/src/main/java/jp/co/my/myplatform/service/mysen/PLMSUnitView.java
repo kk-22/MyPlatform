@@ -14,7 +14,6 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 public class PLMSUnitView extends FrameLayout {
 
-	private View mBackgroundView;
 	private ImageView mUnitImageView;
 	private PLMSHitPointBar mHPBar;
 	private View mAlreadyActionView;
@@ -26,7 +25,6 @@ public class PLMSUnitView extends FrameLayout {
 	public PLMSUnitView(Context context, PLMSUnitData unitData) {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
-		mBackgroundView = findViewById(R.id.background_view);
 		mUnitImageView = (ImageView) findViewById(R.id.image_view);
 		mHPBar = (PLMSHitPointBar) findViewById(R.id.hp_bar);
 		mAlreadyActionView = findViewById(R.id.already_action_view);
@@ -39,14 +37,12 @@ public class PLMSUnitView extends FrameLayout {
 
 	// ターン開始時
 	public void resetForNewTurn(int numberOfTurn) {
-		mBackgroundView.setVisibility(View.VISIBLE);
 	}
 
 	// ターン終了時
 	public void resetForFinishTurn(int numberOfTurn) {
 		if (!isAlreadyAction()) {
 			// TODO:その場で待機処理
-			mBackgroundView.setVisibility(View.GONE);
 		}
 		mAlreadyActionView.setVisibility(GONE);
 	}
@@ -56,7 +52,6 @@ public class PLMSUnitView extends FrameLayout {
 			// 初回配置以外
 			mLandView.removeUnitView();
 			mAlreadyActionView.setVisibility(VISIBLE);
-			mBackgroundView.setVisibility(View.VISIBLE);
 		}
 
 		mLandView = landView;
@@ -86,7 +81,6 @@ public class PLMSUnitView extends FrameLayout {
 
 		// Army による設定
 		PLMSArmyStrategy army = mUnitData.getArmyStrategy();
-		mBackgroundView.setBackgroundColor(army.getUnitBackgroundColor());
 		FrameLayout.LayoutParams layoutParams = (LayoutParams) weaponImage.getLayoutParams();
 		layoutParams.gravity = army.getIconGravity();
 

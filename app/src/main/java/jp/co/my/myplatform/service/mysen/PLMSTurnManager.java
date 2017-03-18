@@ -7,7 +7,6 @@ public class PLMSTurnManager {
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
-	private PLMSUserInterface mUserInterface;
 
 	private int mNumberOfTurn;								// 現在のターン数
 	private PLMSArmyStrategy mCurrentArmy;					// 現ターンのArmy
@@ -27,7 +26,11 @@ public class PLMSTurnManager {
 			armyStrategy.addUnitView(unitView);
 		}
 
-		mUserInterface = new PLMSUserInterface(mInformation, mField, mField.getUnitViewArray());
+		for (PLMSArmyStrategy army : mArmyArray) {
+			PLMSUserInterface userInterface
+					= new PLMSUserInterface(mInformation, mField, mField.getUnitViewArray(), army);
+			army.setUnitInterface(userInterface);
+		}
 		startNextTurn();
 	}
 
@@ -36,6 +39,7 @@ public class PLMSTurnManager {
 		for (PLMSUnitView unitView : mCurrentArmy.getUnitViewArray()) {
 			unitView.resetForFinishTurn(mNumberOfTurn);
 		}
+		mCurrentArmy.getUnitInterface().disableInterface();
 		startNextTurn();
 	}
 
@@ -56,6 +60,6 @@ public class PLMSTurnManager {
 		for (PLMSUnitView unitView : mCurrentArmy.getUnitViewArray()) {
 			unitView.resetForNewTurn(mNumberOfTurn);
 		}
-		mUserInterface.enableInterfaceForArmy(mCurrentArmy);
+		mCurrentArmy.getUnitInterface().enableInterface();
 	}
 }
