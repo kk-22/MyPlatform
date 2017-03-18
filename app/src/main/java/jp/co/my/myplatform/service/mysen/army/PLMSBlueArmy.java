@@ -10,6 +10,11 @@ public class PLMSBlueArmy extends PLMSArmyStrategy {
 	}
 
 	@Override
+	public int getUnitBackgroundColor() {
+		return Color.parseColor("#400000ff");
+	}
+
+	@Override
 	public int getInformationColor() {
 		return Color.parseColor("#00AFEC");
 	}

@@ -31,7 +31,16 @@ public class PLMSTurnManager {
 		startNextTurn();
 	}
 
-	public void startNextTurn() {
+	// ターン終了
+	public void finishTurn() {
+		for (PLMSUnitView unitView : mCurrentArmy.getUnitViewArray()) {
+			unitView.resetForFinishTurn(mNumberOfTurn);
+		}
+		startNextTurn();
+	}
+
+	// 次のターンへ
+	private void startNextTurn() {
 		if (mCurrentArmy == null) {
 			// 最初のターン
 			mNumberOfTurn = 1;

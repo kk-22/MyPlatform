@@ -1,11 +1,9 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -16,6 +14,7 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 public class PLMSUnitView extends FrameLayout {
 
+	private View mBackgroundView;
 	private ImageView mUnitImageView;
 	private PLMSHitPointBar mHPBar;
 	private View mAlreadyActionView;
@@ -23,13 +22,14 @@ public class PLMSUnitView extends FrameLayout {
 	private PLMSUnitData mUnitData;
 	private PLMSLandView mLandView;
 	private Point mCurrentPoint;
-	private boolean mIsAlreadyAction;			// 現在のターン内での行動有無
 
 	public PLMSUnitView(Context context, PLMSUnitData unitData) {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
+		mBackgroundView = findViewById(R.id.background_view);
 		mUnitImageView = (ImageView) findViewById(R.id.image_view);
 		mHPBar = (PLMSHitPointBar) findViewById(R.id.hp_bar);
+		mAlreadyActionView = findViewById(R.id.already_action_view);
 
 		mUnitData = unitData;
 		mUnitData.getArmyStrategy().addUnitView(this);
@@ -37,17 +37,26 @@ public class PLMSUnitView extends FrameLayout {
 		initChildView();
 	}
 
+	// ターン開始時
 	public void resetForNewTurn(int numberOfTurn) {
-		if (mAlreadyActionView != null) {
-			mAlreadyActionView.setVisibility(GONE);
+		mBackgroundView.setVisibility(View.VISIBLE);
+	}
+
+	// ターン終了時
+	public void resetForFinishTurn(int numberOfTurn) {
+		if (!isAlreadyAction()) {
+			// TODO:その場で待機処理
+			mBackgroundView.setVisibility(View.GONE);
 		}
+		mAlreadyActionView.setVisibility(GONE);
 	}
 
 	public void moveToLand(PLMSLandView landView) {
 		if (mLandView != null) {
 			// 初回配置以外
 			mLandView.removeUnitView();
-			showAlreadyActionView();
+			mAlreadyActionView.setVisibility(VISIBLE);
+			mBackgroundView.setVisibility(View.VISIBLE);
 		}
 
 		mLandView = landView;
@@ -75,8 +84,11 @@ public class PLMSUnitView extends FrameLayout {
 		String weaponPath = mUnitData.getWeapon().getWeaponImagePath();
 		weaponImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(weaponPath, getContext()));
 
+		// Army による設定
+		PLMSArmyStrategy army = mUnitData.getArmyStrategy();
+		mBackgroundView.setBackgroundColor(army.getUnitBackgroundColor());
 		FrameLayout.LayoutParams layoutParams = (LayoutParams) weaponImage.getLayoutParams();
-		layoutParams.gravity = mUnitData.getArmyStrategy().getIconGravity();
+		layoutParams.gravity = army.getIconGravity();
 
 		loadImage();
 		mHPBar.initWithUnitView(this);
@@ -85,17 +97,6 @@ public class PLMSUnitView extends FrameLayout {
 	private void loadImage() {
 		String path = mUnitData.getSmallImagePath();
 		mUnitImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath(path, getContext()));
-	}
-
-	private void showAlreadyActionView() {
-		if (mAlreadyActionView == null) {
-			mAlreadyActionView = new View(getContext());
-			mAlreadyActionView.setBackgroundColor(Color.parseColor("#80A9A9A9"));
-			addView(mAlreadyActionView,
-					new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-		} else {
-			mAlreadyActionView.setVisibility(VISIBLE);
-		}
 	}
 
 	// 便利メソッド

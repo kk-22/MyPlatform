@@ -70,7 +70,7 @@ public class PLMSWarContent extends PLContentView {
 				new PLConfirmationPopover("ターンを終了しますか？", new PLConfirmationPopover.PLConfirmationListener() {
 					@Override
 					public void onClickButton(boolean isYes) {
-						mTurnManager.startNextTurn();
+						mTurnManager.finishTurn();
 					}
 				}, null);
 			}
