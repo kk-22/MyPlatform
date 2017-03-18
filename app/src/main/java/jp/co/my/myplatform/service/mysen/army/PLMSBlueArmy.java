@@ -11,7 +11,7 @@ public class PLMSBlueArmy extends PLMSArmyStrategy {
 
 	@Override
 	public int getAvailableAreaColor() {
-		return Color.parseColor("#400000ff");
+		return Color.parseColor("#200000ff");
 	}
 
 	@Override
