@@ -139,6 +139,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					finishMoveEvent();
 				} else {
 					// 移動後のユニットクリック時のみ移動確定
+					mMovingUnitView.didAction();
 					movedUnit(mTempLandView);
 				}
 				break;
@@ -299,14 +300,19 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	private void attackToUnit(PLMSLandView attackerLandView,
 							  PLMSUnitView defenderUnitView) {
-		PLMSUnitView attackerUnitView = mMovingUnitView;
+		final PLMSUnitView attackerUnitView = mMovingUnitView;
 		movedUnit(attackerLandView);
 
 		// ダメージ表示
 		PLMSBattleResult result = new PLMSBattleResult(mField,
 				attackerUnitView, attackerLandView,
 				defenderUnitView, defenderUnitView.getLandView());
-		mAnimationManager.addBattleAnimation(result);
+		mAnimationManager.addBattleAnimation(result, new Runnable() {
+			@Override
+			public void run() {
+				attackerUnitView.didAction();
+			}
+		});
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {

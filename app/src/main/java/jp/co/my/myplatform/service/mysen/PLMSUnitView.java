@@ -51,12 +51,16 @@ public class PLMSUnitView extends FrameLayout {
 		if (mLandView != null) {
 			// 初回配置以外
 			mLandView.removeUnitView();
-			mAlreadyActionView.setVisibility(VISIBLE);
 		}
 
 		mLandView = landView;
 		mCurrentPoint = landView.getPoint();
 		landView.putUnitView(this);
+	}
+
+	// 行動終了
+	public void didAction() {
+		mAlreadyActionView.setVisibility(VISIBLE);
 	}
 
 	// マップからの離脱

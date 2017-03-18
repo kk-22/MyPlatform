@@ -52,8 +52,12 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		addAnimator(objectAnimator);
 	}
 
-	public void addBattleAnimation(PLMSBattleResult battleResult) {
-		for (final PLMSBattleScene scene : battleResult.getSceneArray()) {
+	public void addBattleAnimation(PLMSBattleResult battleResult, final Runnable lastRunnable) {
+		int numberOfScene = battleResult.getSceneArray().size();
+		for (int i = 0; i < numberOfScene; i++) {
+			final PLMSBattleScene scene = battleResult.getSceneArray().get(i);
+			final boolean isLastScene = (i == numberOfScene - 1);
+
 			final PLMSUnitView attackerUnitView = scene.getAttackerUnit().getUnitView();
 			final PLMSUnitView defenderUnitView = scene.getDefenderUnit().getUnitView();
 			PLMSLandView attackerLandView = attackerUnitView.getLandView();
@@ -112,6 +116,9 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 				public void onAnimationEnd(Animator animation) {
 					if (willRemoveUnit) {
 						defenderUnitView.removeFromField();
+					}
+					if (isLastScene) {
+						lastRunnable.run();
 					}
 				}
 			});
