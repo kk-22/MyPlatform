@@ -23,7 +23,6 @@ public class PLMSTurnManager {
 			if (!mArmyArray.contains(armyStrategy)) {
 				mArmyArray.add(armyStrategy);
 			}
-			armyStrategy.addUnitView(unitView);
 		}
 
 		for (PLMSArmyStrategy army : mArmyArray) {
