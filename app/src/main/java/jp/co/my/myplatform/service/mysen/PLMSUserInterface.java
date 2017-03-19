@@ -146,6 +146,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
 				// 攻撃範囲内の敵タップ
 				PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
+				mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, nextLandView, null);
 				moveToTempLand(nextLandView);
 				if (unitView.equals(mInformation.getRightUnitView())) {
 					// 攻撃
@@ -363,7 +364,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	// 移動先のLandViewを返す
 	private PLMSLandView moveUnitForAttack(PLMSLandView targetLandView) {
 		PLMSLandView moveLandView = getAttackLandView(targetLandView);
-		mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, moveLandView, null);
 		return moveLandView;
 	}
 
