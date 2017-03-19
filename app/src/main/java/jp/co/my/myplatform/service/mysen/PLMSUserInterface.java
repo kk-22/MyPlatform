@@ -118,50 +118,54 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					}
 					break;
 				}
-
-				if (mMovingUnitView == null) {
-					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
-						beginMoveEvent(unitView);
-					}
-					break;
-				}
 				if (event.getX() < 0 || unitView.getWidth() < event.getX()
 						|| event.getY() < 0 || unitView.getHeight() < event.getY()) {
 					// タップ位置から指を動かして UnitView 外に移動した場合は何もしない
 					break;
 				}
 
-				mMovingUnitView.setVisibility(View.VISIBLE);
-				if (!unitView.equals(mMovingUnitView)) {
-					PLMSLandView touchLandView = unitView.getLandView();
-					if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-						// 攻撃範囲内の敵タップ
-						PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
-						moveToTempLand(nextLandView);
-						if (unitView.equals(mInformation.getRightUnitView())) {
-							// 攻撃
-							attackToUnit(nextLandView, unitView);
-						} else {
-							// 初回タップ時は Info の更新のみ
-							PLMSBattleResult result = new PLMSBattleResult(mField,
-									mMovingUnitView, nextLandView,
-									unitView, unitView.getLandView());
-							mInformation.updateForBattleData(result);
-						}
-					} else {
-						// ACTION_DOWN の information 更新のみ
-					}
-				} else if (mTempLandView.equals(mMovingUnitView.getLandView())) {
-					finishMoveEvent();
-				} else {
-					// 移動後のユニットクリック時のみ移動確定
-					mMovingUnitView.didAction();
-					movedUnit(mTempLandView);
-				}
+				onClickUnitView(unitView);
 				break;
 			}
 		}
 		return true;
+	}
+
+	private void onClickUnitView(PLMSUnitView unitView) {
+		if (mMovingUnitView == null) {
+			if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
+				beginMoveEvent(unitView);
+			}
+			return;
+		}
+
+		mMovingUnitView.setVisibility(View.VISIBLE);
+		if (!unitView.equals(mMovingUnitView)) {
+			PLMSLandView touchLandView = unitView.getLandView();
+			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
+				// 攻撃範囲内の敵タップ
+				PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
+				moveToTempLand(nextLandView);
+				if (unitView.equals(mInformation.getRightUnitView())) {
+					// 攻撃
+					attackToUnit(nextLandView, unitView);
+				} else {
+					// 初回タップ時は Info の更新のみ
+					PLMSBattleResult result = new PLMSBattleResult(mField,
+							mMovingUnitView, nextLandView,
+							unitView, unitView.getLandView());
+					mInformation.updateForBattleData(result);
+				}
+			} else {
+				// ACTION_DOWN の information 更新のみ
+			}
+		} else if (mTempLandView.equals(mMovingUnitView.getLandView())) {
+			finishMoveEvent();
+		} else {
+			// 移動後のユニットクリック時のみ移動確定
+			mMovingUnitView.didAction();
+			movedUnit(mTempLandView);
+		}
 	}
 
 	@Override
