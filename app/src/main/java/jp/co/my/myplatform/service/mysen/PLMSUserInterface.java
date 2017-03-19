@@ -25,10 +25,12 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSAreaManager mAreaManager;
 	private ArrayList<PLMSUnitView> mUnitArray;
 	private PLMSArmyStrategy mTargetArmy;				// 操作対象のArmy
-
 	private PLMSAnimationManager mAnimationManager;
 
-	private PointF mFirstTouchPointF;
+	private PointF mTouchDownPointF;
+	private long mTouchDownTimeMillis; // ダブルタップ判定用
+	private long mPrevTouchTimeMillis; // ダブルタップ判定用
+
 	private PLMSUnitView mMovingUnitView;
 	private PLMSLandView mTempLandView;					// mMovingUnitView の現在の仮位置
 	private PLMSLandRoute mTempRoute;
@@ -74,7 +76,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		PLMSUnitView unitView = (PLMSUnitView) v;
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
-				mFirstTouchPointF = new PointF(event.getX(), event.getY());
+				mTouchDownPointF = new PointF(event.getX(), event.getY());
+				mTouchDownTimeMillis = System.currentTimeMillis();
 				if (!mAreaManager.getAttackAreaCover().isShowingCover(unitView.getLandView())) {
 					// 攻撃対象の敵ならACTION_UP時にバトル表示するため更新しない
 					mInformation.updateForUnitData(unitView);
@@ -87,7 +90,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				}
 				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
 				// ACTION_UP をクリックと判定するために閾値で判定
-				if ((Math.abs(mFirstTouchPointF.x - event.getX()) + Math.abs(mFirstTouchPointF.y - event.getY())) > 10) {
+				if ((Math.abs(mTouchDownPointF.x - event.getX()) + Math.abs(mTouchDownPointF.y - event.getY())) > 10) {
 					if (!unitView.equals(mMovingUnitView)) {
 						if (mMovingUnitView != null) {
 							cancelMoveEvent();
@@ -99,10 +102,23 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// API24 から startDragAndDrop
 					unitView.startDrag(null, shadow, unitView, 0);
 					unitView.setVisibility(GONE);
+
+					mPrevTouchTimeMillis = 0;
+					mTouchDownTimeMillis = 0;
 				}
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
+				if (shouldDoubleTapEvent()) {
+					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
+						// 未行動ユニットダブルタップで行動終了
+						mMovingUnitView.didAction();
+						mAreaManager.getAvailableAreaCover().hideCoverView(mMovingUnitView.getLandView());
+						finishMoveEvent();
+					}
+					break;
+				}
+
 				if (mMovingUnitView == null) {
 					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 						beginMoveEvent(unitView);
@@ -353,5 +369,22 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			}
 		}
 		return moveLandArray.get(0);
+	}
+
+	private boolean shouldDoubleTapEvent() {
+		long upTimeMillis = System.currentTimeMillis();
+		if (mPrevTouchTimeMillis > 0 && upTimeMillis - mPrevTouchTimeMillis < 250) {
+			mPrevTouchTimeMillis = 0;
+			mTouchDownTimeMillis = 0;
+			return true;
+		}
+
+		if (upTimeMillis - mTouchDownTimeMillis < 250) {
+			mPrevTouchTimeMillis = mTouchDownTimeMillis;
+		} else {
+			mPrevTouchTimeMillis = 0;
+		}
+		mTouchDownTimeMillis = 0;
+		return false;
 	}
 }
