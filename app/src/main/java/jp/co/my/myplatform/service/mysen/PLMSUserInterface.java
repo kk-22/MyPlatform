@@ -15,7 +15,6 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 
-import static android.animation.Animator.AnimatorListener;
 import static android.view.View.GONE;
 
 public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
@@ -30,6 +29,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PointF mTouchDownPointF;
 	private long mTouchDownTimeMillis; // ダブルタップ判定用
 	private long mPrevTouchTimeMillis; // ダブルタップ判定用
+	private boolean mIsDragging;
 
 	private PLMSUnitView mMovingUnitView;
 	private PLMSLandView mTempLandView;					// mMovingUnitView の現在の仮位置
@@ -102,6 +102,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					// API24 から startDragAndDrop
 					unitView.startDrag(null, shadow, unitView, 0);
 					unitView.setVisibility(GONE);
+					mIsDragging = true;
 
 					mPrevTouchTimeMillis = 0;
 					mTouchDownTimeMillis = 0;
@@ -169,7 +170,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	@Override
-	public boolean onDrag(View v, DragEvent event) {
+	public boolean onDrag(View v, final DragEvent event) {
 		final PLMSLandView landView = (PLMSLandView) v;
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
@@ -216,47 +217,65 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				break;
 			}
 			case DragEvent.ACTION_DROP: {
-				// アニメーションする UnitView　が他の UnitView の裏に隠れないようにする
-				mMovingUnitView.bringToFront();
-				mMovingUnitView.setVisibility(View.VISIBLE);
-
-				PointF landPoint = mField.pointOfLandView(landView);
-				// 指を離した位置からアニメーション移動
-				float halfSize = mMovingUnitView.getWidth() / 2;
-				PointF touchPointF = new PointF(
-						landPoint.x + event.getX() - halfSize,
-						landPoint.y + event.getY() - halfSize);
-				final PLMSLandView targetLandView;
-				AnimatorListener animatorListener = null;
-				if (mAreaManager.getMoveAreaCover().isShowingCover(landView) || landView.equals(mMovingUnitView.getLandView())) {
-					// 離した地形に仮配置
-					targetLandView = landView;
-				} else if (mAreaManager.canAttackToLandView(landView)) {
-					targetLandView = mPrevRouteArray.getLast().getLast();
-					animatorListener = new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							attackToUnit(targetLandView, landView.getUnitView());
-						}
-					};
-				} else {
-					// 元の位置に戻す
-					targetLandView = mTempLandView;
-				}
-				mAnimationManager.addMoveAnimation(mMovingUnitView, touchPointF, targetLandView, animatorListener);
-				if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)
-						|| mAreaManager.canAttackToLandView(landView)) {
-					// 移動イベント継続
-					moveToTempLand(targetLandView);
-				} else {
-					finishMoveEvent();
-				}
+				mIsDragging = false;
+				finishDragEvent(event, landView);
 				break;
+			}
+			case DragEvent.ACTION_DRAG_ENDED: {
+				// 全 LandView の数だけ呼ばれるため mIsDragging により1度だけ実行する
+				if (mIsDragging) {
+					mIsDragging = false;
+					// ACTION_DRAG_ENDED 内で setVisibility 実行による ConcurrentModificationException を防ぐ
+					mMovingUnitView.post(new Runnable() {
+						@Override
+						public void run() {
+							finishDragEvent(event, landView);
+						}
+					});
+				}
 			}
 			default:
 				break;
 		}
 		return true;
+	}
+
+	private void finishDragEvent(DragEvent event, final PLMSLandView landView) {
+		// アニメーションする UnitView　が他の UnitView の裏に隠れないようにする
+		mMovingUnitView.bringToFront();
+		mMovingUnitView.setVisibility(View.VISIBLE);
+
+		PointF landPoint = mField.pointOfLandView(landView);
+		// 指を離した位置からアニメーション移動
+		float halfSize = mMovingUnitView.getWidth() / 2;
+		PointF touchPointF = new PointF(
+				landPoint.x + event.getX() - halfSize,
+				landPoint.y + event.getY() - halfSize);
+		final PLMSLandView targetLandView;
+		Animator.AnimatorListener animatorListener = null;
+		if (mAreaManager.getMoveAreaCover().isShowingCover(landView) || landView.equals(mMovingUnitView.getLandView())) {
+			// 離した地形に仮配置
+			targetLandView = landView;
+		} else if (mAreaManager.canAttackToLandView(landView)) {
+			targetLandView = mPrevRouteArray.getLast().getLast();
+			animatorListener = new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					attackToUnit(targetLandView, landView.getUnitView());
+				}
+			};
+		} else {
+			// 元の位置に戻す
+			targetLandView = mTempLandView;
+		}
+		mAnimationManager.addMoveAnimation(mMovingUnitView, touchPointF, targetLandView, animatorListener);
+		if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)
+				|| mAreaManager.canAttackToLandView(landView)) {
+			// 移動イベント継続
+			moveToTempLand(targetLandView);
+		} else {
+			finishMoveEvent();
+		}
 	}
 
 	@Override
