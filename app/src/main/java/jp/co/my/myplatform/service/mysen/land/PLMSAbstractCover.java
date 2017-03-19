@@ -50,7 +50,7 @@ abstract class PLMSAbstractCover {
 		}
 	}
 
-	public void hideTargetCoverView(PLMSLandView targetView) {
+	public void hideCoverView(PLMSLandView targetView) {
 		if (!mParentViewArray.remove(targetView)) {
 			return;
 		}
@@ -62,9 +62,8 @@ abstract class PLMSAbstractCover {
 		}
 	}
 
-	public void hideCoverViews() {
-		for (int i = 0; i < mParentViewArray.size(); i++) {
-			View coverView = mCoverViewArray.get(i);
+	public void hideAllCoverViews() {
+		for (View coverView : mCoverViewArray) {
 			MYViewUtil.removeFromSuperView(coverView);
 		}
 		mParentViewArray.clear();

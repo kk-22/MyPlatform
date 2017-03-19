@@ -63,9 +63,9 @@ public class PLMSAreaManager {
 	}
 
 	public void hideAllAreaCover() {
-		mMoveAreaCover.hideCoverViews();
-		mAttackAreaCover.hideCoverViews();
-		mRouteCover.hideCoverViews();
+		mMoveAreaCover.hideAllCoverViews();
+		mAttackAreaCover.hideAllCoverViews();
+		mRouteCover.hideAllCoverViews();
 	}
 
 	private ArrayList<PLMSLandView> getAttackableLandArray(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
@@ -163,7 +163,7 @@ public class PLMSAreaManager {
 	}
 
 	public PLMSLandRoute showRouteArea(PLMSLandRoute landRoute) {
-		mRouteCover.hideCoverViews();
+		mRouteCover.hideAllCoverViews();
 		if (landRoute != null) {
 			mRouteCover.showCoverViews(landRoute);
 		}

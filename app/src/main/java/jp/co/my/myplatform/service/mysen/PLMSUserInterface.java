@@ -58,7 +58,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	public void disableInterface() {
-		mAreaManager.getAvailableAreaCover().hideCoverViews();
+		mAreaManager.getAvailableAreaCover().hideAllCoverViews();
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(null);
 		}
@@ -165,13 +165,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				} else if (landView.equals(mMovingUnitView.getLandView())) {
 					// 攻撃時の位置が変わるため、ルートを更新
 					mPrevRouteArray.addOrMoveLast(new PLMSLandRoute(landView));
-					mAreaManager.getRouteCover().hideCoverViews();
+					mAreaManager.getRouteCover().hideAllCoverViews();
 				} else if (mTempRoute != null) {
 					// 移動不可地点のため仮位置へのルート表示
 					mPrevRouteArray.addOrMoveLast(mAreaManager.showRouteArea(mTempRoute));
 				} else {
 					// 移動不可地点かつ仮位置がないためルート非表示
-					mAreaManager.getRouteCover().hideCoverViews();
+					mAreaManager.getRouteCover().hideAllCoverViews();
 				}
 
 				// Infoの更新
@@ -316,7 +316,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {
-		mAreaManager.getAvailableAreaCover().hideTargetCoverView(mMovingUnitView.getLandView());
+		mAreaManager.getAvailableAreaCover().hideCoverView(mMovingUnitView.getLandView());
 		mMovingUnitView.moveToLand(targetLandView);
 		finishMoveEvent();
 	}

@@ -82,7 +82,7 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 	}
 
 	@Override
-	public void hideCoverViews() {
+	public void hideAllCoverViews() {
 		MYViewUtil.removeFromSuperView(mBeginImageView);
 		MYViewUtil.removeFromSuperView(mEndImageView);
 		for (View view : mStraightViewArray) {
