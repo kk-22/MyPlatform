@@ -1,8 +1,11 @@
 package jp.co.my.myplatform.service.mysen;
 
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,6 +13,7 @@ import org.json.JSONObject;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 
 @Table(database = PLDatabase.class)
 public class PLMSUnitModel extends PLBaseModel {
@@ -18,6 +22,8 @@ public class PLMSUnitModel extends PLBaseModel {
 	private int no;
 	@Column
 	private String name;
+	@Column
+	private String imageName;
 	@Column
 	private int hitPoint;
 	@Column
@@ -40,6 +46,17 @@ public class PLMSUnitModel extends PLBaseModel {
 	@Column
 	private int branchType;
 
+	@ForeignKey
+	ForeignKeyContainer<PLMSSkillModel> supportSkillForeign;
+	@ForeignKey
+	ForeignKeyContainer<PLMSSkillModel> secretSkillForeign;
+	@ForeignKey
+	ForeignKeyContainer<PLMSSkillModel> passiveASkillForeign;
+	@ForeignKey
+	ForeignKeyContainer<PLMSSkillModel> passiveBSkillForeign;
+	@ForeignKey
+	ForeignKeyContainer<PLMSSkillModel> passiveCSkillForeign;
+
 	public PLMSUnitModel() {
 		super();
 	}
@@ -48,6 +65,7 @@ public class PLMSUnitModel extends PLBaseModel {
 	public void initFromJson(JSONObject jsonObject) throws JSONException {
 		no = jsonObject.getInt("no");
 		name = jsonObject.getString("name");
+		imageName = jsonObject.getString("image_name");
 		hitPoint = jsonObject.getInt("hit_point");
 		attackPoint = jsonObject.getInt("attack_point");
 		speedPoint = jsonObject.getInt("speed_point");
@@ -75,7 +93,6 @@ public class PLMSUnitModel extends PLBaseModel {
 	}
 
 	// getter and setter
-
 	public int getNo() {
 		return no;
 	}
@@ -171,4 +188,36 @@ public class PLMSUnitModel extends PLBaseModel {
 	public void setBranchType(int branchType) {
 		this.branchType = branchType;
 	}
-}
+
+	public String getImageName() {
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
+
+	public void associateSupportSkill(PLMSSkillModel model) {
+		this.supportSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
+				.toForeignKeyContainer(model);
+	}
+
+	public void secretSupportSkill(PLMSSkillModel model) {
+		this.secretSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
+				.toForeignKeyContainer(model);
+	}
+
+	public void passiveASupportSkill(PLMSSkillModel model) {
+		this.passiveASkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
+				.toForeignKeyContainer(model);
+	}
+
+	public void passiveBSupportSkill(PLMSSkillModel model) {
+		this.passiveBSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
+				.toForeignKeyContainer(model);
+	}
+
+	public void passiveCSupportSkill(PLMSSkillModel model) {
+		this.passiveCSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
+				.toForeignKeyContainer(model);
+	}}
