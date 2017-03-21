@@ -14,6 +14,10 @@ public class MYArrayList<E> extends ArrayList<E> {
 		super(c);
 	}
 
+	public MYArrayList(int initialCapacity) {
+		super(initialCapacity);
+	}
+
 	public E getFirst() {
 		if (size() == 0) {
 			return null;

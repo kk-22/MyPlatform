@@ -13,20 +13,23 @@ import com.raizlabs.android.dbflow.structure.ModelAdapter;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
+import jp.co.my.myplatform.service.model.PLAllModelFetcher;
 import jp.co.my.myplatform.service.model.PLBadWordModel;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
-import jp.co.my.myplatform.service.model.PLModelFetchTask;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 import jp.co.my.myplatform.service.mysen.PLMSUnitModel;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.wikipedia.PLWikipediaPageModel;
@@ -99,24 +102,24 @@ public class PLDebugView extends PLContentView {
 			itemList.add(new PLDebugButtonItem("MySen", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new PLConfirmationPopover("MySen UnitModel 削除", new PLConfirmationPopover.PLConfirmationListener() {
+					new PLConfirmationPopover("MySen UnitModel & SkillModel 削除", new PLConfirmationPopover.PLConfirmationListener() {
 						@Override
 						public void onClickButton(boolean isYes) {
-							ArrayList<Class> classAray = new ArrayList<>();
-							classAray.add(PLMSUnitModel.class);
-							deleteTable(classAray);
+							List<Class> classList = Arrays.<Class>asList(PLMSUnitModel.class, PLMSSkillModel.class);
+							deleteTable(classList);
 
-							PLModelFetchTask<PLMSUnitModel> fetchTask = new PLModelFetchTask<>(PLMSUnitModel.class, new PLModelFetchTask.PLModelFetchTaskListener() {
+							PLAllModelFetcher fetcher = new PLAllModelFetcher(classList, new PLAllModelFetcher.PLAllModelFetcherListener() {
 								@Override
-								public void finishedFetchModels(ArrayList<PLBaseModel> modelArray) {
-									if (modelArray == null) {
-										MYLogUtil.showErrorToast("UnitModelの取得に失敗");
+								public void finishedAllFetchModels(MYArrayList<MYArrayList<PLBaseModel>> modelArrays) {
+									if (modelArrays == null) {
+										MYLogUtil.showErrorToast("UnitModel or SkillModel の取得に失敗");
 									} else {
-										MYLogUtil.showToast("UnitModelを保存 count=" +modelArray.size());
+										MYLogUtil.showToast("Modelを保存 unit=" + modelArrays.get(0).size() +
+												"skill=" +modelArrays.get(1).size());
 									}
 								}
 							});
-							fetchTask.execute();
+							fetcher.startAllModelFetch();
 						}
 					}, null);
 				}
@@ -165,7 +168,7 @@ public class PLDebugView extends PLContentView {
 		mAdapter.renewalAllPage(itemList);
 	}
 
-	private void deleteTable(ArrayList<Class> classArray) {
+	private void deleteTable(List<Class> classArray) {
 		DatabaseWrapper database = FlowManager.getDatabase(PLDatabase.NAME).getHelper().getDatabase();
 		for (Class klass : classArray) {
 			ModelAdapter modelAdapter = FlowManager.getModelAdapter(klass);

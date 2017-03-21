@@ -18,8 +18,9 @@ public class MYOtherUtil {
 	}
 
 	// 型チェックとキャスト
+	@SuppressWarnings("unchecked") // instanceof 比較ができないことで発生する型未チェック警告を抑制
 	public static <T> T castObject(Object object, Class<T> klass) {
-		if ((object.getClass() == klass)) {
+		if (object != null && (object.getClass() == klass)) {
 			return (T) object;
 		}
 		return null;

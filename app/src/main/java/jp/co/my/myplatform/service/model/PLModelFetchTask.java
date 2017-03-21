@@ -11,11 +11,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 
-public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Void, ArrayList<PLBaseModel>> {
+public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Void, MYArrayList<PLBaseModel>> {
 
 	private Class<T> mKlass;
 	private PLModelFetchTaskListener mListener;
@@ -27,7 +27,7 @@ public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Voi
 	}
 
 	@Override
-	protected ArrayList<PLBaseModel> doInBackground(Void... params) {
+	protected MYArrayList<PLBaseModel> doInBackground(Void... params) {
 		PLBaseModel dummyModel = createModel();
 		if (dummyModel == null) {
 			MYLogUtil.showErrorToast("con't create instance. class=" +mKlass.getName());
@@ -39,13 +39,13 @@ public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Voi
 			return null;
 		}
 		ByteArrayOutputStream responseArray = fetchJsonData(urlStr);
-		ArrayList<PLBaseModel> modelArray = createModelArray(responseArray);
+		MYArrayList<PLBaseModel> modelArray = createModelArray(responseArray);
 		PLDatabase.saveModelList(modelArray, true);
 		return modelArray;
 	}
 
 	@Override
-	protected void onPostExecute(ArrayList<PLBaseModel> modelArray) {
+	protected void onPostExecute(MYArrayList<PLBaseModel> modelArray) {
 		mListener.finishedFetchModels(modelArray);
 	}
 
@@ -84,9 +84,9 @@ public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Voi
 		}
 	}
 
-	private ArrayList<PLBaseModel> createModelArray(ByteArrayOutputStream responseArray) {
+	private MYArrayList<PLBaseModel> createModelArray(ByteArrayOutputStream responseArray) {
 		try {
-			ArrayList<PLBaseModel> modelArray = new ArrayList<>();
+			MYArrayList<PLBaseModel> modelArray = new MYArrayList<>();
 			JSONArray jsonArray = new JSONArray(new String(responseArray.toByteArray()));
 			int length = jsonArray.length();
 			for (int i = 0; i < length; i++) {
@@ -111,6 +111,6 @@ public class PLModelFetchTask<T extends PLBaseModel> extends AsyncTask<Void, Voi
 	}
 
 	public interface PLModelFetchTaskListener {
-		void finishedFetchModels(ArrayList<PLBaseModel> modelArray);
+		void finishedFetchModels(MYArrayList<PLBaseModel> modelArray);
 	}
 }
