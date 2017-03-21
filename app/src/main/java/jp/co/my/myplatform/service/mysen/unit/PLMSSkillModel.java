@@ -4,6 +4,10 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import jp.co.my.common.util.MYJsonUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 
@@ -16,6 +20,8 @@ public class PLMSSkillModel extends PLBaseModel {
 	private String name;
 	@Column
 	private String description;
+	@Column
+	private int slotType;
 
 	@Column
 	private int timingType;
@@ -24,13 +30,34 @@ public class PLMSSkillModel extends PLBaseModel {
 	@Column
 	private int requirementValue;
 	@Column
-	private int scopeType;
+	private int targetType;
 	@Column
-	private int scopeValue;
+	private int targetValue;
 	@Column
 	private int effectType;
 	@Column
 	private int effectValue;
+
+	@Override
+	public void initFromJson(JSONObject jsonObject) throws JSONException {
+		no = jsonObject.getInt("no");
+		name = jsonObject.getString("name");
+		description = jsonObject.getString("description_text");
+		slotType = jsonObject.getInt("slot");
+
+		timingType = MYJsonUtil.parseIntIfNonNull(jsonObject, "timing_no");
+		requirementType = MYJsonUtil.parseIntIfNonNull(jsonObject, "requirement_no");
+		requirementValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "requirement_value");
+		targetType = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_no");
+		targetValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_value");
+		effectType = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_no");
+		effectValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_value");
+	}
+
+	@Override
+	public String getSheetUrl() {
+		return "https://script.google.com/macros/s/AKfycby42Gh5M6Qkc30-KFfsHEncNAUhG-f2B3EhoIj44T--u7hbUoti/exec?sheet=skill";
+	}
 
 	// getter and setter
 	public int getNo() {
@@ -57,6 +84,14 @@ public class PLMSSkillModel extends PLBaseModel {
 		this.description = description;
 	}
 
+	public int getSlotType() {
+		return slotType;
+	}
+
+	public void setSlotType(int slotType) {
+		this.slotType = slotType;
+	}
+
 	public int getTimingType() {
 		return timingType;
 	}
@@ -81,20 +116,20 @@ public class PLMSSkillModel extends PLBaseModel {
 		this.requirementValue = requirementValue;
 	}
 
-	public int getScopeType() {
-		return scopeType;
+	public int getTargetType() {
+		return targetType;
 	}
 
-	public void setScopeType(int scopeType) {
-		this.scopeType = scopeType;
+	public void setTargetType(int targetType) {
+		this.targetType = targetType;
 	}
 
-	public int getScopeValue() {
-		return scopeValue;
+	public int getTargetValue() {
+		return targetValue;
 	}
 
-	public void setScopeValue(int scopeValue) {
-		this.scopeValue = scopeValue;
+	public void setTargetValue(int targetValue) {
+		this.targetValue = targetValue;
 	}
 
 	public int getEffectType() {

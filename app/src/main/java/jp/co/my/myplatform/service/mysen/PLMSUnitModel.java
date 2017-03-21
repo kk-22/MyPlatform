@@ -10,6 +10,7 @@ import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
@@ -57,6 +58,8 @@ public class PLMSUnitModel extends PLBaseModel {
 	@ForeignKey
 	ForeignKeyContainer<PLMSSkillModel> passiveCSkillForeign;
 
+	private MYArrayList<String> mSkillIdArray;
+
 	public PLMSUnitModel() {
 		super();
 	}
@@ -76,12 +79,39 @@ public class PLMSUnitModel extends PLBaseModel {
 		colorType = jsonObject.getInt("color_type");
 		weaponType = jsonObject.getInt("weapon_type");
 		branchType = jsonObject.getInt("branch_type");
-		debugLog(null);
+
+		mSkillIdArray = new MYArrayList<>();
+		mSkillIdArray.add(jsonObject.getString("support_skill_no"));
+		mSkillIdArray.add(jsonObject.getString("secret_skill_no"));
+		mSkillIdArray.add(jsonObject.getString("passive_a_skill_no"));
+		mSkillIdArray.add(jsonObject.getString("passive_b_skill_no"));
+		mSkillIdArray.add(jsonObject.getString("passive_c_skill_no"));
 	}
 
 	@Override
 	public String getSheetUrl() {
 		return "https://script.google.com/macros/s/AKfycby42Gh5M6Qkc30-KFfsHEncNAUhG-f2B3EhoIj44T--u7hbUoti/exec?sheet=unit";
+	}
+
+	public void setAllSkill(MYArrayList<PLMSSkillModel> skillArray) {
+		int numberOfSkill = mSkillIdArray.size();
+		for (int i = 0; i < numberOfSkill; i++) {
+			int skillId = Integer.parseInt(mSkillIdArray.get(i));
+			if (skillId == 0) {
+				// 未入力
+				continue;
+			}
+			PLMSSkillModel model = skillArray.get(skillId);
+			ForeignKeyContainer<PLMSSkillModel> foreign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
+					.toForeignKeyContainer(model);
+			switch (i) {
+				case 0: supportSkillForeign = foreign; break;
+				case 1: secretSkillForeign = foreign; break;
+				case 2: passiveASkillForeign = foreign; break;
+				case 3: passiveBSkillForeign = foreign; break;
+				case 4: passiveCSkillForeign = foreign; break;
+			}
+		}
 	}
 
 	// Debug
@@ -196,28 +226,4 @@ public class PLMSUnitModel extends PLBaseModel {
 	public void setImageName(String imageName) {
 		this.imageName = imageName;
 	}
-
-	public void associateSupportSkill(PLMSSkillModel model) {
-		this.supportSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
-				.toForeignKeyContainer(model);
-	}
-
-	public void secretSupportSkill(PLMSSkillModel model) {
-		this.secretSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
-				.toForeignKeyContainer(model);
-	}
-
-	public void passiveASupportSkill(PLMSSkillModel model) {
-		this.passiveASkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
-				.toForeignKeyContainer(model);
-	}
-
-	public void passiveBSupportSkill(PLMSSkillModel model) {
-		this.passiveBSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
-				.toForeignKeyContainer(model);
-	}
-
-	public void passiveCSupportSkill(PLMSSkillModel model) {
-		this.passiveCSkillForeign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
-				.toForeignKeyContainer(model);
-	}}
+}

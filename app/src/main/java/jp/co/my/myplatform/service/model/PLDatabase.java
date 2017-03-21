@@ -14,7 +14,7 @@ import jp.co.my.common.util.MYLogUtil;
 @Database(name = PLDatabase.NAME, version = PLDatabase.VERSION, generatedClassSeparator = "_")
 public class PLDatabase {
 	public static final String NAME = "MySupportDatabase";
-	public static final int VERSION = 12;
+	public static final int VERSION = 13;
 	public static final Object sLock = new Object();
 
 	public static <T extends Model> void saveModelList(List<T> modelList) {
