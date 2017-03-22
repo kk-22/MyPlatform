@@ -11,11 +11,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView;
+import jp.co.my.myplatform.service.mysen.information.PLMSUnitInfoView;
 
 
 public class PLMSInformationView extends LinearLayout {
@@ -24,18 +24,10 @@ public class PLMSInformationView extends LinearLayout {
 	private PLMSUnitView mRightUnitView;
 	private PLMSBattleResult mBattleResult;
 
-	private LinearLayout mUnitDataLinear;
+	private PLMSUnitInfoView mUnitInfoView;
 	private FrameLayout mBattleDataFrame;
 
 	private ImageView mLeftImageView;
-	private TextView mLeftNameTextView;
-	private TextView mCurrentHPTextView;
-	private TextView mMaxHPTextView;
-	private TextView mAttackTextView;
-	private TextView mSpeedTextView;
-	private TextView mDefenseTextView;
-	private TextView mMagicDefenseTextView;
-
 	private PLMSBattleInfoView mLeftBattleInfo;
 	private PLMSBattleInfoView mRightBattleInfo;
 	private ImageView mRightImageView;
@@ -43,17 +35,10 @@ public class PLMSInformationView extends LinearLayout {
 	public PLMSInformationView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_information, this);
-		mUnitDataLinear = (LinearLayout) findViewById(R.id.unit_data_linear);
+		mUnitInfoView = (PLMSUnitInfoView) findViewById(R.id.unit_info);
 		mBattleDataFrame = (FrameLayout) findViewById(R.id.battle_data_frame);
 
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
-		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
-		mCurrentHPTextView = (TextView) findViewById(R.id.current_hp_text);
-		mMaxHPTextView = (TextView) findViewById(R.id.result_hp_text);
-		mAttackTextView = (TextView) findViewById(R.id.attack_text);
-		mSpeedTextView = (TextView) findViewById(R.id.speed_text);
-		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
-		mMagicDefenseTextView = (TextView) findViewById(R.id.magic_defense_text);
 
 		mLeftBattleInfo = (PLMSBattleInfoView) findViewById(R.id.left_battle_info);
 		mLeftBattleInfo.initWithIsLeft(true);
@@ -75,7 +60,7 @@ public class PLMSInformationView extends LinearLayout {
 	public void clearInformation() {
 		setBackgroundColor(Color.WHITE);
 
-		mUnitDataLinear.setVisibility(View.GONE);
+		mUnitInfoView.setVisibility(View.GONE);
 		mBattleDataFrame.setVisibility(View.GONE);
 		mRightUnitView = null;
 		mLeftUnitView = null;
@@ -84,7 +69,7 @@ public class PLMSInformationView extends LinearLayout {
 	public void updateForUnitData(PLMSUnitView unitView) {
 		if (mRightUnitView != null || mLeftUnitView == null) {
 			// バトルinfo後の表示 or 初回表示時
-			mUnitDataLinear.setVisibility(View.VISIBLE);
+			mUnitInfoView.setVisibility(View.VISIBLE);
 			mBattleDataFrame.setVisibility(View.GONE);
 			mRightUnitView = null;
 		}
@@ -94,13 +79,7 @@ public class PLMSInformationView extends LinearLayout {
 		mLeftUnitView = unitView;
 
 		animateUnitImage(mLeftImageView, unitView);
-		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
-		setIntToText(unitView.getUnitData().getCurrentHP(), mCurrentHPTextView);
-		setIntToText(unitView.getUnitData().getMaxHP(), mMaxHPTextView);
-		setIntToText(unitView.getUnitData().getCurrentAttack(), mAttackTextView);
-		setIntToText(unitView.getUnitData().getCurrentSpeed(), mSpeedTextView);
-		setIntToText(unitView.getUnitData().getCurrentDefense(), mDefenseTextView);
-		setIntToText(unitView.getUnitData().getCurrentMagicDefense(), mMagicDefenseTextView);
+		mUnitInfoView.updateUnitInfo(unitView);
 
 		// 背景色設定
 		setBackgroundColor(unitView.getUnitData().getArmyStrategy().getInformationColor());
@@ -108,7 +87,7 @@ public class PLMSInformationView extends LinearLayout {
 
 	public void updateForBattleData(PLMSBattleResult battleResult) {
 		if (mRightUnitView == null) {
-			mUnitDataLinear.setVisibility(View.GONE);
+			mUnitInfoView.setVisibility(View.GONE);
 			mBattleDataFrame.setVisibility(View.VISIBLE);
 		}
 		if (battleResult.equals(mBattleResult)) {
@@ -155,10 +134,6 @@ public class PLMSInformationView extends LinearLayout {
 		ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "x", startX, baseX);
 		objectAnimator.setDuration(100);
 		objectAnimator.start();
-	}
-
-	private void setIntToText(int number, TextView textView) {
-		textView.setText(Integer.toString(number));
 	}
 
 	// getter and setter
