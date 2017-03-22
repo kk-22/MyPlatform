@@ -7,7 +7,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 
 
 public class PLMSUnitInfoView extends LinearLayout {
@@ -19,6 +22,13 @@ public class PLMSUnitInfoView extends LinearLayout {
 	private TextView mSpeedTextView;
 	private TextView mDefenseTextView;
 	private TextView mMagicDefenseTextView;
+
+	private TextView mWeaponTextView;
+	private TextView mSupportTextView;
+	private TextView mSecretTextView;
+	private TextView mPassiveATextView;
+	private TextView mPassiveBTextView;
+	private TextView mPassiveCTextView;
 
 	private PLMSUnitView mUnitView;
 
@@ -33,6 +43,13 @@ public class PLMSUnitInfoView extends LinearLayout {
 		mSpeedTextView = (TextView) findViewById(R.id.speed_text);
 		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
 		mMagicDefenseTextView = (TextView) findViewById(R.id.magic_defense_text);
+
+		mWeaponTextView = (TextView) findViewById(R.id.weapon_text);
+		mSupportTextView = (TextView) findViewById(R.id.support_text);
+		mSecretTextView = (TextView) findViewById(R.id.secret_text);
+		mPassiveATextView = (TextView) findViewById(R.id.passive_a_text);
+		mPassiveBTextView = (TextView) findViewById(R.id.passive_b_text);
+		mPassiveCTextView = (TextView) findViewById(R.id.passive_c_text);
 	}
 
 	public PLMSUnitInfoView(Context context, AttributeSet attrs){
@@ -46,16 +63,33 @@ public class PLMSUnitInfoView extends LinearLayout {
 	public void updateUnitInfo(PLMSUnitView unitView) {
 		mUnitView = unitView;
 
-		mLeftNameTextView.setText(unitView.getUnitData().getUnitModel().getName());
-		setIntToText(unitView.getUnitData().getCurrentHP(), mCurrentHPTextView);
-		setIntToText(unitView.getUnitData().getMaxHP(), mMaxHPTextView);
-		setIntToText(unitView.getUnitData().getCurrentAttack(), mAttackTextView);
-		setIntToText(unitView.getUnitData().getCurrentSpeed(), mSpeedTextView);
-		setIntToText(unitView.getUnitData().getCurrentDefense(), mDefenseTextView);
-		setIntToText(unitView.getUnitData().getCurrentMagicDefense(), mMagicDefenseTextView);
+		PLMSUnitData unitData = unitView.getUnitData();
+		mLeftNameTextView.setText(unitData.getUnitModel().getName());
+		setIntToText(unitData.getCurrentHP(), mCurrentHPTextView);
+		setIntToText(unitData.getMaxHP(), mMaxHPTextView);
+		setIntToText(unitData.getCurrentAttack(), mAttackTextView);
+		setIntToText(unitData.getCurrentSpeed(), mSpeedTextView);
+		setIntToText(unitData.getCurrentDefense(), mDefenseTextView);
+		setIntToText(unitData.getCurrentMagicDefense(), mMagicDefenseTextView);
+
+		mWeaponTextView.setText("-");
+		setSkillText(unitData.getSupportSkill(), mSupportTextView);
+		setSkillText(unitData.getSecretSkill(), mSecretTextView);
+		setSkillText(unitData.getPassiveASkill(), mPassiveATextView);
+		setSkillText(unitData.getPassiveBSkill(), mPassiveBTextView);
+		setSkillText(unitData.getPassiveCSkill(), mPassiveCTextView);
 	}
 
 	private void setIntToText(int number, TextView textView) {
 		textView.setText(Integer.toString(number));
+	}
+
+	private void setSkillText(PLMSSkillData skillData, TextView textView) {
+		PLMSSkillModel skillModel = skillData.getSkillModel();
+		if (skillModel== null) {
+			textView.setText("-");
+		} else {
+			textView.setText(skillModel.getName());
+		}
 	}
 }

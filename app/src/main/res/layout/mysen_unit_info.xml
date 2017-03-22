@@ -121,17 +121,63 @@
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent">
 
+        <Space
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/weapon_text"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/support_text"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/secret_text"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent">
 
+        <Space
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/passive_a_text"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/passive_b_text"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/passive_c_text"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
     </LinearLayout>
 
 </LinearLayout>

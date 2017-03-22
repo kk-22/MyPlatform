@@ -2,7 +2,11 @@ package jp.co.my.myplatform.service.mysen;
 
 import android.graphics.Point;
 
+import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
+
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 
 public class PLMSUnitData {
 
@@ -13,6 +17,11 @@ public class PLMSUnitData {
 	private PLMSColorData mColor;
 	private PLMSWeaponData mWeapon;
 	private PLMSBranchData mBranch;
+	private PLMSSkillData mSupportSkill;
+	private PLMSSkillData mSecretSkill;
+	private PLMSSkillData mPassiveASkill;
+	private PLMSSkillData mPassiveBSkill;
+	private PLMSSkillData mPassiveCSkill;
 
 	private int mMaxHP;
 	private int mCurrentHP;
@@ -31,6 +40,11 @@ public class PLMSUnitData {
 		mColor = new PLMSColorData((mUnitModel.getColorType()));
 		mWeapon = new PLMSWeaponData(mUnitModel.getWeaponType());
 		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
+		mSupportSkill = createSkillData(mUnitModel.getSupportSkillForeign());
+		mSecretSkill = createSkillData(mUnitModel.getSecretSkillForeign());
+		mPassiveASkill = createSkillData(mUnitModel.getPassiveASkillForeign());
+		mPassiveBSkill = createSkillData(mUnitModel.getPassiveBSkillForeign());
+		mPassiveCSkill = createSkillData(mUnitModel.getPassiveCSkillForeign());
 
 		resetAllStatus();
 	}
@@ -52,6 +66,13 @@ public class PLMSUnitData {
 		mCurrentMagicDefense = mUnitModel.getMagicDefensePoint();
 
 		mMoveCount = 0;
+	}
+
+	public PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
+		if (foreign == null) {
+			return new PLMSSkillData(null);
+		}
+		return new PLMSSkillData(foreign.load());
 	}
 
 	// getter
@@ -105,6 +126,26 @@ public class PLMSUnitData {
 
 	public PLMSColorData getColor() {
 		return mColor;
+	}
+
+	public PLMSSkillData getSupportSkill() {
+		return mSupportSkill;
+	}
+
+	public PLMSSkillData getSecretSkill() {
+		return mSecretSkill;
+	}
+
+	public PLMSSkillData getPassiveASkill() {
+		return mPassiveASkill;
+	}
+
+	public PLMSSkillData getPassiveBSkill() {
+		return mPassiveBSkill;
+	}
+
+	public PLMSSkillData getPassiveCSkill() {
+		return mPassiveCSkill;
 	}
 
 	// setter
