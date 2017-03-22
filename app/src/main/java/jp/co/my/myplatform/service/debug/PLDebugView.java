@@ -113,10 +113,22 @@ public class PLDebugView extends PLContentView {
 								public void finishedAllFetchModels(MYArrayList<MYArrayList<PLBaseModel>> modelArrays) {
 									if (modelArrays == null) {
 										MYLogUtil.showErrorToast("UnitModel or SkillModel の取得に失敗");
-									} else {
-										MYLogUtil.showToast("Modelを保存 unit=" + modelArrays.get(0).size() +
-												"skill=" +modelArrays.get(1).size());
+										return;
 									}
+									MYArrayList<PLBaseModel> unitArray = modelArrays.get(0);
+									MYArrayList<PLMSSkillModel> skillArray = new MYArrayList<>();
+									for (PLBaseModel baseModel : modelArrays.get(1)) {
+										skillArray.add((PLMSSkillModel) baseModel);
+									}
+
+									int numberOfUnit = unitArray.size();
+									for (int i = 0; i < numberOfUnit; i++) {
+										PLMSUnitModel unitModel = (PLMSUnitModel) unitArray.get(i);
+										unitModel.setAllSkill(skillArray);
+									}
+									PLDatabase.saveModelList(unitArray);
+									MYLogUtil.showToast("Modelを保存 unit=" + numberOfUnit +
+											"skill=" +skillArray.size());
 								}
 							});
 							fetcher.startAllModelFetch();

@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen.unit;
 
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ModelContainer;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 
@@ -11,6 +12,7 @@ import jp.co.my.common.util.MYJsonUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 
+@ModelContainer
 @Table(database = PLDatabase.class)
 public class PLMSSkillModel extends PLBaseModel {
 

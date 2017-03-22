@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYJsonUtil;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
@@ -58,7 +59,7 @@ public class PLMSUnitModel extends PLBaseModel {
 	@ForeignKey
 	ForeignKeyContainer<PLMSSkillModel> passiveCSkillForeign;
 
-	private MYArrayList<String> mSkillIdArray;
+	private MYArrayList<Integer> mSkillIdArray;
 
 	public PLMSUnitModel() {
 		super();
@@ -81,11 +82,11 @@ public class PLMSUnitModel extends PLBaseModel {
 		branchType = jsonObject.getInt("branch_type");
 
 		mSkillIdArray = new MYArrayList<>();
-		mSkillIdArray.add(jsonObject.getString("support_skill_no"));
-		mSkillIdArray.add(jsonObject.getString("secret_skill_no"));
-		mSkillIdArray.add(jsonObject.getString("passive_a_skill_no"));
-		mSkillIdArray.add(jsonObject.getString("passive_b_skill_no"));
-		mSkillIdArray.add(jsonObject.getString("passive_c_skill_no"));
+		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "support_skill_no"));
+		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "secret_skill_no"));
+		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "passive_a_skill_no"));
+		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "passive_b_skill_no"));
+		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "passive_c_skill_no"));
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class PLMSUnitModel extends PLBaseModel {
 	public void setAllSkill(MYArrayList<PLMSSkillModel> skillArray) {
 		int numberOfSkill = mSkillIdArray.size();
 		for (int i = 0; i < numberOfSkill; i++) {
-			int skillId = Integer.parseInt(mSkillIdArray.get(i));
+			int skillId = mSkillIdArray.get(i);
 			if (skillId == 0) {
 				// 未入力
 				continue;
@@ -225,5 +226,25 @@ public class PLMSUnitModel extends PLBaseModel {
 
 	public void setImageName(String imageName) {
 		this.imageName = imageName;
+	}
+
+	public ForeignKeyContainer<PLMSSkillModel> getSupportSkillForeign() {
+		return supportSkillForeign;
+	}
+
+	public ForeignKeyContainer<PLMSSkillModel> getSecretSkillForeign() {
+		return secretSkillForeign;
+	}
+
+	public ForeignKeyContainer<PLMSSkillModel> getPassiveASkillForeign() {
+		return passiveASkillForeign;
+	}
+
+	public ForeignKeyContainer<PLMSSkillModel> getPassiveBSkillForeign() {
+		return passiveBSkillForeign;
+	}
+
+	public ForeignKeyContainer<PLMSSkillModel> getPassiveCSkillForeign() {
+		return passiveCSkillForeign;
 	}
 }

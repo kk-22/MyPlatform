@@ -9,10 +9,9 @@ public class MYJsonUtil {
 
 	public static int parseIntIfNonNull(JSONObject jsonObject, String key) throws JSONException {
 		Object obj = jsonObject.get(key);
-		String str = MYOtherUtil.castObject(obj, String.class);
-		if (str == null || str.equals("")) {
-			return 0;
+		if (obj instanceof Integer) {
+			return (int)obj;
 		}
-		return Integer.parseInt(str);
+		return 0;
 	}
 }
