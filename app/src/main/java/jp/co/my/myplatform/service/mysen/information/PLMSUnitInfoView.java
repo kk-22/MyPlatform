@@ -3,17 +3,20 @@ package jp.co.my.myplatform.service.mysen.information;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
+import jp.co.my.myplatform.service.popover.PLTextViewPopover;
 
 
-public class PLMSUnitInfoView extends LinearLayout {
+public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListener {
 
 	private TextView mLeftNameTextView;
 	private TextView mCurrentHPTextView;
@@ -50,6 +53,8 @@ public class PLMSUnitInfoView extends LinearLayout {
 		mPassiveATextView = (TextView) findViewById(R.id.passive_a_text);
 		mPassiveBTextView = (TextView) findViewById(R.id.passive_b_text);
 		mPassiveCTextView = (TextView) findViewById(R.id.passive_c_text);
+
+		initTouchEvent();
 	}
 
 	public PLMSUnitInfoView(Context context, AttributeSet attrs){
@@ -72,7 +77,7 @@ public class PLMSUnitInfoView extends LinearLayout {
 		setIntToText(unitData.getCurrentDefense(), mDefenseTextView);
 		setIntToText(unitData.getCurrentMagicDefense(), mMagicDefenseTextView);
 
-		mWeaponTextView.setText("-");
+		setSkillText(unitData.getWeaponSkill(), mSupportTextView);
 		setSkillText(unitData.getSupportSkill(), mSupportTextView);
 		setSkillText(unitData.getSecretSkill(), mSecretTextView);
 		setSkillText(unitData.getPassiveASkill(), mPassiveATextView);
@@ -91,5 +96,38 @@ public class PLMSUnitInfoView extends LinearLayout {
 		} else {
 			textView.setText(skillModel.getName());
 		}
+	}
+
+	private void initTouchEvent() {
+		mWeaponTextView.setOnClickListener(this);
+		mSupportTextView.setOnClickListener(this);
+		mSecretTextView.setOnClickListener(this);
+		mPassiveATextView.setOnClickListener(this);
+		mPassiveBTextView.setOnClickListener(this);
+		mPassiveCTextView.setOnClickListener(this);
+	}
+
+	@Override
+	public void onClick(View v) {
+		PLMSSkillData skillData = null;
+		PLMSUnitData unitData = mUnitView.getUnitData();
+		switch (v.getId()) {
+			case R.id.weapon_text: skillData = unitData.getWeaponSkill(); break;
+			case R.id.support_text: skillData = unitData.getSupportSkill(); break;
+			case R.id.secret_text: skillData = unitData.getSecretSkill(); break;
+			case R.id.passive_a_text: skillData = unitData.getPassiveASkill(); break;
+			case R.id.passive_b_text: skillData = unitData.getPassiveBSkill(); break;
+			case R.id.passive_c_text: skillData = unitData.getPassiveCSkill(); break;
+		}
+		if (skillData == null) {
+			return;
+		}
+		PLMSSkillModel skillModel = skillData.getSkillModel();
+		if (skillModel == null) {
+			return;
+		}
+
+		String description = skillModel.getDescription();
+		new PLTextViewPopover(description).showPopover(new PLRelativeLayoutController(v));
 	}
 }

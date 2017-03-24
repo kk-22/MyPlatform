@@ -17,6 +17,7 @@ public class PLMSUnitData {
 	private PLMSColorData mColor;
 	private PLMSWeaponData mWeapon;
 	private PLMSBranchData mBranch;
+	private PLMSSkillData mWeaponSkill;
 	private PLMSSkillData mSupportSkill;
 	private PLMSSkillData mSecretSkill;
 	private PLMSSkillData mPassiveASkill;
@@ -40,6 +41,7 @@ public class PLMSUnitData {
 		mColor = new PLMSColorData((mUnitModel.getColorType()));
 		mWeapon = new PLMSWeaponData(mUnitModel.getWeaponType());
 		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
+		mWeaponSkill = createSkillData(null);
 		mSupportSkill = createSkillData(mUnitModel.getSupportSkillForeign());
 		mSecretSkill = createSkillData(mUnitModel.getSecretSkillForeign());
 		mPassiveASkill = createSkillData(mUnitModel.getPassiveASkillForeign());
@@ -126,6 +128,10 @@ public class PLMSUnitData {
 
 	public PLMSColorData getColor() {
 		return mColor;
+	}
+
+	public PLMSSkillData getWeaponSkill() {
+		return mWeaponSkill;
 	}
 
 	public PLMSSkillData getSupportSkill() {
