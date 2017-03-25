@@ -26,19 +26,21 @@ public class PLMSSkillModel extends PLBaseModel {
 	private int slotType;
 
 	@Column
-	private int timingType;
+	private int timingType; //　発動タイミング
 	@Column
-	private int requirementType;
+	private int requirementType; // 条件種類
 	@Column
-	private int requirementValue;
+	private int requirementValue; // 条件値
 	@Column
-	private int targetType;
+	private int targetType; // 効果対象・範囲
 	@Column
-	private int targetValue;
+	private int targetValue; // 効果範囲の値
 	@Column
-	private int effectType;
+	private int effectType; // 効果内容
 	@Column
-	private int effectValue;
+	private int effectValue; // 効果の値
+	@Column
+	private int statusType;	// 効果対象のステータス
 
 	@Override
 	public void initFromJson(JSONObject jsonObject) throws JSONException {
@@ -54,6 +56,7 @@ public class PLMSSkillModel extends PLBaseModel {
 		targetValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_value");
 		effectType = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_no");
 		effectValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_value");
+		statusType = MYJsonUtil.parseIntIfNonNull(jsonObject, "status_no");
 	}
 
 	@Override
@@ -148,5 +151,13 @@ public class PLMSSkillModel extends PLBaseModel {
 
 	public void setEffectValue(int effectValue) {
 		this.effectValue = effectValue;
+	}
+
+	public int getStatusType() {
+		return statusType;
+	}
+
+	public void setStatusType(int statusType) {
+		this.statusType = statusType;
 	}
 }
