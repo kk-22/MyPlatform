@@ -102,7 +102,7 @@ public class PLMSUnitModel extends PLBaseModel {
 				// 未入力
 				continue;
 			}
-			PLMSSkillModel model = skillArray.get(skillId);
+			PLMSSkillModel model = skillArray.get(skillId - 1); // 配列の要素は0から、スキルIDは1から始まる
 			ForeignKeyContainer<PLMSSkillModel> foreign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
 					.toForeignKeyContainer(model);
 			switch (i) {
