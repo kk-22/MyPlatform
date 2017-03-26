@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.layout.PLRelativeLayoutController;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
@@ -20,6 +21,7 @@ import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_DEFENSE;
 import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_MAGIC_DEFENSE;
 import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_NUMBER;
 import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_SPEED;
+import static jp.co.my.myplatform.service.mysen.PLMSUnitData.SKILL_NUMBER;
 
 
 public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListener {
@@ -28,14 +30,7 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 	private TextView mCurrentHPTextView;
 	private TextView mMaxHPTextView;
 	private TextView[] mParamTextViews;
-	private TextView[] mSkillTextViews;
-
-	private TextView mWeaponTextView;
-	private TextView mSupportTextView;
-	private TextView mSecretTextView;
-	private TextView mPassiveATextView;
-	private TextView mPassiveBTextView;
-	private TextView mPassiveCTextView;
+	private MYArrayList<TextView> mSkillTextViewArray;
 
 	private PLMSUnitView mUnitView;
 
@@ -44,7 +39,6 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_info, this);
 
 		mParamTextViews = new TextView[PARAMETER_NUMBER];
-		mSkillTextViews = new TextView[PARAMETER_NUMBER];
 		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
 		mCurrentHPTextView = (TextView) findViewById(R.id.current_hp_text);
 		mMaxHPTextView = (TextView) findViewById(R.id.result_hp_text);
@@ -53,14 +47,17 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 		mParamTextViews[PARAMETER_DEFENSE] = (TextView) findViewById(R.id.defense_text);
 		mParamTextViews[PARAMETER_MAGIC_DEFENSE] = (TextView) findViewById(R.id.magic_defense_text);
 
-		mWeaponTextView = (TextView) findViewById(R.id.weapon_text);
-		mSupportTextView = (TextView) findViewById(R.id.support_text);
-		mSecretTextView = (TextView) findViewById(R.id.secret_text);
-		mPassiveATextView = (TextView) findViewById(R.id.passive_a_text);
-		mPassiveBTextView = (TextView) findViewById(R.id.passive_b_text);
-		mPassiveCTextView = (TextView) findViewById(R.id.passive_c_text);
+		mSkillTextViewArray = new MYArrayList<>(SKILL_NUMBER);
+		mSkillTextViewArray.add((TextView) findViewById(R.id.weapon_text));
+		mSkillTextViewArray.add((TextView) findViewById(R.id.support_text));
+		mSkillTextViewArray.add((TextView) findViewById(R.id.secret_text));
+		mSkillTextViewArray.add((TextView) findViewById(R.id.passive_a_text));
+		mSkillTextViewArray.add((TextView) findViewById(R.id.passive_b_text));
+		mSkillTextViewArray.add((TextView) findViewById(R.id.passive_c_text));
 
-		initTouchEvent();
+		for (TextView textView : mSkillTextViewArray) {
+			textView.setOnClickListener(this);
+		}
 	}
 
 	public PLMSUnitInfoView(Context context, AttributeSet attrs){
@@ -82,48 +79,26 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 			setIntToText(unitData.getCurrentParameterOfNo(i), mParamTextViews[i]);
 		}
 
-		setSkillText(unitData.getWeaponSkill(), mSupportTextView);
-		setSkillText(unitData.getSupportSkill(), mSupportTextView);
-		setSkillText(unitData.getSecretSkill(), mSecretTextView);
-		setSkillText(unitData.getPassiveASkill(), mPassiveATextView);
-		setSkillText(unitData.getPassiveBSkill(), mPassiveBTextView);
-		setSkillText(unitData.getPassiveCSkill(), mPassiveCTextView);
+		for (int i = 0; i < SKILL_NUMBER; i++) {
+			PLMSSkillModel skillModel = unitData.getSkillOfNo(i).getSkillModel();
+			TextView textView = mSkillTextViewArray.get(i);
+			if (skillModel== null) {
+				textView.setText("-");
+			} else {
+				textView.setText(skillModel.getName());
+			}
+		}
 	}
 
 	private void setIntToText(int number, TextView textView) {
 		textView.setText(Integer.toString(number));
 	}
 
-	private void setSkillText(PLMSSkillData skillData, TextView textView) {
-		PLMSSkillModel skillModel = skillData.getSkillModel();
-		if (skillModel== null) {
-			textView.setText("-");
-		} else {
-			textView.setText(skillModel.getName());
-		}
-	}
-
-	private void initTouchEvent() {
-		mWeaponTextView.setOnClickListener(this);
-		mSupportTextView.setOnClickListener(this);
-		mSecretTextView.setOnClickListener(this);
-		mPassiveATextView.setOnClickListener(this);
-		mPassiveBTextView.setOnClickListener(this);
-		mPassiveCTextView.setOnClickListener(this);
-	}
-
 	@Override
 	public void onClick(View v) {
-		PLMSSkillData skillData = null;
-		PLMSUnitData unitData = mUnitView.getUnitData();
-		switch (v.getId()) {
-			case R.id.weapon_text: skillData = unitData.getWeaponSkill(); break;
-			case R.id.support_text: skillData = unitData.getSupportSkill(); break;
-			case R.id.secret_text: skillData = unitData.getSecretSkill(); break;
-			case R.id.passive_a_text: skillData = unitData.getPassiveASkill(); break;
-			case R.id.passive_b_text: skillData = unitData.getPassiveBSkill(); break;
-			case R.id.passive_c_text: skillData = unitData.getPassiveCSkill(); break;
-		}
+		TextView textView = (TextView) v;
+		int index = mSkillTextViewArray.indexOf(textView);
+		PLMSSkillData skillData = mUnitView.getUnitData().getSkillOfNo(index);
 		if (skillData == null) {
 			return;
 		}

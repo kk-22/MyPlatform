@@ -17,6 +17,14 @@ public class PLMSUnitData {
 	public static final int PARAMETER_MAGIC_DEFENSE = 3;
 	public static final int PARAMETER_NUMBER = 4; // パラメータ数
 
+	public static final int SKILL_WEAPON = 0;
+	public static final int SKILL_SUPPORT = 1;
+	public static final int SKILL_SECRET = 2;
+	public static final int SKILL_A = 3;
+	public static final int SKILL_B = 4;
+	public static final int SKILL_C = 5;
+	public static final int SKILL_NUMBER = 6;
+
 	private PLMSUnitModel mUnitModel;
 	private Point mFirstPoint;				// 初期位置
 	private PLMSArmyStrategy mArmyStrategy;
@@ -24,12 +32,7 @@ public class PLMSUnitData {
 	private PLMSColorData mColor;
 	private PLMSWeaponData mWeapon;
 	private PLMSBranchData mBranch;
-	private PLMSSkillData mWeaponSkill;
-	private PLMSSkillData mSupportSkill;
-	private PLMSSkillData mSecretSkill;
-	private PLMSSkillData mPassiveASkill;
-	private PLMSSkillData mPassiveBSkill;
-	private PLMSSkillData mPassiveCSkill;
+	private PLMSSkillData[] mAllSkills;
 	private MYArrayList<PLMSSkillData> mPassiveSkillArray;
 
 	private int mMaxHP;
@@ -44,21 +47,22 @@ public class PLMSUnitData {
 		mUnitModel = unitModel;
 		mFirstPoint = firstPoint;
 		mArmyStrategy = armyStrategy;
+		mAllSkills = new PLMSSkillData[SKILL_NUMBER];
 
 		mColor = new PLMSColorData((mUnitModel.getColorType()));
 		mWeapon = new PLMSWeaponData(mUnitModel.getWeaponType());
 		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
-		mWeaponSkill = createSkillData(null);
-		mSupportSkill = createSkillData(mUnitModel.getSupportSkillForeign());
-		mSecretSkill = createSkillData(mUnitModel.getSecretSkillForeign());
-		mPassiveASkill = createSkillData(mUnitModel.getPassiveASkillForeign());
-		mPassiveBSkill = createSkillData(mUnitModel.getPassiveBSkillForeign());
-		mPassiveCSkill = createSkillData(mUnitModel.getPassiveCSkillForeign());
+		mAllSkills[SKILL_WEAPON] = createSkillData(null);
+		mAllSkills[SKILL_SUPPORT] = createSkillData(mUnitModel.getSupportSkillForeign());
+		mAllSkills[SKILL_SECRET] = createSkillData(mUnitModel.getSecretSkillForeign());
+		mAllSkills[SKILL_A] = createSkillData(mUnitModel.getPassiveASkillForeign());
+		mAllSkills[SKILL_B] = createSkillData(mUnitModel.getPassiveBSkillForeign());
+		mAllSkills[SKILL_C] = createSkillData(mUnitModel.getPassiveCSkillForeign());
 
 		mPassiveSkillArray = new MYArrayList<>(3);
-		mPassiveSkillArray.add(mPassiveASkill);
-		mPassiveSkillArray.add(mPassiveBSkill);
-		mPassiveSkillArray.add(mPassiveCSkill);
+		mPassiveSkillArray.add(mAllSkills[SKILL_A]);
+		mPassiveSkillArray.add(mAllSkills[SKILL_B]);
+		mPassiveSkillArray.add(mAllSkills[SKILL_C]);
 
 		mBaseParams = new int[PARAMETER_NUMBER];
 		mBaseParams[PARAMETER_ATTACK] = mUnitModel.getAttackPoint();
@@ -156,28 +160,8 @@ public class PLMSUnitData {
 		return mColor;
 	}
 
-	public PLMSSkillData getWeaponSkill() {
-		return mWeaponSkill;
-	}
-
-	public PLMSSkillData getSupportSkill() {
-		return mSupportSkill;
-	}
-
-	public PLMSSkillData getSecretSkill() {
-		return mSecretSkill;
-	}
-
-	public PLMSSkillData getPassiveASkill() {
-		return mPassiveASkill;
-	}
-
-	public PLMSSkillData getPassiveBSkill() {
-		return mPassiveBSkill;
-	}
-
-	public PLMSSkillData getPassiveCSkill() {
-		return mPassiveCSkill;
+	public PLMSSkillData getSkillOfNo(int no) {
+		return mAllSkills[no];
 	}
 
 	public MYArrayList<PLMSSkillData> getPassiveSkillArray() {
