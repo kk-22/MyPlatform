@@ -15,16 +15,20 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 import jp.co.my.myplatform.service.popover.PLTextViewPopover;
 
+import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_ATTACK;
+import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_DEFENSE;
+import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_MAGIC_DEFENSE;
+import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_NUMBER;
+import static jp.co.my.myplatform.service.mysen.PLMSUnitData.PARAMETER_SPEED;
+
 
 public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListener {
 
 	private TextView mLeftNameTextView;
 	private TextView mCurrentHPTextView;
 	private TextView mMaxHPTextView;
-	private TextView mAttackTextView;
-	private TextView mSpeedTextView;
-	private TextView mDefenseTextView;
-	private TextView mMagicDefenseTextView;
+	private TextView[] mParamTextViews;
+	private TextView[] mSkillTextViews;
 
 	private TextView mWeaponTextView;
 	private TextView mSupportTextView;
@@ -39,13 +43,15 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_info, this);
 
+		mParamTextViews = new TextView[PARAMETER_NUMBER];
+		mSkillTextViews = new TextView[PARAMETER_NUMBER];
 		mLeftNameTextView = (TextView) findViewById(R.id.name_text);
 		mCurrentHPTextView = (TextView) findViewById(R.id.current_hp_text);
 		mMaxHPTextView = (TextView) findViewById(R.id.result_hp_text);
-		mAttackTextView = (TextView) findViewById(R.id.attack_text);
-		mSpeedTextView = (TextView) findViewById(R.id.speed_text);
-		mDefenseTextView = (TextView) findViewById(R.id.defense_text);
-		mMagicDefenseTextView = (TextView) findViewById(R.id.magic_defense_text);
+		mParamTextViews[PARAMETER_ATTACK] = (TextView) findViewById(R.id.attack_text);
+		mParamTextViews[PARAMETER_SPEED] = (TextView) findViewById(R.id.speed_text);
+		mParamTextViews[PARAMETER_DEFENSE] = (TextView) findViewById(R.id.defense_text);
+		mParamTextViews[PARAMETER_MAGIC_DEFENSE] = (TextView) findViewById(R.id.magic_defense_text);
 
 		mWeaponTextView = (TextView) findViewById(R.id.weapon_text);
 		mSupportTextView = (TextView) findViewById(R.id.support_text);
@@ -72,10 +78,9 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 		mLeftNameTextView.setText(unitData.getUnitModel().getName());
 		setIntToText(unitData.getCurrentHP(), mCurrentHPTextView);
 		setIntToText(unitData.getMaxHP(), mMaxHPTextView);
-		setIntToText(unitData.getCurrentAttack(), mAttackTextView);
-		setIntToText(unitData.getCurrentSpeed(), mSpeedTextView);
-		setIntToText(unitData.getCurrentDefense(), mDefenseTextView);
-		setIntToText(unitData.getCurrentMagicDefense(), mMagicDefenseTextView);
+		for (int i = 0; i < PARAMETER_NUMBER; i++) {
+			setIntToText(unitData.getCurrentParameterOfNo(i), mParamTextViews[i]);
+		}
 
 		setSkillText(unitData.getWeaponSkill(), mSupportTextView);
 		setSkillText(unitData.getSupportSkill(), mSupportTextView);

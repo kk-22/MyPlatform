@@ -184,6 +184,18 @@ public class PLMSUnitData {
 		return mPassiveSkillArray;
 	}
 
+	public int getCurrentParameterOfNo(int no) {
+		return mCurrentParams[no];
+	}
+
+	public int getBaseParameterOfNo(int no) {
+		return mBaseParams[no];
+	}
+
+	public int getBuffParameterOfNo(int no) {
+		return mBuffParams[no];
+	}
+
 	// setter
 	public void setCurrentHP(int currentHP) {
 		mCurrentHP = currentHP;
