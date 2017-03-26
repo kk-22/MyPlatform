@@ -37,16 +37,16 @@ public class PLMSSkillData {
 				PLMSUnitData unitData = unitView.getUnitData();
 				int statusType = mSkillModel.getStatusType();
 				int value = mSkillModel.getEffectValue();
-				if ((statusType & STATUS_ATTACK) != 0) {
+				if ((statusType & SKILL_ATTACK) != 0) {
 					unitData.setBuffAttack(value);
 				}
-				if ((statusType & STATUS_SPEED) != 0) {
+				if ((statusType & SKILL_SPEED) != 0) {
 					unitData.setBuffSpeed(value);
 				}
-				if ((statusType & STATUS_DEFENCE) != 0) {
+				if ((statusType & SKILL_DEFENSE) != 0) {
 					unitData.setBuffDefense(value);
 				}
-				if ((statusType & STATUS_MAGIC_DEFENCE) != 0) {
+				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
 					unitData.setBuffMagicDefense(value);
 				}
 				break;
@@ -82,11 +82,11 @@ public class PLMSSkillData {
 		return mSkillModel;
 	}
 
-	private static final int STATUS_ATTACK = 0x0001;
-	private static final int STATUS_SPEED = 0x0002;
-	private static final int STATUS_DEFENCE = 0x0004;
-	private static final int STATUS_MAGIC_DEFENCE = 0x0008;
-	private static final int STATUS_HP = 0x0010;
+	private static final int SKILL_ATTACK = 0x0001;
+	private static final int SKILL_SPEED = 0x0002;
+	private static final int SKILL_DEFENSE = 0x0004;
+	private static final int SKILL_MAGIC_DEFENSE = 0x0008;
+	private static final int SKILL_HP = 0x0010;
 
 	private enum TimingType {
 		START_TURN(1),
