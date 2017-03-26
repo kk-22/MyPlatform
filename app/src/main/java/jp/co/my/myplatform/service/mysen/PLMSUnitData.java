@@ -11,6 +11,12 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 
 public class PLMSUnitData {
 
+	public static final int PARAMETER_ATTACK = 0;
+	public static final int PARAMETER_SPEED = 1;
+	public static final int PARAMETER_DEFENSE = 2;
+	public static final int PARAMETER_MAGIC_DEFENSE = 3;
+	public static final int PARAMETER_NUMBER = 4; // パラメータ数
+
 	private PLMSUnitModel mUnitModel;
 	private Point mFirstPoint;				// 初期位置
 	private PLMSArmyStrategy mArmyStrategy;
@@ -28,17 +34,11 @@ public class PLMSUnitData {
 
 	private int mMaxHP;
 	private int mCurrentHP;
-	private int mCurrentAttack;
-	private int mCurrentSpeed;
-	private int mCurrentDefense;
-	private int mCurrentMagicDefense;
+	private int[] mBaseParams; // バフ適用前の値
+	private int[] mCurrentParams; // バフ適用後の値
+	private int[] mBuffParams; // バフによる加算値
 
-	private int mBuffAttack;
-	private int mBuffSpeed;
-	private int mBuffDefense;
-	private int mBuffMagicDefense;
-
-	private int mMoveCount;					// 同一ターン内での移動回数
+	private int mMoveCount; // 同一ターン内での移動回数
 
 	public PLMSUnitData(PLMSUnitModel unitModel, Point firstPoint, PLMSArmyStrategy armyStrategy) {
 		mUnitModel = unitModel;
@@ -60,7 +60,18 @@ public class PLMSUnitData {
 		mPassiveSkillArray.add(mPassiveBSkill);
 		mPassiveSkillArray.add(mPassiveCSkill);
 
-		initAllStatus();
+		mBaseParams = new int[PARAMETER_NUMBER];
+		mBaseParams[PARAMETER_ATTACK] = mUnitModel.getAttackPoint();
+		mBaseParams[PARAMETER_SPEED] = mUnitModel.getSpeedPoint();
+		mBaseParams[PARAMETER_DEFENSE] = mUnitModel.getDefensePoint();
+		mBaseParams[PARAMETER_MAGIC_DEFENSE] = mUnitModel.getMagicDefensePoint();
+		mCurrentParams = new int[PARAMETER_NUMBER];
+		mBuffParams = new int[PARAMETER_NUMBER];
+		
+		mMaxHP = mUnitModel.getHitPoint();
+		mCurrentHP = mMaxHP;
+		resetParams();
+		setAllStatus();
 	}
 
 	public int moveCost(PLMSLandData landData) {
@@ -72,26 +83,17 @@ public class PLMSUnitData {
 	}
 
 	public void resetParams() {
-		mBuffAttack = 0;
-		mBuffSpeed = 0;
-		mBuffDefense = 0;
-		mBuffMagicDefense = 0;
+		for (int i = 0; i < PARAMETER_NUMBER; i++) {
+			mBuffParams[i] = 0;
+		}
 
 		mMoveCount = 0;
 	}
 
 	public void setAllStatus() {
-		mCurrentAttack = mUnitModel.getAttackPoint() + mBuffAttack;
-		mCurrentSpeed = mUnitModel.getSpeedPoint() + mBuffSpeed;
-		mCurrentDefense = mUnitModel.getDefensePoint() + mBuffDefense;
-		mCurrentMagicDefense = mUnitModel.getMagicDefensePoint() + mBuffMagicDefense;
-	}
-
-	private void initAllStatus() {
-		mMaxHP = mUnitModel.getHitPoint();
-		mCurrentHP = mMaxHP;
-		resetParams();
-		setAllStatus();
+		for (int i = 0; i < PARAMETER_NUMBER; i++) {
+			mCurrentParams[i] = mBaseParams[i] + mBuffParams[i];
+		}
 	}
 
 	private PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
@@ -119,19 +121,19 @@ public class PLMSUnitData {
 	}
 
 	public int getCurrentAttack() {
-		return mCurrentAttack;
+		return mCurrentParams[PARAMETER_ATTACK];
 	}
 
 	public int getCurrentSpeed() {
-		return mCurrentSpeed;
+		return mCurrentParams[PARAMETER_SPEED];
 	}
 
 	public int getCurrentDefense() {
-		return mCurrentDefense;
+		return mCurrentParams[PARAMETER_DEFENSE];
 	}
 
 	public int getCurrentMagicDefense() {
-		return mCurrentMagicDefense;
+		return mCurrentParams[PARAMETER_MAGIC_DEFENSE];
 	}
 
 	public PLMSArmyStrategy getArmyStrategy() {
@@ -187,27 +189,9 @@ public class PLMSUnitData {
 		mCurrentHP = currentHP;
 	}
 
-	public void setBuffAttack(int buffAttack) {
-		if (mBuffAttack < buffAttack) {
-			mBuffAttack = buffAttack;
-		}
-	}
-
-	public void setBuffSpeed(int buffSpeed) {
-		if (mBuffSpeed < buffSpeed) {
-			mBuffSpeed = buffSpeed;
-		}
-	}
-
-	public void setBuffDefense(int buffDefense) {
-		if (mBuffDefense < buffDefense) {
-			mBuffDefense = buffDefense;
-		}
-	}
-
-	public void setBuffMagicDefense(int buffMagicDefense) {
-		if (mBuffMagicDefense < buffMagicDefense) {
-			mBuffMagicDefense = buffMagicDefense;
+	public void setBuffNumber(int parameterNo, int buff) {
+		if (mBuffParams[parameterNo] < buff) {
+			mBuffParams[parameterNo] = buff;
 		}
 	}
 }

@@ -38,26 +38,29 @@ public class PLMSSkillData {
 				int statusType = mSkillModel.getStatusType();
 				int value = mSkillModel.getEffectValue();
 				if ((statusType & SKILL_ATTACK) != 0) {
-					unitData.setBuffAttack(value);
+					unitData.setBuffNumber(PLMSUnitData.PARAMETER_ATTACK, value);
 				}
 				if ((statusType & SKILL_SPEED) != 0) {
-					unitData.setBuffSpeed(value);
+					unitData.setBuffNumber(PLMSUnitData.PARAMETER_SPEED, value);
 				}
 				if ((statusType & SKILL_DEFENSE) != 0) {
-					unitData.setBuffDefense(value);
+					unitData.setBuffNumber(PLMSUnitData.PARAMETER_DEFENSE, value);
 				}
 				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
-					unitData.setBuffMagicDefense(value);
+					unitData.setBuffNumber(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
 				}
 				break;
 			}
 			default:
-				return;
+				MYLogUtil.showErrorToast("未実装StartTurnスキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				break;
 		}
-		return;
 	}
 
 	private boolean canExecuteSkill(PLMSUnitView unitView) {
+		if (mSkillModel == null) {
+			return false;
+		}
 		switch (mRequirementType) {
 			case NONE:
 				return true;
