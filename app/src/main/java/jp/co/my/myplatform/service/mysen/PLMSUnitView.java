@@ -11,6 +11,7 @@ import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 public class PLMSUnitView extends FrameLayout {
 
@@ -37,6 +38,11 @@ public class PLMSUnitView extends FrameLayout {
 
 	// ターン開始時
 	public void resetForNewTurn(int numberOfTurn) {
+		mUnitData.resetParams();
+		for (PLMSSkillData skillData : mUnitData.getPassiveSkillArray()) {
+			skillData.executeStartTurnSkill(this, numberOfTurn);
+		}
+		mUnitData.setAllStatus();
 	}
 
 	// ターン終了時

@@ -4,6 +4,7 @@ import android.graphics.Point;
 
 import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
@@ -23,6 +24,7 @@ public class PLMSUnitData {
 	private PLMSSkillData mPassiveASkill;
 	private PLMSSkillData mPassiveBSkill;
 	private PLMSSkillData mPassiveCSkill;
+	private MYArrayList<PLMSSkillData> mPassiveSkillArray;
 
 	private int mMaxHP;
 	private int mCurrentHP;
@@ -30,6 +32,11 @@ public class PLMSUnitData {
 	private int mCurrentSpeed;
 	private int mCurrentDefense;
 	private int mCurrentMagicDefense;
+
+	private int mBuffAttack;
+	private int mBuffSpeed;
+	private int mBuffDefense;
+	private int mBuffMagicDefense;
 
 	private int mMoveCount;					// 同一ターン内での移動回数
 
@@ -48,7 +55,12 @@ public class PLMSUnitData {
 		mPassiveBSkill = createSkillData(mUnitModel.getPassiveBSkillForeign());
 		mPassiveCSkill = createSkillData(mUnitModel.getPassiveCSkillForeign());
 
-		resetAllStatus();
+		mPassiveSkillArray = new MYArrayList<>(3);
+		mPassiveSkillArray.add(mPassiveASkill);
+		mPassiveSkillArray.add(mPassiveBSkill);
+		mPassiveSkillArray.add(mPassiveCSkill);
+
+		initAllStatus();
 	}
 
 	public int moveCost(PLMSLandData landData) {
@@ -59,18 +71,30 @@ public class PLMSUnitData {
 		return "unit/" +mUnitModel.getNo() +".png";
 	}
 
-	public void resetAllStatus() {
-		mMaxHP = mUnitModel.getHitPoint();
-		mCurrentHP = mMaxHP;
-		mCurrentAttack = mUnitModel.getAttackPoint();
-		mCurrentSpeed = mUnitModel.getSpeedPoint();
-		mCurrentDefense = mUnitModel.getDefensePoint();
-		mCurrentMagicDefense = mUnitModel.getMagicDefensePoint();
+	public void resetParams() {
+		mBuffAttack = 0;
+		mBuffSpeed = 0;
+		mBuffDefense = 0;
+		mBuffMagicDefense = 0;
 
 		mMoveCount = 0;
 	}
 
-	public PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
+	public void setAllStatus() {
+		mCurrentAttack = mUnitModel.getAttackPoint() + mBuffAttack;
+		mCurrentSpeed = mUnitModel.getSpeedPoint() + mBuffSpeed;
+		mCurrentDefense = mUnitModel.getDefensePoint() + mBuffDefense;
+		mCurrentMagicDefense = mUnitModel.getMagicDefensePoint() + mBuffMagicDefense;
+	}
+
+	private void initAllStatus() {
+		mMaxHP = mUnitModel.getHitPoint();
+		mCurrentHP = mMaxHP;
+		resetParams();
+		setAllStatus();
+	}
+
+	private PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
 		if (foreign == null) {
 			return new PLMSSkillData(null);
 		}
@@ -154,8 +178,36 @@ public class PLMSUnitData {
 		return mPassiveCSkill;
 	}
 
+	public MYArrayList<PLMSSkillData> getPassiveSkillArray() {
+		return mPassiveSkillArray;
+	}
+
 	// setter
 	public void setCurrentHP(int currentHP) {
 		mCurrentHP = currentHP;
+	}
+
+	public void setBuffAttack(int buffAttack) {
+		if (mBuffAttack < buffAttack) {
+			mBuffAttack = buffAttack;
+		}
+	}
+
+	public void setBuffSpeed(int buffSpeed) {
+		if (mBuffSpeed < buffSpeed) {
+			mBuffSpeed = buffSpeed;
+		}
+	}
+
+	public void setBuffDefense(int buffDefense) {
+		if (mBuffDefense < buffDefense) {
+			mBuffDefense = buffDefense;
+		}
+	}
+
+	public void setBuffMagicDefense(int buffMagicDefense) {
+		if (mBuffMagicDefense < buffMagicDefense) {
+			mBuffMagicDefense = buffMagicDefense;
+		}
 	}
 }
