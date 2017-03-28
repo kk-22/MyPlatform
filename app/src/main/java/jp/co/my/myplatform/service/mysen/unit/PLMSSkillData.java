@@ -3,6 +3,8 @@ package jp.co.my.myplatform.service.mysen.unit;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 
 public class PLMSSkillData {
 
@@ -57,6 +59,43 @@ public class PLMSSkillData {
 		}
 	}
 
+	public void executeAttackToEnemySkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+		if (mTimingType != TimingType.ATTACK_TO_ENEMY && mTimingType != TimingType.START_BATTLE) {
+			return;
+		}
+		PLMSUnitView unitView = battleUnit.getUnitView();
+		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+		if (!canExecuteSkill((unitView)) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
+			return;
+		}
+		switch (mEffectType) {
+			case BATTLE_BUFF: {
+				int statusType = mSkillModel.getStatusType();
+				int value = mSkillModel.getEffectValue();
+				if ((statusType & SKILL_ATTACK) != 0) {
+					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_ATTACK, value);
+				}
+				if ((statusType & SKILL_SPEED) != 0) {
+					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_SPEED, value);
+				}
+				if ((statusType & SKILL_DEFENSE) != 0) {
+					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_DEFENSE, value);
+				}
+				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
+					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
+				}
+				break;
+			}
+			default:
+				MYLogUtil.showErrorToast("未実装StartTurnスキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				break;
+		}
+	}
+
+	public void executeAttackToMeSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+
+	}
+
 	private boolean canExecuteSkill(PLMSUnitView unitView) {
 		if (mSkillModel == null) {
 			return false;
@@ -78,6 +117,10 @@ public class PLMSSkillData {
 				// 各 execute メソッドで判定
 				return true;
 		}
+	}
+
+	private boolean canExecuteBattleSkill(PLMSBattleUnit myBattleUnit, PLMSBattleUnit enemyBattleUnit) {
+		return true;
 	}
 
 	// getter

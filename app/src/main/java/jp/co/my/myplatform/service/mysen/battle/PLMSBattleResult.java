@@ -4,16 +4,17 @@ import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 public class PLMSBattleResult {
 
 	private PLMSBattleUnit mLeftUnit;
 	private PLMSBattleUnit mRightUnit;
 	private PLMSFieldView mFieldView;
-	private MYArrayList<PLMSBattleUnit> mAttackerArray;		// 攻撃順配列
+	private MYArrayList<PLMSBattleUnit> mAttackerArray; // 攻撃順配列
 	private MYArrayList<PLMSBattleScene> mSceneArray;
 
-	private int mDistance;
+	private int mDistance; // 攻撃距離
 
 	public PLMSBattleResult(PLMSFieldView fieldView,
 							PLMSUnitView leftUnitView, PLMSLandView leftLandView,
@@ -22,12 +23,23 @@ public class PLMSBattleResult {
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 		mFieldView = fieldView;
 
-		mLeftUnit.initParamsWithEnemyUnit(mRightUnit);
-		mRightUnit.initParamsWithEnemyUnit(mLeftUnit);
-
+		mLeftUnit.setEnemyUnit(mRightUnit);
+		mRightUnit.setEnemyUnit(mLeftUnit);
 		mDistance = leftUnitView.getUnitData().getWeapon().getAttackRange();
+
+		// 反撃有無に応じたスキルがあるため、全距離反撃スキルを持つ被攻撃側スキルを優先
+		for (PLMSSkillData skillData : mRightUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
+			skillData.executeAttackToMeSkill(mRightUnit, this);
+		}
+		for (PLMSSkillData skillData : mLeftUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
+			skillData.executeAttackToEnemySkill(mLeftUnit, this);
+		}
+
+		mLeftUnit.initParamsWithEnemyUnit();
+		mRightUnit.initParamsWithEnemyUnit();
+		// 速さがスキルによって変わるため最後に計算
+		// TODO: スキル結果をBattleUnitの変数へセットし、その値をもとに攻撃順、追撃判定を行う
 		mAttackerArray = createAttackerArray();
-		mSceneArray = new MYArrayList<>();
 		createScene();
 	}
 
@@ -39,6 +51,7 @@ public class PLMSBattleResult {
 	}
 
 	private void createScene() {
+		mSceneArray = new MYArrayList<>();
 		int maxScene = mAttackerArray.size();
 		for (int i = 0; i < maxScene; i++) {
 			PLMSBattleUnit attackerUnit = mAttackerArray.get(i);

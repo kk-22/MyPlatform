@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen.battle;
 
 import jp.co.my.myplatform.service.mysen.PLMSColorData;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
+import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 
 public class PLMSBattleUnit {
@@ -11,11 +12,8 @@ public class PLMSBattleUnit {
 	private PLMSBattleUnit mEnemyUnit;
 
 	private int mResultHP;
-	private int mBattleAttack;
-	private int mBattleSpeed;
-	private int mBattleDefense;
-	private int mBattleMagicDefense;
 
+	private int[] mBattleBuffs;
 	private int mTotalAttack;					// 3すくみ・スキル補正後の値（奥義スキルは除く）
 
 	public PLMSBattleUnit(PLMSUnitView unitView, PLMSLandView landView) {
@@ -23,10 +21,8 @@ public class PLMSBattleUnit {
 		mLandView = landView;
 
 		mResultHP = mUnitView.getUnitData().getCurrentHP();
-		mBattleAttack = mUnitView.getUnitData().getCurrentAttack();
-		mBattleSpeed = mUnitView.getUnitData().getCurrentSpeed();
-		mBattleDefense = mUnitView.getUnitData().getCurrentDefense();
-		mBattleMagicDefense = mUnitView.getUnitData().getCurrentMagicDefense();
+
+		mBattleBuffs = new int[PLMSUnitData.PARAMETER_NUMBER];
 	}
 
 	public boolean canAttackWithDistance(int distance) {
@@ -35,7 +31,7 @@ public class PLMSBattleUnit {
 	}
 
 	public boolean canChaseAttack(PLMSBattleUnit enemyUnit) {
-		if (enemyUnit.getBattleSpeed() + 5 <= mBattleSpeed) {
+		if (enemyUnit.getBattleSpeed() + 5 <= getBattleSpeed()) {
 			return true;
 		}
 		return false;
@@ -44,21 +40,24 @@ public class PLMSBattleUnit {
 	// TODO: 敵の武器種類（物理/魔法）によって分岐
 	public int getDefenseForEnemyAttack() {
 		if (mEnemyUnit.getUnitView().getUnitData().getWeapon().isPhysicalAttack()) {
-			return mBattleDefense;
+			return getBattleDefense();
 		} else {
-			return mBattleMagicDefense;
+			return getBattleMagicDefense();
 		}
 	}
 
-	public void initParamsWithEnemyUnit(PLMSBattleUnit enemyUnit) {
-		mEnemyUnit = enemyUnit;
-
-		PLMSColorData enemyColor = enemyUnit.getUnitView().getUnitData().getColor();
+	// TODO: 3すくみ補正値はBattleResultに初期値を設定し、スキル側で書き換え可能にする
+	public void initParamsWithEnemyUnit() {
+		PLMSColorData enemyColor = mEnemyUnit.getUnitView().getUnitData().getColor();
 		double ratio = mUnitView.getUnitData().getColor().damageRatio(enemyColor);
 		// 正負どちらでも0に近い値を採用する
 		// Math.floor は負の値の時にも低い値を採用するため使用不可
-		int plusDamage = (int)(mBattleAttack * ratio);
-		mTotalAttack = mBattleAttack + plusDamage;
+		int plusDamage = (int)(getBattleAttack() * ratio);
+		mTotalAttack = getBattleAttack() + plusDamage;
+	}
+
+	private int getBattleParameter(int no) {
+		return mUnitView.getUnitData().getCurrentParameterOfNo(no) + mBattleBuffs[no];
 	}
 
 	// getter
@@ -75,19 +74,19 @@ public class PLMSBattleUnit {
 	}
 
 	public int getBattleAttack() {
-		return mBattleAttack;
+		return getBattleParameter(PLMSUnitData.PARAMETER_ATTACK);
 	}
 
 	public int getBattleSpeed() {
-		return mBattleSpeed;
+		return getBattleParameter(PLMSUnitData.PARAMETER_SPEED);
 	}
 
 	public int getBattleDefense() {
-		return mBattleDefense;
+		return getBattleParameter(PLMSUnitData.PARAMETER_DEFENSE);
 	}
 
 	public int getBattleMagicDefense() {
-		return mBattleMagicDefense;
+		return getBattleParameter(PLMSUnitData.PARAMETER_MAGIC_DEFENSE);
 	}
 
 	public int getTotalAttack() {
@@ -101,5 +100,15 @@ public class PLMSBattleUnit {
 	// setter
 	public void setResultHP(int resultHP) {
 		mResultHP = resultHP;
+	}
+
+	public void setEnemyUnit(PLMSBattleUnit enemyUnit) {
+		mEnemyUnit = enemyUnit;
+	}
+
+	public void setBattleBuff(int parameterNo, int buff) {
+		if (mBattleBuffs[parameterNo] < buff) {
+			mBattleBuffs[parameterNo] = buff;
+		}
 	}
 }
