@@ -40,16 +40,16 @@ public class PLMSSkillData {
 				int statusType = mSkillModel.getStatusType();
 				int value = mSkillModel.getEffectValue();
 				if ((statusType & SKILL_ATTACK) != 0) {
-					unitData.setBuffNumber(PLMSUnitData.PARAMETER_ATTACK, value);
+					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
 				}
 				if ((statusType & SKILL_SPEED) != 0) {
-					unitData.setBuffNumber(PLMSUnitData.PARAMETER_SPEED, value);
+					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_SPEED, value);
 				}
 				if ((statusType & SKILL_DEFENSE) != 0) {
-					unitData.setBuffNumber(PLMSUnitData.PARAMETER_DEFENSE, value);
+					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_DEFENSE, value);
 				}
 				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
-					unitData.setBuffNumber(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
+					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
 				}
 				break;
 			}
@@ -73,16 +73,16 @@ public class PLMSSkillData {
 				int statusType = mSkillModel.getStatusType();
 				int value = mSkillModel.getEffectValue();
 				if ((statusType & SKILL_ATTACK) != 0) {
-					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_ATTACK, value);
+					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
 				}
 				if ((statusType & SKILL_SPEED) != 0) {
-					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_SPEED, value);
+					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_SPEED, value);
 				}
 				if ((statusType & SKILL_DEFENSE) != 0) {
-					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_DEFENSE, value);
+					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_DEFENSE, value);
 				}
 				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
-					battleUnit.setBattleBuff(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
+					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
 				}
 				break;
 			}

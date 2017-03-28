@@ -185,7 +185,7 @@ public class PLMSUnitData {
 		mCurrentHP = currentHP;
 	}
 
-	public void setBuffNumber(int parameterNo, int buff) {
+	public void setBuffOfNo(int parameterNo, int buff) {
 		if (mBuffParams[parameterNo] < buff) {
 			mBuffParams[parameterNo] = buff;
 		}

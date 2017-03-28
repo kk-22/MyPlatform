@@ -56,7 +56,7 @@ public class PLMSBattleUnit {
 		mTotalAttack = getBattleAttack() + plusDamage;
 	}
 
-	private int getBattleParameter(int no) {
+	private int getBattleParameterOfNo(int no) {
 		return mUnitView.getUnitData().getCurrentParameterOfNo(no) + mBattleBuffs[no];
 	}
 
@@ -74,19 +74,19 @@ public class PLMSBattleUnit {
 	}
 
 	public int getBattleAttack() {
-		return getBattleParameter(PLMSUnitData.PARAMETER_ATTACK);
+		return getBattleParameterOfNo(PLMSUnitData.PARAMETER_ATTACK);
 	}
 
 	public int getBattleSpeed() {
-		return getBattleParameter(PLMSUnitData.PARAMETER_SPEED);
+		return getBattleParameterOfNo(PLMSUnitData.PARAMETER_SPEED);
 	}
 
 	public int getBattleDefense() {
-		return getBattleParameter(PLMSUnitData.PARAMETER_DEFENSE);
+		return getBattleParameterOfNo(PLMSUnitData.PARAMETER_DEFENSE);
 	}
 
 	public int getBattleMagicDefense() {
-		return getBattleParameter(PLMSUnitData.PARAMETER_MAGIC_DEFENSE);
+		return getBattleParameterOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE);
 	}
 
 	public int getTotalAttack() {
@@ -106,7 +106,7 @@ public class PLMSBattleUnit {
 		mEnemyUnit = enemyUnit;
 	}
 
-	public void setBattleBuff(int parameterNo, int buff) {
+	public void setBattleBuffOfNo(int parameterNo, int buff) {
 		if (mBattleBuffs[parameterNo] < buff) {
 			mBattleBuffs[parameterNo] = buff;
 		}
