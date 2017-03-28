@@ -31,6 +31,7 @@
 
             <TextView
                 android:id="@+id/current_hp_text"
+                android:textColor="#fff"
                 android:textAlignment="center"
                 android:layout_weight="4"
                 android:layout_width="0dp"
@@ -45,6 +46,7 @@
 
             <TextView
                 android:id="@+id/result_hp_text"
+                android:textColor="#fff"
                 android:textAlignment="center"
                 android:layout_weight="4"
                 android:layout_width="0dp"
