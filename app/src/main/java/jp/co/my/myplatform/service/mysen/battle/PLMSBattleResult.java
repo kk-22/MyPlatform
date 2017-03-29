@@ -6,6 +6,9 @@ import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
+import static jp.co.my.myplatform.service.mysen.unit.PLMSSkillData.EffectType;
+
+
 public class PLMSBattleResult {
 
 	private PLMSBattleUnit mLeftUnit;
@@ -13,8 +16,6 @@ public class PLMSBattleResult {
 	private PLMSFieldView mFieldView;
 	private MYArrayList<PLMSBattleUnit> mAttackerArray; // 攻撃順配列
 	private MYArrayList<PLMSBattleScene> mSceneArray;
-
-	private int mDistance; // 攻撃距離
 
 	public PLMSBattleResult(PLMSFieldView fieldView,
 							PLMSUnitView leftUnitView, PLMSLandView leftLandView,
@@ -25,7 +26,6 @@ public class PLMSBattleResult {
 
 		mLeftUnit.setEnemyUnit(mRightUnit);
 		mRightUnit.setEnemyUnit(mLeftUnit);
-		mDistance = leftUnitView.getUnitData().getWeapon().getAttackRange();
 
 		// 反撃有無に応じたスキルがあるため、全距離反撃スキルを持つ被攻撃側スキルを優先
 		for (PLMSSkillData skillData : mRightUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
@@ -70,7 +70,14 @@ public class PLMSBattleResult {
 		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
 		PLMSBattleUnit firstAttacker = mLeftUnit;
 		PLMSBattleUnit secondAttacker = firstAttacker.getEnemyUnit();
-		boolean canAttackSecondAttacker = secondAttacker.canAttackWithDistance(mDistance);
+
+
+		int distance = firstAttacker.getUnitView().getUnitData().getWeapon().getAttackRange();
+		boolean canAttackSecondAttacker = false;
+		if (secondAttacker.getUnitView().getUnitData().getWeapon().getAttackRange() == distance
+				|| secondAttacker.getSkillEffectArray().contains(EffectType.ALL_RANGE_COUNTER)) {
+			canAttackSecondAttacker = true;
+		}
 
 		attackerArray.add(firstAttacker);
 		if (canAttackSecondAttacker) {

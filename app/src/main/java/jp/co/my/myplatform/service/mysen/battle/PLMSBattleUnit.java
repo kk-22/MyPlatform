@@ -1,9 +1,11 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.PLMSColorData;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 public class PLMSBattleUnit {
 
@@ -12,9 +14,10 @@ public class PLMSBattleUnit {
 	private PLMSBattleUnit mEnemyUnit;
 
 	private int mResultHP;
-
 	private int[] mBattleBuffs;
 	private int mTotalAttack;					// 3すくみ・スキル補正後の値（奥義スキルは除く）
+
+	private MYArrayList<PLMSSkillData.EffectType> mSkillEffectArray;
 
 	public PLMSBattleUnit(PLMSUnitView unitView, PLMSLandView landView) {
 		mUnitView = unitView;
@@ -23,11 +26,7 @@ public class PLMSBattleUnit {
 		mResultHP = mUnitView.getUnitData().getCurrentHP();
 
 		mBattleBuffs = new int[PLMSUnitData.PARAMETER_NUMBER];
-	}
-
-	public boolean canAttackWithDistance(int distance) {
-		int myRange = mUnitView.getUnitData().getWeapon().getAttackRange();
-		return (myRange == distance);
+		mSkillEffectArray = new MYArrayList<>();
 	}
 
 	public boolean canChaseAttack(PLMSBattleUnit enemyUnit) {
@@ -97,6 +96,10 @@ public class PLMSBattleUnit {
 		return mEnemyUnit;
 	}
 
+	public MYArrayList<PLMSSkillData.EffectType> getSkillEffectArray() {
+		return mSkillEffectArray;
+	}
+
 	// setter
 	public void setResultHP(int resultHP) {
 		mResultHP = resultHP;
@@ -106,9 +109,14 @@ public class PLMSBattleUnit {
 		mEnemyUnit = enemyUnit;
 	}
 
+	// TODO: battleBuffは最大値採用方式ではなく加算方式
 	public void setBattleBuffOfNo(int parameterNo, int buff) {
 		if (mBattleBuffs[parameterNo] < buff) {
 			mBattleBuffs[parameterNo] = buff;
 		}
+	}
+
+	public void addSkill(PLMSSkillData skillData) {
+		mSkillEffectArray.add(skillData.getEffectType());
 	}
 }

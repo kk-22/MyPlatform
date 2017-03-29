@@ -54,13 +54,18 @@ public class PLMSSkillData {
 				break;
 			}
 			default:
-				MYLogUtil.showErrorToast("未実装StartTurnスキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				MYLogUtil.showErrorToast("未実装 StartTurn スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
 				break;
 		}
 	}
 
 	public void executeAttackToEnemySkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-		if (mTimingType != TimingType.ATTACK_TO_ENEMY && mTimingType != TimingType.START_BATTLE) {
+		if (mTimingType == TimingType.START_BATTLE) {
+			executeBattleSkill(battleUnit, battleResult);
+			return;
+		}
+
+		if (mTimingType != TimingType.ATTACK_TO_ENEMY) {
 			return;
 		}
 		PLMSUnitView unitView = battleUnit.getUnitView();
@@ -87,12 +92,36 @@ public class PLMSSkillData {
 				break;
 			}
 			default:
-				MYLogUtil.showErrorToast("未実装StartTurnスキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				MYLogUtil.showErrorToast("未実装 AttackToEnemy スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
 				break;
 		}
 	}
 
 	public void executeAttackToMeSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+		if (mTimingType == TimingType.START_BATTLE) {
+			executeBattleSkill(battleUnit, battleResult);
+			return;
+		}
+
+		if (mTimingType != TimingType.ATTACK_TO_ME) {
+			return;
+		}
+		PLMSUnitView unitView = battleUnit.getUnitView();
+		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+		if (!canExecuteSkill((unitView)) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
+			return;
+		}
+		switch (mEffectType) {
+			case ALL_RANGE_COUNTER:
+				battleUnit.addSkill(this);
+				break;
+			default:
+				MYLogUtil.showErrorToast("未実装 AttackToMe スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				break;
+		}
+	}
+
+	public void executeBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
 
 	}
 
@@ -126,6 +155,10 @@ public class PLMSSkillData {
 	// getter
 	public PLMSSkillModel getSkillModel() {
 		return mSkillModel;
+	}
+
+	public EffectType getEffectType() {
+		return mEffectType;
 	}
 
 	private static final int SKILL_ATTACK = 0x0001;
@@ -210,7 +243,7 @@ public class PLMSSkillData {
 		}
 	}
 
-	private enum EffectType {
+	public enum EffectType {
 		ONE_TURN_BUFF(1), BATTLE_BUFF(2), WEAPON_BATTLE_BUFF(3),
 		CURRENT_HP(11),
 		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), WEAKNESS_ATTACK(43);
