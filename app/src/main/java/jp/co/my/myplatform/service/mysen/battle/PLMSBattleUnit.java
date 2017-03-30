@@ -36,7 +36,6 @@ public class PLMSBattleUnit {
 		return false;
 	}
 
-	// TODO: 敵の武器種類（物理/魔法）によって分岐
 	public int getDefenseForEnemyAttack() {
 		if (mEnemyUnit.getUnitView().getUnitData().getWeapon().isPhysicalAttack()) {
 			return getBattleDefense();
@@ -46,12 +45,12 @@ public class PLMSBattleUnit {
 	}
 
 	// TODO: 3すくみ補正値はBattleResultに初期値を設定し、スキル側で書き換え可能にする
-	public void initParamsWithEnemyUnit() {
+	public void initParamsWithEnemyUnit(int threeWayRatio) {
 		PLMSColorData enemyColor = mEnemyUnit.getUnitView().getUnitData().getColor();
-		double ratio = mUnitView.getUnitData().getColor().damageRatio(enemyColor);
+		int compatibility = mUnitView.getUnitData().getColor().threeWayCompatibility(enemyColor);
 		// 正負どちらでも0に近い値を採用する
 		// Math.floor は負の値の時にも低い値を採用するため使用不可
-		int plusDamage = (int)(getBattleAttack() * ratio);
+		int plusDamage = getBattleAttack() * threeWayRatio / 100 * compatibility;
 		mTotalAttack = getBattleAttack() + plusDamage;
 	}
 

@@ -2,9 +2,6 @@ package jp.co.my.myplatform.service.mysen;
 
 public class PLMSColorData {
 
-	private static final double ADVANTAGE_DAMAGE_RATIO = 0.2;
-	private static final double DISADVANTAGE_DAMAGE_RATIO = -0.2;
-
 	private enum Type {
 		RED(1), BLUE(2), GREEN(3),
 		WHITE(11);
@@ -26,33 +23,39 @@ public class PLMSColorData {
 		mColorType = getType(no);
 	}
 
-	public double damageRatio(PLMSColorData enemyColor) {
+	/*
+	3すくみの相性を返す
+	+1 = 有利
+	 0 = 通常
+	-1 = 不利
+	 */
+	public int threeWayCompatibility(PLMSColorData enemyColor) {
 		switch (enemyColor.getColorType()) {
 			case RED:
 				if (mColorType == Type.BLUE) {
-					return ADVANTAGE_DAMAGE_RATIO;
+					return 1;
 				} else if (mColorType == Type.GREEN) {
-					return DISADVANTAGE_DAMAGE_RATIO;
+					return -1;
 				}
 				break;
 			case BLUE:
 				if (mColorType == Type.GREEN) {
-					return ADVANTAGE_DAMAGE_RATIO;
+					return 1;
 				} else if (mColorType == Type.RED) {
-					return DISADVANTAGE_DAMAGE_RATIO;
+					return -1;
 				}
 				break;
 			case GREEN:
 				if (mColorType == Type.RED) {
-					return ADVANTAGE_DAMAGE_RATIO;
+					return 1;
 				} else if (mColorType == Type.BLUE) {
-					return DISADVANTAGE_DAMAGE_RATIO;
+					return -1;
 				}
 				break;
 			case WHITE:
 				break;
 		}
-		return 0.0;
+		return 0;
 	}
 
 	private Type getType(int no) {

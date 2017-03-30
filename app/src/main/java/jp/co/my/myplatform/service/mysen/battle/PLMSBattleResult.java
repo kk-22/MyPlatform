@@ -17,12 +17,15 @@ public class PLMSBattleResult {
 	private MYArrayList<PLMSBattleUnit> mAttackerArray; // 攻撃順配列
 	private MYArrayList<PLMSBattleScene> mSceneArray;
 
+	private int mThreeWayRatio; // 3すくみ補正値
+
 	public PLMSBattleResult(PLMSFieldView fieldView,
 							PLMSUnitView leftUnitView, PLMSLandView leftLandView,
 							PLMSUnitView rightUnitView, PLMSLandView rightLandView) {
 		mLeftUnit = new PLMSBattleUnit(leftUnitView, leftLandView);
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 		mFieldView = fieldView;
+		mThreeWayRatio = 20;
 
 		mLeftUnit.setEnemyUnit(mRightUnit);
 		mRightUnit.setEnemyUnit(mLeftUnit);
@@ -35,8 +38,8 @@ public class PLMSBattleResult {
 			skillData.executeAttackToEnemySkill(mLeftUnit, this);
 		}
 
-		mLeftUnit.initParamsWithEnemyUnit();
-		mRightUnit.initParamsWithEnemyUnit();
+		mLeftUnit.initParamsWithEnemyUnit(mThreeWayRatio);
+		mRightUnit.initParamsWithEnemyUnit(mThreeWayRatio);
 		// 速さがスキルによって変わるため最後に計算
 		// TODO: スキル結果をBattleUnitの変数へセットし、その値をもとに攻撃順、追撃判定を行う
 		mAttackerArray = createAttackerArray();
@@ -109,5 +112,13 @@ public class PLMSBattleResult {
 
 	public MYArrayList<PLMSBattleUnit> getAttackerArray() {
 		return mAttackerArray;
+	}
+
+	// setter
+
+	public void setThreeWayRatio(int threeWayRatio) {
+		if (mThreeWayRatio < threeWayRatio) {
+			mThreeWayRatio = threeWayRatio;
+		}
 	}
 }

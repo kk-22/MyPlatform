@@ -61,7 +61,7 @@ public class PLMSSkillData {
 
 	public void executeAttackToEnemySkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
 		if (mTimingType == TimingType.START_BATTLE) {
-			executeBattleSkill(battleUnit, battleResult);
+			executeStartBattleSkill(battleUnit, battleResult);
 			return;
 		}
 
@@ -99,7 +99,7 @@ public class PLMSSkillData {
 
 	public void executeAttackToMeSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
 		if (mTimingType == TimingType.START_BATTLE) {
-			executeBattleSkill(battleUnit, battleResult);
+			executeStartBattleSkill(battleUnit, battleResult);
 			return;
 		}
 
@@ -121,8 +121,15 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-
+	public void executeStartBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+		switch (mEffectType) {
+			case THREE_WAY_INTENSIFICATION:
+				battleResult.setThreeWayRatio(mSkillModel.getEffectValue());
+				break;
+			default:
+				MYLogUtil.showErrorToast("未実装 Battle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				break;
+		}
 	}
 
 	private boolean canExecuteSkill(PLMSUnitView unitView) {
@@ -246,7 +253,7 @@ public class PLMSSkillData {
 	public enum EffectType {
 		ONE_TURN_BUFF(1), BATTLE_BUFF(2), WEAPON_BATTLE_BUFF(3),
 		CURRENT_HP(11),
-		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), WEAKNESS_ATTACK(43);
+		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43);
 
 		final int id;
 		EffectType(final int id) {
