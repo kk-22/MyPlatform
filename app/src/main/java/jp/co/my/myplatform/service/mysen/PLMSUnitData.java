@@ -28,6 +28,7 @@ public class PLMSUnitData {
 	private PLMSUnitModel mUnitModel;
 	private Point mFirstPoint;				// 初期位置
 	private PLMSArmyStrategy mArmyStrategy;
+	private PLMSArgument mArgument;
 
 	private PLMSColorData mColor;
 	private PLMSWeaponData mWeapon;
@@ -43,10 +44,12 @@ public class PLMSUnitData {
 
 	private int mMoveCount; // 同一ターン内での移動回数
 
-	public PLMSUnitData(PLMSUnitModel unitModel, Point firstPoint, PLMSArmyStrategy armyStrategy) {
+	public PLMSUnitData(PLMSUnitModel unitModel, Point firstPoint,
+						PLMSArmyStrategy armyStrategy, PLMSArgument argument) {
 		mUnitModel = unitModel;
 		mFirstPoint = firstPoint;
 		mArmyStrategy = armyStrategy;
+		mArgument = argument;
 		mAllSkills = new PLMSSkillData[SKILL_NUMBER];
 
 		mColor = new PLMSColorData((mUnitModel.getColorType()));
@@ -106,9 +109,9 @@ public class PLMSUnitData {
 
 	private PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
 		if (foreign == null) {
-			return new PLMSSkillData(null);
+			return new PLMSSkillData(mArgument, null);
 		}
-		return new PLMSSkillData(foreign.load());
+		return new PLMSSkillData(mArgument, foreign.load());
 	}
 
 	// getter

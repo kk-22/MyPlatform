@@ -98,7 +98,7 @@ public class PLMSWarContent extends PLContentView {
 				for (PLMSUnitModel unitModel : modelLists) {
 					Point point = new Point((x % 6), y);
 					PLMSArmyStrategy armyStrategy = (x %2 == 0) ? blueArmy : redArmy;
-					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, armyStrategy);
+					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, armyStrategy, mArgument);
 					x = x + 1;
 					y = x / 2;
 					mUnitDataArray.add(unitData);

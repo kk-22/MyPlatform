@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen.unit;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
@@ -8,13 +9,15 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 
 public class PLMSSkillData {
 
+	private PLMSArgument mArgument;
 	private PLMSSkillModel mSkillModel;
 	private TimingType mTimingType;
 	private RequirementType mRequirementType;
 	private TargetType mTargetType;
 	private EffectType mEffectType;
 
-	public PLMSSkillData(PLMSSkillModel skillModel) {
+	public PLMSSkillData(PLMSArgument argument, PLMSSkillModel skillModel) {
+		mArgument = argument;
 		mSkillModel = skillModel;
 
 		if (skillModel == null) {
