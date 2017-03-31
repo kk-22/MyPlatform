@@ -22,10 +22,10 @@ public class PLMSBattleScene {
 		int defense = mDefenderUnit.getDefenseForEnemyAttack();
 		int damage = Math.max(0, attack - defense);
 		mDefenderDiffHP = damage * -1;
-		mDefenderRemainingHP = mDefenderUnit.getUnitData().calculateRemainingHP(mDefenderUnit.getResultHP(), mDefenderDiffHP);
+		mDefenderRemainingHP = mDefenderUnit.getUnitData().calculateBattleRemainingHP(mDefenderUnit.getResultHP(), mDefenderDiffHP);
 
 		mAttackerDiffHP = 0;
-		mAttackerRemainingHP = mAttackerUnit.getUnitData().calculateRemainingHP(mAttackerUnit.getResultHP(), mAttackerDiffHP);
+		mAttackerRemainingHP = mAttackerUnit.getUnitData().calculateBattleRemainingHP(mAttackerUnit.getResultHP(), mAttackerDiffHP);
 		mAttackerUnit.setResultHP(mAttackerRemainingHP);
 		mDefenderUnit.setResultHP(mDefenderRemainingHP);
 	}

@@ -1,5 +1,7 @@
 package jp.co.my.myplatform.service.mysen.unit;
 
+import android.animation.Animator;
+
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
@@ -33,7 +35,7 @@ public class PLMSSkillData {
 		if (mTimingType != TimingType.START_TURN) {
 			return;
 		}
-		if (!canExecuteSkill((unitView))) {
+		if (!canExecuteSkill(unitView)) {
 			return;
 		}
 
@@ -73,7 +75,7 @@ public class PLMSSkillData {
 		}
 		PLMSUnitView unitView = battleUnit.getUnitView();
 		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-		if (!canExecuteSkill((unitView)) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
+		if (!canExecuteSkill(unitView) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
 			return;
 		}
 		switch (mEffectType) {
@@ -111,7 +113,7 @@ public class PLMSSkillData {
 		}
 		PLMSUnitView unitView = battleUnit.getUnitView();
 		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-		if (!canExecuteSkill((unitView)) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
+		if (!canExecuteSkill(unitView) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
 			return;
 		}
 		switch (mEffectType) {
@@ -133,6 +135,32 @@ public class PLMSSkillData {
 				MYLogUtil.showErrorToast("未実装 Battle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
 				break;
 		}
+	}
+
+	public Animator executeFinishBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
+		if (mTimingType != TimingType.FINISH_BATTLE
+				&& !(mTimingType == TimingType.FINISH_ATTACK_BATTLE && isAttacker)
+				&& !(mTimingType == TimingType.FINISH_DEFENCE_BATTLE && !isAttacker)) {
+			return null;
+		}
+
+		PLMSUnitView unitView = battleUnit.getUnitView();
+		if (!canExecuteSkill(unitView) || battleUnit.getResultHP() <= 0) {
+			return null;
+		}
+
+		switch (mEffectType) {
+			case FLUCTUATE_HP: {
+				int diffHP = mSkillModel.getEffectValue();
+				int remainingHP = unitView.getUnitData().calculateSkillRemainingHP(battleUnit.getResultHP(), diffHP);
+				return mArgument.getAnimationManager().getFluctuateHPAnimation(unitView, remainingHP, diffHP);
+			}
+			default:
+				MYLogUtil.showErrorToast("未実装 FinishBattle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				break;
+		}
+		return null;
 	}
 
 	private boolean canExecuteSkill(PLMSUnitView unitView) {
@@ -179,7 +207,8 @@ public class PLMSSkillData {
 
 	private enum TimingType {
 		START_TURN(1),
-		START_BATTLE(11), ATTACK_TO_ENEMY(12), ATTACK_TO_ME(13), FINISH_BATTLE(14),
+		START_BATTLE(11), ATTACK_TO_ENEMY(12), ATTACK_TO_ME(13),
+		FINISH_BATTLE(16), FINISH_ATTACK_BATTLE(17), FINISH_DEFENCE_BATTLE(18),
 		MY_MOVEMENT(21), TEAM_MOVEMENT(22), ENEMY_MOVEMENT(23),
 		HEAL_BY_STAFF(31);
 
@@ -255,7 +284,7 @@ public class PLMSSkillData {
 
 	public enum EffectType {
 		ONE_TURN_BUFF(1), BATTLE_BUFF(2), WEAPON_BATTLE_BUFF(3),
-		CURRENT_HP(11),
+		FLUCTUATE_HP(11),
 		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43);
 
 		final int id;

@@ -103,8 +103,14 @@ public class PLMSUnitData {
 		}
 	}
 
-	public int calculateRemainingHP(int currentHP, int diffHP) {
+	// 戦闘後のHP
+	public int calculateBattleRemainingHP(int currentHP, int diffHP) {
 		return Math.max(0, Math.min(mMaxHP, currentHP + diffHP));
+	}
+
+	// スキル効果後のHP
+	public int calculateSkillRemainingHP(int currentHP, int diffHP) {
+		return Math.max(1, Math.min(mMaxHP, currentHP + diffHP));
 	}
 
 	private PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {

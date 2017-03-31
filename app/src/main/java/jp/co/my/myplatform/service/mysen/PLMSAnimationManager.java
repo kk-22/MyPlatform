@@ -11,6 +11,8 @@ import android.graphics.PointF;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleScene;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 import static android.animation.PropertyValuesHolder.ofFloat;
 
@@ -56,7 +58,6 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		int numberOfScene = battleResult.getSceneArray().size();
 		for (int i = 0; i < numberOfScene; i++) {
 			final PLMSBattleScene scene = battleResult.getSceneArray().get(i);
-			final boolean isLastScene = (i == numberOfScene - 1);
 
 			final PLMSUnitView attackerUnitView = scene.getAttackerUnit().getUnitView();
 			final PLMSUnitView defenderUnitView = scene.getDefenderUnit().getUnitView();
@@ -117,14 +118,46 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 					if (willRemoveUnit) {
 						defenderUnitView.removeFromField();
 					}
-					if (isLastScene) {
-						lastRunnable.run();
-					}
 				}
 			});
-
 			addAnimator(animatorSet);
 		}
+
+		// 戦闘終了スキルアニメーション
+		MYArrayList<Animator> skillAnimatorArray = new MYArrayList<>();
+		PLMSBattleUnit leftUnit = battleResult.getLeftUnit();
+		for (PLMSSkillData skillData : leftUnit.getUnitData().getPassiveSkillArray()) {
+			Animator animator = skillData.executeFinishBattleSkill(leftUnit, battleResult);
+			skillAnimatorArray.addIfNotNull(animator);
+		}
+		PLMSBattleUnit rightUnit = battleResult.getRightUnit();
+		for (PLMSSkillData skillData : rightUnit.getUnitData().getPassiveSkillArray()) {
+			Animator animator = skillData.executeFinishBattleSkill(rightUnit, battleResult);
+			skillAnimatorArray.addIfNotNull(animator);
+		}
+		if (skillAnimatorArray.size() > 0) {
+			AnimatorSet animatorSet = new AnimatorSet();
+			animatorSet.playSequentially(skillAnimatorArray);
+			addAnimator(animatorSet);
+		}
+
+		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				lastRunnable.run();
+			}
+		});
+	}
+
+	public Animator getFluctuateHPAnimation(final PLMSUnitView unitView, final int remainingHP, final int diffHP) {
+		AnimatorSet animator = unitView.getHPBar().getDamageAnimatorArray(false, diffHP);
+		animator.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationStart(Animator animation) {
+				unitView.updateHitPoint(remainingHP, diffHP);
+			}
+		});
+		return animator;
 	}
 
 	private void addAnimator(Animator animator) {
