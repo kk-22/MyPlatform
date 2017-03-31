@@ -24,18 +24,19 @@ import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 
 public class PLMSWarContent extends PLContentView {
 
-	private PLMSInformationView mInformation;
-	private PLMSFieldView mField;
 	private PLMSTurnManager mTurnManager;
 
 	private ArrayList<PLMSUnitData> mUnitDataArray;
 	private boolean mFinishedLayout;			// OnGlobalLayoutListener が呼ばれたら true
+	private PLMSArgument mArgument;
 
 	public PLMSWarContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_war, this);
-		mInformation = (PLMSInformationView) findViewById(R.id.information_view);
-		mField = (PLMSFieldView) findViewById(R.id.field_view);
+		mArgument = new PLMSArgument();
+		mArgument.setInformationView((PLMSInformationView) findViewById(R.id.information_view));
+		mArgument.setFieldView((PLMSFieldView) findViewById(R.id.field_view));
+		mArgument.setAnimationManager(new PLMSAnimationManager(mArgument));
 
 		getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
@@ -111,7 +112,7 @@ public class PLMSWarContent extends PLContentView {
 		if (mUnitDataArray == null || !mFinishedLayout) {
 			return;
 		}
-		mField.layoutChildViews(mUnitDataArray);
-		mTurnManager = new PLMSTurnManager(mInformation, mField);
+		mArgument.getFieldView().layoutChildViews(mUnitDataArray);
+		mTurnManager = new PLMSTurnManager(mArgument);
 	}
 }

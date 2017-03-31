@@ -5,20 +5,14 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 public class PLMSTurnManager {
 
-	private PLMSInformationView mInformation;
-	private PLMSFieldView mField;
-
 	private int mNumberOfTurn;								// 現在のターン数
 	private PLMSArmyStrategy mCurrentArmy;					// 現ターンのArmy
 	private MYArrayList<PLMSArmyStrategy> mArmyArray;
 
-	public PLMSTurnManager(PLMSInformationView information, PLMSFieldView field) {
-		mInformation = information;
-		mField = field;
-
+	public PLMSTurnManager(PLMSArgument argument) {
 		mArmyArray = new MYArrayList<>();
 		// TODO: 別の場所にArmyArrayを作り、このクラスはそれを引数で受け取る
-		for (PLMSUnitView unitView : mField.getUnitViewArray()) {
+		for (PLMSUnitView unitView : argument.getFieldView().getUnitViewArray()) {
 			PLMSArmyStrategy armyStrategy = unitView.getUnitData().getArmyStrategy();
 			if (!mArmyArray.contains(armyStrategy)) {
 				mArmyArray.add(armyStrategy);
@@ -27,7 +21,7 @@ public class PLMSTurnManager {
 
 		for (PLMSArmyStrategy army : mArmyArray) {
 			PLMSUserInterface userInterface
-					= new PLMSUserInterface(mInformation, mField, mField.getUnitViewArray(), army);
+					= new PLMSUserInterface(argument, army);
 			army.setUnitInterface(userInterface);
 		}
 		startNextTurn();

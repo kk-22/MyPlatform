@@ -20,8 +20,8 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 
 	private MYArrayList<Animator> mAnimatorArray;
 
-	public PLMSAnimationManager(PLMSFieldView fieldView) {
-		mFieldView = fieldView;
+	public PLMSAnimationManager(PLMSArgument argument) {
+		mFieldView = argument.getFieldView();
 
 		mAnimatorArray = new MYArrayList<>();
 	}

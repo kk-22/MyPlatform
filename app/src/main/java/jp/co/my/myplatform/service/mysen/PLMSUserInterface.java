@@ -36,15 +36,15 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private PLMSLandRoute mTempRoute;
 	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
 
-	public PLMSUserInterface(PLMSInformationView information, PLMSFieldView field,
-							 ArrayList<PLMSUnitView> unitArray, PLMSArmyStrategy armyStrategy) {
-		mInformation = information;
-		mField = field;
-		mUnitArray = unitArray;
-		mAreaManager = new PLMSAreaManager(field, mUnitArray, armyStrategy);
+	public PLMSUserInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
+		mInformation = argument.getInformationView();
+		mField = argument.getFieldView();
+		mUnitArray = mField.getUnitViewArray();
+		mAnimationManager = argument.getAnimationManager();
+
+		mAreaManager = new PLMSAreaManager(mField, mUnitArray, armyStrategy);
 		mTargetArmy = armyStrategy;
 
-		mAnimationManager = new PLMSAnimationManager(mField);
 		mPrevRouteArray = new MYArrayList<>();
 	}
 
