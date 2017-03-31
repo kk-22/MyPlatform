@@ -99,6 +99,10 @@ public class PLMSBattleUnit {
 		return mSkillEffectArray;
 	}
 
+	public PLMSUnitData getUnitData() {
+		return mUnitView.getUnitData();
+	}
+
 	// setter
 	public void setResultHP(int resultHP) {
 		mResultHP = resultHP;

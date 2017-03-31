@@ -100,6 +100,10 @@ public class PLMSUnitData {
 		}
 	}
 
+	public int calculateRemainingHP(int currentHP, int diffHP) {
+		return Math.max(0, Math.min(mMaxHP, currentHP + diffHP));
+	}
+
 	private PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
 		if (foreign == null) {
 			return new PLMSSkillData(null);
