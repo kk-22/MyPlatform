@@ -64,15 +64,14 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeAttackToEnemySkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-		if (mTimingType == TimingType.START_BATTLE) {
-			executeStartBattleSkill(battleUnit, battleResult);
+	public void executeStartBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
+		if (mTimingType != TimingType.START_BATTLE
+				&& !(mTimingType == TimingType.ATTACK_TO_ENEMY && isAttacker)
+				&& !(mTimingType == TimingType.ATTACK_TO_ME && !isAttacker)) {
 			return;
 		}
 
-		if (mTimingType != TimingType.ATTACK_TO_ENEMY) {
-			return;
-		}
 		PLMSUnitView unitView = battleUnit.getUnitView();
 		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
 		if (!canExecuteSkill(unitView) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
@@ -96,40 +95,11 @@ public class PLMSSkillData {
 				}
 				break;
 			}
-			default:
-				MYLogUtil.showErrorToast("未実装 AttackToEnemy スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
-				break;
-		}
-	}
-
-	public void executeAttackToMeSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-		if (mTimingType == TimingType.START_BATTLE) {
-			executeStartBattleSkill(battleUnit, battleResult);
-			return;
-		}
-
-		if (mTimingType != TimingType.ATTACK_TO_ME) {
-			return;
-		}
-		PLMSUnitView unitView = battleUnit.getUnitView();
-		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-		if (!canExecuteSkill(unitView) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
-			return;
-		}
-		switch (mEffectType) {
-			case ALL_RANGE_COUNTER:
-				battleUnit.addSkill(this);
-				break;
-			default:
-				MYLogUtil.showErrorToast("未実装 AttackToMe スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
-				break;
-		}
-	}
-
-	public void executeStartBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-		switch (mEffectType) {
 			case THREE_WAY_INTENSIFICATION:
 				battleResult.setThreeWayRatio(mSkillModel.getEffectValue());
+				break;
+			case ALL_RANGE_COUNTER:
+				battleUnit.addSkill(this);
 				break;
 			default:
 				MYLogUtil.showErrorToast("未実装 Battle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());

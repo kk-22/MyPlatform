@@ -30,12 +30,11 @@ public class PLMSBattleResult {
 		mLeftUnit.setEnemyUnit(mRightUnit);
 		mRightUnit.setEnemyUnit(mLeftUnit);
 
-		// 反撃有無に応じたスキルがあるため、全距離反撃スキルを持つ被攻撃側スキルを優先
 		for (PLMSSkillData skillData : mRightUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
-			skillData.executeAttackToMeSkill(mRightUnit, this);
+			skillData.executeStartBattleSkill(mRightUnit, this);
 		}
 		for (PLMSSkillData skillData : mLeftUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
-			skillData.executeAttackToEnemySkill(mLeftUnit, this);
+			skillData.executeStartBattleSkill(mLeftUnit, this);
 		}
 
 		mLeftUnit.initParamsWithEnemyUnit(mThreeWayRatio);
