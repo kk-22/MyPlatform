@@ -53,25 +53,19 @@ public class PLMSHitPointBar extends FrameLayout {
 	}
 
 	public void updateHitPoint(int nextHP, int diffHP) {
-		if (needDamageText(diffHP)) {
-			// 初期設定時以外はダメージ表示
-			mDamageText.setText(String.valueOf(diffHP * -1));
-			mDamageText.setAlpha(1f);
-		}
+		mDamageText.setText(String.valueOf(diffHP * -1));
 		mNumberText.setText(String.valueOf(nextHP));
 	}
 
-	private boolean needDamageText(int diffHP) {
-		return (diffHP < 0);
-	}
-
 	public AnimatorSet getDamageAnimatorArray(boolean willRemoveUnit, int diffHP) {
-		if (!needDamageText(diffHP)) {
-			return null;
-		}
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		float currentY = mDamageText.getY();
 		float topY = currentY - getHeight() / 4;
+
+		// 表示
+		ObjectAnimator showAnimation = ObjectAnimator.ofFloat(mDamageText, "alpha", 1);
+		showAnimation.setDuration(1);
+		animatorArray.add(showAnimation);
 
 		// 上へ
 		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mDamageText, "y", currentY, topY);
