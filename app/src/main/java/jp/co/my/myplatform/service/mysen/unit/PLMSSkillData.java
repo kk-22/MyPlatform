@@ -148,8 +148,6 @@ public class PLMSSkillData {
 				PLMSUnitData unitData = unitView.getUnitData();
 				return unitData.getCurrentHP() >= unitData.getMaxHP() * mSkillModel.getRequirementValue() / 100;
 			}
-			case LESS_THAN_TEAM_HP:
-			case ENEMY_HAS_TARGET_WEAPON:
 			default:
 				// 各 execute メソッドで判定
 				return true;
@@ -177,9 +175,9 @@ public class PLMSSkillData {
 
 	private enum TimingType {
 		START_TURN(1),
-		START_BATTLE(11), ATTACK_TO_ENEMY(12), ATTACK_TO_ME(13),
+		START_BATTLE(11), ATTACK_TO_ENEMY(12), ATTACK_TO_ME(13), START_TEAM_BATTLE(14),
 		FINISH_BATTLE(16), FINISH_ATTACK_BATTLE(17), FINISH_DEFENCE_BATTLE(18),
-		MY_MOVEMENT(21), TEAM_MOVEMENT(22), ENEMY_MOVEMENT(23),
+		MY_MOVEMENT(21), ENEMY_MOVEMENT(22),
 		HEAL_BY_STAFF(31);
 
 		final int id;
@@ -204,8 +202,8 @@ public class PLMSSkillData {
 
 	private enum RequirementType {
 		NONE(0),
-		LESS_THAN_MY_HP(1), GREATER_THAN_MY_HP(2), LESS_THAN_TEAM_HP(3),
-		ENEMY_HAS_TARGET_WEAPON(11);
+		LESS_THAN_MY_HP(1), GREATER_THAN_MY_HP(2),
+		NUMBER_OF_TURN(11);
 
 		final int id;
 		RequirementType(final int id) {
@@ -230,7 +228,7 @@ public class PLMSSkillData {
 	private enum TargetType {
 		NONE(0),
 		SELF(1), TEAM_IN_RANGE(2), SAME_BRANCH_IN_RANGE(3), TEAM_OTHER_THAN_ME(4), ALL_TEAM_MEMBER(5),
-		ENEMY(11), ENEMY_IN_RANGE(12);
+		ENEMY(11), ENEMY_IN_ENEMY_RANGE(12), ENEMY_IN_MY_RANGE(13);
 
 		final int id;
 		TargetType(final int id) {
@@ -254,8 +252,12 @@ public class PLMSSkillData {
 
 	public enum EffectType {
 		ONE_TURN_BUFF(1), BATTLE_BUFF(2), WEAPON_BATTLE_BUFF(3),
-		FLUCTUATE_HP(11),
-		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43);
+		FLUCTUATE_HP(11), HEAL_ME_TOO(12),
+		CHASE_ATTACK_IF_HAS_COUNTER(21), CHASE_ATTACK(22), CONTINUOUSLY_CHASE_ATTACK(23),
+		DISABLE_CHASE_ATTACK(26), KILL_WEAPON(27), PREEMPTIVE_ATTACK(28),
+		SLIP_MOVE(31),WARP_TO_TEAM(32), WARP_TO_TEAM_OF_LESS_HP(33), BLOCK_ENEMY_MOVE(36),
+		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43),
+		SEND_TO_BACKWARD(51), GO_BACKWARD(52), SWAP_POSITION(53);
 
 		final int id;
 		EffectType(final int id) {
