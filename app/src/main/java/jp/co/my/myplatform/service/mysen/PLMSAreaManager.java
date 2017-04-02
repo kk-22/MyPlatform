@@ -39,6 +39,16 @@ public class PLMSAreaManager {
 		mRouteCover = new PLMSRouteCover();
 	}
 
+	public void hideAllAreaCover() {
+		mMoveAreaCover.hideAllCoverViews();
+		mAttackAreaCover.hideAllCoverViews();
+		mRouteCover.hideAllCoverViews();
+	}
+
+	public boolean canAttackToLandView(PLMSLandView landView) {
+		return (mAttackAreaCover.isShowingCover(landView) && landView.getUnitView() != null);
+	}
+
 	public void showAvailableArea() {
 		MYArrayList<PLMSLandView> availableLandViewArray = new MYArrayList<>();
 		for (PLMSUnitView unitView : mTargetArmy.getUnitViewArray()) {
@@ -60,12 +70,6 @@ public class PLMSAreaManager {
 		ArrayList<PLMSLandView> movableLandArray = new ArrayList<>();
 		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
 		return movableLandArray;
-	}
-
-	public void hideAllAreaCover() {
-		mMoveAreaCover.hideAllCoverViews();
-		mAttackAreaCover.hideAllCoverViews();
-		mRouteCover.hideAllCoverViews();
 	}
 
 	private ArrayList<PLMSLandView> getAttackableLandArray(ArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
@@ -114,44 +118,6 @@ public class PLMSAreaManager {
 			movableLandArray.add(landView);
 		}
 		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
-	}
-
-	// 移動不可の場合は負の値を返す
-	private int getRemainingMoveCost(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
-		PLMSUnitView landUnitView = landView.getUnitView();
-		if (landUnitView != null &&
-				(landUnitView.equals(unitView) || landUnitView.isEnemy(unitView))) {
-			// 移動不可
-			return DO_NOT_ENTER;
-		}
-		int nextRemainingMove = remainingMove - unitView.getUnitData().moveCost(landView.getLandData());
-		if (nextRemainingMove < 0) {
-			// 移動不可
-			return DO_NOT_ENTER;
-		}
-		return nextRemainingMove;
-	}
-
-	public ArrayList<PLMSLandView> getAroundLandArray(Point point, int range) {
-		ArrayList<PLMSLandView> landArray = new ArrayList<>();
-		// 上右下左 の順番
-		ArrayList<Point> pointArray = new ArrayList<>();
-		for (int i = -range; i <= range; i++) {
-			int y = range - Math.abs(i);
-			pointArray.add(new Point(point.x + i, point.y + y));
-			if (y != 0) {
-				pointArray.add(new Point(point.x + i, point.y + y * -1));
-			}
-		}
-		for (Point targetPoint : pointArray) {
-			int x = targetPoint.x;
-			int y = targetPoint.y;
-			if (MIN_XY <= x && x < MAX_X && MIN_XY <= y && y < MAX_Y) {
-				PLMSLandView landView = mField.getLandViewForPoint(new Point(x, y));
-				landArray.add(landView);
-			}
-		}
-		return landArray;
 	}
 
 	public PLMSLandRoute showRouteArea(PLMSUnitView unitView,
@@ -256,8 +222,42 @@ public class PLMSAreaManager {
 		return filteredArray;
 	}
 
-	public boolean canAttackToLandView(PLMSLandView landView) {
-		return (mAttackAreaCover.isShowingCover(landView) && landView.getUnitView() != null);
+	public ArrayList<PLMSLandView> getAroundLandArray(Point point, int range) {
+		ArrayList<PLMSLandView> landArray = new ArrayList<>();
+		// 上右下左 の順番
+		ArrayList<Point> pointArray = new ArrayList<>();
+		for (int i = -range; i <= range; i++) {
+			int y = range - Math.abs(i);
+			pointArray.add(new Point(point.x + i, point.y + y));
+			if (y != 0) {
+				pointArray.add(new Point(point.x + i, point.y + y * -1));
+			}
+		}
+		for (Point targetPoint : pointArray) {
+			int x = targetPoint.x;
+			int y = targetPoint.y;
+			if (MIN_XY <= x && x < MAX_X && MIN_XY <= y && y < MAX_Y) {
+				PLMSLandView landView = mField.getLandViewForPoint(new Point(x, y));
+				landArray.add(landView);
+			}
+		}
+		return landArray;
+	}
+
+	// 移動不可の場合は負の値を返す
+	private int getRemainingMoveCost(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
+		PLMSUnitView landUnitView = landView.getUnitView();
+		if (landUnitView != null &&
+				(landUnitView.equals(unitView) || landUnitView.isEnemy(unitView))) {
+			// 移動不可
+			return DO_NOT_ENTER;
+		}
+		int nextRemainingMove = remainingMove - unitView.getUnitData().moveCost(landView.getLandData());
+		if (nextRemainingMove < 0) {
+			// 移動不可
+			return DO_NOT_ENTER;
+		}
+		return nextRemainingMove;
 	}
 
 	// getter and setter
