@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.mysen.unit;
 import android.animation.Animator;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
@@ -38,6 +39,10 @@ public class PLMSSkillData {
 		if (!canExecuteSkill(unitView)) {
 			return;
 		}
+		if (mRequirementType == RequirementType.NUMBER_OF_TURN
+				&& numberOfTurn % mSkillModel.getRequirementValue() != 1) {
+			return;
+		}
 
 		switch (mEffectType) {
 			case ONE_TURN_BUFF: {
@@ -56,6 +61,15 @@ public class PLMSSkillData {
 				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
 					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
 				}
+				break;
+			}
+			case FLUCTUATE_HP: {
+				PLMSUnitData unitData = unitView.getUnitData();
+				int diffHP = mSkillModel.getEffectValue();
+				int remainingHP = unitData.calculateSkillRemainingHP(unitData.getCurrentHP(), diffHP);
+				PLMSAnimationManager animationManager = mArgument.getAnimationManager();
+				Animator animator = animationManager.getFluctuateHPAnimation(unitView, remainingHP, diffHP);
+				animationManager.addTogetherAnimator(animator);
 				break;
 			}
 			default:

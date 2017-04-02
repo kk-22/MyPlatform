@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,14 @@ public class PLMSHitPointBar extends FrameLayout {
 		animatorSet.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationStart(Animator animation) {
-				mDamageText.setText(String.valueOf(diffHP * -1));
+				int textColor;
+				if (diffHP <= 0) {
+					textColor = Color.parseColor("#ff0000");
+				} else {
+					textColor = Color.parseColor("#00ff00");
+				}
+				mDamageText.setTextColor(textColor);
+				mDamageText.setText(String.valueOf(Math.abs(diffHP)));
 				mNumberText.setText(String.valueOf(nextHP));
 			}
 		});

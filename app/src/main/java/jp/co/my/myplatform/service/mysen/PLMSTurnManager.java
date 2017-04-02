@@ -5,11 +5,13 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 public class PLMSTurnManager {
 
+	private PLMSArgument mArgument;
 	private int mNumberOfTurn;								// 現在のターン数
 	private PLMSArmyStrategy mCurrentArmy;					// 現ターンのArmy
 	private MYArrayList<PLMSArmyStrategy> mArmyArray;
 
 	public PLMSTurnManager(PLMSArgument argument) {
+		mArgument = argument;
 		mArmyArray = new MYArrayList<>();
 		// TODO: 別の場所にArmyArrayを作り、このクラスはそれを引数で受け取る
 		for (PLMSUnitView unitView : argument.getFieldView().getUnitViewArray()) {
@@ -53,6 +55,8 @@ public class PLMSTurnManager {
 		for (PLMSUnitView unitView : mCurrentArmy.getUnitViewArray()) {
 			unitView.resetForNewTurn(mNumberOfTurn);
 		}
+		mArgument.getAnimationManager().sendTogetherAnimator();
+
 		mCurrentArmy.getUnitInterface().enableInterface();
 	}
 }

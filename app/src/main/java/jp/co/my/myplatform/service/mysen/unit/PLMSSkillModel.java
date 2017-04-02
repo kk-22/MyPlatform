@@ -47,7 +47,7 @@ public class PLMSSkillModel extends PLBaseModel {
 		no = jsonObject.getInt("no");
 		name = jsonObject.getString("name");
 		description = jsonObject.getString("description_text");
-		slotType = jsonObject.getInt("slot");
+		slotType = MYJsonUtil.parseIntIfNonNull(jsonObject, "slot");
 
 		timingType = MYJsonUtil.parseIntIfNonNull(jsonObject, "timing_no");
 		requirementType = MYJsonUtil.parseIntIfNonNull(jsonObject, "requirement_no");

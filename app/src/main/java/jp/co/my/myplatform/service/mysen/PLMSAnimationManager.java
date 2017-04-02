@@ -21,11 +21,13 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 	private PLMSFieldView mFieldView;
 
 	private MYArrayList<Animator> mAnimatorArray;
+	private MYArrayList<Animator> mTogetherAnimatorArray; // 同時実行するアニメーションの一時保存
 
 	public PLMSAnimationManager(PLMSArgument argument) {
 		mFieldView = argument.getFieldView();
 
 		mAnimatorArray = new MYArrayList<>();
+		mTogetherAnimatorArray = new MYArrayList<>();
 	}
 
 	public void addMoveAnimation(PLMSUnitView moveUnitView,
@@ -153,6 +155,20 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			}
 		});
 		return animator;
+	}
+
+	public void addTogetherAnimator(Animator animator) {
+		mTogetherAnimatorArray.add(animator);
+	}
+
+	public void sendTogetherAnimator() {
+		if (mTogetherAnimatorArray.size() == 0) {
+			return;
+		}
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.playTogether(mTogetherAnimatorArray);
+		addAnimator(animatorSet);
+		mTogetherAnimatorArray.clear();
 	}
 
 	private void addAnimator(Animator animator) {
