@@ -17,4 +17,14 @@ public class PLMSColorCover extends PLMSAbstractCover {
 		view.setBackgroundColor(mCoverColor);
 		return view;
 	}
+
+	public void changeColor(int nextColor) {
+		if (mCoverColor == nextColor) {
+			return;
+		}
+		mCoverColor = nextColor;
+		for (View view : getCoverViewArray()) {
+			view.setBackgroundColor(nextColor);
+		}
+	}
 }

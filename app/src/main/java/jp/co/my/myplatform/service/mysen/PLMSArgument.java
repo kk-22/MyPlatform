@@ -6,6 +6,7 @@ public class PLMSArgument {
 
 	private PLMSTurnManager mTurnManager;
 	private PLMSAnimationManager mAnimationManager;
+	private PLMSAreaManager mAreaManager;
 
 	private PLMSFieldView mFieldView;
 	private PLMSInformationView mInformationView;
@@ -13,6 +14,7 @@ public class PLMSArgument {
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 
 	public PLMSArgument() {
+		mAreaManager = new PLMSAreaManager(this);
 	}
 
 	// getter and setter
@@ -38,6 +40,7 @@ public class PLMSArgument {
 
 	public void setFieldView(PLMSFieldView fieldView) {
 		mFieldView = fieldView;
+		mAreaManager.setField(fieldView);
 	}
 
 	public PLMSInformationView getInformationView() {
@@ -54,5 +57,9 @@ public class PLMSArgument {
 
 	public void setAllUnitViewArray(MYArrayList<PLMSUnitView> allUnitViewArray) {
 		mAllUnitViewArray = allUnitViewArray;
+	}
+
+	public PLMSAreaManager getAreaManager() {
+		return mAreaManager;
 	}
 }

@@ -41,15 +41,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mField = argument.getFieldView();
 		mUnitArray = mField.getUnitViewArray();
 		mAnimationManager = argument.getAnimationManager();
-
-		mAreaManager = new PLMSAreaManager(argument, armyStrategy);
+		mAreaManager = argument.getAreaManager();
 		mTargetArmy = armyStrategy;
 
 		mPrevRouteArray = new MYArrayList<>();
 	}
 
 	public void enableInterface() {
-		mAreaManager.showAvailableArea();
+		mAreaManager.showAvailableArea(mTargetArmy);
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(this);
 		}

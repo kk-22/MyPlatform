@@ -21,19 +21,16 @@ public class PLMSAreaManager {
 
 	private PLMSArgument mArgument;
 	private PLMSFieldView mField;
-	private PLMSArmyStrategy mTargetArmy; // 操作対象のArmy
 
 	private PLMSColorCover mAvailableAreaCover; // 操作可能ユニットの配置マス
 	private PLMSColorCover mMoveAreaCover; // 移動可能マス
 	private PLMSColorCover mAttackAreaCover; // 攻撃可能マス
 	private PLMSRouteCover mRouteCover; // 初期位置と仮位置
 
-	public PLMSAreaManager(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
+	public PLMSAreaManager(PLMSArgument argument) {
 		mArgument = argument;
-		mField = argument.getFieldView();
-		mTargetArmy = armyStrategy;
 
-		mAvailableAreaCover = new PLMSColorCover(mTargetArmy.getAvailableAreaColor());
+		mAvailableAreaCover = new PLMSColorCover(0); // Army 毎に色をセット
 		mMoveAreaCover = new PLMSColorCover(Color.argb(128, 0, 0, 255));
 		mAttackAreaCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
 		mRouteCover = new PLMSRouteCover();
@@ -49,11 +46,12 @@ public class PLMSAreaManager {
 		return (mAttackAreaCover.isShowingCover(landView) && landView.getUnitView() != null);
 	}
 
-	public void showAvailableArea() {
+	public void showAvailableArea(PLMSArmyStrategy armyStrategy) {
 		MYArrayList<PLMSLandView> availableLandViewArray = new MYArrayList<>();
-		for (PLMSUnitView unitView : mTargetArmy.getUnitViewArray()) {
+		for (PLMSUnitView unitView : armyStrategy.getUnitViewArray()) {
 			availableLandViewArray.add(unitView.getLandView());
 		}
+		mAvailableAreaCover.changeColor(armyStrategy.getAvailableAreaColor());
 		mAvailableAreaCover.showCoverViews(availableLandViewArray);
 	}
 
@@ -275,5 +273,9 @@ public class PLMSAreaManager {
 
 	public PLMSRouteCover getRouteCover() {
 		return mRouteCover;
+	}
+
+	public void setField(PLMSFieldView field) {
+		mField = field;
 	}
 }

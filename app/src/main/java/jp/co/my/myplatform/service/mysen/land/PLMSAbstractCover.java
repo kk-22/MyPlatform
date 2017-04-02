@@ -77,4 +77,8 @@ abstract class PLMSAbstractCover {
 	protected ArrayList<PLMSLandView> getParentViewArray() {
 		return mParentViewArray;
 	}
+
+	protected ArrayList<View> getCoverViewArray() {
+		return mCoverViewArray;
+	}
 }
