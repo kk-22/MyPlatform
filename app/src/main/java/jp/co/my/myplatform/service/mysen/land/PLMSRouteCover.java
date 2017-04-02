@@ -21,13 +21,15 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 
 	private ImageView mBeginImageView;
 	private ImageView mEndImageView;
-	private ArrayList<ImageView> mStraightViewArray;        // ストレート
-	private ArrayList<ImageView> mCurveViewArray;            // カーブ
+	private ImageView mStartImageView; // ワープ時など
+	private ArrayList<ImageView> mStraightViewArray; // ストレート
+	private ArrayList<ImageView> mCurveViewArray; // カーブ
 
 	public PLMSRouteCover() {
 		super();
 		mBeginImageView = MYImageUtil.getImageViewFromImagePath("cover/arrow_begin.png", getContext());
 		mEndImageView = MYImageUtil.getImageViewFromImagePath("cover/arrow_end.png", getContext());
+		mStartImageView = MYImageUtil.getImageViewFromImagePath("cover/star.png", getContext());
 
 		mStraightViewArray = new ArrayList<>();
 		mCurveViewArray = new ArrayList<>();
@@ -41,6 +43,10 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 
 	@Override
 	protected View getCoverView(int index, PLMSLandView currentLandView, ArrayList<PLMSLandView> landViews) {
+		if (landViews.size() == 1) {
+			return mStartImageView;
+		}
+
 		View coverView;
 		int direction;
 		if (index == 0) {
@@ -73,18 +79,10 @@ public class PLMSRouteCover extends PLMSAbstractCover {
 	}
 
 	@Override
-	public void showCoverViews(ArrayList<PLMSLandView> landViews) {
-		if (landViews.size() <= 1) {
-			// ルート表示なし
-			return;
-		}
-		super.showCoverViews(landViews);
-	}
-
-	@Override
 	public void hideAllCoverViews() {
 		MYViewUtil.removeFromSuperView(mBeginImageView);
 		MYViewUtil.removeFromSuperView(mEndImageView);
+		MYViewUtil.removeFromSuperView(mStartImageView);
 		for (View view : mStraightViewArray) {
 			MYViewUtil.removeFromSuperView(view);
 		}
