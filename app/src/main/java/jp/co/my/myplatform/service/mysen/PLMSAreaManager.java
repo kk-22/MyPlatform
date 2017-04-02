@@ -158,10 +158,9 @@ public class PLMSAreaManager {
 		searchAdjacentRoute(unitView, targetLandView, unitView.getLandView(),
 				movementForce, baseRoute, resultRouteArray);
 
-		// ワープ移動先の追加
-		for (PLMSLandView landView : mWarpLandArray) {
-			PLMSLandRoute route = new PLMSLandRoute(landView);
-			resultRouteArray.addIfNoContain(route);
+		if (resultRouteArray.size() == 0 && mWarpLandArray.contains(targetLandView)) {
+			// ワープによる移動
+			return new PLMSLandRoute(targetLandView);
 		}
 
 		// 前のルートと同じ経路に絞り込む
