@@ -1,5 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
+import jp.co.my.common.util.MYArrayList;
+
 public class PLMSArgument {
 
 	private PLMSTurnManager mTurnManager;
@@ -7,6 +9,8 @@ public class PLMSArgument {
 
 	private PLMSFieldView mFieldView;
 	private PLMSInformationView mInformationView;
+
+	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 
 	public PLMSArgument() {
 	}
@@ -42,5 +46,13 @@ public class PLMSArgument {
 
 	public void setInformationView(PLMSInformationView informationView) {
 		mInformationView = informationView;
+	}
+
+	public MYArrayList<PLMSUnitView> getAllUnitViewArray() {
+		return mAllUnitViewArray;
+	}
+
+	public void setAllUnitViewArray(MYArrayList<PLMSUnitView> allUnitViewArray) {
+		mAllUnitViewArray = allUnitViewArray;
 	}
 }

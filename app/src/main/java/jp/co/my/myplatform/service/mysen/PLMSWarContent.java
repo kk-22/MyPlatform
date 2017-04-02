@@ -113,6 +113,7 @@ public class PLMSWarContent extends PLContentView {
 			return;
 		}
 		mArgument.getFieldView().layoutChildViews(mUnitDataArray);
+		mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
 		mTurnManager = new PLMSTurnManager(mArgument);
 	}
 }

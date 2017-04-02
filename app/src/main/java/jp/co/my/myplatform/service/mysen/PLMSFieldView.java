@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.R;
 
 
@@ -25,15 +26,15 @@ public class PLMSFieldView extends FrameLayout {
 	private int mLeftMargin;	// mVerticalLinearの左の余白
 	private int mTopMargin;		// mVerticalLinearの上の余白
 
-	private ArrayList<PLMSLandView> mLandViewArray;
-	private ArrayList<PLMSUnitView> mUnitViewArray;
+	private MYArrayList<PLMSLandView> mLandViewArray;
+	private MYArrayList<PLMSUnitView> mUnitViewArray;
 	
 	public PLMSFieldView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_field, this);
 		mVerticalLinear = (LinearLayout) findViewById(R.id.vertical_linear);
-		mLandViewArray = new ArrayList<>();
-		mUnitViewArray = new ArrayList<>();
+		mLandViewArray = new MYArrayList<>();
+		mUnitViewArray = new MYArrayList<>();
 	}
 
 	public PLMSFieldView(Context context, AttributeSet attrs){
@@ -45,7 +46,7 @@ public class PLMSFieldView extends FrameLayout {
 	}
 
 	public void layoutChildViews(ArrayList<PLMSUnitData> unitDataArray) {
-		mUnitViewArray = new ArrayList<>();
+		mUnitViewArray = new MYArrayList<>();
 		for (PLMSUnitData unitData : unitDataArray) {
 			PLMSUnitView unitView = new PLMSUnitView(getContext(), unitData);
 			mUnitViewArray.add(unitView);
@@ -106,11 +107,11 @@ public class PLMSFieldView extends FrameLayout {
 	}
 
 	// getter and setter
-	public ArrayList<PLMSLandView> getLandViewArray() {
+	public MYArrayList<PLMSLandView> getLandViewArray() {
 		return mLandViewArray;
 	}
 
-	public ArrayList<PLMSUnitView> getUnitViewArray() {
+	public MYArrayList<PLMSUnitView> getUnitViewArray() {
 		return mUnitViewArray;
 	}
 }
