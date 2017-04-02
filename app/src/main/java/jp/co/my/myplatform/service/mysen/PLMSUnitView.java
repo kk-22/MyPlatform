@@ -75,11 +75,6 @@ public class PLMSUnitView extends FrameLayout {
 		MYViewUtil.removeFromSuperView(this);
 	}
 
-	public void updateHitPoint(int nextHP, int diffHP) {
-		mUnitData.setCurrentHP(nextHP);
-		mHPBar.updateHitPoint(nextHP, diffHP);
-	}
-
 	public boolean isAlreadyAction() {
 		return (mAlreadyActionView != null && mAlreadyActionView.getVisibility() == VISIBLE);
 	}

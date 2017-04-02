@@ -54,7 +54,7 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		addAnimator(objectAnimator);
 	}
 
-	public void addBattleAnimation(PLMSBattleResult battleResult, final Runnable lastRunnable) {
+	public void addBattleAnimation(final PLMSBattleResult battleResult, final Runnable lastRunnable) {
 		int numberOfScene = battleResult.getSceneArray().size();
 		for (int i = 0; i < numberOfScene; i++) {
 			final PLMSBattleScene scene = battleResult.getSceneArray().get(i);
@@ -97,9 +97,8 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			}
 
 			// ダメージアニメーション
-			final boolean willRemoveUnit = (scene.getDefenderRemainingHP() <= 0);
 			AnimatorSet damageAnimator = defenderLandView.getUnitView().getHPBar()
-					.getDamageAnimatorArray(willRemoveUnit, scene.getDefenderDiffHP());
+					.getDamageAnimatorArray(scene.getDefenderRemainingHP(), scene.getDefenderDiffHP());
 			animatorArray.addIfNotNull(damageAnimator);
 
 			AnimatorSet animatorSet = new AnimatorSet();
@@ -109,15 +108,6 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 				public void onAnimationStart(Animator animation) {
 					// 攻撃で敵 UnitView の裏に隠れないように最前面へ
 					attackerUnitView.bringToFront();
-					// HP更新
-					defenderUnitView.updateHitPoint(scene.getDefenderRemainingHP(), scene.getDefenderDiffHP());
-				}
-
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					if (willRemoveUnit) {
-						defenderUnitView.removeFromField();
-					}
 				}
 			});
 			addAnimator(animatorSet);
@@ -144,17 +134,22 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
+				// HP更新
+				PLMSBattleUnit leftUnit = battleResult.getLeftUnit();
+				updateHitPoint(leftUnit.getUnitView(), leftUnit.getResultHP());
+				PLMSBattleUnit rightUnit = battleResult.getRightUnit();
+				updateHitPoint(rightUnit.getUnitView(), rightUnit.getResultHP());
 				lastRunnable.run();
 			}
 		});
 	}
 
 	public Animator getFluctuateHPAnimation(final PLMSUnitView unitView, final int remainingHP, final int diffHP) {
-		AnimatorSet animator = unitView.getHPBar().getDamageAnimatorArray(false, diffHP);
+		AnimatorSet animator = unitView.getHPBar().getDamageAnimatorArray(remainingHP, diffHP);
 		animator.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationStart(Animator animation) {
-				unitView.updateHitPoint(remainingHP, diffHP);
+				updateHitPoint(unitView, remainingHP);
 			}
 		});
 		return animator;
@@ -166,6 +161,13 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			animator.start();
 		}
 		mAnimatorArray.add(animator);
+	}
+
+	private void updateHitPoint(PLMSUnitView unitView, int remainingHP) {
+		unitView.getUnitData().setCurrentHP(remainingHP);
+		if (remainingHP == 0) {
+			unitView.removeFromField();
+		}
 	}
 
 	@Override

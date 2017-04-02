@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -48,16 +49,10 @@ public class PLMSHitPointBar extends FrameLayout {
 		int color = armyStrategy.getHitPointColor();
 		mNumberText.setTextColor(color);
 		mBarView.setBackgroundColor(color);
-
-		updateHitPoint(mUnitView.getUnitData().getCurrentHP(), 0);
+		mNumberText.setText(String.valueOf(mUnitView.getUnitData().getCurrentHP()));
 	}
 
-	public void updateHitPoint(int nextHP, int diffHP) {
-		mDamageText.setText(String.valueOf(diffHP * -1));
-		mNumberText.setText(String.valueOf(nextHP));
-	}
-
-	public AnimatorSet getDamageAnimatorArray(boolean willRemoveUnit, int diffHP) {
+	public AnimatorSet getDamageAnimatorArray(final int nextHP, final int diffHP) {
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		float currentY = mDamageText.getY();
 		float topY = currentY - getHeight() / 4;
@@ -77,7 +72,7 @@ public class PLMSHitPointBar extends FrameLayout {
 		downAnimation.setDuration(100);
 		animatorArray.add(downAnimation);
 
-		if (willRemoveUnit) {
+		if (nextHP <= 0) {
 			// 敗走
 			ObjectAnimator removeAnimator = ObjectAnimator.ofFloat(mUnitView, "alpha", 1f, 0f);
 			removeAnimator.setDuration(500);
@@ -91,6 +86,15 @@ public class PLMSHitPointBar extends FrameLayout {
 
 		AnimatorSet animatorSet = new AnimatorSet();
 		animatorSet.playSequentially(animatorArray);
+
+		animatorSet.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationStart(Animator animation) {
+				mDamageText.setText(String.valueOf(diffHP * -1));
+				mNumberText.setText(String.valueOf(nextHP));
+			}
+		});
+
 		return animatorSet;
 	}
 }
