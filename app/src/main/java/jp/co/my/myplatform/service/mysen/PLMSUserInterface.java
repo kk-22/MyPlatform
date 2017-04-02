@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
@@ -390,7 +392,19 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				moveLandArray.add(aroundLandView);
 			}
 		}
-		return moveLandArray.get(0);
+
+		// 現在地から最も近い地点を優先
+		PLMSLandView nearestLandView = null;
+		int smallestDistance = 99;
+		Point targetPoint = mMovingUnitView.getLandView().getPoint();
+		for (PLMSLandView landView : moveLandArray) {
+			int distance = MYMathUtil.difference(targetPoint, landView.getPoint());
+			if (distance < smallestDistance) {
+				smallestDistance = distance;
+				nearestLandView = landView;
+			}
+		}
+		return nearestLandView;
 	}
 
 	private boolean shouldDoubleTapEvent() {
