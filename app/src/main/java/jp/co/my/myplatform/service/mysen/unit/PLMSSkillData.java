@@ -158,6 +158,31 @@ public class PLMSSkillData {
 		return;
 	}
 
+	public void executeMoveSkill(PLMSUnitView skillUnitView, PLMSUnitView moveUnitView) {
+		if (!(mTimingType == TimingType.MY_MOVEMENT && moveUnitView == skillUnitView)
+				&& !(mTimingType == TimingType.ENEMY_MOVEMENT && skillUnitView.isEnemy(moveUnitView))) {
+			return;
+		}
+		if (!canExecuteSkill(skillUnitView)) {
+			return;
+		}
+
+		switch (mEffectType) {
+			case SLIP_MOVE:
+				break;
+			case WARP_TO_TEAM:
+				mArgument.getAreaManager().addWarpUnitView(skillUnitView);
+				break;
+			case WARP_TO_TEAM_OF_LESS_HP:
+				break;
+			case BLOCK_ENEMY_MOVE:
+				mArgument.getAreaManager().addBlockUnitView(skillUnitView);
+				break;
+			default:
+				break;
+		}
+	}
+
 	private boolean canExecuteSkill(PLMSUnitView unitView) {
 		if (mSkillModel == null) {
 			return false;

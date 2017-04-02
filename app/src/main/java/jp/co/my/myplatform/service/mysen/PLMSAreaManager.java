@@ -10,6 +10,7 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.land.PLMSColorCover;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.land.PLMSRouteCover;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_X;
 import static jp.co.my.myplatform.service.mysen.PLMSFieldView.MAX_Y;
@@ -22,6 +23,9 @@ public class PLMSAreaManager {
 	private PLMSArgument mArgument;
 	private PLMSFieldView mField;
 
+	private MYArrayList<PLMSLandView> mBlockLandArray; // スキル進軍阻止対象の LandView
+	private MYArrayList<PLMSLandView> mWarpLandArray; // スキルによりワープ可能な LandView
+
 	private PLMSColorCover mAvailableAreaCover; // 操作可能ユニットの配置マス
 	private PLMSColorCover mMoveAreaCover; // 移動可能マス
 	private PLMSColorCover mAttackAreaCover; // 攻撃可能マス
@@ -30,6 +34,8 @@ public class PLMSAreaManager {
 	public PLMSAreaManager(PLMSArgument argument) {
 		mArgument = argument;
 
+		mBlockLandArray = new MYArrayList<>();
+		mWarpLandArray = new MYArrayList<>();
 		mAvailableAreaCover = new PLMSColorCover(0); // Army 毎に色をセット
 		mMoveAreaCover = new PLMSColorCover(Color.argb(128, 0, 0, 255));
 		mAttackAreaCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
@@ -64,6 +70,7 @@ public class PLMSAreaManager {
 	}
 
 	public ArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
+		initLandArrayBySkill(unitView);
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		ArrayList<PLMSLandView> movableLandArray = new ArrayList<>();
 		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
@@ -142,6 +149,7 @@ public class PLMSAreaManager {
 			return new PLMSLandRoute(targetLandView);
 		}
 
+		initLandArrayBySkill(unitView);
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		PLMSLandRoute baseRoute = new PLMSLandRoute(unitView.getLandView());
 		ArrayList<PLMSLandRoute> resultRouteArray = new ArrayList<>();
@@ -255,7 +263,29 @@ public class PLMSAreaManager {
 			// 移動不可
 			return DO_NOT_ENTER;
 		}
+		if (mBlockLandArray.contains(landView)) {
+			// スキルによりそれ以上先に進ませない
+			return 0;
+		}
 		return nextRemainingMove;
+	}
+
+	private void initLandArrayBySkill(PLMSUnitView moveUnitView) {
+		mBlockLandArray.clear();
+		mWarpLandArray.clear();
+		for (PLMSUnitView unitView : mArgument.getAllUnitViewArray()) {
+			for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
+				skillData.executeMoveSkill(unitView, moveUnitView);
+			}
+		}
+	}
+
+	public void addBlockUnitView(PLMSUnitView unitView) {
+		mBlockLandArray.addAll(getAroundLandArray(unitView.getLandView().getPoint(), 1));
+	}
+
+	public void addWarpUnitView(PLMSUnitView unitView) {
+		mWarpLandArray.addAll(getAroundLandArray(unitView.getLandView().getPoint(), 1));
 	}
 
 	// getter and setter
