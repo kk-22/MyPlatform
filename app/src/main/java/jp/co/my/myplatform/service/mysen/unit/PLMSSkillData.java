@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen.unit;
 
 import android.animation.Animator;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
@@ -133,14 +134,21 @@ public class PLMSSkillData {
 		if (!canExecuteSkill(unitView) || battleUnit.getResultHP() <= 0) {
 			return;
 		}
+		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(battleUnit.getUnitView(), battleUnit);
+		if (targetArray.size() == 0) {
+			return;
+		}
 
 		switch (mEffectType) {
 			case FLUCTUATE_HP: {
-				int diffHP = mSkillModel.getEffectValue();
-				int remainingHP = unitView.getUnitData().calculateSkillRemainingHP(battleUnit.getResultHP(), diffHP);
-				PLMSAnimationManager animationManager = mArgument.getAnimationManager();
-				Animator animator = animationManager.getFluctuateHPAnimation(unitView, remainingHP, diffHP);
-				animationManager.addTogetherAnimator(animator);
+				for (PLMSUnitView targetUnit : targetArray) {
+					int currentHP = getCurrentHPForBattle(targetUnit, battleResult);
+					int diffHP = mSkillModel.getEffectValue();
+					int remainingHP = targetUnit.getUnitData().calculateSkillRemainingHP(currentHP, diffHP);
+					PLMSAnimationManager animationManager = mArgument.getAnimationManager();
+					Animator animator = animationManager.getFluctuateHPAnimation(targetUnit, remainingHP, diffHP);
+					animationManager.addTogetherAnimator(animator);
+				}
 				break;
 			}
 			default:
@@ -173,6 +181,46 @@ public class PLMSSkillData {
 
 	private boolean canExecuteBattleSkill(PLMSBattleUnit myBattleUnit, PLMSBattleUnit enemyBattleUnit) {
 		return true;
+	}
+
+	private MYArrayList<PLMSUnitView> getTargetUnitViewArray(PLMSUnitView unitView, PLMSBattleUnit battleUnit) {
+		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>();
+		switch (mTargetType) {
+			case NONE:
+				break;
+			case SELF:
+				resultArray.add(unitView);
+				break;
+			case TEAM_IN_RANGE:
+				break;
+			case SAME_BRANCH_IN_RANGE:
+				break;
+			case TEAM_OTHER_THAN_ME:
+				break;
+			case ALL_TEAM_MEMBER:
+				break;
+			case ENEMY:
+				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+				if (enemyUnit.getResultHP() <= 0) {
+					break;
+				}
+				resultArray.add(enemyUnit.getUnitView());
+				break;
+			case ENEMY_IN_ENEMY_RANGE:
+				break;
+			case ENEMY_IN_MY_RANGE:
+				break;
+		}
+		return resultArray;
+	}
+
+	private int getCurrentHPForBattle(PLMSUnitView targetUnitView, PLMSBattleResult battleResult) {
+		if (battleResult.getLeftUnit().getUnitView().equals(targetUnitView)) {
+			return battleResult.getLeftUnit().getResultHP();
+		} else if (battleResult.getRightUnit().getUnitView().equals(targetUnitView)) {
+			return battleResult.getRightUnit().getResultHP();
+		}
+		return targetUnitView.getUnitData().getCurrentHP();
 	}
 
 	// getter
