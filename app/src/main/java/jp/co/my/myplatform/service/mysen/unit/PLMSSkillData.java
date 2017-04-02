@@ -168,6 +168,7 @@ public class PLMSSkillData {
 
 		switch (mEffectType) {
 			case SLIP_MOVE:
+				mArgument.getAreaManager().setSlipMove(true);
 				break;
 			case WARP_TO_TEAM:
 				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getUnitViewArray()) {

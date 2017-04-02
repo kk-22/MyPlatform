@@ -21,6 +21,7 @@ public class PLMSAreaManager {
 	private PLMSArgument mArgument;
 	private PLMSFieldView mField;
 
+	private boolean isSlipMove; // すり抜け移動フラグ
 	private MYArrayList<PLMSLandView> mBlockLandArray; // スキル進軍阻止対象の LandView
 	private MYArrayList<PLMSLandView> mWarpLandArray; // スキルによりワープ可能な LandView
 
@@ -260,8 +261,7 @@ public class PLMSAreaManager {
 	// 移動不可の場合は負の値を返す
 	private int getRemainingMoveCost(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
 		PLMSUnitView landUnitView = landView.getUnitView();
-		if (landUnitView != null &&
-				(landUnitView.equals(unitView) || landUnitView.isEnemy(unitView))) {
+		if (unitView.equals(landUnitView) || (!isSlipMove && unitView.isEnemy(landUnitView))) {
 			// 移動不可
 			return DO_NOT_ENTER;
 		}
@@ -270,7 +270,7 @@ public class PLMSAreaManager {
 			// 移動不可
 			return DO_NOT_ENTER;
 		}
-		if (mBlockLandArray.contains(landView)) {
+		if (!isSlipMove && mBlockLandArray.contains(landView)) {
 			// スキルによりそれ以上先に進ませない
 			return 0;
 		}
@@ -278,6 +278,7 @@ public class PLMSAreaManager {
 	}
 
 	private void initLandArrayBySkill(PLMSUnitView moveUnitView) {
+		isSlipMove = false;
 		mBlockLandArray.clear();
 		mWarpLandArray.clear();
 		for (PLMSUnitView unitView : mArgument.getAllUnitViewArray()) {
@@ -324,5 +325,9 @@ public class PLMSAreaManager {
 
 	public void setField(PLMSFieldView field) {
 		mField = field;
+	}
+
+	public void setSlipMove(boolean slipMove) {
+		isSlipMove = slipMove;
 	}
 }
