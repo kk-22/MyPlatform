@@ -72,6 +72,9 @@ public class PLMSAreaManager {
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		MYArrayList<PLMSLandView> movableLandArray = new MYArrayList<>();
 		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
+
+		movableLandArray.addAllOnlyNoContain(mWarpLandArray);
+
 		return movableLandArray;
 	}
 
@@ -153,6 +156,12 @@ public class PLMSAreaManager {
 		MYArrayList<PLMSLandRoute> resultRouteArray = new MYArrayList<>();
 		searchAdjacentRoute(unitView, targetLandView, unitView.getLandView(),
 				movementForce, baseRoute, resultRouteArray);
+
+		// ワープ移動先の追加
+		for (PLMSLandView landView : mWarpLandArray) {
+			PLMSLandRoute route = new PLMSLandRoute(landView);
+			resultRouteArray.addIfNoContain(route);
+		}
 
 		// 前のルートと同じ経路に絞り込む
 		MYArrayList<PLMSLandRoute> candidateRouteArray = resultRouteArray;
@@ -282,8 +291,18 @@ public class PLMSAreaManager {
 		mBlockLandArray.addAll(getAroundLandArray(unitView.getLandView().getPoint(), 1));
 	}
 
-	public void addWarpUnitView(PLMSUnitView unitView) {
-		mWarpLandArray.addAll(getAroundLandArray(unitView.getLandView().getPoint(), 1));
+	public void addWarpUnitView(PLMSUnitView targetUnitView, PLMSUnitView moveUnitView) {
+		if (targetUnitView.equals(moveUnitView)) {
+			return;
+		}
+
+		MYArrayList<PLMSLandView> landViewArray = getAroundLandArray(targetUnitView.getLandView().getPoint(), 1);
+		int moveCost = moveUnitView.getUnitData().getBranch().getMovementForce();
+		for (PLMSLandView landView : landViewArray) {
+			if (getRemainingMoveCost(moveUnitView, landView, moveCost) >= 0) {
+				mWarpLandArray.add(landView);
+			}
+		}
 	}
 
 	// getter and setter

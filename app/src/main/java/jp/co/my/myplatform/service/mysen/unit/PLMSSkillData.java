@@ -155,7 +155,6 @@ public class PLMSSkillData {
 				MYLogUtil.showErrorToast("未実装 FinishBattle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
 				break;
 		}
-		return;
 	}
 
 	public void executeMoveSkill(PLMSUnitView skillUnitView, PLMSUnitView moveUnitView) {
@@ -171,9 +170,16 @@ public class PLMSSkillData {
 			case SLIP_MOVE:
 				break;
 			case WARP_TO_TEAM:
-				mArgument.getAreaManager().addWarpUnitView(skillUnitView);
+				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getUnitViewArray()) {
+					mArgument.getAreaManager().addWarpUnitView(unitView, moveUnitView);
+				}
 				break;
 			case WARP_TO_TEAM_OF_LESS_HP:
+				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getUnitViewArray()) {
+					if (getRemainingHPRatio(unitView) <= mSkillModel.getEffectValue()) {
+						mArgument.getAreaManager().addWarpUnitView(unitView, moveUnitView);
+					}
+				}
 				break;
 			case BLOCK_ENEMY_MOVE:
 				mArgument.getAreaManager().addBlockUnitView(skillUnitView);
@@ -206,6 +212,16 @@ public class PLMSSkillData {
 
 	private boolean canExecuteBattleSkill(PLMSBattleUnit myBattleUnit, PLMSBattleUnit enemyBattleUnit) {
 		return true;
+	}
+
+	private float getRemainingHPRatio(PLMSUnitView unitView) {
+		PLMSUnitData unitData = unitView.getUnitData();
+		return unitData.getCurrentHP() / unitData.getMaxHP() * 100;
+	}
+
+	private float getRemainingHPRatio(PLMSBattleUnit battleUnit) {
+		PLMSUnitData unitData = battleUnit.getUnitData();
+		return battleUnit.getResultHP() / unitData.getMaxHP() * 100;
 	}
 
 	private MYArrayList<PLMSUnitView> getTargetUnitViewArray(PLMSUnitView unitView, PLMSBattleUnit battleUnit) {

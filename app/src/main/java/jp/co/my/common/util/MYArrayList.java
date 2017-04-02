@@ -57,6 +57,20 @@ public class MYArrayList<E> extends ArrayList<E> {
 		return exist;
 	}
 
+	public void addIfNoContain(E object) {
+		if (!contains((object))) {
+			add(object);
+		}
+	}
+
+	public void addAllOnlyNoContain(Collection<? extends E> c) {
+		for (E object : c) {
+			if (!contains(object)) {
+				add(object);
+			}
+		}
+	}
+
 	public E getNextOfObject(E object) {
 		int index = indexOf(object);
 		if (index == -1) {
