@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 public class PLMSArgument {
 
@@ -11,6 +12,7 @@ public class PLMSArgument {
 	private PLMSFieldView mFieldView;
 	private PLMSInformationView mInformationView;
 
+	private MYArrayList<PLMSArmyStrategy> mArmyArray;
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 
 	public PLMSArgument() {
@@ -61,5 +63,17 @@ public class PLMSArgument {
 
 	public PLMSAreaManager getAreaManager() {
 		return mAreaManager;
+	}
+
+	public void setAreaManager(PLMSAreaManager areaManager) {
+		mAreaManager = areaManager;
+	}
+
+	public MYArrayList<PLMSArmyStrategy> getArmyArray() {
+		return mArmyArray;
+	}
+
+	public void setArmyArray(MYArrayList<PLMSArmyStrategy> armyArray) {
+		mArmyArray = armyArray;
 	}
 }

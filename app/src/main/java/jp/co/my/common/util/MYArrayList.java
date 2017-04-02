@@ -1,6 +1,7 @@
 package jp.co.my.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 
@@ -12,6 +13,12 @@ public class MYArrayList<E> extends ArrayList<E> {
 
 	public MYArrayList(Collection<? extends E> c) {
 		super(c);
+	}
+
+	// https://docs.oracle.com/javase/jp/8/docs/technotes/guides/language/non-reifiable-varargs.html
+	@SuppressWarnings({"unchecked", "varargs"})
+	public MYArrayList(E... objects) {
+		super(Arrays.asList(objects));
 	}
 
 	public MYArrayList(int initialCapacity) {

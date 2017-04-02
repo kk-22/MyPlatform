@@ -11,6 +11,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
@@ -95,6 +96,7 @@ public class PLMSWarContent extends PLContentView {
 				mUnitDataArray = new ArrayList<>();
 				PLMSBlueArmy blueArmy = new PLMSBlueArmy();
 				PLMSRedArmy redArmy = new PLMSRedArmy();
+				mArgument.setArmyArray(new MYArrayList<>(blueArmy, redArmy));
 				for (PLMSUnitModel unitModel : modelLists) {
 					Point point = new Point((x % 6), y);
 					PLMSArmyStrategy armyStrategy = (x %2 == 0) ? blueArmy : redArmy;
