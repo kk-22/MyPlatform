@@ -19,8 +19,8 @@ public class PLMSAreaManager {
 
 	private static final int DO_NOT_ENTER = -99;
 
+	private PLMSArgument mArgument;
 	private PLMSFieldView mField;
-	private ArrayList<PLMSUnitView> mUnitArray;
 	private PLMSArmyStrategy mTargetArmy; // 操作対象のArmy
 
 	private PLMSColorCover mAvailableAreaCover; // 操作可能ユニットの配置マス
@@ -28,9 +28,9 @@ public class PLMSAreaManager {
 	private PLMSColorCover mAttackAreaCover; // 攻撃可能マス
 	private PLMSRouteCover mRouteCover; // 初期位置と仮位置
 
-	public PLMSAreaManager(PLMSFieldView field, ArrayList<PLMSUnitView> unitArray, PLMSArmyStrategy armyStrategy) {
-		mField = field;
-		mUnitArray = unitArray;
+	public PLMSAreaManager(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
+		mArgument = argument;
+		mField = argument.getFieldView();
 		mTargetArmy = armyStrategy;
 
 		mAvailableAreaCover = new PLMSColorCover(mTargetArmy.getAvailableAreaColor());
