@@ -198,12 +198,10 @@ public class PLMSSkillData {
 			case NONE:
 				return true;
 			case LESS_THAN_MY_HP: {
-				PLMSUnitData unitData = unitView.getUnitData();
-				return unitData.getCurrentHP() <= unitData.getMaxHP() * mSkillModel.getRequirementValue() / 100;
+				return getRemainingHPRatio(unitView) <= mSkillModel.getRequirementValue();
 			}
 			case GREATER_THAN_MY_HP: {
-				PLMSUnitData unitData = unitView.getUnitData();
-				return unitData.getCurrentHP() >= unitData.getMaxHP() * mSkillModel.getRequirementValue() / 100;
+				return getRemainingHPRatio(unitView) >= mSkillModel.getRequirementValue();
 			}
 			default:
 				// 各 execute メソッドで判定
