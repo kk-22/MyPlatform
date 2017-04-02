@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import jp.co.my.common.util.MYImageUtil;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
@@ -106,6 +107,14 @@ public class PLMSUnitView extends FrameLayout {
 		PLMSArmyStrategy myArmy = mUnitData.getArmyStrategy();
 		PLMSArmyStrategy targetArmy = targetUnitView.getUnitData().getArmyStrategy();
 		return !myArmy.equals(targetArmy);
+	}
+
+	// Debug
+	public String debugLog() {
+		PLMSUnitModel unitModel = mUnitData.getUnitModel();
+		String debugText = " UnitView " + unitModel.getName();
+		MYLogUtil.outputLog(debugText);
+		return debugText;
 	}
 
 	// getter and setter
