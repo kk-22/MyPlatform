@@ -116,45 +116,26 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		}
 
 		// 戦闘終了スキルアニメーション
-		MYArrayList<Animator> skillAnimatorArray = new MYArrayList<>();
 		PLMSBattleUnit leftUnit = battleResult.getLeftUnit();
 		for (PLMSSkillData skillData : leftUnit.getUnitData().getPassiveSkillArray()) {
-			Animator animator = skillData.executeFinishBattleSkill(leftUnit, battleResult);
-			skillAnimatorArray.addIfNotNull(animator);
+			skillData.executeFinishBattleSkill(leftUnit, battleResult);
 		}
 		PLMSBattleUnit rightUnit = battleResult.getRightUnit();
 		for (PLMSSkillData skillData : rightUnit.getUnitData().getPassiveSkillArray()) {
-			Animator animator = skillData.executeFinishBattleSkill(rightUnit, battleResult);
-			skillAnimatorArray.addIfNotNull(animator);
+			skillData.executeFinishBattleSkill(rightUnit, battleResult);
 		}
-		if (skillAnimatorArray.size() > 0) {
-			AnimatorSet animatorSet = new AnimatorSet();
-			animatorSet.playSequentially(skillAnimatorArray);
-			addAnimator(animatorSet);
-		}
+		sendTogetherAnimator();
 
 		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				// HP更新
-				PLMSBattleUnit leftUnit = battleResult.getLeftUnit();
-				updateHitPoint(leftUnit.getUnitView(), leftUnit.getResultHP());
-				PLMSBattleUnit rightUnit = battleResult.getRightUnit();
-				updateHitPoint(rightUnit.getUnitView(), rightUnit.getResultHP());
 				lastRunnable.run();
 			}
 		});
 	}
 
 	public Animator getFluctuateHPAnimation(final PLMSUnitView unitView, final int remainingHP, final int diffHP) {
-		AnimatorSet animator = unitView.getHPBar().getDamageAnimatorArray(remainingHP, diffHP);
-		animator.addListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationStart(Animator animation) {
-				updateHitPoint(unitView, remainingHP);
-			}
-		});
-		return animator;
+		return unitView.getHPBar().getDamageAnimatorArray(remainingHP, diffHP);
 	}
 
 	public void addTogetherAnimator(Animator animator) {
@@ -177,13 +158,6 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			animator.start();
 		}
 		mAnimatorArray.add(animator);
-	}
-
-	private void updateHitPoint(PLMSUnitView unitView, int remainingHP) {
-		unitView.getUnitData().setCurrentHP(remainingHP);
-		if (remainingHP == 0) {
-			unitView.removeFromField();
-		}
 	}
 
 	@Override

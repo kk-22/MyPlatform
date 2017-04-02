@@ -91,15 +91,22 @@ public class PLMSHitPointBar extends FrameLayout {
 		animatorSet.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationStart(Animator animation) {
-				int textColor;
 				if (diffHP <= 0) {
-					textColor = Color.parseColor("#ff0000");
+					mDamageText.setTextColor(Color.parseColor("#ff0000"));
 				} else {
-					textColor = Color.parseColor("#00ff00");
+					mDamageText.setTextColor(Color.parseColor("#00ff00"));
 				}
-				mDamageText.setTextColor(textColor);
 				mDamageText.setText(String.valueOf(Math.abs(diffHP)));
 				mNumberText.setText(String.valueOf(nextHP));
+
+				mUnitView.getUnitData().setCurrentHP(nextHP);
+			}
+
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				if (nextHP <= 0) {
+					mUnitView.removeFromField();
+				}
 			}
 		});
 

@@ -121,30 +121,33 @@ public class PLMSSkillData {
 		}
 	}
 
-	public Animator executeFinishBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+	public void executeFinishBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
 		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
 		if (mTimingType != TimingType.FINISH_BATTLE
 				&& !(mTimingType == TimingType.FINISH_ATTACK_BATTLE && isAttacker)
 				&& !(mTimingType == TimingType.FINISH_DEFENCE_BATTLE && !isAttacker)) {
-			return null;
+			return;
 		}
 
 		PLMSUnitView unitView = battleUnit.getUnitView();
 		if (!canExecuteSkill(unitView) || battleUnit.getResultHP() <= 0) {
-			return null;
+			return;
 		}
 
 		switch (mEffectType) {
 			case FLUCTUATE_HP: {
 				int diffHP = mSkillModel.getEffectValue();
 				int remainingHP = unitView.getUnitData().calculateSkillRemainingHP(battleUnit.getResultHP(), diffHP);
-				return mArgument.getAnimationManager().getFluctuateHPAnimation(unitView, remainingHP, diffHP);
+				PLMSAnimationManager animationManager = mArgument.getAnimationManager();
+				Animator animator = animationManager.getFluctuateHPAnimation(unitView, remainingHP, diffHP);
+				animationManager.addTogetherAnimator(animator);
+				break;
 			}
 			default:
 				MYLogUtil.showErrorToast("未実装 FinishBattle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
 				break;
 		}
-		return null;
+		return;
 	}
 
 	private boolean canExecuteSkill(PLMSUnitView unitView) {
