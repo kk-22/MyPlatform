@@ -15,7 +15,8 @@ public class PLMSBattleUnit {
 
 	private int mResultHP;
 	private int[] mBattleBuffs;
-	private int mTotalAttack;					// 3すくみ・スキル補正後の値（奥義スキルは除く）
+	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
+	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
 
 	private MYArrayList<PLMSSkillData.EffectType> mSkillEffectArray;
 
@@ -24,16 +25,18 @@ public class PLMSBattleUnit {
 		mLandView = landView;
 
 		mResultHP = mUnitView.getUnitData().getCurrentHP();
-
 		mBattleBuffs = new int[PLMSUnitData.PARAMETER_NUMBER];
 		mSkillEffectArray = new MYArrayList<>();
+		mChasePoint = 0;
 	}
 
-	public boolean canChaseAttack(PLMSBattleUnit enemyUnit) {
-		if (enemyUnit.getBattleSpeed() + 5 <= getBattleSpeed()) {
+	public boolean canChaseAttack() {
+		if (mChasePoint > 0) {
 			return true;
+		} else if (mChasePoint < 0) {
+			return false;
 		}
-		return false;
+		return mEnemyUnit.getBattleSpeed() + 5 <= getBattleSpeed();
 	}
 
 	public int getDefenseForEnemyAttack() {
@@ -56,6 +59,14 @@ public class PLMSBattleUnit {
 
 	private int getBattleParameterOfNo(int no) {
 		return mUnitView.getUnitData().getCurrentParameterOfNo(no) + mBattleBuffs[no];
+	}
+
+	public void incrementChasePoint() {
+		mChasePoint += 1;
+	}
+
+	public void decrementChasePoint() {
+		mChasePoint -= 1;
 	}
 
 	// getter

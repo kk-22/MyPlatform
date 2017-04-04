@@ -70,30 +70,51 @@ public class PLMSBattleResult {
 	// 攻撃順を返す
 	private MYArrayList<PLMSBattleUnit> createAttackerArray() {
 		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
-		PLMSBattleUnit firstAttacker = mLeftUnit;
-		PLMSBattleUnit secondAttacker = firstAttacker.getEnemyUnit();
 
-
-		int distance = firstAttacker.getUnitView().getUnitData().getWeapon().getAttackRange();
-		boolean canAttackSecondAttacker = false;
-		if (secondAttacker.getUnitView().getUnitData().getWeapon().getAttackRange() == distance
-				|| secondAttacker.getSkillEffectArray().contains(EffectType.ALL_RANGE_COUNTER)) {
-			canAttackSecondAttacker = true;
+		// 反撃判定
+		int distance = mLeftUnit.getUnitView().getUnitData().getWeapon().getAttackRange();
+		boolean canAttackRightAttacker = (mRightUnit.getUnitView().getUnitData().getWeapon().getAttackRange() == distance);
+		if (mRightUnit.getSkillEffectArray().contains(EffectType.ALL_RANGE_COUNTER)) {
+			canAttackRightAttacker = true;
+		}
+		if (canAttackRightAttacker && mLeftUnit.getSkillEffectArray().contains(EffectType.CHASE_ATTACK_IF_HAS_COUNTER)) {
+			mLeftUnit.incrementChasePoint();
 		}
 
+		// 攻撃
+		PLMSBattleUnit firstAttacker;
+		PLMSBattleUnit secondAttacker;
+		if (canAttackRightAttacker) {
+			if (mRightUnit.getSkillEffectArray().contains(EffectType.PREEMPTIVE_ATTACK)) {
+				firstAttacker = mRightUnit;
+			} else {
+				firstAttacker = mLeftUnit;
+			}
+			secondAttacker = firstAttacker.getEnemyUnit();
+		} else {
+			firstAttacker = mLeftUnit;
+			secondAttacker = null;
+		}
 		attackerArray.add(firstAttacker);
-		if (canAttackSecondAttacker) {
-			attackerArray.add(secondAttacker);
-		}
+		attackerArray.addIfNotNull(secondAttacker);
 
-		// 追撃判定
-		if (firstAttacker.canChaseAttack(secondAttacker)) {
-			attackerArray.add(firstAttacker);
-		}
-		if (canAttackSecondAttacker && secondAttacker.canChaseAttack(firstAttacker)) {
-			attackerArray.add(secondAttacker);
-		}
+		// 追撃処理
+		addChaseAttack(attackerArray, firstAttacker);
+		addChaseAttack(attackerArray, secondAttacker);
 		return attackerArray;
+	}
+
+	private void addChaseAttack(MYArrayList<PLMSBattleUnit> attackerArray, PLMSBattleUnit attackerUnit) {
+		if (attackerUnit == null || !attackerUnit.canChaseAttack()) {
+			return;
+		}
+		if (attackerUnit.getSkillEffectArray().contains(EffectType.CONTINUOUSLY_CHASE_ATTACK)) {
+			// 自分の攻撃直後に追撃攻撃
+			int firstAttackIndex = attackerArray.indexOf(attackerUnit);
+			attackerArray.add(firstAttackIndex + 1, attackerUnit);
+		} else {
+			attackerArray.add(attackerUnit);
+		}
 	}
 
 	// getter

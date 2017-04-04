@@ -89,7 +89,7 @@ public class PLMSSkillData {
 
 		PLMSUnitView unitView = battleUnit.getUnitView();
 		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-		if (!canExecuteSkill(unitView) || !canExecuteBattleSkill(battleUnit, enemyUnit)) {
+		if (!canExecuteSkill(unitView)) {
 			return;
 		}
 		switch (mEffectType) {
@@ -110,9 +110,23 @@ public class PLMSSkillData {
 				}
 				break;
 			}
+			case CHASE_ATTACK:
+				battleUnit.incrementChasePoint();
+				break;
+			case DISABLE_CHASE_ATTACK:
+				battleUnit.decrementChasePoint();
+				enemyUnit.decrementChasePoint();
+				break;
+			case KILL_WEAPON:
+				battleUnit.incrementChasePoint();
+				enemyUnit.decrementChasePoint();
+				break;
 			case THREE_WAY_INTENSIFICATION:
 				battleResult.setThreeWayRatio(mSkillModel.getEffectValue());
 				break;
+			case CHASE_ATTACK_IF_HAS_COUNTER:
+			case CONTINUOUSLY_CHASE_ATTACK:
+			case PREEMPTIVE_ATTACK:
 			case ALL_RANGE_COUNTER:
 				battleUnit.addSkill(this);
 				break;
@@ -207,10 +221,6 @@ public class PLMSSkillData {
 				// 各 execute メソッドで判定
 				return true;
 		}
-	}
-
-	private boolean canExecuteBattleSkill(PLMSBattleUnit myBattleUnit, PLMSBattleUnit enemyBattleUnit) {
-		return true;
 	}
 
 	private float getRemainingHPRatio(PLMSUnitView unitView) {
