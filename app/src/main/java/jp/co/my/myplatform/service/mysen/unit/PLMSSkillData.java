@@ -92,6 +92,11 @@ public class PLMSSkillData {
 		if (!canExecuteSkill(unitView)) {
 			return;
 		}
+		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(battleUnit.getUnitView(), battleUnit);
+		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
+			return;
+		}
+
 		switch (mEffectType) {
 			case BATTLE_BUFF: {
 				int statusType = mSkillModel.getStatusType();
@@ -233,13 +238,13 @@ public class PLMSSkillData {
 		return battleUnit.getResultHP() / unitData.getMaxHP() * 100;
 	}
 
-	private MYArrayList<PLMSUnitView> getTargetUnitViewArray(PLMSUnitView unitView, PLMSBattleUnit battleUnit) {
+	private MYArrayList<PLMSUnitView> getTargetUnitViewArray(PLMSUnitView skillUnitView, PLMSBattleUnit battleUnit) {
 		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>();
 		switch (mTargetType) {
 			case NONE:
 				break;
 			case SELF:
-				resultArray.add(unitView);
+				resultArray.add(skillUnitView);
 				break;
 			case TEAM_IN_RANGE:
 				break;
@@ -259,7 +264,20 @@ public class PLMSSkillData {
 			case ENEMY_IN_MY_RANGE:
 				break;
 		}
-		return resultArray;
+		int targetWeapon = mSkillModel.getTargetWeapon();
+		int targetBranch = mSkillModel.getTargetBranch();
+		if (targetWeapon == 0 && targetBranch == 0) {
+			return resultArray;
+		}
+
+		MYArrayList<PLMSUnitView> filteredArray = new MYArrayList<>();
+		for (PLMSUnitView unitView : resultArray) {
+			PLMSUnitData unitData = unitView.getUnitData();
+			if (unitData.getWeapon().getNo() == targetWeapon || unitData.getBranch().getNo() == targetBranch) {
+				filteredArray.add(unitView);
+			}
+		}
+		return filteredArray;
 	}
 
 	private int getCurrentHPForBattle(PLMSUnitView targetUnitView, PLMSBattleResult battleResult) {

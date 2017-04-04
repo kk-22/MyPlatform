@@ -69,6 +69,10 @@ public class PLMSWeaponData {
 		}
 	}
 
+	public int getNo() {
+		return mWeaponType.getInt();
+	}
+
 	private Type getType(int no) {
 		Type[] types = Type.values();
 		for (Type type : types) {

@@ -27,6 +27,10 @@ public class PLMSBranchData {
 		initParams();
 	}
 
+	public int getNo() {
+		return mBranchType.getInt();
+	}
+
 	private void initParams() {
 		switch (mBranchType) {
 			case ARMOR:
