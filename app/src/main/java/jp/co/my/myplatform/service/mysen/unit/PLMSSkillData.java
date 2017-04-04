@@ -233,8 +233,6 @@ public class PLMSSkillData {
 				break;
 			case TEAM_IN_RANGE:
 				break;
-			case SAME_BRANCH_IN_RANGE:
-				break;
 			case TEAM_OTHER_THAN_ME:
 				break;
 			case ALL_TEAM_MEMBER:
@@ -332,7 +330,7 @@ public class PLMSSkillData {
 
 	private enum TargetType {
 		NONE(0),
-		SELF(1), TEAM_IN_RANGE(2), SAME_BRANCH_IN_RANGE(3), TEAM_OTHER_THAN_ME(4), ALL_TEAM_MEMBER(5),
+		SELF(1), TEAM_IN_RANGE(2), TEAM_OTHER_THAN_ME(3), ALL_TEAM_MEMBER(4),
 		ENEMY(11), ENEMY_IN_ENEMY_RANGE(12), ENEMY_IN_MY_RANGE(13);
 
 		final int id;
