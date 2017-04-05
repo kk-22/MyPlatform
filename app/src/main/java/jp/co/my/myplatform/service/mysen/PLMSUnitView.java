@@ -48,7 +48,7 @@ public class PLMSUnitView extends FrameLayout {
 	// ターン終了時
 	public void resetForFinishTurn(int numberOfTurn) {
 		if (!isAlreadyAction()) {
-			// TODO:その場で待機処理
+			standby();
 		}
 		mAlreadyActionView.setVisibility(GONE);
 	}
@@ -62,6 +62,12 @@ public class PLMSUnitView extends FrameLayout {
 		mLandView = landView;
 		mCurrentPoint = landView.getPoint();
 		landView.putUnitView(this);
+	}
+
+	// 待機
+	public void standby() {
+		mUnitData.resetDebuffParams();
+		didAction();
 	}
 
 	// 行動終了

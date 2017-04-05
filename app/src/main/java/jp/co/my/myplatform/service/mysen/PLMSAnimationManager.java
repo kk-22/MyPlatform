@@ -115,6 +115,9 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			addAnimator(animatorSet);
 		}
 
+		// デバフリセット（戦闘終了スキル発動前に必要）
+		battleResult.getLeftUnit().getUnitData().resetDebuffParams();
+
 		// 戦闘終了スキルアニメーション
 		PLMSBattleUnit leftUnit = battleResult.getLeftUnit();
 		for (PLMSSkillData skillData : leftUnit.getUnitData().getPassiveSkillArray()) {

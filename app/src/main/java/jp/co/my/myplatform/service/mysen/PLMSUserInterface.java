@@ -114,7 +114,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				if (shouldDoubleTapEvent()) {
 					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 						// 未行動ユニットダブルタップで行動終了
-						mMovingUnitView.didAction();
+						mMovingUnitView.standby();
 						mAreaManager.getAvailableAreaCover().hideCoverView(mMovingUnitView.getLandView());
 						finishMoveEvent();
 					}
@@ -166,7 +166,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			finishMoveEvent();
 		} else {
 			// 移動後のユニットクリック時のみ移動確定
-			mMovingUnitView.didAction();
+			mMovingUnitView.standby();
 			movedUnit(mTempLandView);
 		}
 	}

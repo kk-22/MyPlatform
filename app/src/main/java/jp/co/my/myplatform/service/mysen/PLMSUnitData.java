@@ -95,7 +95,7 @@ public class PLMSUnitData {
 		mMoveCount = 0;
 	}
 
-	public void resetParamsForDidAction() {
+	public void resetDebuffParams() {
 		for (int i = 0; i < PARAMETER_NUMBER; i++) {
 			mDebuffParams[i] = 0;
 		}
