@@ -152,7 +152,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
 				// 攻撃範囲内の敵タップ
 				PLMSLandView nextLandView = moveUnitForAttack(touchLandView);
-				mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, nextLandView, null);
+				mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, nextLandView));
 				moveToTempLand(nextLandView);
 				if (unitView.equals(mInformation.getRightUnitView())) {
 					// 攻撃
@@ -275,7 +275,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			// 元の位置に戻す
 			targetLandView = mTempLandView;
 		}
-		mAnimationManager.addMoveAnimation(mMovingUnitView, touchPointF, targetLandView, animatorListener);
+		Animator animator = mAnimationManager.getMovementAnimation(mMovingUnitView, touchPointF, targetLandView);
+		if (animatorListener != null) {
+			animator.addListener(animatorListener);
+		}
+		mAnimationManager.addAnimator(animator);
 		if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)
 				|| mAreaManager.canAttackToLandView(landView)) {
 			// 移動イベント継続
@@ -295,7 +299,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mInformation.updateForUnitData(mMovingUnitView);
 		if (mAreaManager.getMoveAreaCover().isShowingCover(landView)) {
 			// クリック地形に仮配置
-			mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, landView, null);
+			mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, landView));
 			moveToTempLand(landView);
 		} else if (mAreaManager.getAttackAreaCover().isShowingCover(landView)) {
 			// ユニットがいればOnTouchListenerが呼ばれる。このLandView上にユニットはいないので動作なし
@@ -313,7 +317,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	private void cancelMoveEvent() {
-		mAnimationManager.addMoveAnimation(mMovingUnitView, mTempLandView, mMovingUnitView.getLandView(), null);
+		mAnimationManager.addAnimator(
+				mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, mMovingUnitView.getLandView()));
 		finishMoveEvent();
 	}
 
