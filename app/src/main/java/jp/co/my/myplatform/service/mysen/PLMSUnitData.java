@@ -111,6 +111,10 @@ public class PLMSUnitData {
 		return Math.max(1, Math.min(mMaxHP, currentHP + diffHP));
 	}
 
+	public boolean isAlive() {
+		return (mCurrentHP > 0);
+	}
+
 	private PLMSSkillData createSkillData(ForeignKeyContainer<PLMSSkillModel> foreign) {
 		if (foreign == null) {
 			return new PLMSSkillData(mArgument, null);

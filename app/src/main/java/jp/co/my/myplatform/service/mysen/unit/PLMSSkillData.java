@@ -185,12 +185,12 @@ public class PLMSSkillData {
 				mArgument.getAreaManager().setSlipMove(true);
 				break;
 			case WARP_TO_TEAM:
-				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getUnitViewArray()) {
+				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
 					mArgument.getAreaManager().addWarpUnitView(unitView, moveUnitView);
 				}
 				break;
 			case WARP_TO_TEAM_OF_LESS_HP:
-				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getUnitViewArray()) {
+				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
 					if (getRemainingHPRatio(unitView) <= mSkillModel.getEffectValue()) {
 						mArgument.getAreaManager().addWarpUnitView(unitView, moveUnitView);
 					}

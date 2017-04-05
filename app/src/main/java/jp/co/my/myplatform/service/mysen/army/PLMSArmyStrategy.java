@@ -6,19 +6,19 @@ import jp.co.my.myplatform.service.mysen.PLMSUserInterface;
 
 public abstract class PLMSArmyStrategy {
 
-	private MYArrayList<PLMSUnitView> mUnitViewArray;
+	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 	private PLMSUserInterface mUnitInterface;
 
 	public PLMSArmyStrategy() {
-		mUnitViewArray = new MYArrayList<>();
+		mAllUnitViewArray = new MYArrayList<>();
 	}
 
 	public void addUnitView(PLMSUnitView unitView) {
-		mUnitViewArray.add(unitView);
+		mAllUnitViewArray.add(unitView);
 	}
 
 	public boolean hasUnitView(PLMSUnitView unitView) {
-		return mUnitViewArray.contains(unitView);
+		return mAllUnitViewArray.contains(unitView);
 	}
 
 	public abstract int getHitPointColor();
@@ -27,12 +27,22 @@ public abstract class PLMSArmyStrategy {
 	public abstract int getIconGravity();
 
 	// getter
-	public MYArrayList<PLMSUnitView> getUnitViewArray() {
-		return mUnitViewArray;
+	public MYArrayList<PLMSUnitView> getAllUnitViewArray() {
+		return mAllUnitViewArray;
 	}
 
 	public PLMSUserInterface getUnitInterface() {
 		return mUnitInterface;
+	}
+
+	public MYArrayList<PLMSUnitView> getAliveUnitViewArray() {
+		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>();
+		for (PLMSUnitView unitView : mAllUnitViewArray) {
+			if (unitView.getUnitData().isAlive()) {
+				resultArray.add(unitView);
+			}
+		}
+		return resultArray;
 	}
 
 	// setter

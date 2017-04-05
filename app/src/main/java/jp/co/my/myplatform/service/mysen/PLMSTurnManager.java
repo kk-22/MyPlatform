@@ -33,7 +33,7 @@ public class PLMSTurnManager {
 	public void finishTurn() {
 		mArgument.getInformationView().clearInformation();
 
-		for (PLMSUnitView unitView : mCurrentArmy.getUnitViewArray()) {
+		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
 			unitView.resetForFinishTurn(mNumberOfTurn);
 		}
 		mCurrentArmy.getUnitInterface().disableInterface();
@@ -54,7 +54,7 @@ public class PLMSTurnManager {
 			}
 		}
 
-		for (PLMSUnitView unitView : mCurrentArmy.getUnitViewArray()) {
+		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
 			unitView.resetForNewTurn(mNumberOfTurn);
 		}
 		mArgument.getAnimationManager().sendTogetherAnimator();

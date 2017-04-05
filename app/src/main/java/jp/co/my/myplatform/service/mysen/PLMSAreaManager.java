@@ -53,7 +53,7 @@ public class PLMSAreaManager {
 
 	public void showAvailableArea(PLMSArmyStrategy armyStrategy) {
 		MYArrayList<PLMSLandView> availableLandViewArray = new MYArrayList<>();
-		for (PLMSUnitView unitView : armyStrategy.getUnitViewArray()) {
+		for (PLMSUnitView unitView : armyStrategy.getAliveUnitViewArray()) {
 			availableLandViewArray.add(unitView.getLandView());
 		}
 		mAvailableAreaCover.changeColor(armyStrategy.getAvailableAreaColor());
