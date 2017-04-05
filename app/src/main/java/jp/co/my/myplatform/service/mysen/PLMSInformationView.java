@@ -64,6 +64,9 @@ public class PLMSInformationView extends LinearLayout {
 		mBattleDataFrame.setVisibility(View.GONE);
 		mRightUnitView = null;
 		mLeftUnitView = null;
+		mBattleResult = null;
+		mLeftImageView.setImageBitmap(null);
+		mRightImageView.setImageBitmap(null);
 	}
 
 	public void updateForUnitData(PLMSUnitView unitView) {
@@ -73,12 +76,10 @@ public class PLMSInformationView extends LinearLayout {
 			mBattleDataFrame.setVisibility(View.GONE);
 			mRightUnitView = null;
 		}
-		if (unitView.equals(mLeftUnitView)) {
-			return;
+		if (!unitView.equals(mLeftUnitView)) {
+			mLeftUnitView = unitView;
+			animateUnitImage(mLeftImageView, unitView);
 		}
-		mLeftUnitView = unitView;
-
-		animateUnitImage(mLeftImageView, unitView);
 		mUnitInfoView.updateUnitInfo(unitView);
 
 		// 背景色設定

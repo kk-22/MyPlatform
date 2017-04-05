@@ -18,12 +18,14 @@ import static android.animation.PropertyValuesHolder.ofFloat;
 
 public class PLMSAnimationManager extends AnimatorListenerAdapter {
 
+	private PLMSArgument mArgument;
 	private PLMSFieldView mFieldView;
 
 	private MYArrayList<Animator> mAnimatorArray;
 	private MYArrayList<Animator> mTogetherAnimatorArray; // 同時実行するアニメーションの一時保存
 
 	public PLMSAnimationManager(PLMSArgument argument) {
+		mArgument = argument;
 		mFieldView = argument.getFieldView();
 
 		mAnimatorArray = new MYArrayList<>();
@@ -132,6 +134,12 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
+				PLMSBattleUnit attackerUnit = battleResult.getLeftUnit();
+				if (attackerUnit.getResultHP() <= 0) {
+					mArgument.getInformationView().clearInformation();
+				} else {
+					mArgument.getInformationView().updateForUnitData(attackerUnit.getUnitView());
+				}
 				lastRunnable.run();
 			}
 		});
