@@ -20,6 +20,7 @@ import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.core.PLWakeLockManager;
 import jp.co.my.myplatform.service.model.PLAllModelFetcher;
 import jp.co.my.myplatform.service.model.PLBadWordModel;
@@ -29,6 +30,7 @@ import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
 import jp.co.my.myplatform.service.mysen.PLMSUnitModel;
+import jp.co.my.myplatform.service.mysen.PLMSWarContent;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
@@ -129,6 +131,7 @@ public class PLDebugView extends PLContentView {
 									PLDatabase.saveModelList(unitArray);
 									MYLogUtil.showToast("Modelを保存 unit=" + numberOfUnit +
 											"skill=" +skillArray.size());
+									PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
 								}
 							});
 							fetcher.startAllModelFetch();
