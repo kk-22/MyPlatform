@@ -24,4 +24,31 @@ public class MYPointUtil {
 		}
 		return resultArray;
 	}
+
+	// rootPoint から見て number 分動かした位置を取得
+	public static Point getMovePoint(Point rootPoint, Point movePoint, int number) {
+		int direction = getDirection(rootPoint, movePoint);
+		switch (direction) {
+			case 1: return new Point(movePoint.x, movePoint.y + number);
+			case 2: return new Point(movePoint.x + number, movePoint.y);
+			case 3: return new Point(movePoint.x, movePoint.y - number);
+			case 4: return new Point(movePoint.x - number, movePoint.y);
+			default: return null;
+		}
+	}
+
+	// rootPoint から見た targetPoint の位置を返す
+	// 1：上　2：右　3：下　4：左
+	public static int getDirection(Point rootPoint, Point targetPoint) {
+		if (rootPoint.y < targetPoint.y) {
+			return 1;
+		} else if (rootPoint.y > targetPoint.y) {
+			return 3;
+		} else if (rootPoint.x < targetPoint.x) {
+			return 2;
+		} else if (rootPoint.x > targetPoint.x) {
+			return 4;
+		}
+		return 0;
+	}
 }

@@ -168,6 +168,19 @@ public class PLMSSkillData {
 				setBuffToUnitArray(targetArray);
 				break;
 			}
+			case PUSH_ONE_SQUARE: {
+				PLMSUnitView enemyUnitView = battleUnit.getEnemyUnit().getUnitView();
+				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnitView.getLandView().getPoint(), 1);
+				moveUnit(unitView, null, enemyUnitView, enemyPoint);
+				break;
+			}
+			case GO_BACKWARD: {
+				PLMSUnitView enemyUnitView = battleUnit.getEnemyUnit().getUnitView();
+				Point selfPoint = MYPointUtil.getMovePoint(enemyUnitView.getLandView().getPoint(), unitView.getLandView().getPoint(), 1);
+				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnitView.getLandView().getPoint(), -1);
+				moveUnit(unitView, selfPoint, enemyUnitView, enemyPoint);
+				break;
+			}
 			case SWAP_POSITION: {
 				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
 				PLMSUnitView enemyUnitView = enemyUnit.getUnitView();
@@ -294,23 +307,32 @@ public class PLMSSkillData {
 		return targetUnitView.getUnitData().getCurrentHP();
 	}
 
+	// ユニットの移動。片方のユニットしか移動しない場合は Point が null
 	private void moveUnit(PLMSUnitView skillUnitView, Point skillPoint,
 						  PLMSUnitView targetUnitView, Point targetPoint) {
 		PLMSLandView skillLandView = mArgument.getFieldView().getLandViewForPoint(skillPoint);
 		PLMSLandView targetLandView = mArgument.getFieldView().getLandViewForPoint(targetPoint);
-		if ((skillLandView != null && !canMoveUnit(skillUnitView, skillLandView, targetUnitView))
-				&& (targetLandView != null && !canMoveUnit(targetUnitView, targetLandView, skillUnitView))) {
+		Boolean canMoveSkillUnit = skillLandView != null && canMoveUnit(skillUnitView, skillLandView, targetUnitView);
+		Boolean canMoveTargetUnit = targetLandView != null && canMoveUnit(targetUnitView, targetLandView, skillUnitView);
+		if ((skillPoint != null && skillUnitView.getLandView().equals(targetLandView) && !canMoveSkillUnit)
+				|| (targetPoint != null && targetUnitView.getLandView().equals(skillLandView) && !canMoveTargetUnit)
+				|| (!canMoveSkillUnit && !canMoveTargetUnit)) {
+			// 移動先にいる一方のユニットが移動不可であるため、もう一方のユニットも移動不可
 			return;
 		}
+
 		PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
-		if (skillLandView != null) {
+		if (canMoveSkillUnit) {
 			animatorArray.add(animationManager.getMovementAnimation(skillUnitView, skillUnitView.getLandView(), skillLandView));
 			skillUnitView.moveToLand(skillLandView);
 		}
-		if (targetLandView != null) {
+		if (canMoveTargetUnit) {
 			animatorArray.add(animationManager.getMovementAnimation(targetUnitView, targetUnitView.getLandView(), targetLandView));
 			targetUnitView.moveToLand(targetLandView);
+		}
+		if (animatorArray.size() == 0) {
+			return;
 		}
 		animationManager.addTogetherAnimatorArray(animatorArray);
 	}
@@ -460,7 +482,7 @@ public class PLMSSkillData {
 		DISABLE_CHASE_ATTACK(26), KILL_WEAPON(27), PREEMPTIVE_ATTACK(28),
 		SLIP_MOVE(31),WARP_TO_TEAM(32), WARP_TO_TEAM_OF_LESS_HP(33), BLOCK_ENEMY_MOVE(36),
 		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43),
-		SEND_TO_BACKWARD(51), GO_BACKWARD(52), SWAP_POSITION(53);
+		PUSH_ONE_SQUARE(51), GO_BACKWARD(52), SWAP_POSITION(53);
 
 		final int id;
 		EffectType(final int id) {
