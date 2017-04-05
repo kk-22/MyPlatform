@@ -8,6 +8,7 @@ public abstract class PLMSArmyStrategy {
 
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 	private PLMSUserInterface mUnitInterface;
+	private PLMSArmyStrategy mEnemyArmy;
 
 	public PLMSArmyStrategy() {
 		mAllUnitViewArray = new MYArrayList<>();
@@ -45,8 +46,16 @@ public abstract class PLMSArmyStrategy {
 		return resultArray;
 	}
 
+	public PLMSArmyStrategy getEnemyArmy() {
+		return mEnemyArmy;
+	}
+
 	// setter
 	public void setUnitInterface(PLMSUserInterface unitInterface) {
 		mUnitInterface = unitInterface;
+	}
+
+	public void setEnemyArmy(PLMSArmyStrategy enemyArmy) {
+		mEnemyArmy = enemyArmy;
 	}
 }

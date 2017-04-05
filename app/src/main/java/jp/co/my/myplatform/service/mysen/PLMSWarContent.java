@@ -96,6 +96,8 @@ public class PLMSWarContent extends PLContentView {
 				mUnitDataArray = new ArrayList<>();
 				PLMSBlueArmy blueArmy = new PLMSBlueArmy();
 				PLMSRedArmy redArmy = new PLMSRedArmy();
+				blueArmy.setEnemyArmy(redArmy);
+				redArmy.setEnemyArmy(blueArmy);
 				mArgument.setArmyArray(new MYArrayList<>(blueArmy, redArmy));
 				for (PLMSUnitModel unitModel : modelLists) {
 					Point point = new Point((x % 6), y);
