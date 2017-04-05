@@ -116,4 +116,8 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 			getNavigationController().putNavigationBar(mNavigationBar);
 		}
 	}
+
+	protected ArrayList<PLPopoverView> getPopoverViews() {
+		return mPopoverViews;
+	}
 }

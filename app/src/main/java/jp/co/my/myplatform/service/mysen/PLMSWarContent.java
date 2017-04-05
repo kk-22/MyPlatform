@@ -21,6 +21,7 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.army.PLMSBlueArmy;
 import jp.co.my.myplatform.service.mysen.army.PLMSRedArmy;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
+import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 
 public class PLMSWarContent extends PLContentView {
@@ -68,6 +69,12 @@ public class PLMSWarContent extends PLContentView {
 			public void onClick(View v) {
 				if (mTurnManager == null) {
 					return;
+				}
+				for (PLPopoverView popoverView : getPopoverViews()) {
+					if (popoverView instanceof PLConfirmationPopover) {
+						// 表示中
+						return;
+					}
 				}
 				new PLConfirmationPopover("ターンを終了しますか？", new PLConfirmationPopover.PLConfirmationListener() {
 					@Override
