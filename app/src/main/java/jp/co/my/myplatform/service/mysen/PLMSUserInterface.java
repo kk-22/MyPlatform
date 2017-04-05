@@ -61,6 +61,11 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	}
 
 	public void disableInterface() {
+		if (mMovingUnitView != null) {
+			mMovingUnitView.standby();
+			movedUnit(mTempLandView);
+		}
+
 		mAreaManager.getAvailableAreaCover().hideAllCoverViews();
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(null);

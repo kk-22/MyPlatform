@@ -32,11 +32,10 @@ public class PLMSTurnManager {
 	// ターン終了
 	public void finishTurn() {
 		mArgument.getInformationView().clearInformation();
-
+		mCurrentArmy.getUnitInterface().disableInterface();
 		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
 			unitView.resetForFinishTurn(mNumberOfTurn);
 		}
-		mCurrentArmy.getUnitInterface().disableInterface();
 		startNextTurn();
 	}
 
