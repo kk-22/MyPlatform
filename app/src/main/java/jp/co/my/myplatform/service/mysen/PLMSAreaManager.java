@@ -282,7 +282,7 @@ public class PLMSAreaManager {
 		mWarpLandArray.clear();
 		for (PLMSUnitView unitView : mArgument.getAllUnitViewArray()) {
 			for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
-				skillData.executeMoveSkill(unitView, moveUnitView);
+				skillData.executeMovementSkill(unitView, moveUnitView);
 			}
 		}
 	}

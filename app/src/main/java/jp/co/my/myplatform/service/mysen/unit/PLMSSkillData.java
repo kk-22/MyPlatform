@@ -171,7 +171,7 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeMoveSkill(PLMSUnitView skillUnitView, PLMSUnitView moveUnitView) {
+	public void executeMovementSkill(PLMSUnitView skillUnitView, PLMSUnitView moveUnitView) {
 		if (!(mTimingType == TimingType.MY_MOVEMENT && moveUnitView == skillUnitView)
 				&& !(mTimingType == TimingType.ENEMY_MOVEMENT && skillUnitView.isEnemy(moveUnitView))) {
 			return;
