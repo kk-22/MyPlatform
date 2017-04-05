@@ -45,23 +45,14 @@ public class PLMSSkillData {
 			return;
 		}
 
+		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(unitView, null);
+		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
+			return;
+		}
+
 		switch (mEffectType) {
 			case ONE_TURN_BUFF: {
-				PLMSUnitData unitData = unitView.getUnitData();
-				int statusType = mSkillModel.getStatusType();
-				int value = mSkillModel.getEffectValue();
-				if ((statusType & SKILL_ATTACK) != 0) {
-					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
-				}
-				if ((statusType & SKILL_SPEED) != 0) {
-					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_SPEED, value);
-				}
-				if ((statusType & SKILL_DEFENSE) != 0) {
-					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_DEFENSE, value);
-				}
-				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
-					unitData.setBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
-				}
+				setBuffToUnitArray(targetArray);
 				break;
 			}
 			case FLUCTUATE_HP: {
@@ -168,6 +159,10 @@ public class PLMSSkillData {
 					Animator animator = animationManager.getFluctuateHPAnimation(targetUnit, remainingHP, diffHP);
 					animationManager.addTogetherAnimator(animator);
 				}
+				break;
+			}
+			case ONE_TURN_BUFF: {
+				setBuffToUnitArray(targetArray);
 				break;
 			}
 			default:
@@ -287,6 +282,26 @@ public class PLMSSkillData {
 			return battleResult.getRightUnit().getResultHP();
 		}
 		return targetUnitView.getUnitData().getCurrentHP();
+	}
+
+	private void setBuffToUnitArray(MYArrayList<PLMSUnitView> targetUnitArray) {
+		int statusType = mSkillModel.getStatusType();
+		int value = mSkillModel.getEffectValue();
+		for (PLMSUnitView targetUnit : targetUnitArray) {
+			PLMSUnitData unitData = targetUnit.getUnitData();
+			if ((statusType & SKILL_ATTACK) != 0) {
+				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
+			}
+			if ((statusType & SKILL_SPEED) != 0) {
+				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_SPEED, value);
+			}
+			if ((statusType & SKILL_DEFENSE) != 0) {
+				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_DEFENSE, value);
+			}
+			if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
+				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
+			}
+		}
 	}
 
 	// getter

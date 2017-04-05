@@ -39,11 +39,10 @@ public class PLMSUnitView extends FrameLayout {
 
 	// ターン開始時
 	public void resetForNewTurn(int numberOfTurn) {
-		mUnitData.resetParams();
+		mUnitData.resetParamsForNewTurn();
 		for (PLMSSkillData skillData : mUnitData.getPassiveSkillArray()) {
 			skillData.executeStartTurnSkill(this, numberOfTurn);
 		}
-		mUnitData.setAllStatus();
 	}
 
 	// ターン終了時

@@ -39,8 +39,8 @@ public class PLMSUnitData {
 	private int mMaxHP;
 	private int mCurrentHP;
 	private int[] mBaseParams; // バフ適用前の値
-	private int[] mCurrentParams; // バフ適用後の値
-	private int[] mBuffParams; // バフによる加算値
+	private int[] mBuffParams; // バフの加算値
+	private int[] mDebuffParams; // デバフの減算値
 
 	private int mMoveCount; // 同一ターン内での移動回数
 
@@ -72,13 +72,12 @@ public class PLMSUnitData {
 		mBaseParams[PARAMETER_SPEED] = mUnitModel.getSpeedPoint();
 		mBaseParams[PARAMETER_DEFENSE] = mUnitModel.getDefensePoint();
 		mBaseParams[PARAMETER_MAGIC_DEFENSE] = mUnitModel.getMagicDefensePoint();
-		mCurrentParams = new int[PARAMETER_NUMBER];
 		mBuffParams = new int[PARAMETER_NUMBER];
+		mDebuffParams = new int[PARAMETER_NUMBER];
 		
 		mMaxHP = mUnitModel.getHitPoint();
 		mCurrentHP = mMaxHP;
-		resetParams();
-		setAllStatus();
+		resetParamsForNewTurn();
 	}
 
 	public int moveCost(PLMSLandData landData) {
@@ -89,17 +88,16 @@ public class PLMSUnitData {
 		return "unit/" +mUnitModel.getNo() +".png";
 	}
 
-	public void resetParams() {
+	public void resetParamsForNewTurn() {
 		for (int i = 0; i < PARAMETER_NUMBER; i++) {
 			mBuffParams[i] = 0;
 		}
-
 		mMoveCount = 0;
 	}
 
-	public void setAllStatus() {
+	public void resetParamsForDidAction() {
 		for (int i = 0; i < PARAMETER_NUMBER; i++) {
-			mCurrentParams[i] = mBaseParams[i] + mBuffParams[i];
+			mDebuffParams[i] = 0;
 		}
 	}
 
@@ -137,22 +135,6 @@ public class PLMSUnitData {
 		return mCurrentHP;
 	}
 
-	public int getCurrentAttack() {
-		return mCurrentParams[PARAMETER_ATTACK];
-	}
-
-	public int getCurrentSpeed() {
-		return mCurrentParams[PARAMETER_SPEED];
-	}
-
-	public int getCurrentDefense() {
-		return mCurrentParams[PARAMETER_DEFENSE];
-	}
-
-	public int getCurrentMagicDefense() {
-		return mCurrentParams[PARAMETER_MAGIC_DEFENSE];
-	}
-
 	public PLMSArmyStrategy getArmyStrategy() {
 		return mArmyStrategy;
 	}
@@ -182,7 +164,7 @@ public class PLMSUnitData {
 	}
 
 	public int getCurrentParameterOfNo(int no) {
-		return mCurrentParams[no];
+		return mBaseParams[no] + mBuffParams[no] - mDebuffParams[no];
 	}
 
 	public int getBaseParameterOfNo(int no) {
@@ -193,14 +175,25 @@ public class PLMSUnitData {
 		return mBuffParams[no];
 	}
 
+	public int getDebuffParameterOfNo(int no) {
+		return mDebuffParams[no];
+	}
+
 	// setter
 	public void setCurrentHP(int currentHP) {
 		mCurrentHP = currentHP;
 	}
 
 	public void setBuffOfNo(int parameterNo, int buff) {
-		if (mBuffParams[parameterNo] < buff) {
-			mBuffParams[parameterNo] = buff;
+		if (buff > 0) {
+			if (mBuffParams[parameterNo] < buff) {
+				mBuffParams[parameterNo] = buff;
+			}
+		} else {
+			int num = Math.abs(buff);
+			if (mDebuffParams[parameterNo] < num) {
+				mDebuffParams[parameterNo] = num;
+			}
 		}
 	}
 }

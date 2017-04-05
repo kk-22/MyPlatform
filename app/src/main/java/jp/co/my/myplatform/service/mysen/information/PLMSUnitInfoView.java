@@ -114,12 +114,17 @@ public class PLMSUnitInfoView extends LinearLayout implements View.OnClickListen
 			PLMSUnitData unitData = mUnitView.getUnitData();
 			int base = unitData.getBaseParameterOfNo(paramIndex);
 			int buff = unitData.getBuffParameterOfNo(paramIndex);
+			int debuff = unitData.getDebuffParameterOfNo(paramIndex);
 			StringBuilder builder = new StringBuilder();
 			builder.append("基本値");
 			builder.append(base);
 			if (buff != 0) {
 				builder.append("　強化+");
 				builder.append(buff);
+			}
+			if (debuff != 0) {
+				builder.append("　弱化-");
+				builder.append(debuff);
 			}
 			message = new String(builder);
 		} else {
