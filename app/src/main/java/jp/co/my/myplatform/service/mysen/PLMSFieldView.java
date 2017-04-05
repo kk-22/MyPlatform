@@ -103,6 +103,9 @@ public class PLMSFieldView extends FrameLayout {
 	}
 
 	public PLMSLandView getLandViewForPoint(Point point) {
+		if (point == null) {
+			return null;
+		}
 		return mLandViewArray.get(point.x + point.y * MAX_X);
 	}
 

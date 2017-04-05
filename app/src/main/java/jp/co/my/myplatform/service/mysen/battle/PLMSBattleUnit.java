@@ -69,6 +69,10 @@ public class PLMSBattleUnit {
 		mChasePoint -= 1;
 	}
 
+	public boolean isAlive() {
+		return (mResultHP > 0) ;
+	}
+
 	// getter
 	public PLMSUnitView getUnitView() {
 		return mUnitView;

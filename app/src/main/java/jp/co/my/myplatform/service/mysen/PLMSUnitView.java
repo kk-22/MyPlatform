@@ -54,7 +54,7 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	public void moveToLand(PLMSLandView landView) {
-		if (mLandView != null) {
+		if (mLandView != null && equals(mLandView.getUnitView())) {
 			// 初回配置以外
 			mLandView.removeUnitView();
 		}
