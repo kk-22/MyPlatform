@@ -5,12 +5,14 @@ import android.graphics.Point;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 
@@ -264,23 +266,34 @@ public class PLMSSkillData {
 			case SELF:
 				resultArray.add(skillUnitView);
 				break;
-			case TEAM_IN_RANGE:
+			case TEAM_IN_RANGE: {
+				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy();
+				resultArray = getInRangeUnitArray(skillUnitView, army.getAliveUnitViewArray());
 				break;
+			}
 			case TEAM_OTHER_THAN_ME:
 				break;
 			case ALL_TEAM_MEMBER:
 				break;
-			case ENEMY:
+			case ENEMY: {
 				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
 				if (enemyUnit.getResultHP() <= 0) {
 					break;
 				}
 				resultArray.add(enemyUnit.getUnitView());
 				break;
-			case ENEMY_IN_ENEMY_RANGE:
+			}
+			case ENEMY_IN_ENEMY_RANGE: {
+				PLMSBattleUnit enemy = battleUnit.getEnemyUnit();
+				PLMSArmyStrategy army = enemy.getUnitData().getArmyStrategy();
+				resultArray = getInRangeUnitArray(enemy.getUnitView(), army.getAliveUnitViewArray());
 				break;
-			case ENEMY_IN_MY_RANGE:
+			}
+			case ENEMY_IN_MY_RANGE: {
+				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy().getEnemyArmy();
+				resultArray = getInRangeUnitArray(skillUnitView, army.getAliveUnitViewArray());
 				break;
+			}
 		}
 		int targetWeapon = mSkillModel.getTargetWeapon();
 		int targetBranch = mSkillModel.getTargetBranch();
@@ -296,6 +309,23 @@ public class PLMSSkillData {
 			}
 		}
 		return filteredArray;
+	}
+
+	private MYArrayList<PLMSUnitView> getInRangeUnitArray(PLMSUnitView skillUnitView,
+														  MYArrayList<PLMSUnitView> baseUnitArray) {
+		Point skillPoint = skillUnitView.getLandView().getPoint();
+		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>(baseUnitArray.size());
+		int range = mSkillModel.getTargetRange();
+		for (PLMSUnitView unitView : baseUnitArray) {
+			if (unitView.equals(skillUnitView)) {
+				continue;
+			}
+			PLMSLandView unitLandView = unitView.getLandView();
+			if (MYMathUtil.difference(skillPoint, unitLandView.getPoint()) <= range) {
+				resultArray.add(unitView);
+			}
+		}
+		return resultArray;
 	}
 
 	private int getCurrentHPForBattle(PLMSUnitView targetUnitView, PLMSBattleResult battleResult) {
