@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 public class PLMSTurnManager {
 
@@ -53,8 +54,15 @@ public class PLMSTurnManager {
 			}
 		}
 
-		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
+		MYArrayList<PLMSUnitView> aliveUnitArray = mCurrentArmy.getAliveUnitViewArray();
+		for (PLMSUnitView unitView : aliveUnitArray) {
 			unitView.resetForNewTurn(mNumberOfTurn);
+		}
+		// バフがリセットされないように resetForNewTurn の後に呼ぶ
+		for (PLMSUnitView unitView : aliveUnitArray) {
+			for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
+				skillData.executeStartTurnSkill(unitView, mNumberOfTurn);
+			}
 		}
 		mArgument.getAnimationManager().sendTogetherAnimator();
 
