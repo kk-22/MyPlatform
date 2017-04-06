@@ -1,5 +1,8 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
+import java.util.Arrays;
+import java.util.List;
+
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
@@ -30,17 +33,18 @@ public class PLMSBattleResult {
 		mLeftUnit.setEnemyUnit(mRightUnit);
 		mRightUnit.setEnemyUnit(mLeftUnit);
 
-		for (PLMSSkillData skillData : mRightUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
-			skillData.executeStartBattleSkill(mRightUnit, this);
-		}
-		for (PLMSSkillData skillData : mLeftUnit.getUnitView().getUnitData().getPassiveSkillArray()) {
-			skillData.executeStartBattleSkill(mLeftUnit, this);
+		List<PLMSBattleUnit> battleList = Arrays.asList(mLeftUnit, mRightUnit);
+		for (PLMSBattleUnit battleUnit : battleList) {
+			for (PLMSUnitView unitView : battleUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
+				for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
+					skillData.executeStartBattleSkill(unitView, battleUnit, this);
+				}
+			}
 		}
 
 		mLeftUnit.initParamsWithEnemyUnit(mThreeWayRatio);
 		mRightUnit.initParamsWithEnemyUnit(mThreeWayRatio);
 		// 速さがスキルによって変わるため最後に計算
-		// TODO: スキル結果をBattleUnitの変数へセットし、その値をもとに攻撃順、追撃判定を行う
 		mAttackerArray = createAttackerArray();
 		createScene();
 	}

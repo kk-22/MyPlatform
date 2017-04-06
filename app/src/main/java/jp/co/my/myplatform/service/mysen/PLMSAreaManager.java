@@ -280,6 +280,7 @@ public class PLMSAreaManager {
 		isSlipMove = false;
 		mBlockLandArray.clear();
 		mWarpLandArray.clear();
+		//  TODO: 生存ユニットのみスキル発動
 		for (PLMSUnitView unitView : mArgument.getAllUnitViewArray()) {
 			for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
 				skillData.executeMovementSkill(unitView, moveUnitView);

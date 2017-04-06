@@ -75,26 +75,35 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeStartBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
-		if (mTimingType != TimingType.START_BATTLE
-				&& !(mTimingType == TimingType.ATTACK_TO_ENEMY && isAttacker)
-				&& !(mTimingType == TimingType.ATTACK_TO_ME && !isAttacker)) {
+	public void executeStartBattleSkill(PLMSUnitView skillUnitView,
+										PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+		if (mTimingType == null) {
 			return;
+		}
+		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
+		boolean isBattleUnit = battleUnit.getUnitView().equals(skillUnitView);
+		switch (mTimingType) {
+			case START_BATTLE: if (!isBattleUnit) {return;} break;
+			case ATTACK_TO_ENEMY: if (!isBattleUnit || !isAttacker) {return;} break;
+			case ATTACK_TO_ME: if (!isBattleUnit || isAttacker) {return;} break;
+			case START_TEAM_BATTLE: if (isBattleUnit) {return;} break;
+			default: return;
 		}
 
-		PLMSUnitView unitView = battleUnit.getUnitView();
 		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-		if (!canExecuteSkill(unitView)) {
+		if (!canExecuteSkill(skillUnitView)) {
 			return;
 		}
-		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(battleUnit.getUnitView(), battleUnit);
+		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(skillUnitView, battleUnit);
 		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
 			return;
 		}
 
 		switch (mEffectType) {
 			case BATTLE_BUFF: {
+				if (!targetArray.contains(battleUnit.getUnitView())) {
+					break;
+				}
 				int statusType = mSkillModel.getStatusType();
 				int value = mSkillModel.getEffectValue();
 				if ((statusType & SKILL_ATTACK) != 0) {
@@ -267,6 +276,14 @@ public class PLMSSkillData {
 				resultArray.add(skillUnitView);
 				break;
 			case TEAM_IN_RANGE: {
+				if (battleUnit != null) {
+					// 戦闘時は戦闘ユニットの位置が異なり、さらに対象が戦闘キャラのみ
+					Point skillPoint = skillUnitView.getLandView().getPoint();
+					if (MYMathUtil.difference(skillPoint, battleUnit.getLandView().getPoint()) <= mSkillModel.getTargetRange()) {
+						resultArray.add(battleUnit.getUnitView());
+					}
+					break;
+				}
 				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy();
 				resultArray = getInRangeUnitArray(skillUnitView, army.getAliveUnitViewArray());
 				break;
