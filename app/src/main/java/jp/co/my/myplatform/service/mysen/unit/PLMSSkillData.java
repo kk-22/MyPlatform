@@ -276,16 +276,10 @@ public class PLMSSkillData {
 				resultArray.add(skillUnitView);
 				break;
 			case TEAM_IN_RANGE: {
-				if (battleUnit != null) {
-					// 戦闘時は戦闘ユニットの位置が異なり、さらに対象が戦闘キャラのみ
-					Point skillPoint = skillUnitView.getLandView().getPoint();
-					if (MYMathUtil.difference(skillPoint, battleUnit.getLandView().getPoint()) <= mSkillModel.getTargetRange()) {
-						resultArray.add(battleUnit.getUnitView());
-					}
-					break;
-				}
+				PLMSLandView landView = (battleUnit != null && skillUnitView.equals(battleUnit.getUnitView())) ?
+						battleUnit.getLandView() : skillUnitView.getLandView();
 				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy();
-				resultArray = getInRangeUnitArray(skillUnitView, army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(landView, army.getAliveUnitViewArray());
 				break;
 			}
 			case TEAM_OTHER_THAN_ME:
@@ -303,12 +297,14 @@ public class PLMSSkillData {
 			case ENEMY_IN_ENEMY_RANGE: {
 				PLMSBattleUnit enemy = battleUnit.getEnemyUnit();
 				PLMSArmyStrategy army = enemy.getUnitData().getArmyStrategy();
-				resultArray = getInRangeUnitArray(enemy.getUnitView(), army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(enemy.getLandView(), army.getAliveUnitViewArray());
 				break;
 			}
 			case ENEMY_IN_MY_RANGE: {
+				PLMSLandView landView = (battleUnit != null && skillUnitView.equals(battleUnit.getUnitView())) ?
+						battleUnit.getLandView() : skillUnitView.getLandView();
 				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy().getEnemyArmy();
-				resultArray = getInRangeUnitArray(skillUnitView, army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(landView, army.getAliveUnitViewArray());
 				break;
 			}
 		}
@@ -328,17 +324,16 @@ public class PLMSSkillData {
 		return filteredArray;
 	}
 
-	private MYArrayList<PLMSUnitView> getInRangeUnitArray(PLMSUnitView skillUnitView,
+	private MYArrayList<PLMSUnitView> getInRangeUnitArray(PLMSLandView skillLandView,
 														  MYArrayList<PLMSUnitView> baseUnitArray) {
-		Point skillPoint = skillUnitView.getLandView().getPoint();
+		Point skillPoint = skillLandView.getPoint();
 		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>(baseUnitArray.size());
 		int range = mSkillModel.getTargetRange();
 		for (PLMSUnitView unitView : baseUnitArray) {
-			if (unitView.equals(skillUnitView)) {
-				continue;
-			}
 			PLMSLandView unitLandView = unitView.getLandView();
-			if (MYMathUtil.difference(skillPoint, unitLandView.getPoint()) <= range) {
+			int difference = MYMathUtil.difference(skillPoint, unitLandView.getPoint());
+			// 同じ位置は除く
+			if (difference != 0 && difference <= range) {
 				resultArray.add(unitView);
 			}
 		}
