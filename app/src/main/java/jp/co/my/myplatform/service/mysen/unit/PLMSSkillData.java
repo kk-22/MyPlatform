@@ -284,8 +284,6 @@ public class PLMSSkillData {
 			}
 			case TEAM_OTHER_THAN_ME:
 				break;
-			case ALL_TEAM_MEMBER:
-				break;
 			case ENEMY: {
 				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
 				if (enemyUnit.getResultHP() <= 0) {
@@ -494,7 +492,8 @@ public class PLMSSkillData {
 
 	private enum TargetType {
 		NONE(0),
-		SELF(1), TEAM_IN_RANGE(2), TEAM_OTHER_THAN_ME(3), ALL_TEAM_MEMBER(4),
+		SELF(1), TEAM_IN_RANGE(2), TEAM_OTHER_THAN_ME(3),
+		TARGET(6), TARGET_AND_SELF(7),
 		ENEMY(11), ENEMY_IN_ENEMY_RANGE(12), ENEMY_IN_MY_RANGE(13);
 
 		final int id;
@@ -518,7 +517,7 @@ public class PLMSSkillData {
 	}
 
 	public enum EffectType {
-		ONE_TURN_BUFF(1), BATTLE_BUFF(2), WEAPON_BATTLE_BUFF(3),
+		ONE_TURN_BUFF(1), BATTLE_BUFF(2),
 		FLUCTUATE_HP(11), HEAL_ME_TOO(12),
 		CHASE_ATTACK_IF_HAS_COUNTER(21), CHASE_ATTACK(22), CONTINUOUSLY_CHASE_ATTACK(23),
 		DISABLE_CHASE_ATTACK(26), KILL_WEAPON(27), PREEMPTIVE_ATTACK(28),
