@@ -49,11 +49,11 @@ public class PLMSBattleInfoView extends LinearLayout {
 	public void updateInfo(PLMSBattleResult battleResult, PLMSBattleUnit battleUnit) {
 		mNameTextView.setText(battleUnit.getUnitView().getUnitData().getUnitModel().getName());
 		setIntToText(battleUnit.getUnitView().getUnitData().getCurrentHP(), mCurrentHPTextView);
-		setIntToText(battleUnit.getResultHP(), mResultHPTextView);
-		if (battleUnit.getResultHP() == 0) {
-			mResultHPTextView.setTextColor(Color.parseColor("#ff0000"));
-		} else {
+		setIntToText(battleUnit.getRemainingHP(), mResultHPTextView);
+		if (battleUnit.isAlive()) {
 			mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
+		} else {
+			mResultHPTextView.setTextColor(Color.parseColor("#ff0000"));
 		}
 		setIntToText(0, mSecretCountTextView);
 

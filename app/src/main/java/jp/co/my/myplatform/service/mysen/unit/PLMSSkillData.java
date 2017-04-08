@@ -155,7 +155,7 @@ public class PLMSSkillData {
 		}
 
 		PLMSUnitView unitView = battleUnit.getUnitView();
-		if (!canExecuteSkill(unitView) || battleUnit.getResultHP() <= 0) {
+		if (!canExecuteSkill(unitView) || !battleUnit.isAlive()) {
 			return;
 		}
 		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(battleUnit, battleResult);
@@ -280,7 +280,7 @@ public class PLMSSkillData {
 				break;
 			case ENEMY: {
 				PLMSBattleUnit enemyUnit = battleResult.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
-				if (enemyUnit.getResultHP() <= 0) {
+				if (!enemyUnit.isAlive()) {
 					break;
 				}
 				resultArray.add(enemyUnit.getUnitView());
@@ -345,9 +345,9 @@ public class PLMSSkillData {
 
 	private int getCurrentHPForBattle(PLMSUnitInterface targetUnitView, PLMSBattleResult battleResult) {
 		if (battleResult.getLeftUnit().getUnitView().equals(targetUnitView)) {
-			return battleResult.getLeftUnit().getResultHP();
+			return battleResult.getLeftUnit().getRemainingHP();
 		} else if (battleResult.getRightUnit().getUnitView().equals(targetUnitView)) {
-			return battleResult.getRightUnit().getResultHP();
+			return battleResult.getRightUnit().getRemainingHP();
 		}
 		return targetUnitView.getUnitData().getCurrentHP();
 	}

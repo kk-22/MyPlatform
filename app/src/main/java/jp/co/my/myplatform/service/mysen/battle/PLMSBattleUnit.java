@@ -14,7 +14,7 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 	private PLMSLandView mLandView;
 	private PLMSBattleUnit mEnemyUnit;
 
-	private int mResultHP;
+	private int mRemainingHP;
 	private int[] mBattleBuffs;
 	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
 	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
@@ -25,7 +25,7 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 		mUnitView = unitView;
 		mLandView = landView;
 
-		mResultHP = mUnitView.getUnitData().getCurrentHP();
+		mRemainingHP = mUnitView.getUnitData().getCurrentHP();
 		mBattleBuffs = new int[PLMSUnitData.PARAMETER_NUMBER];
 		mSkillEffectArray = new MYArrayList<>();
 		mChasePoint = 0;
@@ -71,7 +71,7 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 	}
 
 	public boolean isAlive() {
-		return (mResultHP > 0) ;
+		return (mRemainingHP > 0) ;
 	}
 
 	// getter
@@ -90,8 +90,9 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 		return mLandView;
 	}
 
-	public int getResultHP() {
-		return mResultHP;
+	@Override
+	public int getRemainingHP() {
+		return mRemainingHP;
 	}
 
 	public int getBattleAttack() {
@@ -123,8 +124,8 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 	}
 
 	// setter
-	public void setResultHP(int resultHP) {
-		mResultHP = resultHP;
+	public void setRemainingHP(int remainingHP) {
+		mRemainingHP = remainingHP;
 	}
 
 	public void setEnemyUnit(PLMSBattleUnit enemyUnit) {

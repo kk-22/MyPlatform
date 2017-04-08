@@ -130,10 +130,10 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			@Override
 			public void onAnimationEnd(Animator animation) {
 				PLMSBattleUnit attackerUnit = battleResult.getLeftUnit();
-				if (attackerUnit.getResultHP() <= 0) {
-					mArgument.getInformationView().clearInformation();
-				} else {
+				if (attackerUnit.isAlive()) {
 					mArgument.getInformationView().updateForUnitData(attackerUnit.getUnitView());
+				} else {
+					mArgument.getInformationView().clearInformation();
 				}
 				lastRunnable.run();
 			}
