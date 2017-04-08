@@ -6,8 +6,9 @@ import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
+import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
-public class PLMSBattleUnit {
+public class PLMSBattleUnit implements PLMSUnitInterface {
 
 	private PLMSUnitView mUnitView;
 	private PLMSLandView mLandView;
@@ -74,10 +75,17 @@ public class PLMSBattleUnit {
 	}
 
 	// getter
+	@Override
 	public PLMSUnitView getUnitView() {
 		return mUnitView;
 	}
 
+	@Override
+	public PLMSUnitData getUnitData() {
+		return mUnitView.getUnitData();
+	}
+
+	@Override
 	public PLMSLandView getLandView() {
 		return mLandView;
 	}
@@ -112,10 +120,6 @@ public class PLMSBattleUnit {
 
 	public MYArrayList<PLMSSkillData.EffectType> getSkillEffectArray() {
 		return mSkillEffectArray;
-	}
-
-	public PLMSUnitData getUnitData() {
-		return mUnitView.getUnitData();
 	}
 
 	// setter

@@ -12,8 +12,9 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
-public class PLMSUnitView extends FrameLayout {
+public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 	private ImageView mUnitImageView;
 	private PLMSHitPointBar mHPBar;
@@ -101,12 +102,12 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	// 便利メソッド
-	public boolean isEnemy(PLMSUnitView targetUnitView) {
-		if (targetUnitView == null) {
+	public boolean isEnemy(PLMSUnitInterface targetUnit) {
+		if (targetUnit == null) {
 			return false;
 		}
 		PLMSArmyStrategy myArmy = mUnitData.getArmyStrategy();
-		PLMSArmyStrategy targetArmy = targetUnitView.getUnitData().getArmyStrategy();
+		PLMSArmyStrategy targetArmy = targetUnit.getUnitData().getArmyStrategy();
 		return !myArmy.equals(targetArmy);
 	}
 
@@ -119,16 +120,23 @@ public class PLMSUnitView extends FrameLayout {
 	}
 
 	// getter and setter
+	@Override
+	public PLMSUnitView getUnitView() {
+		return this;
+	}
+
+	@Override
 	public PLMSUnitData getUnitData() {
 		return mUnitData;
 	}
 
-	public Point getCurrentPoint() {
-		return mCurrentPoint;
-	}
-
+	@Override
 	public PLMSLandView getLandView() {
 		return mLandView;
+	}
+
+	public Point getCurrentPoint() {
+		return mCurrentPoint;
 	}
 
 	public ImageView getUnitImageView() {

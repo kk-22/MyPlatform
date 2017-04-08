@@ -1,13 +1,12 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
-import java.util.Arrays;
-import java.util.List;
-
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
+import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 import static jp.co.my.myplatform.service.mysen.unit.PLMSSkillData.EffectType;
 
@@ -17,6 +16,7 @@ public class PLMSBattleResult {
 	private PLMSBattleUnit mLeftUnit;
 	private PLMSBattleUnit mRightUnit;
 	private PLMSFieldView mFieldView;
+	private MYArrayList<PLMSBattleUnit> mBattleUnitArray;
 	private MYArrayList<PLMSBattleUnit> mAttackerArray; // 攻撃順配列
 	private MYArrayList<PLMSBattleScene> mSceneArray;
 
@@ -33,8 +33,10 @@ public class PLMSBattleResult {
 		mLeftUnit.setEnemyUnit(mRightUnit);
 		mRightUnit.setEnemyUnit(mLeftUnit);
 
-		List<PLMSBattleUnit> battleList = Arrays.asList(mLeftUnit, mRightUnit);
-		for (PLMSBattleUnit battleUnit : battleList) {
+		mBattleUnitArray = new MYArrayList<>(2);
+		mBattleUnitArray.add(mLeftUnit);
+		mBattleUnitArray.add(mRightUnit);
+		for (PLMSBattleUnit battleUnit : mBattleUnitArray) {
 			for (PLMSUnitView unitView : battleUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
 				for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
 					skillData.executeStartBattleSkill(unitView, battleUnit, this);
@@ -138,8 +140,28 @@ public class PLMSBattleResult {
 		return mAttackerArray;
 	}
 
-	// setter
+	public PLMSBattleUnit getBattleUnitOfUnitTeam(PLMSUnitInterface unit) {
+		PLMSArmyStrategy armyStrategy = unit.getUnitData().getArmyStrategy();
+		MYArrayList<PLMSUnitView> teamUnitArray = armyStrategy.getAllUnitViewArray();
+		for (PLMSBattleUnit battleUnit : mBattleUnitArray) {
+			if (teamUnitArray.contains(battleUnit.getUnitView())) {
+				return battleUnit;
+			}
+		}
+		return null;
+	}
 
+	public PLMSUnitInterface getUnitOfBattle(PLMSUnitInterface unit) {
+		PLMSUnitView unitView = unit.getUnitView();
+		for (PLMSBattleUnit battleUnit : mBattleUnitArray) {
+			if (battleUnit.getUnitView().equals(unitView)) {
+				return battleUnit;
+			}
+		}
+		return unit;
+	}
+
+	// setter
 	public void setThreeWayRatio(int threeWayRatio) {
 		if (mThreeWayRatio < threeWayRatio) {
 			mThreeWayRatio = threeWayRatio;

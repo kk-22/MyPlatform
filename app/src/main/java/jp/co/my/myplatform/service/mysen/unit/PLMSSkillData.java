@@ -38,11 +38,11 @@ public class PLMSSkillData {
 		mEffectType = EffectType.getType(skillModel.getEffectType());
 	}
 
-	public void executeStartTurnSkill(PLMSUnitView unitView, int numberOfTurn) {
+	public void executeStartTurnSkill(PLMSUnitInterface skillUnit, int numberOfTurn) {
 		if (mTimingType != TimingType.START_TURN) {
 			return;
 		}
-		if (!canExecuteSkill(unitView)) {
+		if (!canExecuteSkill(skillUnit)) {
 			return;
 		}
 		if (mRequirementType == RequirementType.NUMBER_OF_TURN
@@ -50,7 +50,7 @@ public class PLMSSkillData {
 			return;
 		}
 
-		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(unitView, null);
+		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(skillUnit, null);
 		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
 			return;
 		}
@@ -61,11 +61,11 @@ public class PLMSSkillData {
 				break;
 			}
 			case FLUCTUATE_HP: {
-				PLMSUnitData unitData = unitView.getUnitData();
+				PLMSUnitData unitData = skillUnit.getUnitData();
 				int diffHP = mSkillModel.getEffectValue();
 				int remainingHP = unitData.calculateSkillRemainingHP(unitData.getCurrentHP(), diffHP);
 				PLMSAnimationManager animationManager = mArgument.getAnimationManager();
-				Animator animator = animationManager.getFluctuateHPAnimation(unitView, remainingHP, diffHP);
+				Animator animator = animationManager.getFluctuateHPAnimation(skillUnit.getUnitView(), remainingHP, diffHP);
 				animationManager.addTogetherAnimator(animator);
 				break;
 			}
@@ -75,13 +75,13 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeStartBattleSkill(PLMSUnitView skillUnitView,
+	public void executeStartBattleSkill(PLMSUnitInterface skillUnit,
 										PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
 		if (mTimingType == null) {
 			return;
 		}
 		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
-		boolean isBattleUnit = battleUnit.getUnitView().equals(skillUnitView);
+		boolean isBattleUnit = battleUnit.getUnitView().equals(skillUnit);
 		switch (mTimingType) {
 			case START_BATTLE: if (!isBattleUnit) {return;} break;
 			case ATTACK_TO_ENEMY: if (!isBattleUnit || !isAttacker) {return;} break;
@@ -91,10 +91,10 @@ public class PLMSSkillData {
 		}
 
 		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-		if (!canExecuteSkill(skillUnitView)) {
+		if (!canExecuteSkill(skillUnit)) {
 			return;
 		}
-		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(skillUnitView, battleUnit);
+		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(skillUnit, battleResult);
 		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
 			return;
 		}
@@ -158,19 +158,20 @@ public class PLMSSkillData {
 		if (!canExecuteSkill(unitView) || battleUnit.getResultHP() <= 0) {
 			return;
 		}
-		MYArrayList<PLMSUnitView> targetArray = getTargetUnitViewArray(battleUnit.getUnitView(), battleUnit);
+		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(battleUnit, battleResult);
 		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
 			return;
 		}
 
 		switch (mEffectType) {
 			case FLUCTUATE_HP: {
-				for (PLMSUnitView targetUnit : targetArray) {
+				for (PLMSUnitInterface targetUnit : targetArray) {
+					// TODO: UnitInterfaceで共通化
 					int currentHP = getCurrentHPForBattle(targetUnit, battleResult);
 					int diffHP = mSkillModel.getEffectValue();
 					int remainingHP = targetUnit.getUnitData().calculateSkillRemainingHP(currentHP, diffHP);
 					PLMSAnimationManager animationManager = mArgument.getAnimationManager();
-					Animator animator = animationManager.getFluctuateHPAnimation(targetUnit, remainingHP, diffHP);
+					Animator animator = animationManager.getFluctuateHPAnimation(targetUnit.getUnitView(), remainingHP, diffHP);
 					animationManager.addTogetherAnimator(animator);
 				}
 				break;
@@ -180,23 +181,22 @@ public class PLMSSkillData {
 				break;
 			}
 			case PUSH_ONE_SQUARE: {
-				PLMSUnitView enemyUnitView = battleUnit.getEnemyUnit().getUnitView();
-				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnitView.getLandView().getPoint(), 1);
-				moveUnit(unitView, null, enemyUnitView, enemyPoint);
+				PLMSUnitInterface enemyUnit = battleUnit.getEnemyUnit();
+				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), 1);
+				moveUnit(unitView, null, enemyUnit, enemyPoint);
 				break;
 			}
 			case GO_BACKWARD: {
-				PLMSUnitView enemyUnitView = battleUnit.getEnemyUnit().getUnitView();
-				Point selfPoint = MYPointUtil.getMovePoint(enemyUnitView.getLandView().getPoint(), unitView.getLandView().getPoint(), 1);
-				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnitView.getLandView().getPoint(), -1);
-				moveUnit(unitView, selfPoint, enemyUnitView, enemyPoint);
+				PLMSUnitInterface enemyUnit = battleUnit.getEnemyUnit();
+				Point selfPoint = MYPointUtil.getMovePoint(enemyUnit.getLandView().getPoint(), unitView.getLandView().getPoint(), 1);
+				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), -1);
+				moveUnit(unitView, selfPoint, enemyUnit, enemyPoint);
 				break;
 			}
 			case SWAP_POSITION: {
 				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
-				PLMSUnitView enemyUnitView = enemyUnit.getUnitView();
 				Point enemyPoint = (enemyUnit.isAlive()) ? unitView.getCurrentPoint() : null;
-				moveUnit(unitView, enemyUnitView.getCurrentPoint(), enemyUnitView, enemyPoint);
+				moveUnit(unitView, enemyUnit.getUnitView().getCurrentPoint(), enemyUnit, enemyPoint);
 				break;
 			}
 			default:
@@ -205,12 +205,12 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeMovementSkill(PLMSUnitView skillUnitView, PLMSUnitView moveUnitView) {
-		if (!(mTimingType == TimingType.MY_MOVEMENT && moveUnitView == skillUnitView)
-				&& !(mTimingType == TimingType.ENEMY_MOVEMENT && skillUnitView.isEnemy(moveUnitView))) {
+	public void executeMovementSkill(PLMSUnitInterface skillUnit, PLMSUnitInterface moveUnit) {
+		if (!(mTimingType == TimingType.MY_MOVEMENT && moveUnit == skillUnit)
+				&& !(mTimingType == TimingType.ENEMY_MOVEMENT && skillUnit.getUnitView().isEnemy(moveUnit))) {
 			return;
 		}
-		if (!canExecuteSkill(skillUnitView)) {
+		if (!canExecuteSkill(skillUnit)) {
 			return;
 		}
 
@@ -219,26 +219,26 @@ public class PLMSSkillData {
 				mArgument.getAreaManager().setSlipMove(true);
 				break;
 			case WARP_TO_TEAM:
-				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
-					mArgument.getAreaManager().addWarpUnitView(unitView, moveUnitView);
+				for (PLMSUnitView unitView : moveUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
+					mArgument.getAreaManager().addWarpUnitView(unitView, moveUnit.getUnitView());
 				}
 				break;
 			case WARP_TO_TEAM_OF_LESS_HP:
-				for (PLMSUnitView unitView : moveUnitView.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
+				for (PLMSUnitView unitView : moveUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
 					if (getRemainingHPRatio(unitView) <= mSkillModel.getEffectValue()) {
-						mArgument.getAreaManager().addWarpUnitView(unitView, moveUnitView);
+						mArgument.getAreaManager().addWarpUnitView(unitView, moveUnit.getUnitView());
 					}
 				}
 				break;
 			case BLOCK_ENEMY_MOVE:
-				mArgument.getAreaManager().addBlockUnitView(skillUnitView);
+				mArgument.getAreaManager().addBlockUnitView(skillUnit.getUnitView());
 				break;
 			default:
 				break;
 		}
 	}
 
-	private boolean canExecuteSkill(PLMSUnitView unitView) {
+	private boolean canExecuteSkill(PLMSUnitInterface skillUnit) {
 		if (mSkillModel == null) {
 			return false;
 		}
@@ -246,10 +246,10 @@ public class PLMSSkillData {
 			case NONE:
 				return true;
 			case LESS_THAN_MY_HP: {
-				return getRemainingHPRatio(unitView) <= mSkillModel.getRequirementValue();
+				return getRemainingHPRatio(skillUnit) <= mSkillModel.getRequirementValue();
 			}
 			case GREATER_THAN_MY_HP: {
-				return getRemainingHPRatio(unitView) >= mSkillModel.getRequirementValue();
+				return getRemainingHPRatio(skillUnit) >= mSkillModel.getRequirementValue();
 			}
 			default:
 				// 各 execute メソッドで判定
@@ -257,35 +257,29 @@ public class PLMSSkillData {
 		}
 	}
 
-	private float getRemainingHPRatio(PLMSUnitView unitView) {
+	private float getRemainingHPRatio(PLMSUnitInterface unitView) {
 		PLMSUnitData unitData = unitView.getUnitData();
 		return unitData.getCurrentHP() / unitData.getMaxHP() * 100;
 	}
 
-	private float getRemainingHPRatio(PLMSBattleUnit battleUnit) {
-		PLMSUnitData unitData = battleUnit.getUnitData();
-		return battleUnit.getResultHP() / unitData.getMaxHP() * 100;
-	}
-
-	private MYArrayList<PLMSUnitView> getTargetUnitViewArray(PLMSUnitView skillUnitView, PLMSBattleUnit battleUnit) {
-		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>();
+	// battleUnit : 戦闘を行った自身もしくは味方ユニット
+	private MYArrayList<PLMSUnitInterface> getTargetUnitViewArray(PLMSUnitInterface skillUnit, PLMSBattleResult battleResult) {
+		MYArrayList<PLMSUnitInterface> resultArray = new MYArrayList<>();
 		switch (mTargetType) {
 			case NONE:
 				break;
 			case SELF:
-				resultArray.add(skillUnitView);
+				resultArray.add(skillUnit);
 				break;
 			case TEAM_IN_RANGE: {
-				PLMSLandView landView = (battleUnit != null && skillUnitView.equals(battleUnit.getUnitView())) ?
-						battleUnit.getLandView() : skillUnitView.getLandView();
-				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy();
-				resultArray = getInRangeUnitArray(landView, army.getAliveUnitViewArray());
+				PLMSArmyStrategy army = skillUnit.getUnitData().getArmyStrategy();
+				resultArray = getInRangeUnitArray(skillUnit, battleResult, army.getAliveUnitViewArray());
 				break;
 			}
 			case TEAM_OTHER_THAN_ME:
 				break;
 			case ENEMY: {
-				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+				PLMSBattleUnit enemyUnit = battleResult.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
 				if (enemyUnit.getResultHP() <= 0) {
 					break;
 				}
@@ -293,16 +287,14 @@ public class PLMSSkillData {
 				break;
 			}
 			case ENEMY_IN_ENEMY_RANGE: {
-				PLMSBattleUnit enemy = battleUnit.getEnemyUnit();
+				PLMSBattleUnit enemy = battleResult.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
 				PLMSArmyStrategy army = enemy.getUnitData().getArmyStrategy();
-				resultArray = getInRangeUnitArray(enemy.getLandView(), army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(enemy, battleResult, army.getAliveUnitViewArray());
 				break;
 			}
 			case ENEMY_IN_MY_RANGE: {
-				PLMSLandView landView = (battleUnit != null && skillUnitView.equals(battleUnit.getUnitView())) ?
-						battleUnit.getLandView() : skillUnitView.getLandView();
-				PLMSArmyStrategy army = skillUnitView.getUnitData().getArmyStrategy().getEnemyArmy();
-				resultArray = getInRangeUnitArray(landView, army.getAliveUnitViewArray());
+				PLMSArmyStrategy army = skillUnit.getUnitData().getArmyStrategy().getEnemyArmy();
+				resultArray = getInRangeUnitArray(skillUnit, battleResult, army.getAliveUnitViewArray());
 				break;
 			}
 		}
@@ -312,8 +304,8 @@ public class PLMSSkillData {
 			return resultArray;
 		}
 
-		MYArrayList<PLMSUnitView> filteredArray = new MYArrayList<>();
-		for (PLMSUnitView unitView : resultArray) {
+		MYArrayList<PLMSUnitInterface> filteredArray = new MYArrayList<>();
+		for (PLMSUnitInterface unitView : resultArray) {
 			PLMSUnitData unitData = unitView.getUnitData();
 			if (unitData.getWeapon().getNo() == targetWeapon || unitData.getBranch().getNo() == targetBranch) {
 				filteredArray.add(unitView);
@@ -322,14 +314,27 @@ public class PLMSSkillData {
 		return filteredArray;
 	}
 
-	private MYArrayList<PLMSUnitView> getInRangeUnitArray(PLMSLandView skillLandView,
-														  MYArrayList<PLMSUnitView> baseUnitArray) {
-		Point skillPoint = skillLandView.getPoint();
-		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>(baseUnitArray.size());
+	private MYArrayList<PLMSUnitInterface> getInRangeUnitArray(PLMSUnitInterface centerUnit,
+															   PLMSBattleResult battleResult,
+															   MYArrayList<PLMSUnitView> baseUnitArray) {
+		Point centerPoint;
+		if (battleResult == null) {
+			centerPoint = centerUnit.getLandView().getPoint();
+		} else {
+			// 戦闘時の UnitView と BattleUnit の位置の違いを吸収
+			centerPoint= battleResult.getUnitOfBattle(centerUnit).getLandView().getPoint();
+		}
+
+		MYArrayList<PLMSUnitInterface> resultArray = new MYArrayList<>(baseUnitArray.size());
 		int range = mSkillModel.getTargetRange();
 		for (PLMSUnitView unitView : baseUnitArray) {
-			PLMSLandView unitLandView = unitView.getLandView();
-			int difference = MYMathUtil.difference(skillPoint, unitLandView.getPoint());
+			PLMSLandView unitLandView;
+			if (battleResult == null) {
+				unitLandView = unitView.getLandView();
+			} else {
+				unitLandView = battleResult.getUnitOfBattle(unitView).getLandView();
+			}
+			int difference = MYMathUtil.difference(centerPoint, unitLandView.getPoint());
 			// 同じ位置は除く
 			if (difference != 0 && difference <= range) {
 				resultArray.add(unitView);
@@ -338,7 +343,7 @@ public class PLMSSkillData {
 		return resultArray;
 	}
 
-	private int getCurrentHPForBattle(PLMSUnitView targetUnitView, PLMSBattleResult battleResult) {
+	private int getCurrentHPForBattle(PLMSUnitInterface targetUnitView, PLMSBattleResult battleResult) {
 		if (battleResult.getLeftUnit().getUnitView().equals(targetUnitView)) {
 			return battleResult.getLeftUnit().getResultHP();
 		} else if (battleResult.getRightUnit().getUnitView().equals(targetUnitView)) {
@@ -348,14 +353,14 @@ public class PLMSSkillData {
 	}
 
 	// ユニットの移動。片方のユニットしか移動しない場合は Point が null
-	private void moveUnit(PLMSUnitView skillUnitView, Point skillPoint,
-						  PLMSUnitView targetUnitView, Point targetPoint) {
+	private void moveUnit(PLMSUnitInterface skillUnit, Point skillPoint,
+						  PLMSUnitInterface targetUnit, Point targetPoint) {
 		PLMSLandView skillLandView = mArgument.getFieldView().getLandViewForPoint(skillPoint);
 		PLMSLandView targetLandView = mArgument.getFieldView().getLandViewForPoint(targetPoint);
-		Boolean canMoveSkillUnit = skillLandView != null && canMoveUnit(skillUnitView, skillLandView, targetUnitView);
-		Boolean canMoveTargetUnit = targetLandView != null && canMoveUnit(targetUnitView, targetLandView, skillUnitView);
-		if ((skillPoint != null && skillUnitView.getLandView().equals(targetLandView) && !canMoveSkillUnit)
-				|| (targetPoint != null && targetUnitView.getLandView().equals(skillLandView) && !canMoveTargetUnit)
+		Boolean canMoveSkillUnit = skillLandView != null && canMoveUnit(skillUnit, skillLandView, targetUnit);
+		Boolean canMoveTargetUnit = targetLandView != null && canMoveUnit(targetUnit, targetLandView, skillUnit);
+		if ((skillPoint != null && skillUnit.getLandView().equals(targetLandView) && !canMoveSkillUnit)
+				|| (targetPoint != null && targetUnit.getLandView().equals(skillLandView) && !canMoveTargetUnit)
 				|| (!canMoveSkillUnit && !canMoveTargetUnit)) {
 			// 移動先にいる一方のユニットが移動不可であるため、もう一方のユニットも移動不可
 			return;
@@ -364,11 +369,13 @@ public class PLMSSkillData {
 		PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		if (canMoveSkillUnit) {
-			animatorArray.add(animationManager.getMovementAnimation(skillUnitView, skillUnitView.getLandView(), skillLandView));
+			PLMSUnitView skillUnitView = skillUnit.getUnitView();
+			animatorArray.add(animationManager.getMovementAnimation(skillUnitView, skillUnit.getLandView(), skillLandView));
 			skillUnitView.moveToLand(skillLandView);
 		}
 		if (canMoveTargetUnit) {
-			animatorArray.add(animationManager.getMovementAnimation(targetUnitView, targetUnitView.getLandView(), targetLandView));
+			PLMSUnitView targetUnitView = targetUnit.getUnitView();
+			animatorArray.add(animationManager.getMovementAnimation(targetUnitView, targetUnit.getLandView(), targetLandView));
 			targetUnitView.moveToLand(targetLandView);
 		}
 		if (animatorArray.size() == 0) {
@@ -377,19 +384,21 @@ public class PLMSSkillData {
 		animationManager.addTogetherAnimatorArray(animatorArray);
 	}
 
-	// ignoreUnitView : 移動時に位置を無視する UnitView
-	private boolean canMoveUnit(PLMSUnitView moveUnitView, PLMSLandView targetLandView, PLMSUnitView ignoreUnitView) {
-		PLMSUnitData unitData = moveUnitView.getUnitData();
+	// ignoreUnit : 移動時に位置を無視する UnitView
+	private boolean canMoveUnit(PLMSUnitInterface moveUnit, PLMSLandView targetLandView, PLMSUnitInterface ignoreUnit) {
+		PLMSUnitData unitData = moveUnit.getUnitData();
 		if (unitData.moveCost(targetLandView.getLandData()) >= 9) {
 			// 侵入不可の地形
 			return false;
 		}
 		PLMSUnitView landUnitView = targetLandView.getUnitView();
+		PLMSUnitView ignoreUnitView = ignoreUnit.getUnitView();
 		if (landUnitView != null && !ignoreUnitView.equals(landUnitView)) {
 			// 他のユニットが移動先にいる
 			return false;
 		}
-		PLMSLandView currentLandView = moveUnitView.getLandView();
+		PLMSLandView currentLandView = moveUnit.getLandView();
+		PLMSUnitView moveUnitView = moveUnit.getUnitView();
 		MYArrayList<Point> halfwayPointArray = MYPointUtil.getHalfwayPointArray(
 				currentLandView.getPoint(), targetLandView.getPoint());
 		for (Point point : halfwayPointArray) {
@@ -403,10 +412,10 @@ public class PLMSSkillData {
 		return true;
 	}
 
-	private void setBuffToUnitArray(MYArrayList<PLMSUnitView> targetUnitArray) {
+	private void setBuffToUnitArray(MYArrayList<PLMSUnitInterface> targetUnitArray) {
 		int statusType = mSkillModel.getStatusType();
 		int value = mSkillModel.getEffectValue();
-		for (PLMSUnitView targetUnit : targetUnitArray) {
+		for (PLMSUnitInterface targetUnit : targetUnitArray) {
 			PLMSUnitData unitData = targetUnit.getUnitData();
 			if ((statusType & SKILL_ATTACK) != 0) {
 				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
