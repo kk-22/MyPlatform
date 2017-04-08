@@ -135,6 +135,11 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		return mLandView;
 	}
 
+	@Override
+	public int getRemainingHP() {
+		return mUnitData.getCurrentHP();
+	}
+
 	public Point getCurrentPoint() {
 		return mCurrentPoint;
 	}

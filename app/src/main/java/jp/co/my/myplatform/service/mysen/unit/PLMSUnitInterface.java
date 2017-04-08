@@ -10,4 +10,5 @@ public interface PLMSUnitInterface {
 	PLMSUnitView getUnitView();
 	PLMSLandView getLandView();
 	PLMSUnitData getUnitData();
+	int getRemainingHP();
 }

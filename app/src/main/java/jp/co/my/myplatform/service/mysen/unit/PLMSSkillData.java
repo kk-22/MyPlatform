@@ -166,8 +166,7 @@ public class PLMSSkillData {
 		switch (mEffectType) {
 			case FLUCTUATE_HP: {
 				for (PLMSUnitInterface targetUnit : targetArray) {
-					// TODO: UnitInterfaceで共通化
-					int currentHP = getCurrentHPForBattle(targetUnit, battleResult);
+					int currentHP = targetUnit.getRemainingHP();
 					int diffHP = mSkillModel.getEffectValue();
 					int remainingHP = targetUnit.getUnitData().calculateSkillRemainingHP(currentHP, diffHP);
 					PLMSAnimationManager animationManager = mArgument.getAnimationManager();
@@ -341,15 +340,6 @@ public class PLMSSkillData {
 			}
 		}
 		return resultArray;
-	}
-
-	private int getCurrentHPForBattle(PLMSUnitInterface targetUnitView, PLMSBattleResult battleResult) {
-		if (battleResult.getLeftUnit().getUnitView().equals(targetUnitView)) {
-			return battleResult.getLeftUnit().getRemainingHP();
-		} else if (battleResult.getRightUnit().getUnitView().equals(targetUnitView)) {
-			return battleResult.getRightUnit().getRemainingHP();
-		}
-		return targetUnitView.getUnitData().getCurrentHP();
 	}
 
 	// ユニットの移動。片方のユニットしか移動しない場合は Point が null
