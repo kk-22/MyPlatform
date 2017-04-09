@@ -18,18 +18,25 @@ import static android.animation.PropertyValuesHolder.ofFloat;
 
 public class PLMSAnimationManager extends AnimatorListenerAdapter {
 
+	public static final int ANIMATOR_BUFF = 1;
+	public static final int ANIMATOR_HP = 2;
+	public static final int ANIMATOR_NUMBER = 3;
+
 	private PLMSArgument mArgument;
 	private PLMSFieldView mFieldView;
 
-	private MYArrayList<Animator> mAnimatorArray;
-	private MYArrayList<Animator> mTogetherAnimatorArray; // 同時実行するアニメーションの一時保存
+	private MYArrayList<Animator> mAnimatorArray; // 実行中・実行予定のアニメーター
+	private MYArrayList<MYArrayList<Animator>> mTempAnimators; // 種類毎のアニメーターの一時保存
 
 	public PLMSAnimationManager(PLMSArgument argument) {
 		mArgument = argument;
 		mFieldView = argument.getFieldView();
 
 		mAnimatorArray = new MYArrayList<>();
-		mTogetherAnimatorArray = new MYArrayList<>();
+		mTempAnimators = new MYArrayList<>(ANIMATOR_NUMBER);
+		for (int i = 0; i < ANIMATOR_NUMBER; i++) {
+			mTempAnimators.add(new MYArrayList<Animator>());
+		}
 	}
 
 	public Animator getMovementAnimation(PLMSUnitView moveUnitView,
@@ -124,7 +131,7 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		for (PLMSSkillData skillData : rightUnit.getUnitData().getPassiveSkillArray()) {
 			skillData.executeFinishBattleSkill(rightUnit, battleResult);
 		}
-		sendTogetherAnimator();
+		sendTempAnimators();
 
 		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
 			@Override
@@ -144,18 +151,20 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		return unitView.getHPBar().getDamageAnimatorArray(remainingHP, diffHP);
 	}
 
-	public void addTogetherAnimator(Animator animator) {
-		mTogetherAnimatorArray.add(animator);
+	public void addTempAnimator(Animator animator, int typeNo) {
+		mTempAnimators.get(typeNo).add(animator);
 	}
 
-	public void sendTogetherAnimator() {
-		if (mTogetherAnimatorArray.size() == 0) {
-			return;
+	public void sendTempAnimators() {
+		for (MYArrayList<Animator> animatorArray : mTempAnimators) {
+			if (animatorArray.size() == 0) {
+				continue;
+			}
+			AnimatorSet animatorSet = new AnimatorSet();
+			animatorSet.playTogether(animatorArray);
+			addAnimator(animatorSet);
+			animatorArray.clear();
 		}
-		AnimatorSet animatorSet = new AnimatorSet();
-		animatorSet.playTogether(mTogetherAnimatorArray);
-		addAnimator(animatorSet);
-		mTogetherAnimatorArray.clear();
 	}
 
 	public void addAnimator(Animator animator) {

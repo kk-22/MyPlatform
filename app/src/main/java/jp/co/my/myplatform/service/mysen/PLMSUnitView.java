@@ -1,5 +1,8 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.LayoutInflater;
@@ -7,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYViewUtil;
@@ -17,6 +21,7 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 	private ImageView mUnitImageView;
+	private ImageView mBuffImageView;
 	private PLMSHitPointBar mHPBar;
 	private View mAlreadyActionView;
 
@@ -28,6 +33,7 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
 		mUnitImageView = (ImageView) findViewById(R.id.image_view);
+		mBuffImageView = (ImageView) findViewById(R.id.buff_image);
 		mHPBar = (PLMSHitPointBar) findViewById(R.id.hp_bar);
 		mAlreadyActionView = findViewById(R.id.already_action_view);
 
@@ -40,6 +46,13 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 	// ターン開始時
 	public void resetForNewTurn(int numberOfTurn) {
 		mUnitData.resetParamsForNewTurn();
+
+		int totalBuff = 0;
+		for (int i = 0; i < PLMSUnitData.PARAMETER_NUMBER; i++) {
+			totalBuff += mUnitData.getBuffParameterOfNo(i);
+			totalBuff -= mUnitData.getDebuffParameterOfNo(i);
+		}
+		updateBuffImage(totalBuff);
 	}
 
 	// ターン終了時
@@ -101,6 +114,16 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		mUnitImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath(path, getContext()));
 	}
 
+	private void updateBuffImage(int buffPoint) {
+		if (buffPoint == 0) {
+			mBuffImageView.setAlpha(0.f);
+		} else if (buffPoint > 0) {
+			mBuffImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/up_arrow.png", getContext()));
+		} else {
+			mBuffImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/up_arrow.png", getContext()));
+		}
+	}
+
 	// 便利メソッド
 	public boolean isEnemy(PLMSUnitInterface targetUnit) {
 		if (targetUnit == null) {
@@ -150,5 +173,34 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 	public PLMSHitPointBar getHPBar() {
 		return mHPBar;
+	}
+
+	public Animator getBuffAnimator(int buffPoint) {
+		if (buffPoint == 0) {
+			return null;
+		}
+		updateBuffImage(buffPoint);
+
+		MYArrayList<Animator> animatorArray = new MYArrayList<>();
+		float currentY = mBuffImageView.getY();
+		float topY = currentY - getHeight() / 4;
+		// 表示
+		ObjectAnimator showAnimation = ObjectAnimator.ofFloat(mBuffImageView, "alpha", 1);
+		showAnimation.setDuration(1);
+		animatorArray.add(showAnimation);
+
+		// 上へ
+		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mBuffImageView, "y", currentY, topY);
+		upAnimation.setDuration(100);
+		animatorArray.add(upAnimation);
+
+		// 元の位置へ下げる
+		ObjectAnimator downAnimation = ObjectAnimator.ofFloat(mBuffImageView, "y", topY, currentY);
+		downAnimation.setDuration(100);
+		animatorArray.add(downAnimation);
+
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.playSequentially(animatorArray);
+		return animatorSet;
 	}
 }

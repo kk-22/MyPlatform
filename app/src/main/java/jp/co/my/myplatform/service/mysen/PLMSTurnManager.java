@@ -64,7 +64,7 @@ public class PLMSTurnManager {
 				skillData.executeStartTurnSkill(unitView, mNumberOfTurn);
 			}
 		}
-		mArgument.getAnimationManager().sendTogetherAnimator();
+		mArgument.getAnimationManager().sendTempAnimators();
 
 		mCurrentArmy.getUnitInterface().enableInterface();
 	}

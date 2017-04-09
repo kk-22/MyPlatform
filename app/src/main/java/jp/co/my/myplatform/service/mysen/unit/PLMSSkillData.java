@@ -66,7 +66,7 @@ public class PLMSSkillData {
 				int remainingHP = unitData.calculateSkillRemainingHP(unitData.getCurrentHP(), diffHP);
 				PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 				Animator animator = animationManager.getFluctuateHPAnimation(skillUnit.getUnitView(), remainingHP, diffHP);
-				animationManager.addTogetherAnimator(animator);
+				animationManager.addTempAnimator(animator, PLMSAnimationManager.ANIMATOR_HP);
 				break;
 			}
 			default:
@@ -160,7 +160,7 @@ public class PLMSSkillData {
 					int remainingHP = targetUnit.getUnitData().calculateSkillRemainingHP(currentHP, diffHP);
 					PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 					Animator animator = animationManager.getFluctuateHPAnimation(targetUnit.getUnitView(), remainingHP, diffHP);
-					animationManager.addTogetherAnimator(animator);
+					animationManager.addTempAnimator(animator, PLMSAnimationManager.ANIMATOR_HP);
 				}
 				break;
 			}
@@ -230,11 +230,14 @@ public class PLMSSkillData {
 	public void executeSupportSkill(PLMSUnitView skillUnitView, PLMSLandView skillLandView,
 									PLMSUnitView targetUnitView) {
 		switch (mEffectType) {
-			case ONE_TURN_BUFF:
+			case ONE_TURN_BUFF: {
 				for (Integer paramNumber : getBuffParamNumberArray()) {
 					targetUnitView.getUnitData().setBuffOfNo(paramNumber, mSkillModel.getEffectValue());
 				}
+				PLMSAnimationManager animationManager = mArgument.getAnimationManager();
+				animationManager.addAnimator(targetUnitView.getBuffAnimator(mSkillModel.getEffectValue()));
 				break;
+			}
 			case FLUCTUATE_HP:
 			case HEAL_ME_TOO:
 				break;
@@ -483,6 +486,8 @@ public class PLMSSkillData {
 			for (Integer paramNumber : buffParamNumberArray) {
 				unitData.setBuffOfNo(paramNumber, value);
 			}
+			Animator animator = targetUnit.getUnitView().getBuffAnimator(value);
+			mArgument.getAnimationManager().addTempAnimator(animator, PLMSAnimationManager.ANIMATOR_BUFF);
 		}
 	}
 

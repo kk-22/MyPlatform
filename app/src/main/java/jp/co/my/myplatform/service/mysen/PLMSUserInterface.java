@@ -312,7 +312,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		}
 		mAnimationManager.addAnimator(animator);
 		if (mAreaManager.getMoveAreaCover().isShowingCover(targetLandView)
-				|| mAreaManager.canAttackToLandView(landView)) {
+				|| mAreaManager.canAttackToLandView(landView)
+				|| mAreaManager.getSupportAreaCover().isShowingCover(landView)) {
 			// 移動イベント継続
 			moveToTempLand(targetLandView);
 		} else {

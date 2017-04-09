@@ -40,7 +40,7 @@ public class PLMSUnitData {
 	private int mCurrentHP;
 	private int[] mBaseParams; // バフ適用前の値
 	private int[] mBuffParams; // バフの加算値
-	private int[] mDebuffParams; // デバフの減算値
+	private int[] mDebuffParams; // デバフの減算値(正の値)
 
 	private int mMoveCount; // 同一ターン内での移動回数
 
