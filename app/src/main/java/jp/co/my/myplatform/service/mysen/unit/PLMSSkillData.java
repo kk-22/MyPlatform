@@ -70,7 +70,7 @@ public class PLMSSkillData {
 				break;
 			}
 			default:
-				MYLogUtil.showErrorToast("未実装 StartTurn スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				MYLogUtil.showErrorToast("executeStartTurnSkill に未実装のスキル no=" +mEffectType.getInt() +" " +mSkillModel.getName());
 				break;
 		}
 	}
@@ -141,7 +141,7 @@ public class PLMSSkillData {
 				battleUnit.addSkill(this);
 				break;
 			default:
-				MYLogUtil.showErrorToast("未実装 Battle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				MYLogUtil.showErrorToast("executeStartBattleSkill に未実装のスキル no=" +mEffectType.getInt() +" " +mSkillModel.getName());
 				break;
 		}
 	}
@@ -199,7 +199,7 @@ public class PLMSSkillData {
 				break;
 			}
 			default:
-				MYLogUtil.showErrorToast("未実装 FinishBattle スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				MYLogUtil.showErrorToast("executeFinishBattleSkill に未実装のスキル no=" +mEffectType.getInt() +" " +mSkillModel.getName());
 				break;
 		}
 	}
@@ -233,7 +233,7 @@ public class PLMSSkillData {
 				mArgument.getAreaManager().addBlockUnitView(skillUnit.getUnitView());
 				break;
 			default:
-				MYLogUtil.showErrorToast("未実装 Movement スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
+				MYLogUtil.showErrorToast("executeMovementSkill に未実装のスキル no=" +mEffectType.getInt() +" " +mSkillModel.getName());
 				break;
 		}
 	}
