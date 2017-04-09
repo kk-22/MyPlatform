@@ -140,6 +140,21 @@ public class PLMSAreaManager {
 		return resultArray;
 	}
 
+	public MYArrayList<PLMSLandView> getSupportLandArrayForTarget(PLMSUnitView targetUnitView,
+																  PLMSUnitView skillUnitView) {
+		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
+		PLMSLandView targetLandView = targetUnitView.getLandView();
+		PLMSSkillData supportSkill = skillUnitView.getUnitData().getSupportSkillData();
+		int range = supportSkill.getSkillModel().getTargetRange();
+
+		for (PLMSLandView rangeLandView : getAroundLandArray(targetLandView.getPoint(), range)) {
+			if (supportSkill.canExecuteSupportSkill(skillUnitView, rangeLandView, targetUnitView)) {
+				resultArray.add(rangeLandView);
+			}
+		}
+		return resultArray;
+	}
+
 	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView,
 										   int remainingMove, MYArrayList<PLMSLandView> movableLandArray) {
 		MYArrayList<PLMSLandView> adjacentLandArray = getAroundLandArray(point, 1);
@@ -351,6 +366,10 @@ public class PLMSAreaManager {
 
 	public PLMSColorCover getAttackAreaCover() {
 		return mAttackAreaCover;
+	}
+
+	public PLMSColorCover getSupportAreaCover() {
+		return mSupportAreaCover;
 	}
 
 	public PLMSRouteCover getRouteCover() {
