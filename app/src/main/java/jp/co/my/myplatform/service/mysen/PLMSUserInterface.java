@@ -315,7 +315,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
 		mPrevRouteArray.addOrMoveLast(new PLMSLandRoute(unitView.getLandView()));
-		mAreaManager.showMoveAndAttackArea(unitView);
+		mAreaManager.showActionArea(unitView);
 	}
 
 	private void cancelMoveEvent() {

@@ -233,8 +233,46 @@ public class PLMSSkillData {
 				mArgument.getAreaManager().addBlockUnitView(skillUnit.getUnitView());
 				break;
 			default:
+				MYLogUtil.showErrorToast("未実装 Movement スキル " +mSkillModel.getName() +" " +mEffectType.getInt());
 				break;
 		}
+	}
+
+	public boolean canExecuteSupportSkill(PLMSUnitView skillUnitView, PLMSLandView skillLandView,
+										  PLMSUnitView targetUnitView) {
+		switch (mEffectType) {
+			case ONE_TURN_BUFF:
+				break;
+			case FLUCTUATE_HP:
+			case HEAL_ME_TOO:
+				break;
+			case PUSH_TARGET:
+				break;
+			case HIKI_YOSE:
+				break;
+			case IRE_KAE:
+				break;
+			case HIKI_MODOSI:
+				break;
+			case MAWARI_KOMI:
+				break;
+			case AGAIN_ACTION:
+				break;
+			case SAINTS:
+				break;
+			case REVERSE:
+				break;
+			case DEDICATION:
+				break;
+			case MUTUAL_ASSISTANCE:
+				break;
+			case IKKATU:
+				break;
+			default:
+				MYLogUtil.showErrorToast("canExecuteSupportSkill に未実装のスキル no=" +mEffectType.getInt() +" " +mSkillModel.getName());
+				break;
+		}
+		return false;
 	}
 
 	private boolean canExecuteSkill(PLMSUnitInterface skillUnit) {

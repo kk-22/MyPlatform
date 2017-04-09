@@ -37,9 +37,13 @@ public abstract class PLMSArmyStrategy {
 	}
 
 	public MYArrayList<PLMSUnitView> getAliveUnitViewArray() {
+		return getAliveUnitViewArray(null);
+	}
+
+	public MYArrayList<PLMSUnitView> getAliveUnitViewArray(PLMSUnitView ignoreUnitView) {
 		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>();
 		for (PLMSUnitView unitView : mAllUnitViewArray) {
-			if (unitView.getUnitData().isAlive()) {
+			if (!unitView.equals(ignoreUnitView) && unitView.getUnitData().isAlive()) {
 				resultArray.add(unitView);
 			}
 		}

@@ -28,6 +28,7 @@ public class PLMSAreaManager {
 	private PLMSColorCover mAvailableAreaCover; // 操作可能ユニットの配置マス
 	private PLMSColorCover mMoveAreaCover; // 移動可能マス
 	private PLMSColorCover mAttackAreaCover; // 攻撃可能マス
+	private PLMSColorCover mSupportAreaCover; // 補助スキル対象マス
 	private PLMSRouteCover mRouteCover; // 初期位置と仮位置
 
 	public PLMSAreaManager(PLMSArgument argument) {
@@ -38,12 +39,14 @@ public class PLMSAreaManager {
 		mAvailableAreaCover = new PLMSColorCover(0); // Army 毎に色をセット
 		mMoveAreaCover = new PLMSColorCover(Color.argb(128, 0, 0, 255));
 		mAttackAreaCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
+		mSupportAreaCover = new PLMSColorCover(Color.argb(255, 0, 255, 0));
 		mRouteCover = new PLMSRouteCover();
 	}
 
 	public void hideAllAreaCover() {
 		mMoveAreaCover.hideAllCoverViews();
 		mAttackAreaCover.hideAllCoverViews();
+		mSupportAreaCover.hideAllCoverViews();
 		mRouteCover.hideAllCoverViews();
 	}
 
@@ -60,12 +63,16 @@ public class PLMSAreaManager {
 		mAvailableAreaCover.showCoverViews(availableLandViewArray);
 	}
 
-	public void showMoveAndAttackArea(PLMSUnitView unitView) {
+	public void showActionArea(PLMSUnitView unitView) {
 		MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
 		mMoveAreaCover.showCoverViews(movableLandArray);
 
 		MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView);
 		mAttackAreaCover.showCoverViews(attackableLandArray);
+
+		MYArrayList<PLMSLandView> supportableLandArray = getSupportableLandArray(movableLandArray, unitView);
+		mSupportAreaCover.showCoverViews(supportableLandArray);
+
 	}
 
 	public MYArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
@@ -100,6 +107,33 @@ public class PLMSAreaManager {
 				}
 				if (rangeUnitView == null || unitView.isEnemy(rangeUnitView)) {
 					resultArray.add(rangeLandView);
+				}
+			}
+		}
+		return resultArray;
+	}
+
+	private MYArrayList<PLMSLandView> getSupportableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView moveUnitView) {
+		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
+
+		// 現在地も追加
+		movableLandArray.add(moveUnitView.getLandView());
+
+		PLMSUnitData unitData = moveUnitView.getUnitData();
+		PLMSSkillData supportSkill = unitData.getSupportSkillData();
+		int range = supportSkill.getSkillModel().getTargetRange();
+
+		for (PLMSUnitView teamUnitView : unitData.getArmyStrategy().getAliveUnitViewArray(moveUnitView)) {
+			PLMSLandView teamLandView = teamUnitView.getLandView();
+			Point teamPoint = teamLandView.getPoint();
+			MYArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(teamPoint, range);
+			for (PLMSLandView rangeLandView : rangeLandArray) {
+				if (!movableLandArray.contains(rangeLandView)) {
+					// 移動不可マス
+					continue;
+				}
+				if (supportSkill.canExecuteSupportSkill(moveUnitView, rangeLandView, teamUnitView)) {
+					resultArray.addIfNoContain(teamLandView);
 				}
 			}
 		}

@@ -163,6 +163,10 @@ public class PLMSUnitData {
 		return mAllSkills[no];
 	}
 
+	public PLMSSkillData getSupportSkillData() {
+		return mAllSkills[SKILL_SUPPORT];
+	}
+
 	public MYArrayList<PLMSSkillData> getPassiveSkillArray() {
 		return mPassiveSkillArray;
 	}
