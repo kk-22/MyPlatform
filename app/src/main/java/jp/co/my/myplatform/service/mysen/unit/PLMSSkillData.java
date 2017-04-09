@@ -179,20 +179,20 @@ public class PLMSSkillData {
 				setBuffToUnitArray(targetArray);
 				break;
 			}
-			case PUSH_ONE_SQUARE: {
+			case PUSH_TARGET: {
 				PLMSUnitInterface enemyUnit = battleUnit.getEnemyUnit();
 				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), 1);
 				moveUnit(unitView, null, enemyUnit, enemyPoint);
 				break;
 			}
-			case GO_BACKWARD: {
+			case HIKI_YOSE: {
 				PLMSUnitInterface enemyUnit = battleUnit.getEnemyUnit();
 				Point selfPoint = MYPointUtil.getMovePoint(enemyUnit.getLandView().getPoint(), unitView.getLandView().getPoint(), 1);
 				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), -1);
 				moveUnit(unitView, selfPoint, enemyUnit, enemyPoint);
 				break;
 			}
-			case SWAP_POSITION: {
+			case IRE_KAE: {
 				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
 				Point enemyPoint = (enemyUnit.isAlive()) ? unitView.getCurrentPoint() : null;
 				moveUnit(unitView, enemyUnit.getUnitView().getCurrentPoint(), enemyUnit, enemyPoint);
@@ -442,7 +442,7 @@ public class PLMSSkillData {
 		START_BATTLE(11), ATTACK_TO_ENEMY(12), ATTACK_TO_ME(13), START_TEAM_BATTLE(14),
 		FINISH_BATTLE(16), FINISH_ATTACK_BATTLE(17), FINISH_DEFENCE_BATTLE(18),
 		MY_MOVEMENT(21), ENEMY_MOVEMENT(22),
-		HEAL_BY_STAFF(31);
+		SUPPORT_TIMING(31), HEAL_BY_STAFF(32);
 
 		final int id;
 		TimingType(final int id) {
@@ -522,7 +522,9 @@ public class PLMSSkillData {
 		DISABLE_CHASE_ATTACK(26), KILL_WEAPON(27), PREEMPTIVE_ATTACK(28),
 		SLIP_MOVE(31),WARP_TO_TEAM(32), WARP_TO_TEAM_OF_LESS_HP(33), BLOCK_ENEMY_MOVE(36),
 		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43),
-		PUSH_ONE_SQUARE(51), GO_BACKWARD(52), SWAP_POSITION(53);
+		PUSH_TARGET(51), HIKI_YOSE(52), IRE_KAE(53), HIKI_MODOSI(54), MAWARI_KOMI(55), AGAIN_ACTION(56),
+		SAINTS(61), REVERSE(62), DEDICATION(63), MUTUAL_ASSISTANCE(64),
+		IKKATU(71);
 
 		final int id;
 		EffectType(final int id) {
