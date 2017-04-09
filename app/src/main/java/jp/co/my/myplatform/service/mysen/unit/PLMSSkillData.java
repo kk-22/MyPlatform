@@ -104,19 +104,8 @@ public class PLMSSkillData {
 				if (!targetArray.contains(battleUnit.getUnitView())) {
 					break;
 				}
-				int statusType = mSkillModel.getStatusType();
-				int value = mSkillModel.getEffectValue();
-				if ((statusType & SKILL_ATTACK) != 0) {
-					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
-				}
-				if ((statusType & SKILL_SPEED) != 0) {
-					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_SPEED, value);
-				}
-				if ((statusType & SKILL_DEFENSE) != 0) {
-					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_DEFENSE, value);
-				}
-				if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
-					battleUnit.setBattleBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
+				for (Integer paramNumber : getBuffParamNumberArray()) {
+					battleUnit.setBattleBuffOfNo(paramNumber, mSkillModel.getEffectValue());
 				}
 				break;
 			}
@@ -242,7 +231,14 @@ public class PLMSSkillData {
 										  PLMSUnitView targetUnitView) {
 		switch (mEffectType) {
 			case ONE_TURN_BUFF:
-				break;
+				int value = mSkillModel.getEffectValue();
+				PLMSUnitData targetData = targetUnitView.getUnitData();
+				for (Integer paramNumber : getBuffParamNumberArray()) {
+					if (targetData.getBuffParameterOfNo(paramNumber) < value) {
+						return true;
+					}
+				}
+				return false;
 			case FLUCTUATE_HP:
 			case HEAL_ME_TOO:
 				break;
@@ -441,23 +437,32 @@ public class PLMSSkillData {
 	}
 
 	private void setBuffToUnitArray(MYArrayList<PLMSUnitInterface> targetUnitArray) {
-		int statusType = mSkillModel.getStatusType();
+		MYArrayList<Integer> buffParamNumberArray = getBuffParamNumberArray();
 		int value = mSkillModel.getEffectValue();
 		for (PLMSUnitInterface targetUnit : targetUnitArray) {
 			PLMSUnitData unitData = targetUnit.getUnitData();
-			if ((statusType & SKILL_ATTACK) != 0) {
-				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_ATTACK, value);
-			}
-			if ((statusType & SKILL_SPEED) != 0) {
-				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_SPEED, value);
-			}
-			if ((statusType & SKILL_DEFENSE) != 0) {
-				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_DEFENSE, value);
-			}
-			if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
-				unitData.setBuffOfNo(PLMSUnitData.PARAMETER_MAGIC_DEFENSE, value);
+			for (Integer paramNumber : buffParamNumberArray) {
+				unitData.setBuffOfNo(paramNumber, value);
 			}
 		}
+	}
+
+	private MYArrayList<Integer> getBuffParamNumberArray() {
+		MYArrayList<Integer> resultArray = new MYArrayList<>(PLMSUnitData.PARAMETER_NUMBER);
+		int statusType = mSkillModel.getStatusType();
+		if ((statusType & SKILL_ATTACK) != 0) {
+			resultArray.add(PLMSUnitData.PARAMETER_ATTACK);
+		}
+		if ((statusType & SKILL_SPEED) != 0) {
+			resultArray.add(PLMSUnitData.PARAMETER_SPEED);
+		}
+		if ((statusType & SKILL_DEFENSE) != 0) {
+			resultArray.add(PLMSUnitData.PARAMETER_DEFENSE);
+		}
+		if ((statusType & SKILL_MAGIC_DEFENSE) != 0) {
+			resultArray.add(PLMSUnitData.PARAMETER_MAGIC_DEFENSE);
+		}
+		return resultArray;
 	}
 
 	// getter
