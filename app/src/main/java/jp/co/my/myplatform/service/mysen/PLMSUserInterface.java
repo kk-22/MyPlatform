@@ -16,6 +16,7 @@ import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 import static android.view.View.GONE;
 
@@ -84,7 +85,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			case MotionEvent.ACTION_DOWN: {
 				mTouchDownPointF = new PointF(event.getX(), event.getY());
 				mTouchDownTimeMillis = System.currentTimeMillis();
-				if (!mAreaManager.getAttackAreaCover().isShowingCover(unitView.getLandView())) {
+				if (!mAreaManager.getAttackAreaCover().isShowingCover(unitView.getLandView())
+						&& !mAreaManager.getSupportAreaCover().isShowingCover(unitView.getLandView())) {
 					// 攻撃対象の敵ならACTION_UP時にバトル表示するため更新しない
 					mInformation.updateForUnitData(unitView);
 				}
@@ -150,13 +152,20 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mMovingUnitView.setVisibility(View.VISIBLE);
 		if (!unitView.equals(mMovingUnitView)) {
 			PLMSLandView touchLandView = unitView.getLandView();
+			PLMSLandView nextLandView = null;
 			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-				// 攻撃範囲内の敵タップ
-				PLMSLandView nextLandView = getMoveLandForAttack(touchLandView);
-				mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, nextLandView));
-				moveToTempLand(nextLandView);
+				nextLandView = getMoveLandForAttack(touchLandView);
+			} else if (mAreaManager.getSupportAreaCover().isShowingCover(touchLandView)) {
+				nextLandView = getMoveLandForSupportSkill(unitView);
+			} else {
+				// ACTION_DOWN の information 更新のみ
+				return;
+			}
+
+			mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, nextLandView));
+			moveToTempLand(nextLandView);
+			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
 				if (unitView.equals(mInformation.getRightUnitView())) {
-					// 攻撃
 					attackToUnit(nextLandView, unitView);
 				} else {
 					// 初回タップ時は Info の更新のみ
@@ -166,7 +175,15 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					mInformation.updateForBattleData(result);
 				}
 			} else {
-				// ACTION_DOWN の information 更新のみ
+				if (unitView.equals(mInformation.getRightUnitView())) {
+					supportToUnit(nextLandView, unitView);
+				} else {
+					// 初回タップ時は Info の更新のみ
+					PLMSBattleResult result = new PLMSBattleResult(mField,
+							mMovingUnitView, nextLandView,
+							unitView, unitView.getLandView());
+					mInformation.updateForBattleData(result);
+				}
 			}
 		} else if (mTempLandView.equals(mMovingUnitView.getLandView())) {
 			finishMoveEvent();
@@ -277,6 +294,14 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					attackToUnit(targetLandView, landView.getUnitView());
 				}
 			};
+		} else if (mAreaManager.getSupportAreaCover().isShowingCover(landView)) {
+			targetLandView = mPrevRouteArray.getLast().getLast();
+			animatorListener = new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					supportToUnit(targetLandView, landView.getUnitView());
+				}
+			};
 		} else {
 			// 元の位置に戻す
 			targetLandView = mTempLandView;
@@ -370,6 +395,13 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				attackerUnitView.didAction();
 			}
 		});
+	}
+
+	private void supportToUnit(PLMSLandView skillLandView, PLMSUnitView targetUnitView) {
+		PLMSUnitView unitView = mMovingUnitView;
+		movedUnit(skillLandView);
+		PLMSSkillData supportSkill = unitView.getUnitData().getSupportSkillData();
+		supportSkill.executeSupportSkill(unitView, skillLandView, targetUnitView);
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {
