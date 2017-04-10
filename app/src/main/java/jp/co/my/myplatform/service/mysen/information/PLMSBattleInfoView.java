@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 
 public class PLMSBattleInfoView extends LinearLayout {
@@ -46,7 +46,7 @@ public class PLMSBattleInfoView extends LinearLayout {
 		}
 	}
 
-	public void updateInfo(PLMSBattleResult battleResult, PLMSBattleUnit battleUnit) {
+	public void updateInfo(PLMSBattleForecast battleForecast, PLMSBattleUnit battleUnit) {
 		mNameTextView.setText(battleUnit.getUnitView().getUnitData().getUnitModel().getName());
 		setIntToText(battleUnit.getUnitView().getUnitData().getCurrentHP(), mCurrentHPTextView);
 		setIntToText(battleUnit.getRemainingHP(), mResultHPTextView);
@@ -58,11 +58,11 @@ public class PLMSBattleInfoView extends LinearLayout {
 		setIntToText(0, mSecretCountTextView);
 
 		StringBuilder damageText =new StringBuilder();
-		int attackCount = battleResult.getAttackerArray().countObject(battleUnit);
+		int attackCount = battleForecast.getAttackerArray().countObject(battleUnit);
 		if (attackCount == 0) {
 			damageText.append("-");
 		} else {
-			damageText.append(battleResult.givingDamageOfBattleUnit(battleUnit));
+			damageText.append(battleForecast.givingDamageOfBattleUnit(battleUnit));
 			if (attackCount > 1) {
 				damageText.append("×");
 				damageText.append(attackCount);

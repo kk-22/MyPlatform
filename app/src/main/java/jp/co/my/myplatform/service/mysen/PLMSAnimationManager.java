@@ -9,7 +9,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 
 import jp.co.my.common.util.MYArrayList;
-import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleScene;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
@@ -60,10 +60,10 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		return objectAnimator;
 	}
 
-	public void addBattleAnimation(final PLMSBattleResult battleResult, final Runnable lastRunnable) {
-		int numberOfScene = battleResult.getSceneArray().size();
+	public void addBattleAnimation(final PLMSBattleForecast battleForecast, final Runnable lastRunnable) {
+		int numberOfScene = battleForecast.getSceneArray().size();
 		for (int i = 0; i < numberOfScene; i++) {
-			final PLMSBattleScene scene = battleResult.getSceneArray().get(i);
+			final PLMSBattleScene scene = battleForecast.getSceneArray().get(i);
 
 			final PLMSUnitView attackerUnitView = scene.getAttackerUnit().getUnitView();
 			final PLMSUnitView defenderUnitView = scene.getDefenderUnit().getUnitView();
@@ -120,23 +120,23 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		}
 
 		// デバフリセット（戦闘終了スキル発動前に必要）
-		battleResult.getLeftUnit().getUnitData().resetDebuffParams();
+		battleForecast.getLeftUnit().getUnitData().resetDebuffParams();
 
 		// 戦闘終了スキルアニメーション
-		PLMSBattleUnit leftUnit = battleResult.getLeftUnit();
+		PLMSBattleUnit leftUnit = battleForecast.getLeftUnit();
 		for (PLMSSkillData skillData : leftUnit.getUnitData().getPassiveSkillArray()) {
-			skillData.executeFinishBattleSkill(leftUnit, battleResult);
+			skillData.executeFinishBattleSkill(leftUnit, battleForecast);
 		}
-		PLMSBattleUnit rightUnit = battleResult.getRightUnit();
+		PLMSBattleUnit rightUnit = battleForecast.getRightUnit();
 		for (PLMSSkillData skillData : rightUnit.getUnitData().getPassiveSkillArray()) {
-			skillData.executeFinishBattleSkill(rightUnit, battleResult);
+			skillData.executeFinishBattleSkill(rightUnit, battleForecast);
 		}
 		sendTempAnimators();
 
 		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				PLMSBattleUnit attackerUnit = battleResult.getLeftUnit();
+				PLMSBattleUnit attackerUnit = battleForecast.getLeftUnit();
 				if (attackerUnit.isAlive()) {
 					mArgument.getInformationView().updateForUnitData(attackerUnit.getUnitView());
 				} else {

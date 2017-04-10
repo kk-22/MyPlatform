@@ -48,7 +48,6 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 		}
 	}
 
-	// TODO: 3すくみ補正値はBattleResultに初期値を設定し、スキル側で書き換え可能にする
 	public void initParamsWithEnemyUnit(int threeWayRatio) {
 		PLMSColorData enemyColor = mEnemyUnit.getUnitView().getUnitData().getColor();
 		int compatibility = mUnitView.getUnitData().getColor().threeWayCompatibility(enemyColor);

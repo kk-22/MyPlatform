@@ -8,12 +8,12 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import static jp.co.my.myplatform.service.mysen.unit.PLMSSkillData.EffectType;
 
 
-public class PLMSBattleResult extends PLMSBaseForecast {
+public class PLMSBattleForecast extends PLMSBaseForecast {
 
 	private int mThreeWayRatio; // 3すくみ補正値
 
-	public PLMSBattleResult(PLMSUnitView leftUnitView, PLMSLandView leftLandView,
-							PLMSUnitView rightUnitView, PLMSLandView rightLandView) {
+	public PLMSBattleForecast(PLMSUnitView leftUnitView, PLMSLandView leftLandView,
+							  PLMSUnitView rightUnitView, PLMSLandView rightLandView) {
 		super(leftUnitView, leftLandView, rightUnitView, rightLandView);
 		mThreeWayRatio = 20;
 

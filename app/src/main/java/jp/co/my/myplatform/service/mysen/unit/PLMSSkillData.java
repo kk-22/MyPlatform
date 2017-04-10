@@ -13,7 +13,7 @@ import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
-import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 
 public class PLMSSkillData {
@@ -76,11 +76,11 @@ public class PLMSSkillData {
 	}
 
 	public void executeStartBattleSkill(PLMSUnitInterface skillUnit,
-										PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
+										PLMSBattleUnit battleUnit, PLMSBattleForecast battleForecast) {
 		if (mTimingType == null) {
 			return;
 		}
-		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
+		boolean isAttacker = battleForecast.getLeftUnit().equals(battleUnit);
 		boolean isBattleUnit = battleUnit.getUnitView().equals(skillUnit);
 		switch (mTimingType) {
 			case START_BATTLE: if (!isBattleUnit) {return;} break;
@@ -94,7 +94,7 @@ public class PLMSSkillData {
 		if (!canExecuteSkill(skillUnit)) {
 			return;
 		}
-		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(skillUnit, battleResult);
+		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(skillUnit, battleForecast);
 		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
 			return;
 		}
@@ -121,7 +121,7 @@ public class PLMSSkillData {
 				enemyUnit.decrementChasePoint();
 				break;
 			case THREE_WAY_INTENSIFICATION:
-				battleResult.setThreeWayRatio(mSkillModel.getEffectValue());
+				battleForecast.setThreeWayRatio(mSkillModel.getEffectValue());
 				break;
 			case CHASE_ATTACK_IF_HAS_COUNTER:
 			case CONTINUOUSLY_CHASE_ATTACK:
@@ -135,8 +135,8 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeFinishBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleResult battleResult) {
-		boolean isAttacker = battleResult.getLeftUnit().equals(battleUnit);
+	public void executeFinishBattleSkill(PLMSBattleUnit battleUnit, PLMSBattleForecast battleForecast) {
+		boolean isAttacker = battleForecast.getLeftUnit().equals(battleUnit);
 		if (mTimingType != TimingType.FINISH_BATTLE
 				&& !(mTimingType == TimingType.FINISH_ATTACK_BATTLE && isAttacker)
 				&& !(mTimingType == TimingType.FINISH_DEFENCE_BATTLE && !isAttacker)) {
@@ -147,7 +147,7 @@ public class PLMSSkillData {
 		if (!canExecuteSkill(unitView) || !battleUnit.isAlive()) {
 			return;
 		}
-		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(battleUnit, battleResult);
+		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(battleUnit, battleForecast);
 		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
 			return;
 		}
@@ -338,7 +338,7 @@ public class PLMSSkillData {
 	}
 
 	// battleUnit : 戦闘を行った自身もしくは味方ユニット
-	private MYArrayList<PLMSUnitInterface> getTargetUnitViewArray(PLMSUnitInterface skillUnit, PLMSBattleResult battleResult) {
+	private MYArrayList<PLMSUnitInterface> getTargetUnitViewArray(PLMSUnitInterface skillUnit, PLMSBattleForecast battleForecast) {
 		MYArrayList<PLMSUnitInterface> resultArray = new MYArrayList<>();
 		switch (mTargetType) {
 			case NONE:
@@ -348,13 +348,13 @@ public class PLMSSkillData {
 				break;
 			case TEAM_IN_RANGE: {
 				PLMSArmyStrategy army = skillUnit.getUnitData().getArmyStrategy();
-				resultArray = getInRangeUnitArray(skillUnit, battleResult, army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(skillUnit, battleForecast, army.getAliveUnitViewArray());
 				break;
 			}
 			case TEAM_OTHER_THAN_ME:
 				break;
 			case ENEMY: {
-				PLMSBattleUnit enemyUnit = battleResult.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
+				PLMSBattleUnit enemyUnit = battleForecast.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
 				if (!enemyUnit.isAlive()) {
 					break;
 				}
@@ -362,14 +362,14 @@ public class PLMSSkillData {
 				break;
 			}
 			case ENEMY_IN_ENEMY_RANGE: {
-				PLMSBattleUnit enemy = battleResult.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
+				PLMSBattleUnit enemy = battleForecast.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
 				PLMSArmyStrategy army = enemy.getUnitData().getArmyStrategy();
-				resultArray = getInRangeUnitArray(enemy, battleResult, army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(enemy, battleForecast, army.getAliveUnitViewArray());
 				break;
 			}
 			case ENEMY_IN_MY_RANGE: {
 				PLMSArmyStrategy army = skillUnit.getUnitData().getArmyStrategy().getEnemyArmy();
-				resultArray = getInRangeUnitArray(skillUnit, battleResult, army.getAliveUnitViewArray());
+				resultArray = getInRangeUnitArray(skillUnit, battleForecast, army.getAliveUnitViewArray());
 				break;
 			}
 		}
@@ -390,24 +390,24 @@ public class PLMSSkillData {
 	}
 
 	private MYArrayList<PLMSUnitInterface> getInRangeUnitArray(PLMSUnitInterface centerUnit,
-															   PLMSBattleResult battleResult,
+															   PLMSBattleForecast battleForecast,
 															   MYArrayList<PLMSUnitView> baseUnitArray) {
 		Point centerPoint;
-		if (battleResult == null) {
+		if (battleForecast == null) {
 			centerPoint = centerUnit.getLandView().getPoint();
 		} else {
 			// 戦闘時の UnitView と BattleUnit の位置の違いを吸収
-			centerPoint= battleResult.getUnitOfBattle(centerUnit).getLandView().getPoint();
+			centerPoint= battleForecast.getUnitOfBattle(centerUnit).getLandView().getPoint();
 		}
 
 		MYArrayList<PLMSUnitInterface> resultArray = new MYArrayList<>(baseUnitArray.size());
 		int range = mSkillModel.getTargetRange();
 		for (PLMSUnitView unitView : baseUnitArray) {
 			PLMSLandView unitLandView;
-			if (battleResult == null) {
+			if (battleForecast == null) {
 				unitLandView = unitView.getLandView();
 			} else {
-				unitLandView = battleResult.getUnitOfBattle(unitView).getLandView();
+				unitLandView = battleForecast.getUnitOfBattle(unitView).getLandView();
 			}
 			int difference = MYMathUtil.difference(centerPoint, unitLandView.getPoint());
 			// 同じ位置は除く

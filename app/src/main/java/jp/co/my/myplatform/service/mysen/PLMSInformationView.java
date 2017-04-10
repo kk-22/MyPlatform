@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.service.mysen.battle.PLMSBattleResult;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView;
 import jp.co.my.myplatform.service.mysen.information.PLMSUnitInfoView;
 
@@ -22,7 +22,7 @@ public class PLMSInformationView extends LinearLayout {
 
 	private PLMSUnitView mLeftUnitView;
 	private PLMSUnitView mRightUnitView;
-	private PLMSBattleResult mBattleResult;
+	private PLMSBattleForecast mForecast;
 
 	private PLMSUnitInfoView mUnitInfoView;
 	private FrameLayout mBattleDataFrame;
@@ -64,7 +64,7 @@ public class PLMSInformationView extends LinearLayout {
 		mBattleDataFrame.setVisibility(View.GONE);
 		mRightUnitView = null;
 		mLeftUnitView = null;
-		mBattleResult = null;
+		mForecast = null;
 		mLeftImageView.setImageBitmap(null);
 		mRightImageView.setImageBitmap(null);
 	}
@@ -86,18 +86,18 @@ public class PLMSInformationView extends LinearLayout {
 		setBackgroundColor(unitView.getUnitData().getArmyStrategy().getInformationColor());
 	}
 
-	public void updateForBattleData(PLMSBattleResult battleResult) {
+	public void updateForBattleData(PLMSBattleForecast battleForecast) {
 		if (mRightUnitView == null) {
 			mUnitInfoView.setVisibility(View.GONE);
 			mBattleDataFrame.setVisibility(View.VISIBLE);
 		}
-		if (battleResult.equals(mBattleResult)) {
+		if (battleForecast.equals(mForecast)) {
 			return;
 		}
-		mBattleResult = battleResult;
+		mForecast = battleForecast;
 
 		// 左の設定
-		PLMSUnitView leftUnitView = battleResult.getLeftUnit().getUnitView();
+		PLMSUnitView leftUnitView = battleForecast.getLeftUnit().getUnitView();
 		if (!leftUnitView.equals(mLeftUnitView)) {
 			animateUnitImage(mLeftImageView, leftUnitView);
 			mLeftUnitView = leftUnitView;
@@ -105,12 +105,12 @@ public class PLMSInformationView extends LinearLayout {
 		}
 
 		// 右の設定
-		mRightUnitView = battleResult.getRightUnit().getUnitView();;
+		mRightUnitView = battleForecast.getRightUnit().getUnitView();;
 		animateUnitImage(mRightImageView, mRightUnitView);
 		mBattleDataFrame.setBackgroundColor(mRightUnitView.getUnitData().getArmyStrategy().getInformationColor());
 
-		mLeftBattleInfo.updateInfo(battleResult, battleResult.getLeftUnit());
-		mRightBattleInfo.updateInfo(battleResult, battleResult.getRightUnit());
+		mLeftBattleInfo.updateInfo(battleForecast, battleForecast.getLeftUnit());
+		mRightBattleInfo.updateInfo(battleForecast, battleForecast.getRightUnit());
 	}
 
 	private Bitmap unitImageFromUnitView(PLMSUnitView unitView) {
