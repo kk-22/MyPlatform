@@ -1,41 +1,22 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
 import jp.co.my.common.util.MYArrayList;
-import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
-import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
-import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 import static jp.co.my.myplatform.service.mysen.unit.PLMSSkillData.EffectType;
 
 
-public class PLMSBattleResult {
-
-	private PLMSBattleUnit mLeftUnit;
-	private PLMSBattleUnit mRightUnit;
-	private PLMSFieldView mFieldView;
-	private MYArrayList<PLMSBattleUnit> mBattleUnitArray;
-	private MYArrayList<PLMSBattleUnit> mAttackerArray; // 攻撃順配列
-	private MYArrayList<PLMSBattleScene> mSceneArray;
+public class PLMSBattleResult extends PLMSBaseForecast {
 
 	private int mThreeWayRatio; // 3すくみ補正値
 
-	public PLMSBattleResult(PLMSFieldView fieldView,
-							PLMSUnitView leftUnitView, PLMSLandView leftLandView,
+	public PLMSBattleResult(PLMSUnitView leftUnitView, PLMSLandView leftLandView,
 							PLMSUnitView rightUnitView, PLMSLandView rightLandView) {
-		mLeftUnit = new PLMSBattleUnit(leftUnitView, leftLandView);
-		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
-		mFieldView = fieldView;
+		super(leftUnitView, leftLandView, rightUnitView, rightLandView);
 		mThreeWayRatio = 20;
 
-		mLeftUnit.setEnemyUnit(mRightUnit);
-		mRightUnit.setEnemyUnit(mLeftUnit);
-
-		mBattleUnitArray = new MYArrayList<>(2);
-		mBattleUnitArray.add(mLeftUnit);
-		mBattleUnitArray.add(mRightUnit);
 		for (PLMSBattleUnit battleUnit : mBattleUnitArray) {
 			for (PLMSUnitView unitView : battleUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
 				for (PLMSSkillData skillData : unitView.getUnitData().getPassiveSkillArray()) {
@@ -121,44 +102,6 @@ public class PLMSBattleResult {
 		} else {
 			attackerArray.add(attackerUnit);
 		}
-	}
-
-	// getter
-	public PLMSBattleUnit getLeftUnit() {
-		return mLeftUnit;
-	}
-
-	public PLMSBattleUnit getRightUnit() {
-		return mRightUnit;
-	}
-
-	public MYArrayList<PLMSBattleScene> getSceneArray() {
-		return mSceneArray;
-	}
-
-	public MYArrayList<PLMSBattleUnit> getAttackerArray() {
-		return mAttackerArray;
-	}
-
-	public PLMSBattleUnit getBattleUnitOfUnitTeam(PLMSUnitInterface unit) {
-		PLMSArmyStrategy armyStrategy = unit.getUnitData().getArmyStrategy();
-		MYArrayList<PLMSUnitView> teamUnitArray = armyStrategy.getAllUnitViewArray();
-		for (PLMSBattleUnit battleUnit : mBattleUnitArray) {
-			if (teamUnitArray.contains(battleUnit.getUnitView())) {
-				return battleUnit;
-			}
-		}
-		return null;
-	}
-
-	public PLMSUnitInterface getUnitOfBattle(PLMSUnitInterface unit) {
-		PLMSUnitView unitView = unit.getUnitView();
-		for (PLMSBattleUnit battleUnit : mBattleUnitArray) {
-			if (battleUnit.getUnitView().equals(unitView)) {
-				return battleUnit;
-			}
-		}
-		return unit;
 	}
 
 	// setter

@@ -169,8 +169,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					attackToUnit(nextLandView, unitView);
 				} else {
 					// 初回タップ時は Info の更新のみ
-					PLMSBattleResult result = new PLMSBattleResult(mField,
-							mMovingUnitView, nextLandView,
+					PLMSBattleResult result = new PLMSBattleResult(mMovingUnitView, nextLandView,
 							unitView, unitView.getLandView());
 					mInformation.updateForBattleData(result);
 				}
@@ -179,8 +178,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					supportToUnit(nextLandView, unitView);
 				} else {
 					// 初回タップ時は Info の更新のみ
-					PLMSBattleResult result = new PLMSBattleResult(mField,
-							mMovingUnitView, nextLandView,
+					PLMSBattleResult result = new PLMSBattleResult(mMovingUnitView, nextLandView,
 							unitView, unitView.getLandView());
 					mInformation.updateForBattleData(result);
 				}
@@ -210,8 +208,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					PLMSLandView nextLandView = getMoveLandForAttack(landView);
 					mPrevRouteArray.addOrMoveLast(mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRouteArray.getLast()));
 
-					PLMSBattleResult result = new PLMSBattleResult(mField,
-							mMovingUnitView, nextLandView,
+					PLMSBattleResult result = new PLMSBattleResult(mMovingUnitView, nextLandView,
 							unitView, unitView.getLandView());
 					mInformation.updateForBattleData(result);
 				} else if (mAreaManager.getSupportAreaCover().isShowingCover(landView)) {
@@ -219,8 +216,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					PLMSLandView nextLandView = getMoveLandForSupportSkill(unitView);
 					mPrevRouteArray.addOrMoveLast(mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRouteArray.getLast()));
 
-					PLMSBattleResult result = new PLMSBattleResult(mField,
-							mMovingUnitView, nextLandView,
+					PLMSBattleResult result = new PLMSBattleResult(mMovingUnitView, nextLandView,
 							unitView, unitView.getLandView());
 					mInformation.updateForBattleData(result);
 				} else if (landView.equals(mMovingUnitView.getLandView())) {
@@ -387,8 +383,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		movedUnit(attackerLandView);
 
 		// ダメージ表示
-		PLMSBattleResult result = new PLMSBattleResult(mField,
-				attackerUnitView, attackerLandView,
+		PLMSBattleResult result = new PLMSBattleResult(attackerUnitView, attackerLandView,
 				defenderUnitView, defenderUnitView.getLandView());
 		mAnimationManager.addBattleAnimation(result, new Runnable() {
 			@Override
