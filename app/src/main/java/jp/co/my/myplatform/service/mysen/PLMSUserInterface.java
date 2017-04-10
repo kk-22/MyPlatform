@@ -15,6 +15,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
@@ -178,9 +179,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					supportToUnit(nextLandView, unitView);
 				} else {
 					// 初回タップ時は Info の更新のみ
-					PLMSBattleForecast forecast = new PLMSBattleForecast(mMovingUnitView, nextLandView,
+					PLMSSupportForecast forecast = new PLMSSupportForecast(mMovingUnitView, nextLandView,
 							unitView, unitView.getLandView());
-					mInformation.updateForBattleData(forecast);
+					mInformation.updateForSupportData(forecast);
 				}
 			}
 		} else if (mTempLandView.equals(mMovingUnitView.getLandView())) {
@@ -216,9 +217,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					PLMSLandView nextLandView = getMoveLandForSupportSkill(unitView);
 					mPrevRouteArray.addOrMoveLast(mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRouteArray.getLast()));
 
-					PLMSBattleForecast forecast = new PLMSBattleForecast(mMovingUnitView, nextLandView,
+					PLMSSupportForecast forecast = new PLMSSupportForecast(mMovingUnitView, nextLandView,
 							unitView, unitView.getLandView());
-					mInformation.updateForBattleData(forecast);
+					mInformation.updateForSupportData(forecast);
 				} else if (landView.equals(mMovingUnitView.getLandView())) {
 					// 攻撃時の位置が変わるため、ルートを更新
 					mPrevRouteArray.addOrMoveLast(new PLMSLandRoute(landView));

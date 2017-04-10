@@ -13,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.battle.PLMSBaseForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView;
 import jp.co.my.myplatform.service.mysen.information.PLMSUnitInfoView;
 
@@ -22,7 +24,7 @@ public class PLMSInformationView extends LinearLayout {
 
 	private PLMSUnitView mLeftUnitView;
 	private PLMSUnitView mRightUnitView;
-	private PLMSBattleForecast mForecast;
+	private PLMSBaseForecast mForecast;
 
 	private PLMSUnitInfoView mUnitInfoView;
 	private FrameLayout mBattleDataFrame;
@@ -86,31 +88,45 @@ public class PLMSInformationView extends LinearLayout {
 		setBackgroundColor(unitView.getUnitData().getArmyStrategy().getInformationColor());
 	}
 
+	public void updateForSupportData(PLMSSupportForecast supportForecast) {
+		if (!updateForForecast(supportForecast)) {
+			return;
+		}
+		mLeftBattleInfo.updateInfoForSupport(supportForecast, supportForecast.getLeftUnit());
+		mRightBattleInfo.updateInfoForSupport(supportForecast, supportForecast.getRightUnit());
+	}
+
 	public void updateForBattleData(PLMSBattleForecast battleForecast) {
+		if (!updateForForecast(battleForecast)) {
+			return;
+		}
+		mLeftBattleInfo.updateInfoForBattle(battleForecast, battleForecast.getLeftUnit());
+		mRightBattleInfo.updateInfoForBattle(battleForecast, battleForecast.getRightUnit());
+	}
+
+	// 更新する必要がないとき false を返す
+	private boolean updateForForecast(PLMSBaseForecast forecast) {
 		if (mRightUnitView == null) {
 			mUnitInfoView.setVisibility(View.GONE);
 			mBattleDataFrame.setVisibility(View.VISIBLE);
 		}
-		if (battleForecast.equals(mForecast)) {
-			return;
+		if (forecast.equals(mForecast)) {
+			return false;
 		}
-		mForecast = battleForecast;
+		mForecast = forecast;
 
 		// 左の設定
-		PLMSUnitView leftUnitView = battleForecast.getLeftUnit().getUnitView();
+		PLMSUnitView leftUnitView = forecast.getLeftUnit().getUnitView();
 		if (!leftUnitView.equals(mLeftUnitView)) {
 			animateUnitImage(mLeftImageView, leftUnitView);
 			mLeftUnitView = leftUnitView;
 			setBackgroundColor(leftUnitView.getUnitData().getArmyStrategy().getInformationColor());
 		}
-
 		// 右の設定
-		mRightUnitView = battleForecast.getRightUnit().getUnitView();;
+		mRightUnitView = forecast.getRightUnit().getUnitView();;
 		animateUnitImage(mRightImageView, mRightUnitView);
 		mBattleDataFrame.setBackgroundColor(mRightUnitView.getUnitData().getArmyStrategy().getInformationColor());
-
-		mLeftBattleInfo.updateInfo(battleForecast, battleForecast.getLeftUnit());
-		mRightBattleInfo.updateInfo(battleForecast, battleForecast.getRightUnit());
+		return true;
 	}
 
 	private Bitmap unitImageFromUnitView(PLMSUnitView unitView) {

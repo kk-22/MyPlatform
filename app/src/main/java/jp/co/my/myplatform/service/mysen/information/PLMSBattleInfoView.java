@@ -11,6 +11,9 @@ import android.widget.TextView;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
+import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 public class PLMSBattleInfoView extends LinearLayout {
 
@@ -46,18 +49,22 @@ public class PLMSBattleInfoView extends LinearLayout {
 		}
 	}
 
-	public void updateInfo(PLMSBattleForecast battleForecast, PLMSBattleUnit battleUnit) {
-		mNameTextView.setText(battleUnit.getUnitView().getUnitData().getUnitModel().getName());
-		setIntToText(battleUnit.getUnitView().getUnitData().getCurrentHP(), mCurrentHPTextView);
-		setIntToText(battleUnit.getRemainingHP(), mResultHPTextView);
+	public void updateInfoForSupport(PLMSSupportForecast supportForecast, PLMSSupportUnit supportUnit) {
+		updateInfo(supportUnit);
+		// TODO: move to updateInfo method.
+		mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
+		mDamageTextView.setText("");
+	}
+
+	public void updateInfoForBattle(PLMSBattleForecast battleForecast, PLMSBattleUnit battleUnit) {
+		updateInfo(battleUnit);
 		if (battleUnit.isAlive()) {
 			mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
 		} else {
 			mResultHPTextView.setTextColor(Color.parseColor("#ff0000"));
 		}
-		setIntToText(0, mSecretCountTextView);
 
-		StringBuilder damageText =new StringBuilder();
+		StringBuilder damageText = new StringBuilder();
 		int attackCount = battleForecast.getAttackerArray().countObject(battleUnit);
 		if (attackCount == 0) {
 			damageText.append("-");
@@ -69,6 +76,14 @@ public class PLMSBattleInfoView extends LinearLayout {
 			}
 		}
 		mDamageTextView.setText(damageText.toString());
+	}
+
+	private void updateInfo(PLMSUnitInterface unit) {
+		mNameTextView.setText(unit.getUnitView().getUnitData().getUnitModel().getName());
+		setIntToText(unit.getUnitView().getUnitData().getCurrentHP(), mCurrentHPTextView);
+		setIntToText(unit.getRemainingHP(), mResultHPTextView);
+
+		setIntToText(0, mSecretCountTextView);
 	}
 
 	private void setIntToText(int number, TextView textView) {
