@@ -121,10 +121,12 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 	}
 
 	// getter
+	@Override
 	public PLMSBattleUnit getLeftUnit() {
 		return mLeftUnit;
 	}
 
+	@Override
 	public PLMSBattleUnit getRightUnit() {
 		return mRightUnit;
 	}
