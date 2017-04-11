@@ -60,7 +60,7 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		return objectAnimator;
 	}
 
-	public void addBattleAnimation(final PLMSBattleForecast battleForecast, final Runnable lastRunnable) {
+	public void addBattleAnimation(final PLMSBattleForecast battleForecast) {
 		int numberOfScene = battleForecast.getSceneArray().size();
 		for (int i = 0; i < numberOfScene; i++) {
 			final PLMSBattleScene scene = battleForecast.getSceneArray().get(i);
@@ -132,19 +132,6 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			skillData.executeFinishBattleSkill(rightUnit, battleForecast);
 		}
 		sendTempAnimators();
-
-		mAnimatorArray.getLast().addListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				PLMSBattleUnit attackerUnit = battleForecast.getLeftUnit();
-				if (attackerUnit.isAlive()) {
-					mArgument.getInformationView().updateForUnitData(attackerUnit.getUnitView());
-				} else {
-					mArgument.getInformationView().clearInformation();
-				}
-				lastRunnable.run();
-			}
-		});
 	}
 
 	public Animator getFluctuateHPAnimation(final PLMSUnitView unitView, final int remainingHP, final int diffHP) {
@@ -179,6 +166,21 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		AnimatorSet animatorSet = new AnimatorSet();
 		animatorSet.playTogether(animatorArray);
 		addAnimator(animatorSet);
+	}
+
+	// 最期のアニメーション完了時に実行する Runnable をセット
+	public void addAnimationCompletedRunnable(final Runnable runnable) {
+		Animator lastAnimator = mAnimatorArray.getLast();
+		if (lastAnimator == null) {
+			runnable.run();
+			return;
+		}
+		lastAnimator.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				runnable.run();
+			}
+		});
 	}
 
 	@Override

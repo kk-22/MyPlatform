@@ -18,6 +18,7 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
+import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 import static android.view.View.GONE;
 
@@ -384,21 +385,36 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		movedUnit(attackerLandView);
 
 		// ダメージ表示
-		PLMSBattleForecast forecast = new PLMSBattleForecast(attackerUnitView, attackerLandView,
+		final PLMSBattleForecast forecast = new PLMSBattleForecast(attackerUnitView, attackerLandView,
 				defenderUnitView, defenderUnitView.getLandView());
-		mAnimationManager.addBattleAnimation(forecast, new Runnable() {
+		mAnimationManager.addBattleAnimation(forecast);
+		mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
 			@Override
 			public void run() {
-				attackerUnitView.didAction();
+				PLMSUnitInterface leftUnit = forecast.getLeftUnit();
+				if (leftUnit.isAlive()) {
+					mInformation.updateForUnitData(leftUnit.getUnitView());
+				} else {
+					mInformation.clearInformation();
+				}
+				leftUnit.getUnitView().didAction();
 			}
 		});
 	}
 
 	private void supportToUnit(PLMSLandView skillLandView, PLMSUnitView targetUnitView) {
-		PLMSUnitView unitView = mMovingUnitView;
+		final PLMSUnitView skillUnitView = mMovingUnitView;
 		movedUnit(skillLandView);
-		PLMSSkillData supportSkill = unitView.getUnitData().getSupportSkillData();
-		supportSkill.executeSupportSkill(unitView, skillLandView, targetUnitView);
+		PLMSSkillData supportSkill = skillUnitView.getUnitData().getSupportSkillData();
+		supportSkill.executeSupportSkill(skillUnitView, skillLandView, targetUnitView);
+		mAnimationManager.sendTempAnimators();
+		mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
+			@Override
+			public void run() {
+				mInformation.updateForUnitData(skillUnitView.getUnitView());
+				skillUnitView.getUnitView().didAction();
+			}
+		});
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {
