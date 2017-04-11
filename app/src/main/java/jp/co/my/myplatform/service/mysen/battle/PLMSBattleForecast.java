@@ -131,6 +131,11 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 		return mRightUnit;
 	}
 
+	@Override
+	public String getInformationTitle() {
+		return "攻撃";
+	}
+
 	public MYArrayList<PLMSBattleScene> getSceneArray() {
 		return mSceneArray;
 	}

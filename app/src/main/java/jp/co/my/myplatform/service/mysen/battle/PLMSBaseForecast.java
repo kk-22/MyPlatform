@@ -9,4 +9,5 @@ public abstract class PLMSBaseForecast {
 
 	public abstract PLMSUnitInterface getLeftUnit();
 	public abstract PLMSUnitInterface getRightUnit();
+	public abstract String getInformationTitle();
 }

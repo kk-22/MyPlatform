@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBaseForecast;
@@ -33,6 +34,7 @@ public class PLMSInformationView extends LinearLayout {
 	private PLMSBattleInfoView mLeftBattleInfo;
 	private PLMSBattleInfoView mRightBattleInfo;
 	private ImageView mRightImageView;
+	private TextView mTitleTextView;
 
 	public PLMSInformationView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
@@ -42,6 +44,7 @@ public class PLMSInformationView extends LinearLayout {
 
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
 
+		mTitleTextView = (TextView) findViewById(R.id.title_text);
 		mLeftBattleInfo = (PLMSBattleInfoView) findViewById(R.id.left_battle_info);
 		mLeftBattleInfo.initWithIsLeft(true);
 		mRightBattleInfo = (PLMSBattleInfoView) findViewById(R.id.right_battle_info);
@@ -114,6 +117,9 @@ public class PLMSInformationView extends LinearLayout {
 			return false;
 		}
 		mForecast = forecast;
+
+		// 中央の設定
+		mTitleTextView.setText(forecast.getInformationTitle());
 
 		// 左の設定
 		PLMSUnitView leftUnitView = forecast.getLeftUnit().getUnitView();

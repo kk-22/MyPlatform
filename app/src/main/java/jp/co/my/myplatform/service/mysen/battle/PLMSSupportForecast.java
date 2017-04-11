@@ -27,4 +27,9 @@ public class PLMSSupportForecast extends PLMSBaseForecast {
 	public PLMSSupportUnit getRightUnit() {
 		return mRightSupportUnit;
 	}
+
+	@Override
+	public String getInformationTitle() {
+		return mLeftSupportUnit.getUnitData().getSupportSkillData().getSkillModel().getName();
+	}
 }

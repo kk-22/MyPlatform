@@ -70,7 +70,7 @@
                             android:layout_height="0dp"/>
 
                         <TextView
-                            android:text="攻撃"
+                            android:id="@+id/title_text"
                             android:textSize="9sp"
                             android:textAlignment="center"
                             android:gravity="center_vertical"
