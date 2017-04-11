@@ -39,4 +39,9 @@ public class PLMSSupportUnit implements PLMSUnitInterface {
 	public int getRemainingHP() {
 		return mRemainingHP;
 	}
+
+	@Override
+	public boolean isAlive() {
+		return true;
+	}
 }

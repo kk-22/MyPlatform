@@ -69,10 +69,6 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 		mChasePoint -= 1;
 	}
 
-	public boolean isAlive() {
-		return (mRemainingHP > 0) ;
-	}
-
 	// getter
 	@Override
 	public PLMSUnitView getUnitView() {
@@ -92,6 +88,11 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 	@Override
 	public int getRemainingHP() {
 		return mRemainingHP;
+	}
+
+	@Override
+	public boolean isAlive() {
+		return (mRemainingHP > 0) ;
 	}
 
 	public int getBattleAttack() {

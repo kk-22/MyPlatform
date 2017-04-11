@@ -51,18 +51,11 @@ public class PLMSBattleInfoView extends LinearLayout {
 
 	public void updateInfoForSupport(PLMSSupportForecast supportForecast, PLMSSupportUnit supportUnit) {
 		updateInfo(supportUnit);
-		// TODO: move to updateInfo method.
-		mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
 		mDamageTextView.setText("");
 	}
 
 	public void updateInfoForBattle(PLMSBattleForecast battleForecast, PLMSBattleUnit battleUnit) {
 		updateInfo(battleUnit);
-		if (battleUnit.isAlive()) {
-			mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
-		} else {
-			mResultHPTextView.setTextColor(Color.parseColor("#ff0000"));
-		}
 
 		StringBuilder damageText = new StringBuilder();
 		int attackCount = battleForecast.getAttackerArray().countObject(battleUnit);
@@ -84,6 +77,11 @@ public class PLMSBattleInfoView extends LinearLayout {
 		setIntToText(unit.getRemainingHP(), mResultHPTextView);
 
 		setIntToText(0, mSecretCountTextView);
+		if (unit.isAlive()) {
+			mResultHPTextView.setTextColor(Color.parseColor("#ffffff"));
+		} else {
+			mResultHPTextView.setTextColor(Color.parseColor("#ff0000"));
+		}
 	}
 
 	private void setIntToText(int number, TextView textView) {

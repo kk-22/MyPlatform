@@ -163,6 +163,11 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		return mUnitData.getCurrentHP();
 	}
 
+	@Override
+	public boolean isAlive() {
+		return (getRemainingHP() > 0);
+	}
+
 	public Point getCurrentPoint() {
 		return mCurrentPoint;
 	}
