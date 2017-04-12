@@ -113,6 +113,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 					mPrevTouchTimeMillis = 0;
 					mTouchDownTimeMillis = 0;
+					MYLogUtil.outputLog(" startDrag unit=" +unitView.debugLog());
 				}
 				break;
 			}
@@ -201,6 +202,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	@Override
 	public boolean onDrag(View v, final DragEvent event) {
+		MYLogUtil.outputLog(" onDrag event=" +event.getAction() +" v=" +v);
 		final PLMSLandView landView = (PLMSLandView) v;
 		PLMSUnitView unitView = landView.getUnitView();
 		switch (event.getAction())	{
