@@ -88,11 +88,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			case MotionEvent.ACTION_DOWN: {
 				mTouchDownPointF = new PointF(event.getX(), event.getY());
 				mTouchDownTimeMillis = System.currentTimeMillis();
-				if (!mAreaManager.getAttackAreaCover().isShowingCover(unitView.getLandView())
-						&& !mAreaManager.getSupportAreaCover().isShowingCover(unitView.getLandView())) {
-					// 攻撃対象の敵ならACTION_UP時にバトル表示するため更新しない
-					mInformation.updateForUnitData(unitView);
-				}
 			}
 			case MotionEvent.ACTION_MOVE: {
 				if (unitView.getVisibility() == GONE || !mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
@@ -102,6 +97,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
 				// ACTION_UP をクリックと判定するために閾値で判定
 				if ((Math.abs(mTouchDownPointF.x - event.getX()) + Math.abs(mTouchDownPointF.y - event.getY())) > 10) {
+					mInformation.updateForUnitData(unitView);
 					if (!unitView.equals(mMovingUnitView)) {
 						if (mMovingUnitView != null) {
 							cancelMoveEvent();
@@ -153,46 +149,53 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		}
 
 		mMovingUnitView.setVisibility(View.VISIBLE);
-		if (!unitView.equals(mMovingUnitView)) {
-			PLMSLandView touchLandView = unitView.getLandView();
-			PLMSLandView nextLandView = null;
-			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-				nextLandView = getMoveLandForAttack(touchLandView);
-			} else if (mAreaManager.getSupportAreaCover().isShowingCover(touchLandView)) {
-				nextLandView = getMoveLandForSupportSkill(unitView);
-			} else {
-				// ACTION_DOWN の information 更新のみ
-				return;
+		if (unitView.equals(mMovingUnitView)) {
+			// 移動中のユニットをタップ
+			if (mTempLandView.equals(mMovingUnitView.getLandView())) {
+				// 移動前の地点をタップで移動キャンセル
+				finishMoveEvent();
+			} else if (mInformation.getInfoUnitView().equals(mMovingUnitView)) {
+				// 仮移動中のユニットをタップで移動確定
+				mMovingUnitView.standby();
+				movedUnit(mTempLandView);
 			}
+			mInformation.updateForUnitData(unitView);
+			return;
+		}
 
-			mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, nextLandView));
-			moveToTempLand(nextLandView);
-			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-				if (mInformation.getBattleForecast() != null) {
-					attackToUnit(mInformation.getBattleForecast());
-				} else {
-					// 初回タップ時は Info の更新のみ
-					PLMSBattleForecast forecast = new PLMSBattleForecast(mMovingUnitView, nextLandView,
-							unitView, unitView.getLandView());
-					mInformation.updateForBattleData(forecast);
-				}
-			} else {
-				if (mInformation.getSupportForecast() != null) {
-					supportToUnit(mInformation.getSupportForecast());
-				} else {
-					// 初回タップ時は Info の更新のみ
-					PLMSSupportForecast forecast = new PLMSSupportForecast(mMovingUnitView, nextLandView,
-							unitView, unitView.getLandView());
-					mInformation.updateForSupportData(forecast);
-				}
-			}
-		} else if (mTempLandView.equals(mMovingUnitView.getLandView())) {
-			finishMoveEvent();
+		// 移動中のユニットとは別のユニットをタップ
+		PLMSLandView touchLandView = unitView.getLandView();
+		PLMSLandView nextLandView;
+		if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
+			nextLandView = getMoveLandForAttack(touchLandView);
+		} else if (mAreaManager.getSupportAreaCover().isShowingCover(touchLandView)) {
+			nextLandView = getMoveLandForSupportSkill(unitView);
 		} else {
-			// 移動後のユニットクリック時のみ移動確定
-			mMovingUnitView.standby();
-			mInformation.updateForUnitData(mMovingUnitView);
-			movedUnit(mTempLandView);
+			// information 更新のみ
+			mInformation.updateForUnitData(unitView);
+			return;
+		}
+
+		mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, nextLandView));
+		moveToTempLand(nextLandView);
+		if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
+			PLMSBattleForecast forecast = mInformation.getBattleForecast();
+			if (forecast != null && forecast.getRightUnit().getUnitView().equals(unitView)) {
+				attackToUnit(mInformation.getBattleForecast());
+			} else {
+				// 初回タップ時は Info の更新のみ
+				forecast = new PLMSBattleForecast(mMovingUnitView, nextLandView, unitView, unitView.getLandView());
+				mInformation.updateForBattleData(forecast);
+			}
+		} else {
+			PLMSSupportForecast forecast = mInformation.getSupportForecast();
+			if (forecast != null && forecast.getRightUnit().getUnitView().equals(unitView)) {
+				supportToUnit(mInformation.getSupportForecast());
+			} else {
+				// 初回タップ時は Info の更新のみ
+				forecast = new PLMSSupportForecast(mMovingUnitView, nextLandView, unitView, unitView.getLandView());
+				mInformation.updateForSupportData(forecast);
+			}
 		}
 	}
 
