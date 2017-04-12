@@ -16,6 +16,7 @@ import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
@@ -167,8 +168,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			mAnimationManager.addAnimator(mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, nextLandView));
 			moveToTempLand(nextLandView);
 			if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-				if (unitView.equals(mInformation.getRightUnitView())) {
-					attackToUnit(nextLandView, unitView);
+				if (mInformation.getBattleForecast() != null) {
+					attackToUnit(mInformation.getBattleForecast());
 				} else {
 					// 初回タップ時は Info の更新のみ
 					PLMSBattleForecast forecast = new PLMSBattleForecast(mMovingUnitView, nextLandView,
@@ -176,8 +177,8 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 					mInformation.updateForBattleData(forecast);
 				}
 			} else {
-				if (unitView.equals(mInformation.getRightUnitView())) {
-					supportToUnit(nextLandView, unitView);
+				if (mInformation.getSupportForecast() != null) {
+					supportToUnit(mInformation.getSupportForecast());
 				} else {
 					// 初回タップ時は Info の更新のみ
 					PLMSSupportForecast forecast = new PLMSSupportForecast(mMovingUnitView, nextLandView,
@@ -289,7 +290,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			animatorListener = new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(Animator animation) {
-					attackToUnit(targetLandView, landView.getUnitView());
+					PLMSBattleForecast forecast = new PLMSBattleForecast(mMovingUnitView, targetLandView,
+							landView.getUnitView(), landView);
+					attackToUnit(forecast);
 				}
 			};
 		} else if (mAreaManager.getSupportAreaCover().isShowingCover(landView)) {
@@ -297,7 +300,9 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			animatorListener = new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(Animator animation) {
-					supportToUnit(targetLandView, landView.getUnitView());
+					PLMSSupportForecast forecast = new PLMSSupportForecast(mMovingUnitView, targetLandView,
+							landView.getUnitView(), landView);
+					supportToUnit(forecast);
 				}
 			};
 		} else {
@@ -379,14 +384,10 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mTempRoute = nextRoute;
 	}
 
-	private void attackToUnit(PLMSLandView attackerLandView,
-							  PLMSUnitView defenderUnitView) {
-		final PLMSUnitView attackerUnitView = mMovingUnitView;
-		movedUnit(attackerLandView);
+	private void attackToUnit(final PLMSBattleForecast forecast) {
+		movedUnit(forecast.getLeftUnit().getLandView());
 
 		// ダメージ表示
-		final PLMSBattleForecast forecast = new PLMSBattleForecast(attackerUnitView, attackerLandView,
-				defenderUnitView, defenderUnitView.getLandView());
 		mAnimationManager.addBattleAnimation(forecast);
 		mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
 			@Override
@@ -402,17 +403,17 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		});
 	}
 
-	private void supportToUnit(PLMSLandView skillLandView, PLMSUnitView targetUnitView) {
-		final PLMSUnitView skillUnitView = mMovingUnitView;
-		movedUnit(skillLandView);
-		PLMSSkillData supportSkill = skillUnitView.getUnitData().getSupportSkillData();
-		supportSkill.executeSupportSkill(skillUnitView, skillLandView, targetUnitView);
+	private void supportToUnit(PLMSSupportForecast forecast) {
+		final PLMSSupportUnit supportUnit = forecast.getLeftUnit();
+		movedUnit(supportUnit.getLandView());
+		PLMSSkillData supportSkill = supportUnit.getUnitData().getSupportSkillData();
+		supportSkill.executeSupportSkill(forecast);
 		mAnimationManager.sendTempAnimators();
 		mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
 			@Override
 			public void run() {
-				mInformation.updateForUnitData(skillUnitView.getUnitView());
-				skillUnitView.getUnitView().didAction();
+				mInformation.updateForUnitData(supportUnit.getUnitView());
+				supportUnit.getUnitView().didAction();
 			}
 		});
 	}

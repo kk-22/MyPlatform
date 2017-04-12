@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBaseForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
@@ -160,11 +161,28 @@ public class PLMSInformationView extends LinearLayout {
 	}
 
 	// getter and setter
-	public PLMSUnitView getRightUnitView() {
-		return mRightUnitView;
+	// 現在ユニット情報に表示中のユニット
+	public PLMSUnitView getInfoUnitView() {
+		if (mRightUnitView != null) {
+			// 予測表示中のためユニット情報表示中ではない
+			return null;
+		}
+		return mLeftUnitView;
 	}
 
-	public PLMSUnitView getLeftUnitView() {
-		return mLeftUnitView;
+	public PLMSBattleForecast getBattleForecast() {
+		if (mRightUnitView == null) {
+			// ユニット情報表示中
+			return null;
+		}
+		return MYOtherUtil.castObject(mForecast, PLMSBattleForecast.class);
+	}
+
+	public PLMSSupportForecast getSupportForecast() {
+		if (mRightUnitView == null) {
+			// ユニット情報表示中
+			return null;
+		}
+		return MYOtherUtil.castObject(mForecast, PLMSSupportForecast.class);
 	}
 }

@@ -15,6 +15,8 @@ import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
 
 public class PLMSSkillData {
 
@@ -219,20 +221,21 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeSupportSkill(PLMSUnitView skillUnitView, PLMSLandView skillLandView,
-									PLMSUnitView targetUnitView) {
+	public void executeSupportSkill(PLMSSupportForecast forecast) {
+		PLMSSupportUnit supportUnit = forecast.getLeftUnit();
+		PLMSSupportUnit targetUnit = forecast.getRightUnit();
 		switch (mEffectType) {
 			case ONE_TURN_BUFF: {
-				setBuffToUnitArray(new MYArrayList<PLMSUnitInterface>(targetUnitView));
+				setBuffToUnitArray(new MYArrayList<PLMSUnitInterface>(targetUnit));
 				break;
 			}
 			case FLUCTUATE_HP: {
-				fluctuateHP(targetUnitView, mSkillModel.getEffectValue());
+				fluctuateHP(targetUnit, mSkillModel.getEffectValue());
 				break;
 			}
 			case HEAL_ME_TOO:
-				fluctuateHP(targetUnitView, mSkillModel.getEffectValue());
-				fluctuateHP(skillUnitView, mSkillModel.getEffectValue());
+				fluctuateHP(targetUnit, mSkillModel.getEffectValue());
+				fluctuateHP(supportUnit, mSkillModel.getEffectValue());
 				break;
 			case SAINTS:
 				break;
