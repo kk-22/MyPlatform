@@ -6,15 +6,10 @@ import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
-import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
-public class PLMSBattleUnit implements PLMSUnitInterface {
+public class PLMSBattleUnit extends PLMSForecastUnit {
 
-	private PLMSUnitView mUnitView;
-	private PLMSLandView mLandView;
 	private PLMSBattleUnit mEnemyUnit;
-
-	private int mRemainingHP;
 	private int[] mBattleBuffs;
 	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
 	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
@@ -22,10 +17,8 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 	private MYArrayList<PLMSSkillData.EffectType> mSkillEffectArray;
 
 	public PLMSBattleUnit(PLMSUnitView unitView, PLMSLandView landView) {
-		mUnitView = unitView;
-		mLandView = landView;
+		super(unitView, landView);
 
-		mRemainingHP = mUnitView.getUnitData().getCurrentHP();
 		mBattleBuffs = new int[PLMSUnitData.PARAMETER_NUMBER];
 		mSkillEffectArray = new MYArrayList<>();
 		mChasePoint = 0;
@@ -70,31 +63,6 @@ public class PLMSBattleUnit implements PLMSUnitInterface {
 	}
 
 	// getter
-	@Override
-	public PLMSUnitView getUnitView() {
-		return mUnitView;
-	}
-
-	@Override
-	public PLMSUnitData getUnitData() {
-		return mUnitView.getUnitData();
-	}
-
-	@Override
-	public PLMSLandView getLandView() {
-		return mLandView;
-	}
-
-	@Override
-	public int getRemainingHP() {
-		return mRemainingHP;
-	}
-
-	@Override
-	public boolean isAlive() {
-		return (mRemainingHP > 0) ;
-	}
-
 	public int getBattleAttack() {
 		return getBattleParameterOfNo(PLMSUnitData.PARAMETER_ATTACK);
 	}
