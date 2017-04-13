@@ -235,10 +235,18 @@ public class PLMSSkillData {
 				targetUnit.setDiffHP(mSkillModel.getEffectValue());
 				break;
 			}
-			case SAINTS:
+			case SAINTS: {
+				int damage = supportUnit.getUnitData().getMaxHP() - supportUnit.getRemainingHP();
+				supportUnit.setDiffHP(damage / 2);
+				targetUnit.setDiffHP(damage + 7);
 				break;
-			case REVERSE:
+			}
+			case REVERSE: {
+				int maxHP = targetUnit.getUnitData().getMaxHP();
+				int point = Math.max(0, (maxHP - targetUnit.getRemainingHP() * 2));
+				targetUnit.setDiffHP(point + 7);
 				break;
+			}
 			case DEDICATION:
 				break;
 			case MUTUAL_ASSISTANCE:
@@ -246,6 +254,26 @@ public class PLMSSkillData {
 			default:
 				// HP補助スキル以外
 				break;
+		}
+		for (PLMSSkillData skillData : supportUnit.getUnitData().getPassiveSkillArray()) {
+			if (skillData.mTimingType != TimingType.HEAL_BY_STAFF) {
+				continue;
+			}
+			switch (skillData.mEffectType) {
+				case HEAL_ME_TOO: {
+					if (supportUnit.getDiffHP() != 0) {
+						// 補助スキルにより自身も回復しているためスキルは発動しない
+						break;
+					}
+					int targetDiffHP = targetUnit.getDiffHP();
+					supportUnit.setDiffHP(targetDiffHP * skillData.getSkillModel().getEffectValue() / 100);
+					break;
+				}
+				default:
+					MYLogUtil.showErrorToast("updateRemainingHPOfSupportUnit に未実装のスキル no="
+							+skillData.mEffectType.getInt() +" " +skillData.mSkillModel.getName());
+					break;
+			}
 		}
 	}
 
