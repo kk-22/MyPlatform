@@ -146,6 +146,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 				beginMoveEvent(unitView);
 			}
+			mInformation.updateForUnitData(unitView);
 			return;
 		}
 
