@@ -25,7 +25,7 @@
 
         <!-- 戦闘時の表示 -->
         <FrameLayout
-            android:id="@+id/battle_data_frame"
+            android:id="@+id/forecast_data_frame"
             android:visibility="gone"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -44,12 +44,12 @@
                     android:layout_height="match_parent">
 
                     <!-- 左ユニットの情報 -->
-                    <jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView
-                        android:id="@+id/left_battle_info"
+                    <jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView
+                        android:id="@+id/left_forecast_info"
                         android:layout_weight="4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
-                    </jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView>
+                    </jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView>
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -80,12 +80,12 @@
                     </LinearLayout>
 
                     <!-- 右ユニットの情報 -->
-                    <jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView
-                        android:id="@+id/right_battle_info"
+                    <jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView
+                        android:id="@+id/right_forecast_info"
                         android:layout_weight="4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
-                    </jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView>
+                    </jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView>
 
                 </LinearLayout>
 

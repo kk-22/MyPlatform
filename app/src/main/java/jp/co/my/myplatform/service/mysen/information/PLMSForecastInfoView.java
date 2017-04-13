@@ -15,7 +15,7 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
-public class PLMSBattleInfoView extends LinearLayout {
+public class PLMSForecastInfoView extends LinearLayout {
 
 	private TextView mNameTextView;
 	private TextView mCurrentHPTextView;
@@ -23,9 +23,9 @@ public class PLMSBattleInfoView extends LinearLayout {
 	private TextView mDamageTextView;
 	private TextView mSecretCountTextView;
 
-	public PLMSBattleInfoView(Context context, AttributeSet attrs, int defStyle) {
+	public PLMSForecastInfoView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.mysen_view_battle_info, this);
+		LayoutInflater.from(context).inflate(R.layout.mysen_view_forecast_info, this);
 		mNameTextView = (TextView) findViewById(R.id.name_text);
 		mCurrentHPTextView = (TextView) findViewById(R.id.current_hp_text);
 		mResultHPTextView = (TextView) findViewById(R.id.result_hp_text);
@@ -33,11 +33,11 @@ public class PLMSBattleInfoView extends LinearLayout {
 		mSecretCountTextView = (TextView) findViewById(R.id.secret_count_text);
 	}
 
-	public PLMSBattleInfoView(Context context, AttributeSet attrs){
+	public PLMSForecastInfoView(Context context, AttributeSet attrs){
 		this(context, attrs, 0);
 	}
 
-	public PLMSBattleInfoView(Context context) {
+	public PLMSForecastInfoView(Context context) {
 		this(context, null);
 	}
 

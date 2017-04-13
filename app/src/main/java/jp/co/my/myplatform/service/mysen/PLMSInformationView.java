@@ -18,7 +18,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBaseForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
-import jp.co.my.myplatform.service.mysen.information.PLMSBattleInfoView;
+import jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView;
 import jp.co.my.myplatform.service.mysen.information.PLMSUnitInfoView;
 
 
@@ -29,11 +29,11 @@ public class PLMSInformationView extends LinearLayout {
 	private PLMSBaseForecast mForecast;
 
 	private PLMSUnitInfoView mUnitInfoView;
-	private FrameLayout mBattleDataFrame;
+	private FrameLayout mForefastDataFrame;
 
 	private ImageView mLeftImageView;
-	private PLMSBattleInfoView mLeftBattleInfo;
-	private PLMSBattleInfoView mRightBattleInfo;
+	private PLMSForecastInfoView mLeftForecastInfo;
+	private PLMSForecastInfoView mRightForecastInfo;
 	private ImageView mRightImageView;
 	private TextView mTitleTextView;
 
@@ -41,15 +41,15 @@ public class PLMSInformationView extends LinearLayout {
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_information, this);
 		mUnitInfoView = (PLMSUnitInfoView) findViewById(R.id.unit_info);
-		mBattleDataFrame = (FrameLayout) findViewById(R.id.battle_data_frame);
+		mForefastDataFrame = (FrameLayout) findViewById(R.id.forecast_data_frame);
 
 		mLeftImageView = (ImageView) findViewById(R.id.left_image);
 
 		mTitleTextView = (TextView) findViewById(R.id.title_text);
-		mLeftBattleInfo = (PLMSBattleInfoView) findViewById(R.id.left_battle_info);
-		mLeftBattleInfo.initWithIsLeft(true);
-		mRightBattleInfo = (PLMSBattleInfoView) findViewById(R.id.right_battle_info);
-		mRightBattleInfo.initWithIsLeft(false);
+		mLeftForecastInfo = (PLMSForecastInfoView) findViewById(R.id.left_forecast_info);
+		mLeftForecastInfo.initWithIsLeft(true);
+		mRightForecastInfo = (PLMSForecastInfoView) findViewById(R.id.right_forecast_info);
+		mRightForecastInfo.initWithIsLeft(false);
 		mRightImageView = (ImageView) findViewById(R.id.right_image);
 
 		clearInformation();
@@ -67,7 +67,7 @@ public class PLMSInformationView extends LinearLayout {
 		setBackgroundColor(Color.WHITE);
 
 		mUnitInfoView.setVisibility(View.GONE);
-		mBattleDataFrame.setVisibility(View.GONE);
+		mForefastDataFrame.setVisibility(View.GONE);
 		mRightUnitView = null;
 		mLeftUnitView = null;
 		mForecast = null;
@@ -79,7 +79,7 @@ public class PLMSInformationView extends LinearLayout {
 		if (mRightUnitView != null || mLeftUnitView == null) {
 			// バトルinfo後の表示 or 初回表示時
 			mUnitInfoView.setVisibility(View.VISIBLE);
-			mBattleDataFrame.setVisibility(View.GONE);
+			mForefastDataFrame.setVisibility(View.GONE);
 			mRightUnitView = null;
 		}
 		if (!unitView.equals(mLeftUnitView)) {
@@ -96,23 +96,23 @@ public class PLMSInformationView extends LinearLayout {
 		if (!updateForForecast(supportForecast)) {
 			return;
 		}
-		mLeftBattleInfo.updateInfoForSupport(supportForecast, supportForecast.getLeftUnit());
-		mRightBattleInfo.updateInfoForSupport(supportForecast, supportForecast.getRightUnit());
+		mLeftForecastInfo.updateInfoForSupport(supportForecast, supportForecast.getLeftUnit());
+		mRightForecastInfo.updateInfoForSupport(supportForecast, supportForecast.getRightUnit());
 	}
 
 	public void updateForBattleData(PLMSBattleForecast battleForecast) {
 		if (!updateForForecast(battleForecast)) {
 			return;
 		}
-		mLeftBattleInfo.updateInfoForBattle(battleForecast, battleForecast.getLeftUnit());
-		mRightBattleInfo.updateInfoForBattle(battleForecast, battleForecast.getRightUnit());
+		mLeftForecastInfo.updateInfoForBattle(battleForecast, battleForecast.getLeftUnit());
+		mRightForecastInfo.updateInfoForBattle(battleForecast, battleForecast.getRightUnit());
 	}
 
 	// 更新する必要がないとき false を返す
 	private boolean updateForForecast(PLMSBaseForecast forecast) {
 		if (mRightUnitView == null) {
 			mUnitInfoView.setVisibility(View.GONE);
-			mBattleDataFrame.setVisibility(View.VISIBLE);
+			mForefastDataFrame.setVisibility(View.VISIBLE);
 		}
 		if (forecast.equals(mForecast)) {
 			return false;
@@ -132,7 +132,7 @@ public class PLMSInformationView extends LinearLayout {
 		// 右の設定
 		mRightUnitView = forecast.getRightUnit().getUnitView();;
 		animateUnitImage(mRightImageView, mRightUnitView);
-		mBattleDataFrame.setBackgroundColor(mRightUnitView.getUnitData().getArmyStrategy().getInformationColor());
+		mForefastDataFrame.setBackgroundColor(mRightUnitView.getUnitData().getArmyStrategy().getInformationColor());
 		return true;
 	}
 
