@@ -221,28 +221,56 @@ public class PLMSSkillData {
 		}
 	}
 
-	public void executeSupportSkill(PLMSSupportForecast forecast) {
+	// HP変動補助スキルの実行
+	public void updateRemainingHPOfSupportUnit(PLMSSupportForecast forecast) {
 		PLMSSupportUnit supportUnit = forecast.getLeftUnit();
 		PLMSSupportUnit targetUnit = forecast.getRightUnit();
 		switch (mEffectType) {
-			case ONE_TURN_BUFF: {
-				setBuffToUnitArray(new MYArrayList<PLMSUnitInterface>(targetUnit));
-				break;
-			}
 			case FLUCTUATE_HP: {
-				fluctuateHP(targetUnit, mSkillModel.getEffectValue());
+				targetUnit.setDiffHP(mSkillModel.getEffectValue());
 				break;
 			}
-			case HEAL_ME_TOO:
-				fluctuateHP(targetUnit, mSkillModel.getEffectValue());
-				fluctuateHP(supportUnit, mSkillModel.getEffectValue());
+			case HEAL_ME_TOO: {
+				supportUnit.setDiffHP(mSkillModel.getEffectValue());
+				targetUnit.setDiffHP(mSkillModel.getEffectValue());
 				break;
+			}
 			case SAINTS:
 				break;
 			case REVERSE:
 				break;
 			case DEDICATION:
 				break;
+			case MUTUAL_ASSISTANCE:
+				break;
+			default:
+				// HP補助スキル以外
+				break;
+		}
+	}
+
+	//
+	public void executeSupportSkill(PLMSSupportForecast forecast) {
+		PLMSSupportUnit supportUnit = forecast.getLeftUnit();
+		PLMSSupportUnit targetUnit = forecast.getRightUnit();
+		if (supportUnit.getDiffHP() != 00 || targetUnit.getDiffHP() != 0) {
+			// HP変動補助スキル
+			int supportDiffHP = supportUnit.getDiffHP();
+			int targetDiffHP = targetUnit.getDiffHP();
+			if (supportDiffHP != 0) {
+				fluctuateHP(supportUnit, supportDiffHP);
+			}
+			if (targetDiffHP != 0) {
+				fluctuateHP(targetUnit, targetDiffHP);
+			}
+			return;
+		}
+
+		switch (mEffectType) {
+			case ONE_TURN_BUFF: {
+				setBuffToUnitArray(new MYArrayList<PLMSUnitInterface>(targetUnit));
+				break;
+			}
 			case PUSH_TARGET:
 				break;
 			case HIKI_YOSE:
@@ -254,8 +282,6 @@ public class PLMSSkillData {
 			case MAWARI_KOMI:
 				break;
 			case AGAIN_ACTION:
-				break;
-			case MUTUAL_ASSISTANCE:
 				break;
 			case IKKATU:
 				break;

@@ -11,6 +11,7 @@ public class PLMSSupportUnit implements PLMSUnitInterface {
 	private PLMSUnitView mUnitView;
 	private PLMSLandView mLandView;
 	private int mRemainingHP;
+	private int mDiffHP; // 補助スキルによるHPの変動値
 
 	public PLMSSupportUnit(PLMSUnitView unitView, PLMSLandView landView) {
 		mUnitView = unitView;
@@ -43,5 +44,15 @@ public class PLMSSupportUnit implements PLMSUnitInterface {
 	@Override
 	public boolean isAlive() {
 		return true;
+	}
+
+	public int getDiffHP() {
+		return mDiffHP;
+	}
+
+	// setter
+	public void setDiffHP(int diffHP) {
+		mDiffHP = diffHP;
+		mRemainingHP = getUnitData().calculateSkillRemainingHP(mRemainingHP, diffHP);
 	}
 }

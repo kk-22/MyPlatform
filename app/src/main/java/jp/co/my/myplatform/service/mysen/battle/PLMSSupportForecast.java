@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen.battle;
 
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 public class PLMSSupportForecast extends PLMSBaseForecast {
 
@@ -14,7 +15,8 @@ public class PLMSSupportForecast extends PLMSBaseForecast {
 		mLeftSupportUnit = new PLMSSupportUnit(leftUnitView, leftLandView);
 		mRightSupportUnit = new PLMSSupportUnit(rightUnitView, rightLandView);
 
-		// TODO: SupportUnitにHPをセット
+		PLMSSkillData supportSkill = leftUnitView.getUnitData().getSupportSkillData();
+		supportSkill.updateRemainingHPOfSupportUnit(this);
 	}
 
 	// getter

@@ -106,7 +106,7 @@ public class PLMSUnitData {
 		return Math.max(0, Math.min(mMaxHP, currentHP + diffHP));
 	}
 
-	// スキル効果後のHP
+	// スキル効果後のHP(HPが最低1残る)
 	public int calculateSkillRemainingHP(int currentHP, int diffHP) {
 		return Math.max(1, Math.min(mMaxHP, currentHP + diffHP));
 	}
