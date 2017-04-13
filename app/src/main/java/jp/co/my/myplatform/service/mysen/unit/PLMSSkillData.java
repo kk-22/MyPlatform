@@ -6,6 +6,7 @@ import android.graphics.Point;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
+import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
@@ -225,14 +226,17 @@ public class PLMSSkillData {
 	public void updateRemainingHPOfSupportUnit(PLMSSupportForecast forecast) {
 		PLMSSupportUnit supportUnit = forecast.getLeftUnit();
 		PLMSSupportUnit targetUnit = forecast.getRightUnit();
+		MYArrayList<PLMSUnitInterface> targetArray = getTargetUnitViewArray(supportUnit, null);
+		if (mTargetType != TargetType.NONE && targetArray.size() == 0) {
+			return;
+		}
+
 		switch (mEffectType) {
 			case FLUCTUATE_HP: {
-				targetUnit.setDiffHP(mSkillModel.getEffectValue());
-				break;
-			}
-			case HEAL_ME_TOO: {
-				supportUnit.setDiffHP(mSkillModel.getEffectValue());
-				targetUnit.setDiffHP(mSkillModel.getEffectValue());
+				for (PLMSUnitInterface unitInterface : targetArray) {
+					PLMSSupportUnit unit = MYOtherUtil.castObject(unitInterface, PLMSSupportUnit.class);
+					unit.setDiffHP(mSkillModel.getEffectValue());
+				}
 				break;
 			}
 			case SAINTS: {
@@ -396,6 +400,15 @@ public class PLMSSkillData {
 			case TEAM_IN_RANGE: {
 				PLMSArmyStrategy army = skillUnit.getUnitData().getArmyStrategy();
 				resultArray = getInRangeUnitArray(skillUnit, battleForecast, army.getAliveUnitViewArray());
+				break;
+			}
+			case TARGET: {
+				resultArray.add(skillUnit.getAnotherUnit());
+				break;
+			}
+			case TARGET_AND_SELF: {
+				resultArray.add(skillUnit);
+				resultArray.add(skillUnit.getAnotherUnit());
 				break;
 			}
 			case TEAM_OTHER_THAN_ME:
