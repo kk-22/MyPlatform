@@ -12,4 +12,5 @@ public interface PLMSUnitInterface {
 	PLMSUnitData getUnitData();
 	int getRemainingHP();
 	boolean isAlive();
+	PLMSUnitInterface getAnotherUnit();
 }

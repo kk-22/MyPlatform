@@ -168,6 +168,11 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		return (getRemainingHP() > 0);
 	}
 
+	@Override
+	public PLMSUnitInterface getAnotherUnit() {
+		return null;
+	}
+
 	public Point getCurrentPoint() {
 		return mCurrentPoint;
 	}

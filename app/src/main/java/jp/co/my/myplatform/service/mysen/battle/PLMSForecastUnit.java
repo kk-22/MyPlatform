@@ -42,4 +42,10 @@ public class PLMSForecastUnit implements PLMSUnitInterface {
 	public boolean isAlive() {
 		return (mRemainingHP > 0) ;
 	}
+
+	@Override
+	public PLMSForecastUnit getAnotherUnit() {
+		// サブクラスで実装
+		return null;
+	}
 }

@@ -9,7 +9,7 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
 public class PLMSBattleUnit extends PLMSForecastUnit {
 
-	private PLMSBattleUnit mEnemyUnit;
+	private PLMSBattleUnit mAnotherUnit;
 	private int[] mBattleBuffs;
 	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
 	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
@@ -30,11 +30,11 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		} else if (mChasePoint < 0) {
 			return false;
 		}
-		return mEnemyUnit.getBattleSpeed() + 5 <= getBattleSpeed();
+		return mAnotherUnit.getBattleSpeed() + 5 <= getBattleSpeed();
 	}
 
 	public int getDefenseForEnemyAttack() {
-		if (mEnemyUnit.getUnitView().getUnitData().getWeapon().isPhysicalAttack()) {
+		if (mAnotherUnit.getUnitView().getUnitData().getWeapon().isPhysicalAttack()) {
 			return getBattleDefense();
 		} else {
 			return getBattleMagicDefense();
@@ -42,7 +42,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	}
 
 	public void initParamsWithEnemyUnit(int threeWayRatio) {
-		PLMSColorData enemyColor = mEnemyUnit.getUnitView().getUnitData().getColor();
+		PLMSColorData enemyColor = mAnotherUnit.getUnitView().getUnitData().getColor();
 		int compatibility = mUnitView.getUnitData().getColor().threeWayCompatibility(enemyColor);
 		// 正負どちらでも0に近い値を採用する
 		// Math.floor は負の値の時にも低い値を採用するため使用不可
@@ -63,6 +63,11 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	}
 
 	// getter
+	@Override
+	public PLMSBattleUnit getAnotherUnit() {
+		return mAnotherUnit;
+	}
+
 	public int getBattleAttack() {
 		return getBattleParameterOfNo(PLMSUnitData.PARAMETER_ATTACK);
 	}
@@ -83,21 +88,17 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		return mTotalAttack;
 	}
 
-	public PLMSBattleUnit getEnemyUnit() {
-		return mEnemyUnit;
-	}
-
 	public MYArrayList<PLMSSkillData.EffectType> getSkillEffectArray() {
 		return mSkillEffectArray;
 	}
 
 	// setter
-	public void setRemainingHP(int remainingHP) {
-		mRemainingHP = remainingHP;
+	public void setAnotherUnit(PLMSBattleUnit anotherUnit) {
+		mAnotherUnit = anotherUnit;
 	}
 
-	public void setEnemyUnit(PLMSBattleUnit enemyUnit) {
-		mEnemyUnit = enemyUnit;
+	public void setRemainingHP(int remainingHP) {
+		mRemainingHP = remainingHP;
 	}
 
 	// TODO: battleBuffは最大値採用方式ではなく加算方式

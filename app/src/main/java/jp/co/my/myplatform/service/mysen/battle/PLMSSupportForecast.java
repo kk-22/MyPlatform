@@ -15,6 +15,9 @@ public class PLMSSupportForecast extends PLMSBaseForecast {
 		mLeftSupportUnit = new PLMSSupportUnit(leftUnitView, leftLandView);
 		mRightSupportUnit = new PLMSSupportUnit(rightUnitView, rightLandView);
 
+		mLeftSupportUnit.setAnotherUnit(mRightSupportUnit);
+		mRightSupportUnit.setAnotherUnit(mLeftSupportUnit);
+
 		PLMSSkillData supportSkill = leftUnitView.getUnitData().getSupportSkillData();
 		supportSkill.updateRemainingHPOfSupportUnit(this);
 	}

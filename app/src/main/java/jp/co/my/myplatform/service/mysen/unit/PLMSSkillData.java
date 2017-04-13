@@ -89,7 +89,7 @@ public class PLMSSkillData {
 			default: return;
 		}
 
-		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+		PLMSBattleUnit enemyUnit = battleUnit.getAnotherUnit();
 		if (!canExecuteSkill(skillUnit)) {
 			return;
 		}
@@ -163,20 +163,20 @@ public class PLMSSkillData {
 				break;
 			}
 			case PUSH_TARGET: {
-				PLMSUnitInterface enemyUnit = battleUnit.getEnemyUnit();
+				PLMSUnitInterface enemyUnit = battleUnit.getAnotherUnit();
 				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), 1);
 				moveUnit(unitView, null, enemyUnit, enemyPoint);
 				break;
 			}
 			case HIKI_YOSE: {
-				PLMSUnitInterface enemyUnit = battleUnit.getEnemyUnit();
+				PLMSUnitInterface enemyUnit = battleUnit.getAnotherUnit();
 				Point selfPoint = MYPointUtil.getMovePoint(enemyUnit.getLandView().getPoint(), unitView.getLandView().getPoint(), 1);
 				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), -1);
 				moveUnit(unitView, selfPoint, enemyUnit, enemyPoint);
 				break;
 			}
 			case IRE_KAE: {
-				PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+				PLMSBattleUnit enemyUnit = battleUnit.getAnotherUnit();
 				Point enemyPoint = (enemyUnit.isAlive()) ? unitView.getCurrentPoint() : null;
 				moveUnit(unitView, enemyUnit.getUnitView().getCurrentPoint(), enemyUnit, enemyPoint);
 				break;
@@ -333,7 +333,6 @@ public class PLMSSkillData {
 				return false;
 			}
 			case FLUCTUATE_HP:
-			case HEAL_ME_TOO:
 			case SAINTS:
 			case REVERSE:
 			case DEDICATION:
@@ -402,7 +401,7 @@ public class PLMSSkillData {
 			case TEAM_OTHER_THAN_ME:
 				break;
 			case ENEMY: {
-				PLMSBattleUnit enemyUnit = battleForecast.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
+				PLMSBattleUnit enemyUnit = battleForecast.getBattleUnitOfUnitTeam(skillUnit).getAnotherUnit();
 				if (!enemyUnit.isAlive()) {
 					break;
 				}
@@ -410,7 +409,7 @@ public class PLMSSkillData {
 				break;
 			}
 			case ENEMY_IN_ENEMY_RANGE: {
-				PLMSBattleUnit enemy = battleForecast.getBattleUnitOfUnitTeam(skillUnit).getEnemyUnit();
+				PLMSBattleUnit enemy = battleForecast.getBattleUnitOfUnitTeam(skillUnit).getAnotherUnit();
 				PLMSArmyStrategy army = enemy.getUnitData().getArmyStrategy();
 				resultArray = getInRangeUnitArray(enemy, battleForecast, army.getAliveUnitViewArray());
 				break;

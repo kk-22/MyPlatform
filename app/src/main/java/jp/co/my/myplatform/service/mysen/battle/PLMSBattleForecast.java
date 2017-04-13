@@ -25,8 +25,8 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 		mLeftUnit = new PLMSBattleUnit(leftUnitView, leftLandView);
 		mRightUnit = new PLMSBattleUnit(rightUnitView, rightLandView);
 
-		mLeftUnit.setEnemyUnit(mRightUnit);
-		mRightUnit.setEnemyUnit(mLeftUnit);
+		mLeftUnit.setAnotherUnit(mRightUnit);
+		mRightUnit.setAnotherUnit(mLeftUnit);
 		mBattleUnitArray = new MYArrayList<>(2);
 		mBattleUnitArray.add(mLeftUnit);
 		mBattleUnitArray.add(mRightUnit);
@@ -50,7 +50,7 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 
 	// 戦闘 Info に表示するダメージ値
 	public int givingDamageOfBattleUnit(PLMSBattleUnit battleUnit) {
-		PLMSBattleUnit enemyUnit = battleUnit.getEnemyUnit();
+		PLMSBattleUnit enemyUnit = battleUnit.getAnotherUnit();
 		int damage = battleUnit.getTotalAttack() - enemyUnit.getDefenseForEnemyAttack();
 		return Math.max(0, damage);
 	}
@@ -60,7 +60,7 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 		int maxScene = mAttackerArray.size();
 		for (int i = 0; i < maxScene; i++) {
 			PLMSBattleUnit attackerUnit = mAttackerArray.get(i);
-			PLMSBattleUnit defenderUnit = attackerUnit.getEnemyUnit();
+			PLMSBattleUnit defenderUnit = attackerUnit.getAnotherUnit();
 			PLMSBattleScene scene = new PLMSBattleScene(attackerUnit, defenderUnit);
 			mSceneArray.add(scene);
 
@@ -93,7 +93,7 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 			} else {
 				firstAttacker = mLeftUnit;
 			}
-			secondAttacker = firstAttacker.getEnemyUnit();
+			secondAttacker = firstAttacker.getAnotherUnit();
 		} else {
 			firstAttacker = mLeftUnit;
 			secondAttacker = null;
