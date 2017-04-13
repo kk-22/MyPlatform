@@ -118,11 +118,6 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
-				if (mMovingUnitView == unitView) {
-					// ドラッグ開始直後に離すと呼ばれる
-					finishMoveEvent();
-					break;
-				}
 				if (shouldDoubleTapEvent()) {
 					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 						// 未行動ユニットダブルタップで行動終了
