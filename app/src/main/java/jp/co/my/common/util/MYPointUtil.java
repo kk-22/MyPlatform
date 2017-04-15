@@ -27,12 +27,15 @@ public class MYPointUtil {
 
 	// rootPoint から見て number 分動かした位置を取得
 	public static Point getMovePoint(Point rootPoint, Point movePoint, int number) {
+		if (number == 0) {
+			return null;
+		}
 		int direction = getDirection(rootPoint, movePoint);
 		switch (direction) {
-			case 1: return new Point(movePoint.x, movePoint.y + number);
-			case 2: return new Point(movePoint.x + number, movePoint.y);
-			case 3: return new Point(movePoint.x, movePoint.y - number);
-			case 4: return new Point(movePoint.x - number, movePoint.y);
+			case 1: return new Point(movePoint.x, movePoint.y - number);
+			case 2: return new Point(movePoint.x - number, movePoint.y);
+			case 3: return new Point(movePoint.x, movePoint.y + number);
+			case 4: return new Point(movePoint.x + number, movePoint.y);
 			default: return null;
 		}
 	}

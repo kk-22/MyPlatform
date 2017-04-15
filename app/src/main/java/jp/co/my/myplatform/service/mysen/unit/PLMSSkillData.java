@@ -163,23 +163,13 @@ public class PLMSSkillData {
 				setBuffToUnitArray(targetArray);
 				break;
 			}
-			case PUSH_TARGET: {
+			case CHANGE_POSITION: {
 				PLMSUnitInterface enemyUnit = battleUnit.getAnotherUnit();
-				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), 1);
-				moveUnit(unitView, null, enemyUnit, enemyPoint);
-				break;
-			}
-			case HIKI_YOSE: {
-				PLMSUnitInterface enemyUnit = battleUnit.getAnotherUnit();
-				Point selfPoint = MYPointUtil.getMovePoint(enemyUnit.getLandView().getPoint(), unitView.getLandView().getPoint(), 1);
-				Point enemyPoint = MYPointUtil.getMovePoint(unitView.getLandView().getPoint(), enemyUnit.getLandView().getPoint(), -1);
-				moveUnit(unitView, selfPoint, enemyUnit, enemyPoint);
-				break;
-			}
-			case IRE_KAE: {
-				PLMSBattleUnit enemyUnit = battleUnit.getAnotherUnit();
-				Point enemyPoint = (enemyUnit.isAlive()) ? unitView.getCurrentPoint() : null;
-				moveUnit(unitView, enemyUnit.getUnitView().getCurrentPoint(), enemyUnit, enemyPoint);
+				Point selfLandPoint = battleUnit.getLandView().getPoint();
+				Point enemyLandPoint = enemyUnit.getLandView().getPoint();
+				Point selfMovePoint = MYPointUtil.getMovePoint(enemyLandPoint, selfLandPoint, mSkillModel.getEffectValue());
+				Point enemyMovePoint = MYPointUtil.getMovePoint(selfLandPoint, enemyLandPoint, mSkillModel.getEffectSubValue());
+				moveUnit(unitView, selfMovePoint, enemyUnit, enemyMovePoint);
 				break;
 			}
 			default:
@@ -303,15 +293,7 @@ public class PLMSSkillData {
 				setBuffToUnitArray(new MYArrayList<PLMSUnitInterface>(targetUnit));
 				break;
 			}
-			case PUSH_TARGET:
-				break;
-			case HIKI_YOSE:
-				break;
-			case IRE_KAE:
-				break;
-			case HIKI_MODOSI:
-				break;
-			case MAWARI_KOMI:
+			case CHANGE_POSITION:
 				break;
 			case AGAIN_ACTION:
 				break;
@@ -341,15 +323,7 @@ public class PLMSSkillData {
 			case REVERSE:
 			case DEDICATION:
 				return (targetUnitView.getRemainingHP() < targetData.getMaxHP());
-			case PUSH_TARGET:
-				break;
-			case HIKI_YOSE:
-				break;
-			case IRE_KAE:
-				break;
-			case HIKI_MODOSI:
-				break;
-			case MAWARI_KOMI:
+			case CHANGE_POSITION:
 				break;
 			case AGAIN_ACTION:
 				break;
@@ -677,7 +651,7 @@ public class PLMSSkillData {
 		DISABLE_CHASE_ATTACK(26), KILL_WEAPON(27), PREEMPTIVE_ATTACK(28),
 		SLIP_MOVE(31),WARP_TO_TEAM(32), WARP_TO_TEAM_OF_LESS_HP(33), BLOCK_ENEMY_MOVE(36),
 		THREE_WAY_INTENSIFICATION(41), ALL_RANGE_COUNTER(42), PROTECT_WEAKNESS_ATTACK(43),
-		PUSH_TARGET(51), HIKI_YOSE(52), IRE_KAE(53), HIKI_MODOSI(54), MAWARI_KOMI(55), AGAIN_ACTION(56),
+		CHANGE_POSITION(51), AGAIN_ACTION(56),
 		SAINTS(61), REVERSE(62), DEDICATION(63), MUTUAL_ASSISTANCE(64),
 		IKKATU(71);
 

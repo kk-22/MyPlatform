@@ -36,15 +36,19 @@ public class PLMSSkillModel extends PLBaseModel {
 	@Column
 	private int targetRange; // 効果範囲の値
 	@Column
-	private int targetWeapon; // 効果範囲の値
+	private int targetWeapon; // 効果対象の武器
 	@Column
-	private int targetBranch; // 効果範囲の値
+	private int targetBranch; // 効果対象の兵科
 	@Column
 	private int effectType; // 効果内容
 	@Column
 	private int effectValue; // 効果の値
 	@Column
+	private int effectSubValue; // 効果の値2
+	@Column
 	private int statusType;	// 効果対象のステータス
+	@Column
+	private int weakness; // 特効
 
 	@Override
 	public void initFromJson(JSONObject jsonObject) throws JSONException {
@@ -62,7 +66,9 @@ public class PLMSSkillModel extends PLBaseModel {
 		targetBranch = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_branch");
 		effectType = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_no");
 		effectValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_value");
+		effectSubValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_sub_value");
 		statusType = MYJsonUtil.parseIntIfNonNull(jsonObject, "status_no");
+		weakness = MYJsonUtil.parseIntIfNonNull(jsonObject, "weakness");
 	}
 
 	@Override
@@ -175,11 +181,27 @@ public class PLMSSkillModel extends PLBaseModel {
 		this.effectValue = effectValue;
 	}
 
+	public int getEffectSubValue() {
+		return effectSubValue;
+	}
+
+	public void setEffectSubValue(int effectSubValue) {
+		this.effectSubValue = effectSubValue;
+	}
+
 	public int getStatusType() {
 		return statusType;
 	}
 
 	public void setStatusType(int statusType) {
 		this.statusType = statusType;
+	}
+
+	public int getWeakness() {
+		return weakness;
+	}
+
+	public void setWeakness(int weakness) {
+		this.weakness = weakness;
 	}
 }
