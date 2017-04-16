@@ -16,6 +16,7 @@ import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
+import jp.co.my.myplatform.service.mysen.battle.PLMSForecastUnit;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
 
@@ -164,12 +165,7 @@ public class PLMSSkillData {
 				break;
 			}
 			case CHANGE_POSITION: {
-				PLMSUnitInterface enemyUnit = battleUnit.getAnotherUnit();
-				Point selfLandPoint = battleUnit.getLandView().getPoint();
-				Point enemyLandPoint = enemyUnit.getLandView().getPoint();
-				Point selfMovePoint = MYPointUtil.getMovePoint(enemyLandPoint, selfLandPoint, mSkillModel.getEffectValue());
-				Point enemyMovePoint = MYPointUtil.getMovePoint(selfLandPoint, enemyLandPoint, mSkillModel.getEffectSubValue());
-				moveUnit(unitView, selfMovePoint, enemyUnit, enemyMovePoint);
+				moveUnit(battleUnit);
 				break;
 			}
 			default:
@@ -453,52 +449,57 @@ public class PLMSSkillData {
 	}
 
 	// ユニットの移動。片方のユニットしか移動しない場合は Point が null
-	private void moveUnit(PLMSUnitInterface skillUnit, Point skillPoint,
-						  PLMSUnitInterface targetUnit, Point targetPoint) {
-		PLMSLandView skillLandView = mArgument.getFieldView().getLandViewForPoint(skillPoint);
-		PLMSLandView targetLandView = mArgument.getFieldView().getLandViewForPoint(targetPoint);
-		Boolean canMoveSkillUnit = skillLandView != null && canMoveUnit(skillUnit, skillLandView, targetUnit);
-		Boolean canMoveTargetUnit = targetLandView != null && canMoveUnit(targetUnit, targetLandView, skillUnit);
-		if ((skillPoint != null && skillUnit.getLandView().equals(targetLandView) && !canMoveSkillUnit)
-				|| (targetPoint != null && targetUnit.getLandView().equals(skillLandView) && !canMoveTargetUnit)
-				|| (!canMoveSkillUnit && !canMoveTargetUnit)) {
-			// 移動先にいる一方のユニットが移動不可であるため、もう一方のユニットも移動不可
+	private void moveUnit(PLMSForecastUnit skillUnit) {
+		PLMSForecastUnit targetUnit = skillUnit.getAnotherUnit();
+		PLMSUnitView skillUnitView = skillUnit.getUnitView();
+		PLMSUnitView targetUnitView = targetUnit.getUnitView();
+		PLMSLandView skillLandView = getMoveLandView(skillUnitView, targetUnitView, mSkillModel.getEffectValue());
+		PLMSLandView targetLandView = getMoveLandView(targetUnitView, skillUnitView, mSkillModel.getEffectSubValue());
+		if ((skillLandView == null && mSkillModel.getEffectValue() != 0 && skillUnit.isAlive())
+				|| (targetLandView == null && mSkillModel.getEffectSubValue() != 0 && targetUnit.isAlive())) {
+			// 移動不可
 			return;
 		}
 
 		PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
-		if (canMoveSkillUnit) {
-			PLMSUnitView skillUnitView = skillUnit.getUnitView();
+		if (skillLandView != null) {
 			animatorArray.add(animationManager.getMovementAnimation(skillUnitView, skillUnit.getLandView(), skillLandView));
 			skillUnitView.moveToLand(skillLandView);
 		}
-		if (canMoveTargetUnit) {
-			PLMSUnitView targetUnitView = targetUnit.getUnitView();
+		if (targetLandView != null) {
 			animatorArray.add(animationManager.getMovementAnimation(targetUnitView, targetUnit.getLandView(), targetLandView));
 			targetUnitView.moveToLand(targetLandView);
-		}
-		if (animatorArray.size() == 0) {
-			return;
 		}
 		animationManager.addTogetherAnimatorArray(animatorArray);
 	}
 
+	// TODO:絶対値2以上の移動の場合、2マス先が移動不可ならその手前まで移動
+	// TODO: getMoveLandView メソッドを包むメソッドを作り0になるまで順次チェックする
 	// ignoreUnit : 移動時に位置を無視する UnitView
-	private boolean canMoveUnit(PLMSUnitInterface moveUnit, PLMSLandView targetLandView, PLMSUnitInterface ignoreUnit) {
-		PLMSUnitData unitData = moveUnit.getUnitData();
+	private PLMSLandView getMoveLandView(PLMSUnitView moveUnitView, PLMSUnitView ignoreUnitView, int moveValue) {
+		if (moveValue == 0 || !moveUnitView.isAlive()) {
+			return null;
+		}
+		Point anotherLandPoint = ignoreUnitView.getLandView().getPoint();
+		Point currentLandPoint = moveUnitView.getLandView().getPoint();
+		Point targetPoint = MYPointUtil.getMovePoint(anotherLandPoint, currentLandPoint, moveValue);
+		PLMSLandView targetLandView = mArgument.getFieldView().getLandViewForPoint(targetPoint);
+		if (targetLandView == null) {
+			// フィールド範囲外
+			return null;
+		}
+		PLMSUnitData unitData = moveUnitView.getUnitData();
 		if (unitData.moveCost(targetLandView.getLandData()) >= 9) {
 			// 侵入不可の地形
-			return false;
+			return null;
 		}
 		PLMSUnitView landUnitView = targetLandView.getUnitView();
-		PLMSUnitView ignoreUnitView = ignoreUnit.getUnitView();
 		if (landUnitView != null && !ignoreUnitView.equals(landUnitView)) {
 			// 他のユニットが移動先にいる
-			return false;
+			return null;
 		}
-		PLMSLandView currentLandView = moveUnit.getLandView();
-		PLMSUnitView moveUnitView = moveUnit.getUnitView();
+		PLMSLandView currentLandView = moveUnitView.getLandView();
 		MYArrayList<Point> halfwayPointArray = MYPointUtil.getHalfwayPointArray(
 				currentLandView.getPoint(), targetLandView.getPoint());
 		for (Point point : halfwayPointArray) {
@@ -506,10 +507,10 @@ public class PLMSSkillData {
 			PLMSUnitView unitView = landView.getUnitView();
 			if (moveUnitView.isEnemy(unitView) && !ignoreUnitView.equals(unitView)) {
 				// 移動経路の途中に敵ユニット
-				return false;
+				return null;
 			}
 		}
-		return true;
+		return targetLandView;
 	}
 
 	private void setBuffToUnitArray(MYArrayList<PLMSUnitInterface> targetUnitArray) {

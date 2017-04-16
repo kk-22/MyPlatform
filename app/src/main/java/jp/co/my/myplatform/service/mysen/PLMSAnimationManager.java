@@ -163,6 +163,9 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 	}
 
 	public void addTogetherAnimatorArray(MYArrayList<Animator> animatorArray) {
+		if (animatorArray.size() == 0) {
+			return;
+		}
 		AnimatorSet animatorSet = new AnimatorSet();
 		animatorSet.playTogether(animatorArray);
 		addAnimator(animatorSet);
