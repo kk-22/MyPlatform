@@ -321,8 +321,9 @@ public class PLMSSkillData {
 			case DEDICATION:
 				return (targetUnitView.getRemainingHP() < targetData.getMaxHP());
 			case CHANGE_POSITION: {
-				PLMSLandView skillMoveLandView = getMoveLandView(skillUnitView, targetUnitView, mSkillModel.getEffectValue());
-				PLMSLandView targetMoveLandView = getMoveLandView(targetUnitView, skillUnitView, mSkillModel.getEffectSubValue());
+				PLMSSupportUnit skillUnit = new PLMSSupportUnit(skillUnitView, skillLandView);
+				PLMSLandView skillMoveLandView = getMoveLandView(skillUnit, targetUnitView, mSkillModel.getEffectValue());
+				PLMSLandView targetMoveLandView = getMoveLandView(targetUnitView, skillUnit, mSkillModel.getEffectSubValue());
 				return  ((mSkillModel.getEffectValue() == 0 || skillMoveLandView != null)
 						&& (mSkillModel.getEffectSubValue() != 0 && targetMoveLandView != null));
 			}
@@ -456,10 +457,8 @@ public class PLMSSkillData {
 	// ユニットの移動。片方のユニットしか移動しない場合は Point が null
 	private void moveUnit(PLMSForecastUnit skillUnit) {
 		PLMSForecastUnit targetUnit = skillUnit.getAnotherUnit();
-		PLMSUnitView skillUnitView = skillUnit.getUnitView();
-		PLMSUnitView targetUnitView = targetUnit.getUnitView();
-		PLMSLandView skillLandView = getMoveLandView(skillUnitView, targetUnitView, mSkillModel.getEffectValue());
-		PLMSLandView targetLandView = getMoveLandView(targetUnitView, skillUnitView, mSkillModel.getEffectSubValue());
+		PLMSLandView skillLandView = getMoveLandView(skillUnit, targetUnit, mSkillModel.getEffectValue());
+		PLMSLandView targetLandView = getMoveLandView(targetUnit, skillUnit, mSkillModel.getEffectSubValue());
 		if ((skillLandView == null && mSkillModel.getEffectValue() != 0 && skillUnit.isAlive())
 				|| (targetLandView == null && mSkillModel.getEffectSubValue() != 0 && targetUnit.isAlive())) {
 			// 移動不可
@@ -469,10 +468,12 @@ public class PLMSSkillData {
 		PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		if (skillLandView != null) {
+			PLMSUnitView skillUnitView = skillUnit.getUnitView();
 			animatorArray.add(animationManager.getMovementAnimation(skillUnitView, skillUnit.getLandView(), skillLandView));
 			skillUnitView.moveToLand(skillLandView);
 		}
 		if (targetLandView != null) {
+			PLMSUnitView targetUnitView = targetUnit.getUnitView();
 			mArgument.getAreaManager().getAvailableAreaCover().changeCover(targetUnitView.getLandView(), targetLandView);
 
 			animatorArray.add(animationManager.getMovementAnimation(targetUnitView, targetUnit.getLandView(), targetLandView));
@@ -484,35 +485,36 @@ public class PLMSSkillData {
 	// TODO:絶対値2以上の移動の場合、2マス先が移動不可ならその手前まで移動
 	// TODO: getMoveLandView メソッドを包むメソッドを作り0になるまで順次チェックする
 	// ignoreUnit : 移動時に位置を無視する UnitView
-	private PLMSLandView getMoveLandView(PLMSUnitView moveUnitView, PLMSUnitView ignoreUnitView, int moveValue) {
-		if (moveValue == 0 || !moveUnitView.isAlive()) {
+	private PLMSLandView getMoveLandView(PLMSUnitInterface moveUnit, PLMSUnitInterface ignoreUnit, int moveValue) {
+		if (moveValue == 0 || !moveUnit.isAlive()) {
 			return null;
 		}
-		Point anotherLandPoint = ignoreUnitView.getLandView().getPoint();
-		Point currentLandPoint = moveUnitView.getLandView().getPoint();
-		Point targetPoint = MYPointUtil.getMovePoint(anotherLandPoint, currentLandPoint, moveValue);
+		Point ignoreLandPoint = ignoreUnit.getLandView().getPoint();
+		Point currentLandPoint = moveUnit.getLandView().getPoint();
+		Point targetPoint = MYPointUtil.getMovePoint(ignoreLandPoint, currentLandPoint, moveValue);
 		PLMSLandView targetLandView = mArgument.getFieldView().getLandViewForPoint(targetPoint);
 		if (targetLandView == null) {
 			// フィールド範囲外
 			return null;
 		}
-		PLMSUnitData unitData = moveUnitView.getUnitData();
+		PLMSUnitData unitData = moveUnit.getUnitData();
 		if (unitData.moveCost(targetLandView.getLandData()) >= 9) {
 			// 侵入不可の地形
 			return null;
 		}
 		PLMSUnitView landUnitView = targetLandView.getUnitView();
+		PLMSUnitView ignoreUnitView = ignoreUnit.getUnitView();
 		if (landUnitView != null && !ignoreUnitView.equals(landUnitView)) {
 			// 他のユニットが移動先にいる
 			return null;
 		}
-		PLMSLandView currentLandView = moveUnitView.getLandView();
+		PLMSLandView currentLandView = moveUnit.getLandView();
 		MYArrayList<Point> halfwayPointArray = MYPointUtil.getHalfwayPointArray(
 				currentLandView.getPoint(), targetLandView.getPoint());
 		for (Point point : halfwayPointArray) {
 			PLMSLandView landView = mArgument.getFieldView().getLandViewForPoint(point);
 			PLMSUnitView unitView = landView.getUnitView();
-			if (moveUnitView.isEnemy(unitView) && !ignoreUnitView.equals(unitView)) {
+			if (moveUnit.getUnitView().isEnemy(unitView) && !ignoreUnitView.equals(unitView)) {
 				// 移動経路の途中に敵ユニット
 				return null;
 			}
