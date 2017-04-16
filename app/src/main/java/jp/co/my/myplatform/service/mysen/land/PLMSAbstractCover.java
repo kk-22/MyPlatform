@@ -41,25 +41,31 @@ abstract class PLMSAbstractCover {
 		int coverIndex = mParentViewArray.size();
 		for (int i = 0; i < landViews.size(); i++) {
 			PLMSLandView landView = landViews.get(i);
-			View coverView = getCoverView(coverIndex, landView, landViews);
-			landView.addView(coverView, new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-			mParentViewArray.add(landView);
+			showCoverView(coverIndex, landView, landViews);
 			coverIndex++;
 		}
 	}
 
-	public void hideCoverView(PLMSLandView targetView) {
+	private void showCoverView(int index, PLMSLandView landView, ArrayList<PLMSLandView> landViews) {
+		View coverView = getCoverView(index, landView, landViews);
+		landView.addView(coverView, new FrameLayout.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		mParentViewArray.add(landView);
+	}
+
+	public int hideCoverView(PLMSLandView targetView) {
 		if (!mParentViewArray.remove(targetView)) {
-			return;
+			return -1;
 		}
-		for (View coverView : mCoverViewArray) {
+		int coverSize = mCoverViewArray.size();
+		for (int i = 0; i < coverSize; i++) {
+			View coverView = mCoverViewArray.get(i);
 			if (coverView.getParent() == targetView) {
 				targetView.removeView(coverView);
-				break;
+				return i;
 			}
 		}
+		return -1;
 	}
 
 	public void hideAllCoverViews() {
@@ -71,6 +77,16 @@ abstract class PLMSAbstractCover {
 
 	public boolean isShowingCover(PLMSLandView landView) {
 		return mParentViewArray.contains(landView);
+	}
+
+	// coverView の付け替え
+	public void changeCover(PLMSLandView from, PLMSLandView to) {
+		int index = hideCoverView(from);
+		if (index == -1) {
+			// 表示されていなかった
+			return;
+		}
+		showCoverView(index, to, null);
 	}
 
 	// getter and setter

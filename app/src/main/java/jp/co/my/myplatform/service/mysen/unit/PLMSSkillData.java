@@ -290,6 +290,7 @@ public class PLMSSkillData {
 				break;
 			}
 			case CHANGE_POSITION:
+				moveUnit(supportUnit);
 				break;
 			case AGAIN_ACTION:
 				break;
@@ -319,8 +320,12 @@ public class PLMSSkillData {
 			case REVERSE:
 			case DEDICATION:
 				return (targetUnitView.getRemainingHP() < targetData.getMaxHP());
-			case CHANGE_POSITION:
-				break;
+			case CHANGE_POSITION: {
+				PLMSLandView skillMoveLandView = getMoveLandView(skillUnitView, targetUnitView, mSkillModel.getEffectValue());
+				PLMSLandView targetMoveLandView = getMoveLandView(targetUnitView, skillUnitView, mSkillModel.getEffectSubValue());
+				return  ((mSkillModel.getEffectValue() == 0 || skillMoveLandView != null)
+						&& (mSkillModel.getEffectSubValue() != 0 && targetMoveLandView != null));
+			}
 			case AGAIN_ACTION:
 				break;
 			case MUTUAL_ASSISTANCE:
@@ -468,6 +473,8 @@ public class PLMSSkillData {
 			skillUnitView.moveToLand(skillLandView);
 		}
 		if (targetLandView != null) {
+			mArgument.getAreaManager().getAvailableAreaCover().changeCover(targetUnitView.getLandView(), targetLandView);
+
 			animatorArray.add(animationManager.getMovementAnimation(targetUnitView, targetUnit.getLandView(), targetLandView));
 			targetUnitView.moveToLand(targetLandView);
 		}
