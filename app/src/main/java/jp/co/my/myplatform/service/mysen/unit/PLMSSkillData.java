@@ -325,7 +325,7 @@ public class PLMSSkillData {
 				PLMSLandView skillMoveLandView = getMoveLandView(skillUnit, targetUnitView, mSkillModel.getEffectValue());
 				PLMSLandView targetMoveLandView = getMoveLandView(targetUnitView, skillUnit, mSkillModel.getEffectSubValue());
 				return  ((mSkillModel.getEffectValue() == 0 || skillMoveLandView != null)
-						&& (mSkillModel.getEffectSubValue() != 0 && targetMoveLandView != null));
+						&& (mSkillModel.getEffectSubValue() == 0 || targetMoveLandView != null));
 			}
 			case AGAIN_ACTION:
 				break;
