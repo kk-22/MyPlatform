@@ -85,12 +85,18 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		mAlreadyActionView.setVisibility(VISIBLE);
 	}
 
+	// 再行動可能にする
+	public void againAction() {
+		mAlreadyActionView.setVisibility(GONE);
+	}
+
 	// マップからの離脱
 	public void removeFromField() {
 		mLandView.removeUnitView();
 		MYViewUtil.removeFromSuperView(this);
 	}
 
+	// 行動済みの場合 true を返す
 	public boolean isAlreadyAction() {
 		return (mAlreadyActionView != null && mAlreadyActionView.getVisibility() == VISIBLE);
 	}

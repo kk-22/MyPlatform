@@ -49,6 +49,19 @@ abstract class PLMSAbstractCover {
 		}
 	}
 
+	public void showCoverView(PLMSLandView landView) {
+		// 未使用 view が見つからなければ新規 view を作成するために index に初期値をセット
+		int index = mCoverViewArray.size();
+		for (int i = 0; i < mCoverViewArray.size(); i++) {
+			View view = mCoverViewArray.get(i);
+			if (view.getParent() == null) {
+				index = i;
+				break;
+			}
+		}
+		showCoverView(index, landView, null);
+	}
+
 	private void showCoverView(int index, PLMSLandView landView, ArrayList<PLMSLandView> landViews) {
 		View coverView = getCoverView(index, landView, landViews);
 		landView.addView(coverView, new FrameLayout.LayoutParams(

@@ -292,8 +292,12 @@ public class PLMSSkillData {
 			case CHANGE_POSITION:
 				moveUnit(supportUnit);
 				break;
-			case AGAIN_ACTION:
+			case AGAIN_ACTION: {
+				PLMSUnitView targetUnitView = targetUnit.getUnitView();
+				targetUnitView.againAction();
+				mArgument.getAreaManager().getAvailableAreaCover().showCoverView(targetUnit.getLandView());
 				break;
+			}
 			case IKKATU:
 				break;
 			default:
@@ -327,8 +331,10 @@ public class PLMSSkillData {
 				return  ((mSkillModel.getEffectValue() == 0 || skillMoveLandView != null)
 						&& (mSkillModel.getEffectSubValue() == 0 || targetMoveLandView != null));
 			}
-			case AGAIN_ACTION:
-				break;
+			case AGAIN_ACTION: {
+				return  (targetUnitView.isAlreadyAction()
+						&& targetData.getSupportSkillData().getEffectType() != EffectType.AGAIN_ACTION);
+			}
 			case MUTUAL_ASSISTANCE:
 				break;
 			case IKKATU:
@@ -580,6 +586,10 @@ public class PLMSSkillData {
 
 	public EffectType getEffectType() {
 		return mEffectType;
+	}
+
+	public boolean isAvailable() {
+		return (mSkillModel != null);
 	}
 
 	private static final int SKILL_ATTACK = 0x0001;
