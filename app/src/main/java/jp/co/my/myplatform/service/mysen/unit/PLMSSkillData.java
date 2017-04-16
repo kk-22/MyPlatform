@@ -482,10 +482,22 @@ public class PLMSSkillData {
 		animationManager.addTogetherAnimatorArray(animatorArray);
 	}
 
-	// TODO:絶対値2以上の移動の場合、2マス先が移動不可ならその手前まで移動
-	// TODO: getMoveLandView メソッドを包むメソッドを作り0になるまで順次チェックする
+	// スキルよる移動先の LandView を取得
 	// ignoreUnit : 移動時に位置を無視する UnitView
 	private PLMSLandView getMoveLandView(PLMSUnitInterface moveUnit, PLMSUnitInterface ignoreUnit, int moveValue) {
+		do {
+			PLMSLandView landView = getMoveLandViewOfValue(moveUnit, ignoreUnit, moveValue);
+			if (landView != null) {
+				return landView;
+			}
+			// 相手から離れる方向へ2マス以上移動するスキルの場合、1マス移動まで繰り返す
+			moveValue++;
+		} while (moveValue <= -1);
+		return null;
+	}
+
+	// getMoveLandView メソッドからのみ呼ばれるメソッド
+	private PLMSLandView getMoveLandViewOfValue(PLMSUnitInterface moveUnit, PLMSUnitInterface ignoreUnit, int moveValue) {
 		if (moveValue == 0 || !moveUnit.isAlive()) {
 			return null;
 		}
