@@ -114,15 +114,15 @@ public class PLMSAreaManager {
 	}
 
 	private MYArrayList<PLMSLandView> getSupportableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView moveUnitView) {
-		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
-
-		// 現在地も追加
-		movableLandArray.add(moveUnitView.getLandView());
-
 		PLMSUnitData unitData = moveUnitView.getUnitData();
 		PLMSSkillData supportSkill = unitData.getSupportSkillData();
-		int range = supportSkill.getSkillModel().getTargetRange();
+		if (!supportSkill.isAvailable()) {
+			return null;
+		}
 
+		int range = supportSkill.getSkillModel().getTargetRange();
+		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
+		movableLandArray.add(moveUnitView.getLandView()); // 現在地も追加
 		for (PLMSUnitView teamUnitView : unitData.getArmyStrategy().getAliveUnitViewArray(moveUnitView)) {
 			PLMSLandView teamLandView = teamUnitView.getLandView();
 			Point teamPoint = teamLandView.getPoint();

@@ -38,6 +38,9 @@ abstract class PLMSAbstractCover {
 	}
 
 	public void showCoverViews(ArrayList<PLMSLandView> landViews) {
+		if (landViews == null) {
+			return;
+		}
 		int coverIndex = mParentViewArray.size();
 		for (int i = 0; i < landViews.size(); i++) {
 			PLMSLandView landView = landViews.get(i);
