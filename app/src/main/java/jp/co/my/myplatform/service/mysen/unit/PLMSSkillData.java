@@ -551,7 +551,7 @@ public class PLMSSkillData {
 			for (Integer paramNumber : buffParamNumberArray) {
 				unitData.setBuffOfNo(paramNumber, value);
 			}
-			Animator animator = targetUnit.getUnitView().getBuffAnimator(value);
+			Animator animator = targetUnit.getUnitView().makeBuffAnimator(value);
 			mArgument.getAnimationManager().addTempAnimator(animator, PLMSAnimationManager.ANIMATOR_BUFF);
 		}
 	}

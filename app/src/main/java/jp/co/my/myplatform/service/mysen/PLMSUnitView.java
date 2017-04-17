@@ -133,6 +133,16 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		}
 	}
 
+	// 便利メソッド
+	public boolean isEnemy(PLMSUnitInterface targetUnit) {
+		if (targetUnit == null) {
+			return false;
+		}
+		PLMSArmyStrategy myArmy = mUnitData.getArmyStrategy();
+		PLMSArmyStrategy targetArmy = targetUnit.getUnitData().getArmyStrategy();
+		return !myArmy.equals(targetArmy);
+	}
+
 	// アニメーション
 	public Animator makeCommonAnimator() {
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
@@ -151,14 +161,33 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		return animatorSet;
 	}
 
-	// 便利メソッド
-	public boolean isEnemy(PLMSUnitInterface targetUnit) {
-		if (targetUnit == null) {
-			return false;
+	public Animator makeBuffAnimator(int buffPoint) {
+		if (buffPoint == 0) {
+			return null;
 		}
-		PLMSArmyStrategy myArmy = mUnitData.getArmyStrategy();
-		PLMSArmyStrategy targetArmy = targetUnit.getUnitData().getArmyStrategy();
-		return !myArmy.equals(targetArmy);
+		updateBuffImage(buffPoint);
+
+		MYArrayList<Animator> animatorArray = new MYArrayList<>();
+		float currentY = mBuffImageView.getY();
+		float topY = currentY - getHeight() / 4;
+		// 表示
+		ObjectAnimator showAnimation = ObjectAnimator.ofFloat(mBuffImageView, "alpha", 1);
+		showAnimation.setDuration(1);
+		animatorArray.add(showAnimation);
+
+		// 上へ
+		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mBuffImageView, "y", currentY, topY);
+		upAnimation.setDuration(100);
+		animatorArray.add(upAnimation);
+
+		// 元の位置へ下げる
+		ObjectAnimator downAnimation = ObjectAnimator.ofFloat(mBuffImageView, "y", topY, currentY);
+		downAnimation.setDuration(100);
+		animatorArray.add(downAnimation);
+
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.playSequentially(animatorArray);
+		return animatorSet;
 	}
 
 	// Debug
@@ -210,34 +239,5 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 	public PLMSHitPointBar getHPBar() {
 		return mHPBar;
-	}
-
-	public Animator getBuffAnimator(int buffPoint) {
-		if (buffPoint == 0) {
-			return null;
-		}
-		updateBuffImage(buffPoint);
-
-		MYArrayList<Animator> animatorArray = new MYArrayList<>();
-		float currentY = mBuffImageView.getY();
-		float topY = currentY - getHeight() / 4;
-		// 表示
-		ObjectAnimator showAnimation = ObjectAnimator.ofFloat(mBuffImageView, "alpha", 1);
-		showAnimation.setDuration(1);
-		animatorArray.add(showAnimation);
-
-		// 上へ
-		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mBuffImageView, "y", currentY, topY);
-		upAnimation.setDuration(100);
-		animatorArray.add(upAnimation);
-
-		// 元の位置へ下げる
-		ObjectAnimator downAnimation = ObjectAnimator.ofFloat(mBuffImageView, "y", topY, currentY);
-		downAnimation.setDuration(100);
-		animatorArray.add(downAnimation);
-
-		AnimatorSet animatorSet = new AnimatorSet();
-		animatorSet.playSequentially(animatorArray);
-		return animatorSet;
 	}
 }
