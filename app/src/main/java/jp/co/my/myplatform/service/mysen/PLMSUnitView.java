@@ -21,6 +21,7 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 	private ImageView mUnitImageView;
+	private ImageView mStartsImageView;
 	private ImageView mBuffImageView;
 	private PLMSHitPointBar mHPBar;
 	private View mAlreadyActionView;
@@ -33,6 +34,8 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_unit_view, this);
 		mUnitImageView = (ImageView) findViewById(R.id.image_view);
+		mStartsImageView = (ImageView) findViewById(R.id.starts_image);
+		mStartsImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/stars.png", getContext()));
 		mBuffImageView = (ImageView) findViewById(R.id.buff_image);
 		mHPBar = (PLMSHitPointBar) findViewById(R.id.hp_bar);
 		mAlreadyActionView = findViewById(R.id.already_action_view);
@@ -128,6 +131,24 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		} else {
 			mBuffImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/up_arrow.png", getContext()));
 		}
+	}
+
+	// アニメーション
+	public Animator makeCommonAnimator() {
+		MYArrayList<Animator> animatorArray = new MYArrayList<>();
+		// 表示
+		ObjectAnimator showAnimation = ObjectAnimator.ofFloat(mStartsImageView, "alpha", 1);
+		showAnimation.setDuration(200);
+		animatorArray.add(showAnimation);
+
+		// 上へ
+		ObjectAnimator upAnimation = ObjectAnimator.ofFloat(mStartsImageView, "alpha", 0);
+		upAnimation.setDuration(200);
+		animatorArray.add(upAnimation);
+
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.playSequentially(animatorArray);
+		return animatorSet;
 	}
 
 	// 便利メソッド

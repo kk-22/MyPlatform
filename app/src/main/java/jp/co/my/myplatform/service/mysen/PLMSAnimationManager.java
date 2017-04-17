@@ -178,6 +178,7 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 			runnable.run();
 			return;
 		}
+		// 最期のアニメーション時間が短い場合 listener が呼ばれないことあり
 		lastAnimator.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
