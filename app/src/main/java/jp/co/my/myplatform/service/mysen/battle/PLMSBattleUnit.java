@@ -1,7 +1,7 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
 import jp.co.my.common.util.MYArrayList;
-import jp.co.my.myplatform.service.mysen.PLMSColorData;
+import jp.co.my.myplatform.service.mysen.PLMSBranchData;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
@@ -34,7 +34,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	}
 
 	public int getDefenseForEnemyAttack() {
-		if (mAnotherUnit.getUnitView().getUnitData().getWeapon().isPhysicalAttack()) {
+		if (mAnotherUnit.getUnitView().getUnitData().getBranch().isPhysicalAttack()) {
 			return getBattleDefense();
 		} else {
 			return getBattleMagicDefense();
@@ -42,8 +42,8 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	}
 
 	public void initParamsWithEnemyUnit(int threeWayRatio) {
-		PLMSColorData enemyColor = mAnotherUnit.getUnitView().getUnitData().getColor();
-		int compatibility = mUnitView.getUnitData().getColor().threeWayCompatibility(enemyColor);
+		PLMSBranchData enemyBranch = mAnotherUnit.getUnitView().getUnitData().getBranch();
+		int compatibility = mUnitView.getUnitData().getBranch().threeWayCompatibility(enemyBranch);
 		// 正負どちらでも0に近い値を採用する
 		// Math.floor は負の値の時にも低い値を採用するため使用不可
 		int plusDamage = getBattleAttack() * threeWayRatio / 100 * compatibility;

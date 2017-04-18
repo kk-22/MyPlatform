@@ -432,7 +432,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 
 	// 攻撃地点の取得
 	private PLMSLandView getMoveLandForAttack(PLMSLandView targetLandView) {
-		int range = mMovingUnitView.getUnitData().getWeapon().getAttackRange();
+		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
 		MYArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
 		return getMoveLandViewByRoute(targetAroundLandArray);
 	}

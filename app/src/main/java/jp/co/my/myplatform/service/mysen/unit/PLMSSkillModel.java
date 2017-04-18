@@ -36,9 +36,7 @@ public class PLMSSkillModel extends PLBaseModel {
 	@Column
 	private int targetRange; // 効果範囲の値
 	@Column
-	private int targetWeapon; // 効果対象の武器
-	@Column
-	private int targetBranch; // 効果対象の兵科
+	private int targetBranch; // 効果対象の兵種
 	@Column
 	private int effectType; // 効果内容
 	@Column
@@ -62,7 +60,6 @@ public class PLMSSkillModel extends PLBaseModel {
 		requirementValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "requirement_value");
 		targetType = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_no");
 		targetRange = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_range");
-		targetWeapon = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_weapon");
 		targetBranch = MYJsonUtil.parseIntIfNonNull(jsonObject, "target_branch");
 		effectType = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_no");
 		effectValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_value");
@@ -147,14 +144,6 @@ public class PLMSSkillModel extends PLBaseModel {
 
 	public void setTargetRange(int targetRange) {
 		this.targetRange = targetRange;
-	}
-
-	public int getTargetWeapon() {
-		return targetWeapon;
-	}
-
-	public void setTargetWeapon(int targetWeapon) {
-		this.targetWeapon = targetWeapon;
 	}
 
 	public int getTargetBranch() {

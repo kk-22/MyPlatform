@@ -418,16 +418,15 @@ public class PLMSSkillData {
 				break;
 			}
 		}
-		int targetWeapon = mSkillModel.getTargetWeapon();
 		int targetBranch = mSkillModel.getTargetBranch();
-		if (targetWeapon == 0 && targetBranch == 0) {
+		if (targetBranch == 0) {
 			return resultArray;
 		}
 
 		MYArrayList<PLMSUnitInterface> filteredArray = new MYArrayList<>();
 		for (PLMSUnitInterface unitView : resultArray) {
 			PLMSUnitData unitData = unitView.getUnitData();
-			if (unitData.getWeapon().getNo() == targetWeapon || unitData.getBranch().getNo() == targetBranch) {
+			if ((unitData.getBranch().getNo() & targetBranch) != 0) {
 				filteredArray.add(unitView);
 			}
 		}

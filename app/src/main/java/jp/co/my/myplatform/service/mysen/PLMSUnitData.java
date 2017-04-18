@@ -30,8 +30,6 @@ public class PLMSUnitData {
 	private PLMSArmyStrategy mArmyStrategy;
 	private PLMSArgument mArgument;
 
-	private PLMSColorData mColor;
-	private PLMSWeaponData mWeapon;
 	private PLMSBranchData mBranch;
 	private PLMSSkillData[] mAllSkills;
 	private MYArrayList<PLMSSkillData> mPassiveSkillArray;
@@ -52,8 +50,6 @@ public class PLMSUnitData {
 		mArgument = argument;
 		mAllSkills = new PLMSSkillData[SKILL_NUMBER];
 
-		mColor = new PLMSColorData((mUnitModel.getColorType()));
-		mWeapon = new PLMSWeaponData(mUnitModel.getWeaponType());
 		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
 		mAllSkills[SKILL_WEAPON] = createSkillData(null);
 		mAllSkills[SKILL_SUPPORT] = createSkillData(mUnitModel.getSupportSkillForeign());
@@ -149,14 +145,6 @@ public class PLMSUnitData {
 
 	public Point getFirstPoint() {
 		return mFirstPoint;
-	}
-
-	public PLMSWeaponData getWeapon() {
-		return mWeapon;
-	}
-
-	public PLMSColorData getColor() {
-		return mColor;
 	}
 
 	public PLMSSkillData getSkillOfNo(int no) {

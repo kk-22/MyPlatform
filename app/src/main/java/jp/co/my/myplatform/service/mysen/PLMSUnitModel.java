@@ -42,12 +42,10 @@ public class PLMSUnitModel extends PLBaseModel {
 	@Column
 	private int groupType;
 	@Column
-	private int colorType;
-	@Column
-	private int weaponType;
-	@Column
 	private int branchType;
 
+	@ForeignKey
+	ForeignKeyContainer<PLMSSkillModel> weaponSkillForeign;
 	@ForeignKey
 	ForeignKeyContainer<PLMSSkillModel> supportSkillForeign;
 	@ForeignKey
@@ -77,11 +75,10 @@ public class PLMSUnitModel extends PLBaseModel {
 		magicDefensePoint = jsonObject.getInt("magic_point");
 		totalPoint = jsonObject.getInt("total_point");
 		groupType = jsonObject.getInt("group_type");
-		colorType = jsonObject.getInt("color_type");
-		weaponType = jsonObject.getInt("weapon_type");
-		branchType = jsonObject.getInt("branch_type");
+		branchType = jsonObject.getInt("branch_no");
 
 		mSkillIdArray = new MYArrayList<>();
+		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "weapon_skill_no"));
 		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "support_skill_no"));
 		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "secret_skill_no"));
 		mSkillIdArray.add(MYJsonUtil.parseIntIfNonNull(jsonObject, "passive_a_skill_no"));
@@ -106,11 +103,12 @@ public class PLMSUnitModel extends PLBaseModel {
 			ForeignKeyContainer<PLMSSkillModel> foreign = FlowManager.getContainerAdapter(PLMSSkillModel.class)
 					.toForeignKeyContainer(model);
 			switch (i) {
-				case 0: supportSkillForeign = foreign; break;
-				case 1: secretSkillForeign = foreign; break;
-				case 2: passiveASkillForeign = foreign; break;
-				case 3: passiveBSkillForeign = foreign; break;
-				case 4: passiveCSkillForeign = foreign; break;
+				case 0: weaponSkillForeign = foreign; break;
+				case 1: supportSkillForeign = foreign; break;
+				case 2: secretSkillForeign = foreign; break;
+				case 3: passiveASkillForeign = foreign; break;
+				case 4: passiveBSkillForeign = foreign; break;
+				case 5: passiveCSkillForeign = foreign; break;
 			}
 		}
 	}
@@ -196,22 +194,6 @@ public class PLMSUnitModel extends PLBaseModel {
 		this.groupType = groupType;
 	}
 
-	public int getColorType() {
-		return colorType;
-	}
-
-	public void setColorType(int colorType) {
-		this.colorType = colorType;
-	}
-
-	public int getWeaponType() {
-		return weaponType;
-	}
-
-	public void setWeaponType(int weaponType) {
-		this.weaponType = weaponType;
-	}
-
 	public int getBranchType() {
 		return branchType;
 	}
@@ -226,6 +208,10 @@ public class PLMSUnitModel extends PLBaseModel {
 
 	public void setImageName(String imageName) {
 		this.imageName = imageName;
+	}
+
+	public ForeignKeyContainer<PLMSSkillModel> getWeaponSkillForeign() {
+		return weaponSkillForeign;
 	}
 
 	public ForeignKeyContainer<PLMSSkillModel> getSupportSkillForeign() {

@@ -106,7 +106,7 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 	private void initChildView() {
 		ImageView weaponImage = (ImageView) findViewById(R.id.weapon_image);
-		String weaponPath = mUnitData.getWeapon().getWeaponImagePath();
+		String weaponPath = mUnitData.getBranch().getWeaponImagePath();
 		weaponImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(weaponPath, getContext()));
 
 		// Army による設定

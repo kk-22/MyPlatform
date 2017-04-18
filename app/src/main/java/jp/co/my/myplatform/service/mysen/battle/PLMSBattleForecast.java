@@ -75,8 +75,8 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
 
 		// 反撃判定
-		int distance = mLeftUnit.getUnitView().getUnitData().getWeapon().getAttackRange();
-		boolean canAttackRightAttacker = (mRightUnit.getUnitView().getUnitData().getWeapon().getAttackRange() == distance);
+		int distance = mLeftUnit.getUnitView().getUnitData().getBranch().getAttackRange();
+		boolean canAttackRightAttacker = (mRightUnit.getUnitView().getUnitData().getBranch().getAttackRange() == distance);
 		if (mRightUnit.getSkillEffectArray().contains(EffectType.ALL_RANGE_COUNTER)) {
 			canAttackRightAttacker = true;
 		}
