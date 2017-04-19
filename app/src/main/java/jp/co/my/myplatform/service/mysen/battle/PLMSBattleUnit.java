@@ -13,6 +13,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	private int[] mBattleBuffs;
 	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
 	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
+	private int mNumberOfConsecutiveAttack; // 連続攻撃回数
 
 	private MYArrayList<PLMSSkillData.EffectType> mSkillEffectArray;
 
@@ -22,6 +23,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		mBattleBuffs = new int[PLMSUnitData.PARAMETER_NUMBER];
 		mSkillEffectArray = new MYArrayList<>();
 		mChasePoint = 0;
+		mNumberOfConsecutiveAttack = 1;
 	}
 
 	public boolean canChaseAttack() {
@@ -92,6 +94,10 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		return mSkillEffectArray;
 	}
 
+	public int getNumberOfConsecutiveAttack() {
+		return mNumberOfConsecutiveAttack;
+	}
+
 	// setter
 	public void setAnotherUnit(PLMSBattleUnit anotherUnit) {
 		mAnotherUnit = anotherUnit;
@@ -99,6 +105,10 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 
 	public void setRemainingHP(int remainingHP) {
 		mRemainingHP = remainingHP;
+	}
+
+	public void setNumberOfConsecutiveAttack(int numberOfConsecutiveAttack) {
+		mNumberOfConsecutiveAttack = numberOfConsecutiveAttack;
 	}
 
 	// TODO: battleBuffは最大値採用方式ではなく加算方式

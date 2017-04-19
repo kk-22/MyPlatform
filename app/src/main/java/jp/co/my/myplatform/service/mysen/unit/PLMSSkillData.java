@@ -130,6 +130,9 @@ public class PLMSSkillData {
 			case ALL_RANGE_COUNTER:
 				battleUnit.addSkill(this);
 				break;
+			case CONTINUOUSLY_ATTACK:
+				battleUnit.setNumberOfConsecutiveAttack(mSkillModel.getEffectValue());
+				break;
 			default:
 				MYLogUtil.showErrorToast("executeStartBattleSkill に未実装のスキル no=" +mEffectType.getInt() +" " +mSkillModel.getName());
 				break;

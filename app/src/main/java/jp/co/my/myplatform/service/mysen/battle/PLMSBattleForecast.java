@@ -44,7 +44,7 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 		mLeftUnit.initParamsWithEnemyUnit(mThreeWayRatio);
 		mRightUnit.initParamsWithEnemyUnit(mThreeWayRatio);
 		// 速さがスキルによって変わるため最後に計算
-		mAttackerArray = createAttackerArray();
+		initAttackerArray();
 		createScene();
 	}
 
@@ -71,8 +71,8 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 	}
 
 	// 攻撃順を返す
-	private MYArrayList<PLMSBattleUnit> createAttackerArray() {
-		MYArrayList<PLMSBattleUnit> attackerArray = new MYArrayList<>();
+	private void initAttackerArray() {
+		mAttackerArray =  new MYArrayList<>();
 
 		// 反撃判定
 		int distance = mLeftUnit.getUnitView().getUnitData().getBranch().getAttackRange();
@@ -98,25 +98,47 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 			firstAttacker = mLeftUnit;
 			secondAttacker = null;
 		}
-		attackerArray.add(firstAttacker);
-		attackerArray.addIfNotNull(secondAttacker);
+		mAttackerArray.add(firstAttacker);
+		mAttackerArray.addIfNotNull(secondAttacker);
 
 		// 追撃処理
-		addChaseAttack(attackerArray, firstAttacker);
-		addChaseAttack(attackerArray, secondAttacker);
-		return attackerArray;
+		addChaseAttack(firstAttacker);
+		addChaseAttack(secondAttacker);
+
+		// 勇者武器による連続攻撃
+		addConsecutiveAttack(firstAttacker);
+		addConsecutiveAttack(secondAttacker);
 	}
 
-	private void addChaseAttack(MYArrayList<PLMSBattleUnit> attackerArray, PLMSBattleUnit attackerUnit) {
+	private void addChaseAttack(PLMSBattleUnit attackerUnit) {
 		if (attackerUnit == null || !attackerUnit.canChaseAttack()) {
 			return;
 		}
 		if (attackerUnit.getSkillEffectArray().contains(EffectType.CONTINUOUSLY_CHASE_ATTACK)) {
 			// 自分の攻撃直後に追撃攻撃
-			int firstAttackIndex = attackerArray.indexOf(attackerUnit);
-			attackerArray.add(firstAttackIndex + 1, attackerUnit);
+			int firstAttackIndex = mAttackerArray.indexOf(attackerUnit);
+			mAttackerArray.add(firstAttackIndex + 1, attackerUnit);
 		} else {
-			attackerArray.add(attackerUnit);
+			mAttackerArray.add(attackerUnit);
+		}
+	}
+
+	private void addConsecutiveAttack(PLMSBattleUnit attackerUnit) {
+		if (attackerUnit == null) {
+			return;
+		}
+		int numberOfConsecutiveAttack = attackerUnit.getNumberOfConsecutiveAttack();
+		if (numberOfConsecutiveAttack <= 1) {
+			return;
+		}
+		for (int i = mAttackerArray.size() - 1; i >= 0; i--) {
+			PLMSBattleUnit turnUnit = mAttackerArray.get(i);
+			if (!turnUnit.equals(attackerUnit)) {
+				continue;
+			}
+			for (int j = 1; j < numberOfConsecutiveAttack; j++) {
+				mAttackerArray.add(i, attackerUnit);
+			}
 		}
 	}
 
