@@ -51,7 +51,7 @@ public class PLMSUnitData {
 		mAllSkills = new PLMSSkillData[SKILL_NUMBER];
 
 		mBranch = new PLMSBranchData(mUnitModel.getBranchType());
-		mAllSkills[SKILL_WEAPON] = createSkillData(null);
+		mAllSkills[SKILL_WEAPON] = createSkillData(mUnitModel.getWeaponSkillForeign());
 		mAllSkills[SKILL_SUPPORT] = createSkillData(mUnitModel.getSupportSkillForeign());
 		mAllSkills[SKILL_SECRET] = createSkillData(mUnitModel.getSecretSkillForeign());
 		mAllSkills[SKILL_A] = createSkillData(mUnitModel.getPassiveASkillForeign());
@@ -59,6 +59,7 @@ public class PLMSUnitData {
 		mAllSkills[SKILL_C] = createSkillData(mUnitModel.getPassiveCSkillForeign());
 
 		mPassiveSkillArray = new MYArrayList<>(3);
+		mPassiveSkillArray.add(mAllSkills[SKILL_WEAPON]);
 		mPassiveSkillArray.add(mAllSkills[SKILL_A]);
 		mPassiveSkillArray.add(mAllSkills[SKILL_B]);
 		mPassiveSkillArray.add(mAllSkills[SKILL_C]);

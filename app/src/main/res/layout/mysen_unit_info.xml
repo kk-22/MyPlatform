@@ -171,10 +171,11 @@
 
         <TextView
             android:id="@+id/weapon_text"
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="12dp"/>
+            android:textSize="8dp"/>
 
         <TextView
             android:id="@+id/support_text"
