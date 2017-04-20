@@ -41,8 +41,8 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 			}
 		}
 
-		mLeftUnit.initParamsWithEnemyUnit(mThreeWayRatio);
-		mRightUnit.initParamsWithEnemyUnit(mThreeWayRatio);
+		mLeftUnit.initParamsWithThreeWayRatio(mThreeWayRatio);
+		mRightUnit.initParamsWithThreeWayRatio(mThreeWayRatio);
 		// 速さがスキルによって変わるため最後に計算
 		initAttackerArray();
 		createScene();

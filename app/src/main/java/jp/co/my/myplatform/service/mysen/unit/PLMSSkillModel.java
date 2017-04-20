@@ -46,7 +46,7 @@ public class PLMSSkillModel extends PLBaseModel {
 	@Column
 	private int statusType;	// 効果対象のステータス
 	@Column
-	private int weakness; // 特効
+	private int weaknessBranch; // 特効
 
 	@Override
 	public void initFromJson(JSONObject jsonObject) throws JSONException {
@@ -65,7 +65,7 @@ public class PLMSSkillModel extends PLBaseModel {
 		effectValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_value");
 		effectSubValue = MYJsonUtil.parseIntIfNonNull(jsonObject, "effect_sub_value");
 		statusType = MYJsonUtil.parseIntIfNonNull(jsonObject, "status_no");
-		weakness = MYJsonUtil.parseIntIfNonNull(jsonObject, "weakness");
+		weaknessBranch = MYJsonUtil.parseIntIfNonNull(jsonObject, "weakness_branch");
 	}
 
 	@Override
@@ -186,11 +186,11 @@ public class PLMSSkillModel extends PLBaseModel {
 		this.statusType = statusType;
 	}
 
-	public int getWeakness() {
-		return weakness;
+	public int getWeaknessBranch() {
+		return weaknessBranch;
 	}
 
-	public void setWeakness(int weakness) {
-		this.weakness = weakness;
+	public void setWeaknessBranch(int weaknessBranch) {
+		this.weaknessBranch = weaknessBranch;
 	}
 }

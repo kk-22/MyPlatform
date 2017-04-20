@@ -152,6 +152,10 @@ public class PLMSUnitData {
 		return mAllSkills[no];
 	}
 
+	public PLMSSkillData getWeaponSkillData() {
+		return mAllSkills[SKILL_WEAPON];
+	}
+
 	public PLMSSkillData getSupportSkillData() {
 		return mAllSkills[SKILL_SUPPORT];
 	}

@@ -67,6 +67,11 @@ public class PLMSForecastInfoView extends LinearLayout {
 				damageText.append("×");
 				damageText.append(attackCount);
 			}
+			if (battleUnit.isWeaknessAttack()) {
+				mDamageTextView.setTextColor(Color.parseColor("#00ff00"));
+			} else {
+				mDamageTextView.setTextColor(Color.WHITE);
+			}
 		}
 		mDamageTextView.setText(damageText.toString());
 	}

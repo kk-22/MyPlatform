@@ -14,6 +14,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
 	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
 	private int mNumberOfConsecutiveAttack; // 連続攻撃回数
+	private boolean mIsWeaknessAttack; // 特効攻撃をする
 
 	private MYArrayList<PLMSSkillData.EffectType> mSkillEffectArray;
 
@@ -43,13 +44,19 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		}
 	}
 
-	public void initParamsWithEnemyUnit(int threeWayRatio) {
+	public void initParamsWithThreeWayRatio(int threeWayRatio) {
 		PLMSBranchData enemyBranch = mAnotherUnit.getUnitView().getUnitData().getBranch();
 		int compatibility = mUnitView.getUnitData().getBranch().threeWayCompatibility(enemyBranch);
 		// 正負どちらでも0に近い値を採用する
 		// Math.floor は負の値の時にも低い値を採用するため使用不可
 		int plusDamage = getBattleAttack() * threeWayRatio / 100 * compatibility;
 		mTotalAttack = getBattleAttack() + plusDamage;
+
+		if (getUnitData().getWeaponSkillData().isWeaknessBranch(mAnotherUnit)
+				&& !mAnotherUnit.getSkillEffectArray().contains(PLMSSkillData.EffectType.PROTECT_WEAKNESS_ATTACK)) {
+			mIsWeaknessAttack = true;
+			mTotalAttack = (int)Math.floor(mTotalAttack * 1.5);
+		}
 	}
 
 	private int getBattleParameterOfNo(int no) {
@@ -96,6 +103,10 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 
 	public int getNumberOfConsecutiveAttack() {
 		return mNumberOfConsecutiveAttack;
+	}
+
+	public boolean isWeaknessAttack() {
+		return mIsWeaknessAttack;
 	}
 
 	// setter

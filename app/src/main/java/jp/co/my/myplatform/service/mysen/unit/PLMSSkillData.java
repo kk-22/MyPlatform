@@ -10,6 +10,7 @@ import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
+import jp.co.my.myplatform.service.mysen.PLMSBranchData;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
@@ -582,6 +583,14 @@ public class PLMSSkillData {
 		PLMSAnimationManager animationManager = mArgument.getAnimationManager();
 		Animator animator = animationManager.getFluctuateHPAnimation(unit.getUnitView(), remainingHP, diffHP);
 		animationManager.addTempAnimator(animator, PLMSAnimationManager.ANIMATOR_HP);
+	}
+
+	public boolean isWeaknessBranch(PLMSBattleUnit enemyUnit) {
+		if (mSkillModel == null) {
+			return false;
+		}
+		PLMSBranchData enemyBranch = enemyUnit.getUnitData().getBranch();
+		return  ((mSkillModel.getWeaknessBranch() & enemyBranch.getNo()) != 0);
 	}
 
 	// getter
