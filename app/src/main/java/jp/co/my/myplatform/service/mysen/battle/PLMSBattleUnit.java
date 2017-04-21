@@ -11,6 +11,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 
 	private PLMSBattleUnit mAnotherUnit;
 	private int[] mBattleBuffs;
+	private int mThreeWayCompatibility; // 3すくみ(-1:不利、0:対等、1:有利)
 	private int mTotalAttack; // 3すくみ・スキル補正後の値（奥義スキルは除く）
 	private int mChasePoint; // 追撃補正値（0の時速さ参照。1以上で絶対追撃）
 	private int mNumberOfConsecutiveAttack; // 連続攻撃回数
@@ -45,11 +46,9 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	}
 
 	public void initParamsWithThreeWayRatio(int threeWayRatio) {
-		PLMSBranchData enemyBranch = mAnotherUnit.getUnitView().getUnitData().getBranch();
-		int compatibility = mUnitView.getUnitData().getBranch().threeWayCompatibility(enemyBranch);
 		// 正負どちらでも0に近い値を採用する
 		// Math.floor は負の値の時にも低い値を採用するため使用不可
-		int plusDamage = getBattleAttack() * threeWayRatio / 100 * compatibility;
+		int plusDamage = getBattleAttack() * threeWayRatio / 100 * mThreeWayCompatibility;
 		mTotalAttack = getBattleAttack() + plusDamage;
 
 		if (getUnitData().getWeaponSkillData().isWeaknessBranch(mAnotherUnit)
@@ -112,6 +111,9 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	// setter
 	public void setAnotherUnit(PLMSBattleUnit anotherUnit) {
 		mAnotherUnit = anotherUnit;
+
+		PLMSBranchData enemyBranch = mAnotherUnit.getUnitView().getUnitData().getBranch();
+		mThreeWayCompatibility = mUnitView.getUnitData().getBranch().threeWayCompatibility(enemyBranch);
 	}
 
 	public void setRemainingHP(int remainingHP) {
@@ -128,5 +130,10 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 
 	public void addSkill(PLMSSkillData skillData) {
 		mSkillEffectArray.add(skillData.getEffectType());
+	}
+
+	public void setThreeWayCompatibility(int threeWayCompatibility) {
+		// お互い相手色に有利になるスキルを持っていた場合に値が0にするため、セットではなく加算する
+		mThreeWayCompatibility += threeWayCompatibility;
 	}
 }

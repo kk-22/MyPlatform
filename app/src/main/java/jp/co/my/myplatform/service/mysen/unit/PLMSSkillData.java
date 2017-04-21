@@ -139,6 +139,11 @@ public class PLMSSkillData {
 			case THREE_WAY_INTENSIFICATION:
 				battleForecast.setThreeWayRatio(mSkillModel.getEffectValue());
 				break;
+			case ADD_ADVANTAGE_COLOR:
+				// 色判定は getTargetUnitViewArray　メソッド内で行われているためここで判定不要
+				battleUnit.setThreeWayCompatibility(1);
+				enemyUnit.setThreeWayCompatibility(-1);
+				break;
 			case CHASE_ATTACK_IF_HAS_COUNTER:
 			case CONTINUOUSLY_CHASE_ATTACK:
 			case PREEMPTIVE_ATTACK:
