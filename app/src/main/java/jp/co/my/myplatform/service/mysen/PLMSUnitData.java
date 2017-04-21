@@ -176,6 +176,10 @@ public class PLMSUnitData {
 		return mBuffParams[no];
 	}
 
+	public int[] getBuffParams() {
+		return mBuffParams;
+	}
+
 	public int getDebuffParameterOfNo(int no) {
 		return mDebuffParams[no];
 	}

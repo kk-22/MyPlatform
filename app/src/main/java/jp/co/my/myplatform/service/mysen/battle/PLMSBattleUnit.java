@@ -122,11 +122,8 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		mNumberOfConsecutiveAttack = numberOfConsecutiveAttack;
 	}
 
-	// TODO: battleBuffは最大値採用方式ではなく加算方式
-	public void setBattleBuffOfNo(int parameterNo, int buff) {
-		if (mBattleBuffs[parameterNo] < buff) {
-			mBattleBuffs[parameterNo] = buff;
-		}
+	public void addBattleBuffOfNo(int parameterNo, int buff) {
+		mBattleBuffs[parameterNo] += buff;
 	}
 
 	public void addSkill(PLMSSkillData skillData) {

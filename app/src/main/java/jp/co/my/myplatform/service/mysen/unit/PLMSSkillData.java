@@ -104,10 +104,24 @@ public class PLMSSkillData {
 		switch (mEffectType) {
 			case BATTLE_BUFF: {
 				if (!targetArray.contains(battleUnit.getUnitView())) {
+					// 紋章の範囲外ならなにもしない
 					break;
 				}
 				for (Integer paramNumber : getBuffParamNumberArray()) {
-					battleUnit.setBattleBuffOfNo(paramNumber, mSkillModel.getEffectValue());
+					battleUnit.addBattleBuffOfNo(paramNumber, mSkillModel.getEffectValue());
+				}
+				break;
+			}
+			case ALL_TURN_BATTLE_BUFF: {
+				if (!targetArray.contains(battleUnit.getUnitView())) {
+					break;
+				}
+				int battleBuff = 0;
+				for (int turnBuff : battleUnit.getUnitData().getBuffParams()) {
+					battleBuff += turnBuff;
+				}
+				for (Integer paramNumber : getBuffParamNumberArray()) {
+					battleUnit.addBattleBuffOfNo(paramNumber, battleBuff);
 				}
 				break;
 			}
