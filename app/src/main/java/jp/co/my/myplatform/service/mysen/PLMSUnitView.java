@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -49,13 +50,7 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 	// ターン開始時
 	public void resetForNewTurn(int numberOfTurn) {
 		mUnitData.resetParamsForNewTurn();
-
-		int totalBuff = 0;
-		for (int i = 0; i < PLMSUnitData.PARAMETER_NUMBER; i++) {
-			totalBuff += mUnitData.getBuffParameterOfNo(i);
-			totalBuff -= mUnitData.getDebuffParameterOfNo(i);
-		}
-		updateBuffImage(totalBuff);
+		updateBuffImage();
 	}
 
 	// ターン終了時
@@ -80,6 +75,7 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 	// 待機
 	public void standby() {
 		mUnitData.resetDebuffParams();
+		updateBuffImage();
 		didAction();
 	}
 
@@ -123,13 +119,23 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		mUnitImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath(path, getContext()));
 	}
 
+	// 現在のバフ補正値に応じて表示更新
+	private void updateBuffImage() {
+		int totalBuff = 0;
+		for (int i = 0; i < PLMSUnitData.PARAMETER_NUMBER; i++) {
+			totalBuff += mUnitData.getBuffParameterOfNo(i);
+			totalBuff -= mUnitData.getDebuffParameterOfNo(i);
+		}
+		updateBuffImage(totalBuff);
+	}
+
 	private void updateBuffImage(int buffPoint) {
 		if (buffPoint == 0) {
 			mBuffImageView.setAlpha(0.f);
 		} else if (buffPoint > 0) {
 			mBuffImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/up_arrow.png", getContext()));
 		} else {
-			mBuffImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/up_arrow.png", getContext()));
+			mBuffImageView.setImageBitmap(MYImageUtil.getBitmapFromImagePath("icon/down_arrow.png", getContext()));
 		}
 	}
 
@@ -161,11 +167,10 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		return animatorSet;
 	}
 
-	public Animator makeBuffAnimator(int buffPoint) {
+	public Animator makeBuffAnimator(final int buffPoint) {
 		if (buffPoint == 0) {
 			return null;
 		}
-		updateBuffImage(buffPoint);
 
 		MYArrayList<Animator> animatorArray = new MYArrayList<>();
 		float currentY = mBuffImageView.getY();
@@ -187,6 +192,18 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 
 		AnimatorSet animatorSet = new AnimatorSet();
 		animatorSet.playSequentially(animatorArray);
+		animatorSet.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationStart(Animator animation) {
+				updateBuffImage(buffPoint);
+			}
+
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				updateBuffImage();
+			}
+		});
+
 		return animatorSet;
 	}
 
