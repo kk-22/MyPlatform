@@ -124,6 +124,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 						mMovingUnitView.standby();
 						mInformation.updateForUnitData(mMovingUnitView);
 						mAreaManager.getAvailableAreaCover().hideCoverView(mMovingUnitView.getLandView());
+						MYLogUtil.outputLog("finishMoveEvent by 移動前の地点タップ");
 						finishMoveEvent();
 					}
 					break;
@@ -155,6 +156,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			// 移動中のユニットをタップ
 			if (mTempLandView.equals(mMovingUnitView.getLandView())) {
 				// 移動前の地点をタップで移動キャンセル
+				MYLogUtil.outputLog("finishMoveEvent by 移動前の地点タップ");
 				finishMoveEvent();
 			} else if (mInformation.getInfoUnitView().equals(mMovingUnitView)) {
 				// 仮移動中のユニットをタップで移動確定
@@ -326,6 +328,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 			// 移動イベント継続
 			moveToTempLand(targetLandView);
 		} else {
+			MYLogUtil.outputLog("finishMoveEvent by 移動前の地点へアニメーション移動");
 			finishMoveEvent();
 		}
 	}
@@ -360,6 +363,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private void cancelMoveEvent() {
 		mAnimationManager.addAnimator(
 				mAnimationManager.getMovementAnimation(mMovingUnitView, mTempLandView, mMovingUnitView.getLandView()));
+		MYLogUtil.outputLog("finishMoveEvent by 移動イベントキャンセル");
 		finishMoveEvent();
 	}
 
@@ -427,6 +431,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 	private void movedUnit(PLMSLandView targetLandView) {
 		mAreaManager.getAvailableAreaCover().hideCoverView(mMovingUnitView.getLandView());
 		mMovingUnitView.moveToLand(targetLandView);
+		MYLogUtil.outputLog("finishMoveEvent by 移動完了");
 		finishMoveEvent();
 	}
 
