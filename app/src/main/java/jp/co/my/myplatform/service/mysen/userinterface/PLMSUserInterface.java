@@ -128,17 +128,6 @@ public class PLMSUserInterface extends PLMSWarInterface
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
-				if (shouldDoubleTapEvent()) {
-					if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
-						// 未行動ユニットダブルタップで行動終了
-						mMovingUnitView.standby();
-						mInformation.updateForUnitData(mMovingUnitView);
-						mAreaManager.getAvailableAreaCover().hideCoverView(mMovingUnitView.getLandView());
-						MYLogUtil.outputLog("finishMoveEvent by 移動前の地点タップ");
-						finishMoveEvent();
-					}
-					break;
-				}
 				if (event.getX() < 0 || unitView.getWidth() < event.getX()
 						|| event.getY() < 0 || unitView.getHeight() < event.getY()) {
 					// タップ位置から指を動かして UnitView 外に移動した場合は何もしない
@@ -153,6 +142,19 @@ public class PLMSUserInterface extends PLMSWarInterface
 	}
 
 	private void onClickUnitView(PLMSUnitView unitView) {
+		if (shouldDoubleTapEvent() && (mMovingUnitView == null || mMovingUnitView.equals(unitView))) {
+			// 移動中以外のユニットをダブルタップ時は行動終了しない
+			if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
+				// 未行動ユニットダブルタップで行動終了
+				unitView.standby();
+				mInformation.updateForUnitData(unitView);
+				mAreaManager.getAvailableAreaCover().hideCoverView(unitView.getLandView());
+				MYLogUtil.outputLog("finishMoveEvent by 移動前の地点タップ");
+				finishMoveEvent();
+			}
+			return;
+		}
+
 		if (mMovingUnitView == null) {
 			if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 				beginMoveEvent(unitView);
