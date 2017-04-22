@@ -120,7 +120,7 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		}
 
 		// デバフリセット（戦闘終了スキル発動前に必要）
-		battleForecast.getLeftUnit().getUnitData().resetDebuffParams();
+		battleForecast.getLeftUnit().getUnitView().clearDebuffAndUpdateIcon();
 
 		// 戦闘終了スキルアニメーション
 		PLMSBattleUnit leftUnit = battleForecast.getLeftUnit();

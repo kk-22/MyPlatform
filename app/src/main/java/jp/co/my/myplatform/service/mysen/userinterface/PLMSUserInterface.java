@@ -33,6 +33,7 @@ import static android.view.View.GONE;
 public class PLMSUserInterface extends PLMSWarInterface
 		implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
 
+	private PLMSArgument mArgument;
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
 	private PLMSAreaManager mAreaManager;
@@ -51,6 +52,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
 
 	public PLMSUserInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
+		mArgument = argument;
 		mInformation = argument.getInformationView();
 		mField = argument.getFieldView();
 		mUnitArray = mField.getUnitViewArray();
@@ -151,6 +153,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 				mAreaManager.getAvailableAreaCover().hideCoverView(unitView.getLandView());
 				MYLogUtil.outputLog("finishMoveEvent by 移動前の地点タップ");
 				finishMoveEvent();
+				finishAction();
 			}
 			return;
 		}
@@ -174,6 +177,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 				// 仮移動中のユニットをタップで移動確定
 				mMovingUnitView.standby();
 				movedUnit(mTempLandView);
+				finishAction();
 			}
 			mInformation.updateForUnitData(unitView);
 			return;
@@ -421,6 +425,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 					mInformation.clearInformation();
 				}
 				leftUnit.getUnitView().didAction();
+				finishAction();
 			}
 		});
 	}
@@ -436,8 +441,13 @@ public class PLMSUserInterface extends PLMSWarInterface
 			public void run() {
 				mInformation.updateForUnitData(supportUnit.getUnitView());
 				supportUnit.getUnitView().didAction();
+				finishAction();
 			}
 		});
+	}
+
+	private void finishAction() {
+		mArgument.getTurnManager().finishTurnIfNecessary();
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {

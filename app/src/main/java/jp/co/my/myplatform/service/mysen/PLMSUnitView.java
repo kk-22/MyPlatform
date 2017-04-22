@@ -72,14 +72,13 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		landView.putUnitView(this);
 	}
 
-	// 待機
+	// 待機。戦闘時はこのメソッドを呼ばずに直接 didAction や resetDebuffParams を呼ぶ
 	public void standby() {
-		mUnitData.resetDebuffParams();
-		updateBuffImage();
+		clearDebuffAndUpdateIcon();
 		didAction();
 	}
 
-	// 行動終了
+	// 行動の最期に呼ぶ
 	public void didAction() {
 		mAlreadyActionView.setVisibility(VISIBLE);
 	}
@@ -98,6 +97,11 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 	// 行動済みの場合 true を返す
 	public boolean isAlreadyAction() {
 		return (mAlreadyActionView != null && mAlreadyActionView.getVisibility() == VISIBLE);
+	}
+
+	public void clearDebuffAndUpdateIcon() {
+		mUnitData.resetDebuffParams();
+		updateBuffImage();
 	}
 
 	private void initChildView() {

@@ -26,8 +26,6 @@ import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLMSWarContent extends PLContentView {
 
-	private PLMSTurnManager mTurnManager;
-
 	private ArrayList<PLMSUnitData> mUnitDataArray;
 	private boolean mFinishedLayout;			// OnGlobalLayoutListener が呼ばれたら true
 	private PLMSArgument mArgument;
@@ -67,7 +65,7 @@ public class PLMSWarContent extends PLContentView {
 		naviBar.findViewById(R.id.turn_end_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mTurnManager == null) {
+				if (mArgument.getTurnManager() == null) {
 					return;
 				}
 				for (PLPopoverView popoverView : getPopoverViews()) {
@@ -79,7 +77,7 @@ public class PLMSWarContent extends PLContentView {
 				new PLConfirmationPopover("ターンを終了しますか？", new PLConfirmationPopover.PLConfirmationListener() {
 					@Override
 					public void onClickButton(boolean isYes) {
-						mTurnManager.finishTurn();
+						mArgument.getTurnManager().finishTurn();
 					}
 				}, null);
 			}
@@ -125,6 +123,6 @@ public class PLMSWarContent extends PLContentView {
 		}
 		mArgument.getFieldView().layoutChildViews(mUnitDataArray);
 		mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
-		mTurnManager = new PLMSTurnManager(mArgument);
+		mArgument.setTurnManager(new PLMSTurnManager(mArgument));
 	}
 }

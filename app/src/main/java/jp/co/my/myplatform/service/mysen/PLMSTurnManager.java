@@ -31,6 +31,16 @@ public class PLMSTurnManager {
 		startNextTurn();
 	}
 
+	// 全員行動済みならターン終了
+	public void finishTurnIfNecessary() {
+		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
+			if (!unitView.isAlreadyAction()) {
+				return;
+			}
+		}
+		finishTurn();
+	}
+
 	// ターン終了
 	public void finishTurn() {
 		mArgument.getInformationView().clearInformation();
