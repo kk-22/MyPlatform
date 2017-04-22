@@ -20,6 +20,7 @@ import jp.co.my.myplatform.service.model.PLModelContainer;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.army.PLMSBlueArmy;
 import jp.co.my.myplatform.service.mysen.army.PLMSRedArmy;
+import jp.co.my.myplatform.service.mysen.setting.PLMSWarSettingContent;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLPopoverView;
 
@@ -56,7 +57,8 @@ public class PLMSWarContent extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_war_navibar, naviBar);
 		setNavigationBar(naviBar);
 
-		naviBar.findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
+
+		naviBar.findViewById(R.id.back_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().popView();
@@ -80,6 +82,13 @@ public class PLMSWarContent extends PLContentView {
 						mArgument.getTurnManager().finishTurn();
 					}
 				}, null);
+			}
+		});
+		naviBar.findViewById(R.id.setting_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLMSWarSettingContent settingContent = new PLMSWarSettingContent(mArgument);
+				PLCoreService.getNavigationController().pushView(settingContent);
 			}
 		});
 	}

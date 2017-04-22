@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
+        android:id="@+id/blue_army"
+        android:layout_weight="5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="名前"
+            android:layout_weight="5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:text="COM操作"
+            android:layout_weight="5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <Space
+            android:layout_weight="40"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"/>
+    </LinearLayout>
+
+    <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
+        android:id="@+id/red_army"
+        android:layout_weight="5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
