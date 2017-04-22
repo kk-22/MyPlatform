@@ -57,10 +57,11 @@ public class PLMSWarSettingContent extends PLContentView {
 			PLMSArmySetting armyView = mArmyViewArray.get(i);
 
 			if (armyStrategy.getInterfaceNo() != armyView.getNextInterfaceNo()) {
+				// インターフェースの切り替え
 				PLMSWarInterface prevInterface = armyStrategy.getWarInterface();
+				armyStrategy.setInterfaceNo(armyView.getNextInterfaceNo());
 				PLMSWarInterface nextInterface = armyStrategy.makeInterface();
 				if (mArgument.getTurnManager().getCurrentArmy() == armyStrategy) {
-					// インターフェースの切り替え
 					prevInterface.disableInterface();
 					nextInterface.enableInterface();
 				}

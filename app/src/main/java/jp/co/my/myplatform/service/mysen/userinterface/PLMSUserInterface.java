@@ -13,10 +13,7 @@ import java.util.ArrayList;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
-import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
-import jp.co.my.myplatform.service.mysen.PLMSAreaManager;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
-import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.PLMSInformationView;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
@@ -33,13 +30,7 @@ import static android.view.View.GONE;
 public class PLMSUserInterface extends PLMSWarInterface
 		implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
 
-	private PLMSArgument mArgument;
 	private PLMSInformationView mInformation;
-	private PLMSFieldView mField;
-	private PLMSAreaManager mAreaManager;
-	private ArrayList<PLMSUnitView> mUnitArray;
-	private PLMSArmyStrategy mTargetArmy;				// 操作対象のArmy
-	private PLMSAnimationManager mAnimationManager;
 
 	private PointF mTouchDownPointF;
 	private long mTouchDownTimeMillis; // ダブルタップ判定用
@@ -52,14 +43,8 @@ public class PLMSUserInterface extends PLMSWarInterface
 	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
 
 	public PLMSUserInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
-		mArgument = argument;
+		super(argument, armyStrategy);
 		mInformation = argument.getInformationView();
-		mField = argument.getFieldView();
-		mUnitArray = mField.getUnitViewArray();
-		mAnimationManager = argument.getAnimationManager();
-		mAreaManager = argument.getAreaManager();
-		mTargetArmy = armyStrategy;
-
 		mPrevRouteArray = new MYArrayList<>();
 	}
 

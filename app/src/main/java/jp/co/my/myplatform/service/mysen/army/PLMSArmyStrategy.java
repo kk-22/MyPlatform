@@ -4,6 +4,7 @@ import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.userinterface.PLMSComputerInterface;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
@@ -40,7 +41,7 @@ public abstract class PLMSArmyStrategy {
 				mWarInterface = new PLMSUserInterface(mArgument, this);
 				break;
 			case 2:
-//				mWarInterface = new PLMSComputerInterface(mArgument, this);
+				mWarInterface = new PLMSComputerInterface(mArgument, this);
 				break;
 			default:
 				MYLogUtil.showErrorToast("未対応のmInterfaceNo=" +mInterfaceNo);
@@ -92,5 +93,9 @@ public abstract class PLMSArmyStrategy {
 	// setter
 	public void setEnemyArmy(PLMSArmyStrategy enemyArmy) {
 		mEnemyArmy = enemyArmy;
+	}
+
+	public void setInterfaceNo(int interfaceNo) {
+		mInterfaceNo = interfaceNo;
 	}
 }
