@@ -1,42 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
-        android:id="@+id/blue_army"
-        android:layout_weight="5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"/>
-
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="0dp"
-        android:layout_height="match_parent">
+        android:orientation="horizontal"
+        android:layout_weight="5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
 
-        <TextView
-            android:text="名前"
+        <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
+            android:id="@+id/left_army"
             android:layout_weight="5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
 
-        <TextView
-            android:text="COM操作"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_weight="5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
 
-        <Space
-            android:layout_weight="40"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"/>
+            <TextView
+                android:text="名前"
+                android:textColor="#000"
+                android:textAlignment="center"
+                android:layout_weight="5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <TextView
+                android:text="COM操作"
+                android:textColor="#000"
+                android:textAlignment="center"
+                android:layout_weight="5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <Space
+                android:layout_weight="40"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"/>
+        </LinearLayout>
+
+        <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
+            android:id="@+id/right_army"
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
-    <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
-        android:id="@+id/red_army"
-        android:layout_weight="5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="66dp">
 
+        <Button
+            android:id="@+id/execute_button"
+            android:text="実行"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 </LinearLayout>

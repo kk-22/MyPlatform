@@ -1,16 +1,28 @@
 package jp.co.my.myplatform.service.mysen.army;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
+import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
 public abstract class PLMSArmyStrategy {
 
+	public static final int INTERFACE_USER = 1;
+	public static final int INTERFACE_COMPUTER = 2;
+
+	private String mName;
+	private int mInterfaceNo;
+	private PLMSArgument mArgument;
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 	private PLMSWarInterface mWarInterface;
 	private PLMSArmyStrategy mEnemyArmy;
 
-	public PLMSArmyStrategy() {
+	public PLMSArmyStrategy(PLMSArgument argument, String name, int interfaceNo) {
+		mArgument = argument;
+		mName = name;
+		mInterfaceNo = interfaceNo;
 		mAllUnitViewArray = new MYArrayList<>();
 	}
 
@@ -20,6 +32,21 @@ public abstract class PLMSArmyStrategy {
 
 	public boolean hasUnitView(PLMSUnitView unitView) {
 		return mAllUnitViewArray.contains(unitView);
+	}
+
+	public PLMSWarInterface makeInterface() {
+		switch (mInterfaceNo) {
+			case 1:
+				mWarInterface = new PLMSUserInterface(mArgument, this);
+				break;
+			case 2:
+//				mWarInterface = new PLMSComputerInterface(mArgument, this);
+				break;
+			default:
+				MYLogUtil.showErrorToast("未対応のmInterfaceNo=" +mInterfaceNo);
+				break;
+		}
+		return mWarInterface;
 	}
 
 	public abstract int getHitPointColor();
@@ -54,11 +81,15 @@ public abstract class PLMSArmyStrategy {
 		return mEnemyArmy;
 	}
 
-	// setter
-	public void setWarInterface(PLMSWarInterface warInterface) {
-		mWarInterface = warInterface;
+	public String getName() {
+		return mName;
 	}
 
+	public int getInterfaceNo() {
+		return mInterfaceNo;
+	}
+
+	// setter
 	public void setEnemyArmy(PLMSArmyStrategy enemyArmy) {
 		mEnemyArmy = enemyArmy;
 	}

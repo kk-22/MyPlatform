@@ -16,6 +16,8 @@ public class PLMSArmySetting extends LinearLayout {
 	private TextView mNameText;
 	private Switch mInterfaceSwitch;
 
+	private PLMSArmyStrategy mArmyStrategy;
+
 	public PLMSArmySetting(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_army_setting, this);
@@ -31,7 +33,21 @@ public class PLMSArmySetting extends LinearLayout {
 		this(context, null);
 	}
 
-	public void updateByArmy(PLMSArmyStrategy armyStrategy) {
+	// getter
+	public int getNextInterfaceNo() {
+		if (mInterfaceSwitch.isChecked()) {
+			return PLMSArmyStrategy.INTERFACE_COMPUTER;
+		} else {
+			return PLMSArmyStrategy.INTERFACE_USER;
+		}
+	}
 
+	// setter
+	public void setArmyStrategy(PLMSArmyStrategy armyStrategy) {
+		mArmyStrategy = armyStrategy;
+
+		mNameText.setText(mArmyStrategy.getName());
+		mInterfaceSwitch.setChecked(mArmyStrategy.getInterfaceNo() == PLMSArmyStrategy.INTERFACE_COMPUTER);
+		setBackgroundColor(mArmyStrategy.getAvailableAreaColor());
 	}
 }
