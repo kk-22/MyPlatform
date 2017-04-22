@@ -30,7 +30,8 @@ import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 import static android.view.View.GONE;
 
-public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
+public class PLMSUserInterface extends PLMSWarInterface
+		implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
 
 	private PLMSInformationView mInformation;
 	private PLMSFieldView mField;
@@ -60,6 +61,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		mPrevRouteArray = new MYArrayList<>();
 	}
 
+	@Override
 	public void enableInterface() {
 		mAreaManager.showAvailableArea(mTargetArmy);
 		for (PLMSUnitView unitView : mUnitArray) {
@@ -71,6 +73,7 @@ public class PLMSUserInterface implements View.OnTouchListener, View.OnDragListe
 		}
 	}
 
+	@Override
 	public void disableInterface() {
 		if (mMovingUnitView != null) {
 			mMovingUnitView.standby();

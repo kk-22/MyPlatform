@@ -2,12 +2,12 @@ package jp.co.my.myplatform.service.mysen.army;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
-import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
+import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
 public abstract class PLMSArmyStrategy {
 
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
-	private PLMSUserInterface mUnitInterface;
+	private PLMSWarInterface mWarInterface;
 	private PLMSArmyStrategy mEnemyArmy;
 
 	public PLMSArmyStrategy() {
@@ -32,8 +32,8 @@ public abstract class PLMSArmyStrategy {
 		return mAllUnitViewArray;
 	}
 
-	public PLMSUserInterface getUnitInterface() {
-		return mUnitInterface;
+	public PLMSWarInterface getWarInterface() {
+		return mWarInterface;
 	}
 
 	public MYArrayList<PLMSUnitView> getAliveUnitViewArray() {
@@ -55,8 +55,8 @@ public abstract class PLMSArmyStrategy {
 	}
 
 	// setter
-	public void setUnitInterface(PLMSUserInterface unitInterface) {
-		mUnitInterface = unitInterface;
+	public void setWarInterface(PLMSWarInterface warInterface) {
+		mWarInterface = warInterface;
 	}
 
 	public void setEnemyArmy(PLMSArmyStrategy enemyArmy) {

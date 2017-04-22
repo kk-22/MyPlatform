@@ -4,6 +4,7 @@ import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
+import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
 public class PLMSTurnManager {
 
@@ -24,9 +25,8 @@ public class PLMSTurnManager {
 		}
 
 		for (PLMSArmyStrategy army : mArmyArray) {
-			PLMSUserInterface userInterface
-					= new PLMSUserInterface(argument, army);
-			army.setUnitInterface(userInterface);
+			PLMSWarInterface userInterface = new PLMSUserInterface(argument, army);
+			army.setWarInterface(userInterface);
 		}
 		startNextTurn();
 	}
@@ -34,7 +34,7 @@ public class PLMSTurnManager {
 	// ターン終了
 	public void finishTurn() {
 		mArgument.getInformationView().clearInformation();
-		mCurrentArmy.getUnitInterface().disableInterface();
+		mCurrentArmy.getWarInterface().disableInterface();
 		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
 			unitView.resetForFinishTurn(mNumberOfTurn);
 		}
@@ -67,6 +67,6 @@ public class PLMSTurnManager {
 		}
 		mArgument.getAnimationManager().sendTempAnimators();
 
-		mCurrentArmy.getUnitInterface().enableInterface();
+		mCurrentArmy.getWarInterface().enableInterface();
 	}
 }
