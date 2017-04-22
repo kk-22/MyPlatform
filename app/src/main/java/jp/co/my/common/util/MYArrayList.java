@@ -96,4 +96,15 @@ public class MYArrayList<E> extends ArrayList<E> {
 		}
 		return count;
 	}
+
+	// 自身と引数の配列の双方に含まれる要素のみを持つ配列を返す
+	public MYArrayList<E> filterByArray(MYArrayList<E> array) {
+		MYArrayList<E> result = new MYArrayList<>(size());
+		for (E obj : array) {
+			if (contains(obj)) {
+				result.add(obj);
+			}
+		}
+		return result;
+	}
 }

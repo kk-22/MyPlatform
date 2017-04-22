@@ -108,7 +108,7 @@ public class PLMSWarContent extends PLContentView {
 				// TODO: delete dummy code
 				int x = 0, y = 0;
 				mUnitDataArray = new ArrayList<>();
-				PLMSBlueArmy blueArmy = new PLMSBlueArmy(mArgument, "青軍", PLMSArmyStrategy.INTERFACE_USER);
+				PLMSBlueArmy blueArmy = new PLMSBlueArmy(mArgument, "青軍", PLMSArmyStrategy.INTERFACE_COMPUTER);
 				PLMSRedArmy redArmy = new PLMSRedArmy(mArgument, "赤軍", PLMSArmyStrategy.INTERFACE_USER);
 				blueArmy.setEnemyArmy(redArmy);
 				redArmy.setEnemyArmy(blueArmy);

@@ -74,7 +74,6 @@ public class PLMSAreaManager {
 
 		MYArrayList<PLMSLandView> supportableLandArray = getSupportableLandArray(movableLandArray, unitView);
 		mSupportAreaCover.showCoverViews(supportableLandArray);
-
 	}
 
 	public MYArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
@@ -88,7 +87,8 @@ public class PLMSAreaManager {
 		return movableLandArray;
 	}
 
-	private MYArrayList<PLMSLandView> getAttackableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
+	// 移動範囲と味方ユニットがいる地点を除く攻撃範囲の取得
+	public MYArrayList<PLMSLandView> getAttackableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
 		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
 
 		// 現在地も追加
@@ -115,7 +115,7 @@ public class PLMSAreaManager {
 		return resultArray;
 	}
 
-	private MYArrayList<PLMSLandView> getSupportableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView moveUnitView) {
+	public MYArrayList<PLMSLandView> getSupportableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView moveUnitView) {
 		PLMSUnitData unitData = moveUnitView.getUnitData();
 		PLMSSkillData supportSkill = unitData.getSupportSkillData();
 		if (!supportSkill.isAvailable()) {
@@ -142,8 +142,17 @@ public class PLMSAreaManager {
 		return resultArray;
 	}
 
-	public MYArrayList<PLMSLandView> getSupportLandArrayForTarget(PLMSUnitView targetUnitView,
-																  PLMSUnitView skillUnitView) {
+	// 全攻撃地点の取得
+	public MYArrayList<PLMSLandView> getAttackLandArrayToTarget(PLMSUnitView targetUnitView,
+																PLMSUnitView attackerUnitView) {
+		int range = attackerUnitView.getUnitData().getBranch().getAttackRange();
+		Point targetPoint = targetUnitView.getLandView().getPoint();
+		return getAroundLandArray(targetPoint, range);
+	}
+
+	// スキルが発動可能な地点の取得
+	public MYArrayList<PLMSLandView> getSupportLandArrayToTarget(PLMSUnitView targetUnitView,
+																 PLMSUnitView skillUnitView) {
 		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
 		PLMSLandView targetLandView = targetUnitView.getLandView();
 		PLMSSkillData supportSkill = skillUnitView.getUnitData().getSupportSkillData();

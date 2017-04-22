@@ -172,7 +172,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 		PLMSLandView touchLandView = unitView.getLandView();
 		PLMSLandView nextLandView;
 		if (mAreaManager.getAttackAreaCover().isShowingCover(touchLandView)) {
-			nextLandView = getMoveLandForAttack(touchLandView);
+			nextLandView = getMoveLandForAttack(unitView);
 		} else if (mAreaManager.getSupportAreaCover().isShowingCover(touchLandView)) {
 			nextLandView = getMoveLandForSupportSkill(unitView);
 		} else {
@@ -217,7 +217,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 					mPrevRouteArray.addOrMoveLast(mAreaManager.showRouteArea(mMovingUnitView, landView, mPrevRouteArray.getLast()));
 				} else if (mAreaManager.canAttackToLandView(landView)) {
 					// 攻撃地点へのルート表示
-					PLMSLandView nextLandView = getMoveLandForAttack(landView);
+					PLMSLandView nextLandView = getMoveLandForAttack(unitView);
 					mPrevRouteArray.addOrMoveLast(mAreaManager.showRouteArea(mMovingUnitView, nextLandView, mPrevRouteArray.getLast()));
 
 					PLMSBattleForecast forecast = new PLMSBattleForecast(mMovingUnitView, nextLandView,
@@ -443,15 +443,14 @@ public class PLMSUserInterface extends PLMSWarInterface
 	}
 
 	// 攻撃地点の取得
-	private PLMSLandView getMoveLandForAttack(PLMSLandView targetLandView) {
-		int range = mMovingUnitView.getUnitData().getBranch().getAttackRange();
-		MYArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAroundLandArray(targetLandView.getPoint(), range);
+	private PLMSLandView getMoveLandForAttack(PLMSUnitView targetUnitView) {
+		MYArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getAttackLandArrayToTarget(targetUnitView, mMovingUnitView);
 		return getMoveLandViewByRoute(targetAroundLandArray);
 	}
 
 	// サポートスキル発動地点の取得
 	private PLMSLandView getMoveLandForSupportSkill(PLMSUnitView targetUnitView) {
-		MYArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getSupportLandArrayForTarget(targetUnitView, mMovingUnitView);
+		MYArrayList<PLMSLandView> targetAroundLandArray = mAreaManager.getSupportLandArrayToTarget(targetUnitView, mMovingUnitView);
 		return getMoveLandViewByRoute(targetAroundLandArray);
 	}
 
