@@ -2,7 +2,7 @@ package jp.co.my.myplatform.service.mysen.army;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
-import jp.co.my.myplatform.service.mysen.PLMSUserInterface;
+import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
 
 public abstract class PLMSArmyStrategy {
 

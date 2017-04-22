@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.mysen;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
+import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
 
 public class PLMSTurnManager {
 

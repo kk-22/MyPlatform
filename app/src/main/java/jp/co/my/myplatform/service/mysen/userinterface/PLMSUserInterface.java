@@ -1,4 +1,4 @@
-package jp.co.my.myplatform.service.mysen;
+package jp.co.my.myplatform.service.mysen.userinterface;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -13,6 +13,13 @@ import java.util.ArrayList;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
+import jp.co.my.myplatform.service.mysen.PLMSAnimationManager;
+import jp.co.my.myplatform.service.mysen.PLMSAreaManager;
+import jp.co.my.myplatform.service.mysen.PLMSArgument;
+import jp.co.my.myplatform.service.mysen.PLMSFieldView;
+import jp.co.my.myplatform.service.mysen.PLMSInformationView;
+import jp.co.my.myplatform.service.mysen.PLMSLandView;
+import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
