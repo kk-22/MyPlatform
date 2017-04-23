@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
@@ -13,6 +14,7 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSBaseForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
+import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 public class PLMSComputerInterface extends PLMSWarInterface {
@@ -32,6 +34,15 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 	}
 
 	private void scanNextAction() {
+		if (scanBattleAndSupport()) {
+			return;
+		} else if (scanMovement()) {
+			return;
+		}
+		mArgument.getTurnManager().finishTurn();
+	}
+
+	private boolean scanBattleAndSupport() {
 		MYArrayList<PLMSBattleForecast> allBattleForecast = new MYArrayList<>();
 		MYArrayList<PLMSSupportForecast> allSupportForecast = new MYArrayList<>();
 		for (PLMSUnitView actionUnitView : mTargetArmy.getAliveUnitViewArray()) {
@@ -67,24 +78,14 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			}
 		}
 		if (allBattleForecast.size() == 0) {
-			mArgument.getTurnManager().finishTurn();
-			return;
+			return false;
 		}
 
 		// 最適な行動の選択
 		MYArrayList<PLMSBattleForecast> highestForecastArray = new MYArrayList<>();
 		int highestScore = Integer.MIN_VALUE;
 		for (PLMSBattleForecast battleForecast : allBattleForecast) {
-			PLMSBattleUnit battleUnit = battleForecast.getLeftUnit();
-			PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
-			int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
-			int enemyDamage = enemyUnit.getUnitData().getCurrentHP() - enemyUnit.getRemainingHP();
-			int score = enemyDamage - selfDamage;
-			if (enemyUnit.getRemainingHP() <= 0) {
-				score += 10000;
-			} else if (battleUnit.getRemainingHP() <= 0) {
-				score -= 10000;
-			}
+			int score = calculateScore(battleForecast);
 
 			if (highestScore == score) {
 				highestForecastArray.add(battleForecast);
@@ -94,8 +95,97 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				highestForecastArray.add(battleForecast);
 			}
 		}
-
 		moveUnitIfNeeded(highestForecastArray.getFirst());
+		return true;
+	}
+
+	private boolean scanMovement() {
+		// 移動するユニットを探す
+		for (PLMSUnitView moveUnitView : mTargetArmy.getAliveUnitViewArray()) {
+			if (moveUnitView.isAlreadyAction()) {
+				continue;
+			}
+			// 狙う対象を探す
+			PLMSUnitView targetUnitView = null;
+			int highestScore = Integer.MIN_VALUE;
+			for (PLMSUnitView enemyUnitView : mTargetArmy.getEnemyArmy().getAliveUnitViewArray()) {
+				PLMSBattleForecast battleForecast = new PLMSBattleForecast(moveUnitView, null, enemyUnitView, null);
+				int score = calculateScore(battleForecast);
+				if (highestScore < score) {
+					highestScore = score;
+					targetUnitView = enemyUnitView;
+				}
+			}
+
+			// ルートを探す
+			MYArrayList<PLMSLandView> attackLandArray = mAreaManager.getAttackLandArrayToTarget(targetUnitView, moveUnitView);
+			PLMSLandRoute bestRoute = null;
+			for (PLMSLandView attackLandView : attackLandArray) {
+				// TODO: 他の敵はすり抜けるようにルートを取得
+				// TODO: movementForceは使用しない
+				// TODO: 検索がループしないようにする
+				PLMSLandRoute route = mAreaManager.getRouteOfUnit(moveUnitView, attackLandView, null);
+				if (bestRoute == null || route.size() < bestRoute.size()) {
+					/*
+					TODO: ルートにより優先度
+					優先度上げる：敵の上を通らない、斜めに移動
+					優先度下げる：敵の攻撃範囲に入る
+					 */
+					bestRoute = route;
+				}
+			}
+			if (bestRoute == null) {
+				MYLogUtil.showErrorToast("bestRoute is null");
+				continue;
+			}
+			int movementForce = moveUnitView.getUnitData().getBranch().getMovementForce();
+			PLMSLandView moveLandView = bestRoute.getFirst(); // このターンでの移動先
+			for (int i = 1; i <= movementForce; i++) {
+				PLMSLandView routeLandView = bestRoute.get(i);
+				PLMSUnitView landUnitView = moveLandView.getUnitView();
+				if (landUnitView == null) {
+					moveLandView = routeLandView;
+				} else if (moveUnitView.isEnemy(landUnitView)) {
+					// TODO: すり抜け持ちならreturnしない
+					// 敵がいるためその先に移動不可
+					break;
+				}
+			}
+			if (moveUnitView.getLandView().equals(moveLandView)) {
+				// 移動不可
+				continue;
+			}
+			// 移動
+			moveUnit(moveUnitView, moveLandView);
+			return true;
+		}
+		return false;
+	}
+
+	private int calculateScore(PLMSBattleForecast battleForecast) {
+		PLMSBattleUnit battleUnit = battleForecast.getLeftUnit();
+		PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
+		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
+		int enemyDamage = enemyUnit.getUnitData().getCurrentHP() - enemyUnit.getRemainingHP();
+		int score = enemyDamage - selfDamage;
+		if (enemyUnit.getRemainingHP() <= 0) {
+			score += 10000;
+		} else if (battleUnit.getRemainingHP() <= 0) {
+			score -= 10000;
+		}
+		return score;
+	}
+
+	private void moveUnit(final PLMSUnitView moveUnitView, final PLMSLandView moveLandView) {
+		Animator animator = mAnimationManager.getMovementAnimation(moveUnitView, moveUnitView.getLandView(), moveLandView);
+		animator.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				moveUnitView.moveToLand(moveLandView);
+				scanNextAction();
+			}
+		});
+		mAnimationManager.addAnimator(animator);
 	}
 
 	private void moveUnitIfNeeded(final PLMSBaseForecast forecast) {

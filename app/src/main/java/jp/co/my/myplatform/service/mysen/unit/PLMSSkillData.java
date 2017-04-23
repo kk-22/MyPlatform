@@ -582,6 +582,10 @@ public class PLMSSkillData {
 		if (battleForecast == null) {
 			centerPoint = centerUnit.getLandView().getPoint();
 		} else {
+			if (battleForecast.getLeftUnit().getLandView() == null) {
+				// 戦闘地点が未指定の場合は範囲スキルを考慮しない
+				return new MYArrayList<>(0);
+			}
 			// 戦闘時の UnitView と BattleUnit の位置の違いを吸収
 			centerPoint= battleForecast.getUnitOfBattle(centerUnit).getLandView().getPoint();
 		}

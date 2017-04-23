@@ -203,7 +203,7 @@ public class PLMSAreaManager {
 		return landRoute;
 	}
 
-	private PLMSLandRoute getRouteOfUnit(PLMSUnitView unitView,
+	public PLMSLandRoute getRouteOfUnit(PLMSUnitView unitView,
 										 PLMSLandView targetLandView,
 										 PLMSLandRoute prevRoute) {
 		if (unitView.getLandView().equals(targetLandView)) {

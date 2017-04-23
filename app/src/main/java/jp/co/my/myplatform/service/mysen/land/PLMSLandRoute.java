@@ -8,6 +8,10 @@ import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 
+/*
+ ユニットの現在位置から目標地点までの PLMSLandView を持つ配列。
+ ワープ移動の場合は現在地点を含まず、要素は目標地点の1つだけとなる。
+  */
 public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 
 	public PLMSLandRoute(ArrayList<PLMSLandView> landArray) {
