@@ -15,6 +15,7 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
+import jp.co.my.myplatform.service.mysen.land.PLMSRouteArray;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 public class PLMSComputerInterface extends PLMSWarInterface {
@@ -118,31 +119,35 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			}
 
 			// ルートを探す
+			PLMSRouteArray[][] allRouteArrays = mAreaManager.getAllRouteArrays(moveUnitView);
 			MYArrayList<PLMSLandView> attackLandArray = mAreaManager.getAttackLandArrayToTarget(targetUnitView, moveUnitView);
 			PLMSLandRoute bestRoute = null;
-			for (PLMSLandView attackLandView : attackLandArray) {
-				// TODO: 他の敵はすり抜けるようにルートを取得
-				// TODO: movementForceは使用しない
-				// TODO: 検索がループしないようにする
-				PLMSLandRoute route = mAreaManager.getRouteOfUnit(moveUnitView, attackLandView, null);
-				if (bestRoute == null || route.size() < bestRoute.size()) {
-					/*
-					TODO: ルートにより優先度
-					優先度上げる：敵の上を通らない、斜めに移動
-					優先度下げる：敵の攻撃範囲に入る
-					 */
-					bestRoute = route;
-				}
-			}
+//			for (PLMSLandView attackLandView : attackLandArray) {
+//				// TODO: 他の敵はすり抜けるようにルートを取得
+//				// TODO: movementForceは使用しない
+//				// TODO: 検索がループしないようにする
+//				if (bestRoute == null || route.size() < bestRoute.size()) {
+//					/*
+//					TODO: ルートにより優先度
+//					優先度上げる：敵の上を通らない、斜めに移動
+//					優先度下げる：敵の攻撃範囲に入る
+//					 */
+//					bestRoute = route;
+//				}
+//			}
+			// TODO: delete debug code
+			bestRoute = allRouteArrays[5][3].getFirst();
+
 			if (bestRoute == null) {
 				MYLogUtil.showErrorToast("bestRoute is null");
 				continue;
 			}
 			int movementForce = moveUnitView.getUnitData().getBranch().getMovementForce();
-			PLMSLandView moveLandView = bestRoute.getFirst(); // このターンでの移動先
-			for (int i = 1; i <= movementForce; i++) {
+			PLMSLandView moveLandView = null; // このターンでの移動先
+			for (int i = 1; i <= movementForce && i < bestRoute.size(); i++) {
+				// TODO:移動コスト計算していない。allRouteArraysのLandRouteのnumberOfTurnが使えないか？
 				PLMSLandView routeLandView = bestRoute.get(i);
-				PLMSUnitView landUnitView = moveLandView.getUnitView();
+				PLMSUnitView landUnitView = routeLandView.getUnitView();
 				if (landUnitView == null) {
 					moveLandView = routeLandView;
 				} else if (moveUnitView.isEnemy(landUnitView)) {
@@ -151,7 +156,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 					break;
 				}
 			}
-			if (moveUnitView.getLandView().equals(moveLandView)) {
+			if (moveLandView == null) {
 				// 移動不可
 				continue;
 			}
@@ -186,6 +191,8 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			}
 		});
 		mAnimationManager.addAnimator(animator);
+
+		moveUnitView.standby();
 	}
 
 	private void moveUnitIfNeeded(final PLMSBaseForecast forecast) {

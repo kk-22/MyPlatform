@@ -108,17 +108,20 @@ public class PLMSWarContent extends PLContentView {
 				// TODO: delete dummy code
 				int x = 0, y = 0;
 				mUnitDataArray = new ArrayList<>();
-				PLMSBlueArmy blueArmy = new PLMSBlueArmy(mArgument, "青軍", PLMSArmyStrategy.INTERFACE_COMPUTER);
-				PLMSRedArmy redArmy = new PLMSRedArmy(mArgument, "赤軍", PLMSArmyStrategy.INTERFACE_USER);
+				PLMSBlueArmy blueArmy = new PLMSBlueArmy(mArgument, "青軍", PLMSArmyStrategy.INTERFACE_USER);
+				PLMSRedArmy redArmy = new PLMSRedArmy(mArgument, "赤軍", PLMSArmyStrategy.INTERFACE_COMPUTER);
 				blueArmy.setEnemyArmy(redArmy);
 				redArmy.setEnemyArmy(blueArmy);
 				mArgument.setArmyArray(new MYArrayList<>(blueArmy, redArmy));
 				for (PLMSUnitModel unitModel : modelLists) {
-					Point point = new Point((x % 6), y);
-					PLMSArmyStrategy armyStrategy = (x %2 == 0) ? blueArmy : redArmy;
+					Point point = new Point(x, y);
+					PLMSArmyStrategy armyStrategy = (y == 0) ? blueArmy : redArmy;
 					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, armyStrategy, mArgument);
 					x = x + 1;
-					y = x / 2;
+					if (x == 4) {
+						x = 0;
+						y = 7;
+					}
 					mUnitDataArray.add(unitData);
 				}
 				startChildLayoutIfNeeded();

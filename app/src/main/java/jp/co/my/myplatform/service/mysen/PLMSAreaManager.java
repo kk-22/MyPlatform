@@ -4,9 +4,11 @@ import android.graphics.Color;
 import android.graphics.Point;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.land.PLMSColorCover;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
+import jp.co.my.myplatform.service.mysen.land.PLMSRouteArray;
 import jp.co.my.myplatform.service.mysen.land.PLMSRouteCover;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 
@@ -293,6 +295,128 @@ public class PLMSAreaManager {
 			}
 		}
 		return filteredArray;
+	}
+
+	public PLMSRouteArray[][] getAllRouteArrays(PLMSUnitView movingUnitView) {
+		MYLogUtil.outputLog("start");
+		initLandArrayBySkill(movingUnitView);
+		isSlipMove = true; // 敵を通過するルートも含む
+
+		PLMSRouteArray[][] allRouteArrays = new PLMSRouteArray[MAX_X][MAX_Y];
+		for (int i = 0; i < MAX_X; i++) {
+			for (int j = 0; j < MAX_Y; j++) {
+				allRouteArrays[i][j] = new PLMSRouteArray();
+			}
+		}
+
+		PLMSLandView currentLandView = movingUnitView.getLandView();
+		Point currentPoint = currentLandView.getPoint();
+		PLMSRouteArray currentRoute = allRouteArrays[currentPoint.x][currentPoint.y];
+		currentRoute.add(new PLMSLandRoute(currentLandView));
+		currentRoute.didSearch();
+		// TODO:ワープ＋移動によるルートも初期位置と同様の形で追加（ただしターン数の初期値は2）
+		// TODO:ワープ先の個数＋１をsearchedCountにセット
+
+		int range = 1;
+		int searchedCount = 1; // 現在位置、ワープ先地点分を初期値に設定
+		int maxSearchedCount = MAX_Y * MAX_X;
+		while (searchedCount < maxSearchedCount) {
+			MYLogUtil.outputLog("loop start range="+ range +" searchedCount=" +searchedCount);
+			// 現在位置から広がるように順に検索
+			MYArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(currentPoint, range);
+			for (PLMSLandView focusLandView : rangeLandArray) {
+				Point focusPoint = focusLandView.getPoint();
+				PLMSRouteArray focusRouteArray = allRouteArrays[focusPoint.x][focusPoint.y];
+
+				// フォーカス位置に移動するための出発地点を探す
+				MYArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusPoint, 1);
+				for (PLMSLandView aroundLandView : aroundLandArray) {
+					Point aroundPoint = aroundLandView.getPoint();
+					PLMSRouteArray aroundRouteArray = allRouteArrays[aroundPoint.x][aroundPoint.y];
+					if (aroundRouteArray.size() == 0) {
+						// ルートが無い地点からは出発できない
+						continue;
+					}
+					searchAllRoute(movingUnitView, focusLandView, focusRouteArray, aroundRouteArray, allRouteArrays);
+				}
+				MYLogUtil.outputLog(" searched count=" +searchedCount);
+				focusRouteArray.didSearch();
+				searchedCount++;
+//				if (searchedCount >= maxSearchedCount) {
+//					break;
+//				}
+			}
+			MYLogUtil.outputLog("loop end range="+ range +" searchedCount=" +searchedCount);
+			range++;
+		}
+		MYLogUtil.outputLog("end");
+		return allRouteArrays;
+	}
+
+	// TODO:旧サーチ処理と共通化できないか
+	private void searchAllRoute(PLMSUnitView movingUnitView,
+								PLMSLandView focusLandView,
+								PLMSRouteArray focusRouteArray,
+								PLMSRouteArray prevRouteArray,
+								PLMSRouteArray[][] allRouteArrays) {
+		MYLogUtil.outputLog(" searchAllRoute start");
+		// コスト判定
+		PLMSLandRoute prevRoute = prevRouteArray.getFirst();
+		int numberOfTurn = prevRoute.getNumberOfTurn(); // この位置に移動するのに必要なターン数
+		int remainingPower = prevRoute.getRemainingMovementPower();
+		int nextRemainingMove = getRemainingMoveCost(movingUnitView, focusLandView, remainingPower);
+		if (nextRemainingMove < 0) {
+			int movementForce = movingUnitView.getUnitData().getBranch().getMovementForce();
+			nextRemainingMove = getRemainingMoveCost(movingUnitView, focusLandView, movementForce);
+			if (nextRemainingMove < 0) {
+				// 移動不可の地形
+				return;
+			}
+			numberOfTurn++;
+		}
+
+		// 探索済みルート判定
+		PLMSLandRoute oldRoute = focusRouteArray.getFirst();
+		if (oldRoute != null) {
+			if (oldRoute.getNumberOfTurn() < numberOfTurn) {
+				// 最短ルートではない
+				return;
+			} else if (oldRoute.getNumberOfTurn() > numberOfTurn) {
+				// 最短ルートが出たため既存のルートを破棄
+				focusRouteArray.clear();
+			}
+		}
+		for (PLMSLandRoute landRoute : prevRouteArray) {
+			PLMSLandRoute copyRoute = (PLMSLandRoute) landRoute.clone();
+			copyRoute.add(focusLandView);
+			copyRoute.setRemainingMovementPower(remainingPower);
+			copyRoute.setNumberOfTurn(numberOfTurn);
+			focusRouteArray.add(copyRoute);
+		}
+		searchAdjacentAllRoute(movingUnitView, focusLandView, focusRouteArray, allRouteArrays);
+		MYLogUtil.outputLog(" searchAllRoute end");
+	}
+
+	private void searchAdjacentAllRoute(PLMSUnitView movingUnitView,
+										PLMSLandView focusLandView,
+										PLMSRouteArray focusRouteArray,
+										PLMSRouteArray[][] allRouteArrays) {
+		MYLogUtil.outputLog(" searchAdjacentAllRoute start");
+		MYArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusLandView.getPoint(), 1);
+		for (PLMSLandView aroundLand : aroundLandArray) {
+			Point focusPoint = focusLandView.getPoint();
+			PLMSRouteArray routeArray = allRouteArrays[focusPoint.x][focusPoint.y];
+			if (!routeArray.isAlreadySearched()) {
+				// 未探索地点を追い続けることで起きる無駄な迂回ルートの大量生成を避ける
+				continue;
+			}
+			if (routeArray == focusRouteArray) {
+				// 直前の 位置
+				continue;
+			}
+			searchAllRoute(movingUnitView, aroundLand, routeArray, focusRouteArray, allRouteArrays);
+		}
+		MYLogUtil.outputLog(" searchAdjacentAllRoute end");
 	}
 
 	public MYArrayList<PLMSLandView> getAroundLandArray(Point point, int range) {

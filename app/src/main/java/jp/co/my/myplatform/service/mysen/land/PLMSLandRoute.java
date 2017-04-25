@@ -14,6 +14,9 @@ import jp.co.my.myplatform.service.mysen.PLMSLandView;
   */
 public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 
+	private int mRemainingMovementPower; // 残りの移動力
+	private int mNumberOfTurn; // 移動に必要なターン数
+
 	public PLMSLandRoute(ArrayList<PLMSLandView> landArray) {
 		super(landArray);
 	}
@@ -25,6 +28,7 @@ public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 	public PLMSLandRoute(PLMSLandView landView) {
 		super();
 		add(landView);
+		mNumberOfTurn = 1;
 	}
 
 	// Debug
@@ -41,5 +45,23 @@ public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 		String debugText = builder.toString();
 		MYLogUtil.outputLog(debugText);
 		return debugText;
+	}
+
+	// getter
+	public int getRemainingMovementPower() {
+		return mRemainingMovementPower;
+	}
+
+	public int getNumberOfTurn() {
+		return mNumberOfTurn;
+	}
+
+	// setter
+	public void setRemainingMovementPower(int remainingMovementPower) {
+		mRemainingMovementPower = remainingMovementPower;
+	}
+
+	public void setNumberOfTurn(int numberOfTurn) {
+		mNumberOfTurn = numberOfTurn;
 	}
 }
