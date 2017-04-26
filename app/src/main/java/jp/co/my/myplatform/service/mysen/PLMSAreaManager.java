@@ -298,7 +298,7 @@ public class PLMSAreaManager {
 	}
 
 	public PLMSRouteArray[][] getAllRouteArrays(PLMSUnitView movingUnitView) {
-		MYLogUtil.outputLog("start");
+		MYLogUtil.outputLog("getAllRouteArrays start");
 		initLandArrayBySkill(movingUnitView);
 		isSlipMove = true; // 敵を通過するルートも含む
 
@@ -321,7 +321,6 @@ public class PLMSAreaManager {
 		int searchedCount = 1; // 現在位置、ワープ先地点分を初期値に設定
 		int maxSearchedCount = MAX_Y * MAX_X;
 		while (searchedCount < maxSearchedCount) {
-			MYLogUtil.outputLog("loop start range="+ range +" searchedCount=" +searchedCount);
 			// 現在位置から広がるように順に検索
 			MYArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(currentPoint, range);
 			for (PLMSLandView focusLandView : rangeLandArray) {
@@ -339,17 +338,12 @@ public class PLMSAreaManager {
 					}
 					searchAllRoute(movingUnitView, focusLandView, focusRouteArray, aroundRouteArray, allRouteArrays);
 				}
-				MYLogUtil.outputLog(" searched count=" +searchedCount);
 				focusRouteArray.didSearch();
 				searchedCount++;
-//				if (searchedCount >= maxSearchedCount) {
-//					break;
-//				}
 			}
-			MYLogUtil.outputLog("loop end range="+ range +" searchedCount=" +searchedCount);
 			range++;
 		}
-		MYLogUtil.outputLog("end");
+		MYLogUtil.outputLog("getAllRouteArrays end");
 		return allRouteArrays;
 	}
 
@@ -359,7 +353,6 @@ public class PLMSAreaManager {
 								PLMSRouteArray focusRouteArray,
 								PLMSRouteArray prevRouteArray,
 								PLMSRouteArray[][] allRouteArrays) {
-		MYLogUtil.outputLog(" searchAllRoute start");
 		// コスト判定
 		PLMSLandRoute prevRoute = prevRouteArray.getFirst();
 		int numberOfTurn = prevRoute.getNumberOfTurn(); // この位置に移動するのに必要なターン数
@@ -394,14 +387,12 @@ public class PLMSAreaManager {
 			focusRouteArray.add(copyRoute);
 		}
 		searchAdjacentAllRoute(movingUnitView, focusLandView, focusRouteArray, allRouteArrays);
-		MYLogUtil.outputLog(" searchAllRoute end");
 	}
 
 	private void searchAdjacentAllRoute(PLMSUnitView movingUnitView,
 										PLMSLandView focusLandView,
 										PLMSRouteArray focusRouteArray,
 										PLMSRouteArray[][] allRouteArrays) {
-		MYLogUtil.outputLog(" searchAdjacentAllRoute start");
 		MYArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusLandView.getPoint(), 1);
 		for (PLMSLandView aroundLand : aroundLandArray) {
 			Point focusPoint = focusLandView.getPoint();
@@ -416,7 +407,6 @@ public class PLMSAreaManager {
 			}
 			searchAllRoute(movingUnitView, aroundLand, routeArray, focusRouteArray, allRouteArrays);
 		}
-		MYLogUtil.outputLog(" searchAdjacentAllRoute end");
 	}
 
 	public MYArrayList<PLMSLandView> getAroundLandArray(Point point, int range) {
