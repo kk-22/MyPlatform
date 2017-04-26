@@ -16,6 +16,7 @@ public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 
 	private int mRemainingMovementPower; // 残りの移動力
 	private int mNumberOfTurn; // 移動に必要なターン数
+	private int mOneTurnIndex; // 1ターン目で移動可能な PLMSLandView を指す index
 
 	public PLMSLandRoute(ArrayList<PLMSLandView> landArray) {
 		super(landArray);
@@ -28,7 +29,6 @@ public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 	public PLMSLandRoute(PLMSLandView landView) {
 		super();
 		add(landView);
-		mNumberOfTurn = 1;
 	}
 
 	// Debug
@@ -56,12 +56,20 @@ public class PLMSLandRoute extends MYArrayList<PLMSLandView> {
 		return mNumberOfTurn;
 	}
 
+	public int getOneTurnIndex() {
+		return mOneTurnIndex;
+	}
+
 	// setter
 	public void setRemainingMovementPower(int remainingMovementPower) {
 		mRemainingMovementPower = remainingMovementPower;
 	}
 
 	public void setNumberOfTurn(int numberOfTurn) {
+		if (mNumberOfTurn == 1 && numberOfTurn == 2) {
+			// 1ターン目中に移動可能な位置を保持
+			mOneTurnIndex = size() - 1;
+		}
 		mNumberOfTurn = numberOfTurn;
 	}
 }

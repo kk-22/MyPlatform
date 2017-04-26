@@ -51,6 +51,7 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 		int plusDamage = getBattleAttack() * threeWayRatio / 100 * mThreeWayCompatibility;
 		mTotalAttack = getBattleAttack() + plusDamage;
 
+		// TODO: 先に1.5倍してから相性補正値を計算
 		if (getUnitData().getWeaponSkillData().isWeaknessBranch(mAnotherUnit)
 				&& !mAnotherUnit.getSkillEffectArray().contains(PLMSSkillData.EffectType.PROTECT_WEAKNESS_ATTACK)) {
 			mIsWeaknessAttack = true;

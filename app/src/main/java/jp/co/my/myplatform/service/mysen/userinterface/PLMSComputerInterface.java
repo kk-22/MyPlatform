@@ -2,10 +2,14 @@ package jp.co.my.myplatform.service.mysen.userinterface;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.Point;
+
+import java.util.HashMap;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYOtherUtil;
+import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
@@ -86,7 +90,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		MYArrayList<PLMSBattleForecast> highestForecastArray = new MYArrayList<>();
 		int highestScore = Integer.MIN_VALUE;
 		for (PLMSBattleForecast battleForecast : allBattleForecast) {
-			int score = calculateScore(battleForecast);
+			int score = calculateBattleScore(battleForecast);
 
 			if (highestScore == score) {
 				highestForecastArray.add(battleForecast);
@@ -101,6 +105,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 	}
 
 	private boolean scanMovement() {
+		// TODO:近距離・補助スキルなしユニットを優先的に移動
 		// 移動するユニットを探す
 		for (PLMSUnitView moveUnitView : mTargetArmy.getAliveUnitViewArray()) {
 			if (moveUnitView.isAlreadyAction()) {
@@ -111,7 +116,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			int highestScore = Integer.MIN_VALUE;
 			for (PLMSUnitView enemyUnitView : mTargetArmy.getEnemyArmy().getAliveUnitViewArray()) {
 				PLMSBattleForecast battleForecast = new PLMSBattleForecast(moveUnitView, null, enemyUnitView, null);
-				int score = calculateScore(battleForecast);
+				int score = calculateBattleScore(battleForecast);
 				if (highestScore < score) {
 					highestScore = score;
 					targetUnitView = enemyUnitView;
@@ -119,55 +124,21 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			}
 
 			// ルートを探す
-			PLMSRouteArray[][] allRouteArrays = mAreaManager.getAllRouteArrays(moveUnitView);
-			MYArrayList<PLMSLandView> attackLandArray = mAreaManager.getAttackLandArrayToTarget(targetUnitView, moveUnitView);
-			PLMSLandRoute bestRoute = null;
-//			for (PLMSLandView attackLandView : attackLandArray) {
-//				// TODO: 他の敵はすり抜けるようにルートを取得
-//				// TODO: movementForceは使用しない
-//				// TODO: 検索がループしないようにする
-//				if (bestRoute == null || route.size() < bestRoute.size()) {
-//					/*
-//					TODO: ルートにより優先度
-//					優先度上げる：敵の上を通らない、斜めに移動
-//					優先度下げる：敵の攻撃範囲に入る
-//					 */
-//					bestRoute = route;
-//				}
-//			}
-			// TODO: delete debug code
-			bestRoute = allRouteArrays[5][3].getFirst();
-
-			if (bestRoute == null) {
-				MYLogUtil.showErrorToast("bestRoute is null");
-				continue;
-			}
-			int movementForce = moveUnitView.getUnitData().getBranch().getMovementForce();
-			PLMSLandView moveLandView = null; // このターンでの移動先
-			for (int i = 1; i <= movementForce && i < bestRoute.size(); i++) {
-				// TODO:移動コスト計算していない。allRouteArraysのLandRouteのnumberOfTurnが使えないか？
-				PLMSLandView routeLandView = bestRoute.get(i);
-				PLMSUnitView landUnitView = routeLandView.getUnitView();
-				if (landUnitView == null) {
-					moveLandView = routeLandView;
-				} else if (moveUnitView.isEnemy(landUnitView)) {
-					// TODO: すり抜け持ちならreturnしない
-					// 敵がいるためその先に移動不可
-					break;
-				}
-			}
-			if (moveLandView == null) {
-				// 移動不可
+			HashMap<PLMSLandView, PLMSRouteArray> routeArrayHashMap = mAreaManager.getAllRouteArrayHashMap(moveUnitView);
+			PLMSLandView destinationLandView = filterDestinationLandView(moveUnitView, targetUnitView, routeArrayHashMap);
+			if (destinationLandView == null) {
+				// TODO:エラーではないため、動作に問題がなければトーストを消す
+				MYLogUtil.showErrorToast("destination is null. unit=" +moveUnitView +" target=" +targetUnitView);
 				continue;
 			}
 			// 移動
-			moveUnit(moveUnitView, moveLandView);
+			moveUnit(moveUnitView, destinationLandView);
 			return true;
 		}
 		return false;
 	}
 
-	private int calculateScore(PLMSBattleForecast battleForecast) {
+	private int calculateBattleScore(PLMSBattleForecast battleForecast) {
 		PLMSBattleUnit battleUnit = battleForecast.getLeftUnit();
 		PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
 		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
@@ -179,6 +150,62 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			score -= 10000;
 		}
 		return score;
+	}
+
+	// ルート情報から移動先の PLMSLandView を絞り込む
+	private PLMSLandView filterDestinationLandView(PLMSUnitView movingUnitView,
+												   PLMSUnitView targetUnitView,
+												   HashMap<PLMSLandView, PLMSRouteArray> routeArrayHashMap) {
+		MYArrayList<PLMSLandView> attackLandArray = mAreaManager.getAttackLandArrayToTarget(targetUnitView, movingUnitView);
+		MYArrayList<PLMSRouteArray> shortestRouteArrays = new MYArrayList<>(attackLandArray.size());
+		int shortestNum = Integer.MAX_VALUE;
+		for (PLMSLandView attackLandView : attackLandArray) {
+			PLMSRouteArray routeArray = routeArrayHashMap.get(attackLandView);
+			PLMSLandRoute landRoute = routeArray.getFirst();
+			if (landRoute == null || landRoute.size() > shortestNum) {
+				continue;
+			}
+			if (landRoute.size() < shortestNum) {
+				shortestNum = landRoute.size();
+				shortestRouteArrays.clear();
+			}
+			shortestRouteArrays.add(routeArray);
+		}
+
+		PLMSLandView targetLandView = targetUnitView.getLandView();
+		Point targetPoint = targetLandView.getPoint();
+		PLMSLandView highestLandView = null;
+		int highestScore = Integer.MIN_VALUE;
+		for (PLMSRouteArray routeArray : shortestRouteArrays) {
+			for (PLMSLandRoute landRoute : routeArray) {
+				int oneTurnIndex = landRoute.getOneTurnIndex();
+				for (int i = 1; i <= oneTurnIndex; i++) {
+					PLMSLandView landView = landRoute.get(i);
+					PLMSUnitView landUnitView = landView.getUnitView();
+					if (landUnitView != null) {
+						if (landUnitView.isEnemy(movingUnitView)) {
+							// TODO: すり抜け判定
+							// 敵ならそこで移動停止
+							break;
+						} else {
+							// 味方なら通過
+							continue;
+						}
+					}
+					// 1ターン目での移動先から離れている程マイナス
+					int score = -10000 * (oneTurnIndex - i);
+					if (MYPointUtil.isEqualOneSide(targetPoint, landView.getPoint())) {
+						score += 100;
+					}
+					// TODO:敵の攻撃範囲外を優先
+					if (score > highestScore) {
+						highestScore = score;
+						highestLandView = landView;
+					}
+				}
+			}
+		}
+		return highestLandView;
 	}
 
 	private void moveUnit(final PLMSUnitView moveUnitView, final PLMSLandView moveLandView) {
