@@ -239,7 +239,7 @@ public class PLMSAreaManager {
 		}
 
 		// 最短ルートに絞り込む
-		int shortestSize = 99;
+		int shortestSize = Integer.MAX_VALUE;
 		PLMSLandRoute shortestRoute = null;
 		for (PLMSLandRoute landRoute : candidateRouteArray) {
 			int size = landRoute.size();
