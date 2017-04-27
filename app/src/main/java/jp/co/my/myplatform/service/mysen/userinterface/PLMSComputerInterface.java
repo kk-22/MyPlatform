@@ -35,7 +35,6 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 
 	@Override
 	public void disableInterface() {
-
 	}
 
 	private void scanNextAction() {
@@ -45,6 +44,12 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			return;
 		}
 		mArgument.getTurnManager().finishTurn();
+	}
+
+	private void scanNextActionIfNeeded() {
+		if (!mArgument.getTurnManager().finishTurnIfNecessary()) {
+			scanNextAction();
+		}
 	}
 
 	private boolean scanBattleAndSupport() {
@@ -214,7 +219,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			@Override
 			public void onAnimationEnd(Animator animation) {
 				moveUnitView.moveToLand(moveLandView);
-				scanNextAction();
+				scanNextActionIfNeeded();
 			}
 		});
 		mAnimationManager.addAnimator(animator);
@@ -250,7 +255,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			public void run() {
 				PLMSUnitInterface leftUnit = battleForecast.getLeftUnit();
 				leftUnit.getUnitView().didAction();
-				scanNextAction();
+				scanNextActionIfNeeded();
 			}
 		});
 	}

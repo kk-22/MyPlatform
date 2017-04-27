@@ -28,14 +28,22 @@ public class PLMSTurnManager {
 		startNextTurn();
 	}
 
-	// 全員行動済みならターン終了
-	public void finishTurnIfNecessary() {
+	// 全員行動済みならターン終了。ターン続行なら false を返す
+	public boolean finishTurnIfNecessary() {
+		if (mCurrentArmy.getEnemyArmy().getAliveUnitViewArray().size() == 0) {
+			// 敵全滅
+			mCurrentArmy.getWarInterface().disableInterface();
+			return true;
+		}
 		for (PLMSUnitView unitView : mCurrentArmy.getAliveUnitViewArray()) {
 			if (!unitView.isAlreadyAction()) {
-				return;
+				// 行動可能
+				return false;
 			}
 		}
+		// 全員行動済み
 		finishTurn();
+		return true;
 	}
 
 	// ターン終了
