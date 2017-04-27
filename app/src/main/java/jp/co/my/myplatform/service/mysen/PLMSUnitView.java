@@ -92,6 +92,7 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 	public void removeFromField() {
 		mLandView.removeUnitView();
 		MYViewUtil.removeFromSuperView(this);
+		mUnitData.getArmyStrategy().withdrawalUnitView(this);
 	}
 
 	// 行動済みの場合 true を返す

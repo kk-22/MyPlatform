@@ -16,6 +16,7 @@ public abstract class PLMSArmyStrategy {
 	private String mName;
 	private int mInterfaceNo;
 	private PLMSArgument mArgument;
+	private MYArrayList<PLMSUnitView> mAliveUnitViewArray;
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 	private PLMSWarInterface mWarInterface;
 	private PLMSArmyStrategy mEnemyArmy;
@@ -25,10 +26,18 @@ public abstract class PLMSArmyStrategy {
 		mName = name;
 		mInterfaceNo = interfaceNo;
 		mAllUnitViewArray = new MYArrayList<>();
+		mAliveUnitViewArray = new MYArrayList<>();
 	}
 
+	// ユニットの登録
 	public void addUnitView(PLMSUnitView unitView) {
 		mAllUnitViewArray.add(unitView);
+		mAliveUnitViewArray.add(unitView);
+	}
+
+	// ユニットの離脱
+	public void withdrawalUnitView(PLMSUnitView unitView) {
+		mAliveUnitViewArray.remove(unitView);
 	}
 
 	public boolean hasUnitView(PLMSUnitView unitView) {
@@ -65,13 +74,13 @@ public abstract class PLMSArmyStrategy {
 	}
 
 	public MYArrayList<PLMSUnitView> getAliveUnitViewArray() {
-		return getAliveUnitViewArray(null);
+		return mAliveUnitViewArray;
 	}
 
 	public MYArrayList<PLMSUnitView> getAliveUnitViewArray(PLMSUnitView ignoreUnitView) {
 		MYArrayList<PLMSUnitView> resultArray = new MYArrayList<>();
-		for (PLMSUnitView unitView : mAllUnitViewArray) {
-			if (!unitView.equals(ignoreUnitView) && unitView.getUnitData().isAlive()) {
+		for (PLMSUnitView unitView : mAliveUnitViewArray) {
+			if (!unitView.equals(ignoreUnitView)) {
 				resultArray.add(unitView);
 			}
 		}
