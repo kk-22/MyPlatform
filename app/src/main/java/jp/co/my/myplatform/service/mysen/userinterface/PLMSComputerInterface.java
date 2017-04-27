@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.Point;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import jp.co.my.common.util.MYArrayList;
@@ -30,6 +32,26 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 
 	@Override
 	public void enableInterface() {
+		// 移動順にソート
+		Collections.sort(mTargetArmy.getAliveUnitViewArray(), new Comparator<PLMSUnitView>() {
+			@Override
+			public int compare(PLMSUnitView unitView1, PLMSUnitView unitView2) {
+				// 近接ユニットは先
+				int rangeDiff = unitView1.getUnitData().getBranch().getAttackRange()
+						- unitView2.getUnitData().getBranch().getAttackRange();
+				if (rangeDiff != 0) {
+					return rangeDiff;
+				}
+				// 補助スキル無い方は先
+				boolean isAvailable1 = unitView1.getUnitData().getSupportSkillData().isAvailable();
+				boolean isAvailable2 = unitView2.getUnitData().getSupportSkillData().isAvailable();
+				if (isAvailable1 == isAvailable2) {
+					return 0;
+				}
+				return (isAvailable1) ? 1 : -1;
+			}
+		});
+
 		scanNextAction();
 	}
 
