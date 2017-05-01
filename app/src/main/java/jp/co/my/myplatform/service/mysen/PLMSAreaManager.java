@@ -70,7 +70,7 @@ public class PLMSAreaManager {
 	}
 
 	public void showActionArea(PLMSUnitView unitView) {
-		MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
+		MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView, false);
 		mMoveAreaCover.showCoverViews(movableLandArray);
 
 		MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView, false);
@@ -83,18 +83,20 @@ public class PLMSAreaManager {
 	public MYArrayList<PLMSLandView> getAllAttackableLandArray(MYArrayList<PLMSUnitView> targetUnitArray) {
 		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
 		for (PLMSUnitView unitView : targetUnitArray) {
-			MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
+			MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView, true);
 			MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView, true);
 			resultArray.addAllOnlyNoContain(attackableLandArray);
 		}
 		return resultArray;
 	}
 
-	public MYArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
+	// 1ターンで移動可能な PLMSLandView の取得
+	// includeTeamLand : 味方ユニットがいる地点も戻り値に含む
+	public MYArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView, boolean includeTeamLand) {
 		initLandArrayBySkill(unitView);
 		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
 		MYArrayList<PLMSLandView> movableLandArray = new MYArrayList<>();
-		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, movementForce, movableLandArray);
+		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, includeTeamLand, movementForce, movableLandArray);
 
 		movableLandArray.addAllOnlyNoContain(mWarpLandArray);
 
@@ -181,25 +183,27 @@ public class PLMSAreaManager {
 		return resultArray;
 	}
 
-	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView,
+	private void searchAdjacentMovableArea(Point point, PLMSUnitView unitView, boolean includeTeamLand,
 										   int remainingMove, MYArrayList<PLMSLandView> movableLandArray) {
 		MYArrayList<PLMSLandView> adjacentLandArray = getAroundLandArray(point, 1);
 		for (PLMSLandView adjacentLandView : adjacentLandArray) {
-			searchMovableArea(unitView, adjacentLandView, remainingMove, movableLandArray);
+			searchMovableArea(unitView, includeTeamLand, adjacentLandView, remainingMove, movableLandArray);
 		}
 	}
 
-	private void searchMovableArea(PLMSUnitView unitView, PLMSLandView landView,
+	private void searchMovableArea(PLMSUnitView unitView, boolean includeTeamLand, PLMSLandView landView,
 								   int remainingMove, MYArrayList<PLMSLandView> movableLandArray) {
 		int nextRemainingMove = getRemainingMoveCost(unitView, landView, remainingMove);
 		if (nextRemainingMove < 0) {
 			// 移動不可
 			return;
 		}
-		if (landView.getUnitView() == null && !movableLandArray.contains(landView)) {
+		PLMSUnitView landUnitView = landView.getUnitView();
+		if (!movableLandArray.contains(landView)
+				&& (landUnitView == null || (includeTeamLand && !unitView.isEnemy(landUnitView)))) {
 			movableLandArray.add(landView);
 		}
-		searchAdjacentMovableArea(landView.getPoint(), unitView, nextRemainingMove, movableLandArray);
+		searchAdjacentMovableArea(landView.getPoint(), unitView, includeTeamLand, nextRemainingMove, movableLandArray);
 	}
 
 	public PLMSLandRoute showRouteArea(PLMSUnitView unitView,

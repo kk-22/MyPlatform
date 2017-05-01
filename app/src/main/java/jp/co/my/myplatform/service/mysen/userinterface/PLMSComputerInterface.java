@@ -81,7 +81,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			if (actionUnitView.isAlreadyAction()) {
 				continue;
 			}
-			MYArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(actionUnitView);
+			MYArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(actionUnitView, false);
 			// 戦闘予測取得
 			MYArrayList<PLMSLandView> attackableLandArray = mAreaManager.getAttackableLandArray(movableLandArray, actionUnitView, false);
 			for (PLMSLandView targetLandView : attackableLandArray) {

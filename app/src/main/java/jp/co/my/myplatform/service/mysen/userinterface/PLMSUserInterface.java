@@ -533,7 +533,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 		}
 
 		// 移動可能範囲取得
-		ArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(mMovingUnitView);
+		ArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(mMovingUnitView, false);
 		movableLandArray.add(mMovingUnitView.getLandView()); // 現在地も追加
 		// 移動候補を移動可能範囲で絞り込み
 		ArrayList<PLMSLandView> moveLandArray = new ArrayList<>();
