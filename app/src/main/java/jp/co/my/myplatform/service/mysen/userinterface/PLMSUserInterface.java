@@ -37,17 +37,20 @@ public class PLMSUserInterface extends PLMSWarInterface
 	private PLMSLandView mTempLandView;					// mMovingUnitView の現在の仮位置
 	private PLMSLandRoute mTempRoute;
 	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
-	private boolean mIsShowingAllDangerArea; // 敵全員の攻撃範囲表示中なら true
 
 	// カバー
 	// TODO: AreaManager にあるカバーもここに移動する
-	private PLMSColorCover mAllDangerCover; // 危険範囲
+	private PLMSColorCover mAllDangerCover; // 全敵の危険範囲
+	private PLMSColorCover mSelectDangerCover; // 選択している敵の危険範囲
+	private boolean mIsShowingAllDangerArea; // 全敵の危険範囲表示中なら true
+	private MYArrayList<PLMSUnitView> mSelectingDangerAreaUnit; // 攻撃範囲表示対象の PLMSUnitView
 
 	// タップ判定
 	private PointF mTouchDownPointF;
-	private long mTouchDownTimeMillis; // ダブルタップ判定用
-	private long mPrevTouchTimeMillis; // ダブルタップ判定用
+	private long mTouchDownTimeMillis; // ダブル・ロングタップ判定用。今回指を押した時間
+	private long mPrevTouchTimeMillis; // ダブルタップ判定用。前回指を離した時間
 	private boolean mIsDragging;
+	private boolean mDidLongTap; // 今回のタップイベント中にロングタップしたらなら true
 
 	public PLMSUserInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
 		super(argument, armyStrategy);
@@ -55,6 +58,8 @@ public class PLMSUserInterface extends PLMSWarInterface
 		mPrevRouteArray = new MYArrayList<>();
 
 		mAllDangerCover = new PLMSColorCover(Color.argb(128, 205, 97, 155));
+		mSelectDangerCover = new PLMSColorCover(Color.argb(128, 255, 0, 0));
+		mSelectingDangerAreaUnit = new MYArrayList<>();
 	}
 
 	@Override
@@ -79,6 +84,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 		}
 
 		mAllDangerCover.hideAllCoverViews();
+		mSelectDangerCover.hideAllCoverViews();
 		mAreaManager.getAvailableAreaCover().hideAllCoverViews();
 
 		for (PLMSUnitView unitView : mUnitArray) {
@@ -98,32 +104,29 @@ public class PLMSUserInterface extends PLMSWarInterface
 			case MotionEvent.ACTION_DOWN: {
 				mTouchDownPointF = new PointF(event.getX(), event.getY());
 				mTouchDownTimeMillis = System.currentTimeMillis();
+				mDidLongTap = false;
 			}
 			case MotionEvent.ACTION_MOVE: {
-				if (unitView.getVisibility() == GONE || !mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
-					// 同ユニットを既にドラッグイベント中 or 移動対象でないユニット
+				if (unitView.getVisibility() == GONE) {
+					// 同ユニットを既にドラッグイベント中
 					break;
 				}
-				// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
-				// ACTION_UP をクリックと判定するために閾値で判定
-				if ((Math.abs(mTouchDownPointF.x - event.getX()) + Math.abs(mTouchDownPointF.y - event.getY())) > 10) {
-					mInformation.updateForUnitData(unitView);
-					if (!unitView.equals(mMovingUnitView)) {
-						if (mMovingUnitView != null) {
-							cancelMoveEvent();
-						}
-						beginMoveEvent(unitView);
+
+				if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
+					// startDrag メソッドにより ACTION_CANCEL が呼ばれ、ACTION_UP が呼ばれなくなる
+					// ACTION_UP をクリックと判定するために閾値で判定
+					float diffPoint = Math.abs(mTouchDownPointF.x - event.getX()) + Math.abs(mTouchDownPointF.y - event.getY());
+					if (diffPoint > 10 || shouldLongTapEvent(unitView, event)) {
+						beginDragEvent(unitView);
 					}
-
-					View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
-					// API24 から startDragAndDrop
-					unitView.startDrag(null, shadow, unitView, 0);
-					unitView.setVisibility(GONE);
-					mIsDragging = true;
-
-					mPrevTouchTimeMillis = 0;
-					mTouchDownTimeMillis = 0;
-					MYLogUtil.outputLog(" startDrag unit=" +unitView.debugLog());
+				} else if (shouldLongTapEvent(unitView, event)) {
+					// 移動対象ではないユニットをロングタップ
+					if (mSelectingDangerAreaUnit.contains(unitView)) {
+						mSelectingDangerAreaUnit.remove(unitView);
+					} else {
+						mSelectingDangerAreaUnit.add(unitView);
+					}
+					updateDangerArea();
 				}
 				break;
 			}
@@ -377,7 +380,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 		}
 	}
 
-	public void updateDangerArea() {
+	private void updateDangerArea() {
 		if (mIsShowingAllDangerArea) {
 			mAllDangerCover.hideAllCoverViews();
 
@@ -385,6 +388,34 @@ public class PLMSUserInterface extends PLMSWarInterface
 			MYArrayList<PLMSLandView> dangerLandArray = mAreaManager.getAllAttackableLandArray(enemyUnitArray);
 			mAllDangerCover.showCoverViews(dangerLandArray);
 		}
+
+		mSelectDangerCover.hideAllCoverViews();
+		if (mSelectingDangerAreaUnit.size() > 0) {
+			MYArrayList<PLMSUnitView> enemyAliveUnitArray = mTargetArmy.getEnemyArmy().getAliveUnitViewArray();
+			MYArrayList<PLMSUnitView> targetUnitArray = enemyAliveUnitArray.filterByArray(mSelectingDangerAreaUnit);
+			MYArrayList<PLMSLandView> dangerLandArray = mAreaManager.getAllAttackableLandArray(targetUnitArray);
+			mSelectDangerCover.showCoverViews(dangerLandArray);
+		}
+	}
+
+	private void beginDragEvent(PLMSUnitView unitView) {
+		mInformation.updateForUnitData(unitView);
+		if (!unitView.equals(mMovingUnitView)) {
+			if (mMovingUnitView != null) {
+				cancelMoveEvent();
+			}
+			beginMoveEvent(unitView);
+		}
+
+		View.DragShadowBuilder shadow = new View.DragShadowBuilder(unitView);
+		// API24 から startDragAndDrop
+		unitView.startDrag(null, shadow, unitView, 0);
+		unitView.setVisibility(GONE);
+		mIsDragging = true;
+
+		mPrevTouchTimeMillis = 0;
+		mTouchDownTimeMillis = 0;
+		MYLogUtil.outputLog(" startDrag unit=" +unitView.debugLog());
 	}
 
 	private void beginMoveEvent(PLMSUnitView unitView) {
@@ -541,5 +572,23 @@ public class PLMSUserInterface extends PLMSWarInterface
 		}
 		mTouchDownTimeMillis = 0;
 		return false;
+	}
+
+	private boolean shouldLongTapEvent(PLMSUnitView unitView, MotionEvent event) {
+		if (mDidLongTap) {
+			// ロングタップイベントは連続では発生させない
+			return false;
+		}
+		long currentTimeMillis = System.currentTimeMillis();
+		if (currentTimeMillis - mTouchDownTimeMillis < 300) {
+			return false;
+		}
+		if (event.getX() < 0 || unitView.getWidth() < event.getX()
+				|| event.getY() < 0 || unitView.getHeight() < event.getY()) {
+			// View の領域外にいる
+			return false;
+		}
+		mDidLongTap = true;
+		return true;
 	}
 }
