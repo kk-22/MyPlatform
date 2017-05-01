@@ -73,11 +73,21 @@ public class PLMSAreaManager {
 		MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
 		mMoveAreaCover.showCoverViews(movableLandArray);
 
-		MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView);
+		MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView, false);
 		mAttackAreaCover.showCoverViews(attackableLandArray);
 
 		MYArrayList<PLMSLandView> supportableLandArray = getSupportableLandArray(movableLandArray, unitView);
 		mSupportAreaCover.showCoverViews(supportableLandArray);
+	}
+
+	public MYArrayList<PLMSLandView> getAllAttackableLandArray(MYArrayList<PLMSUnitView> targetUnitArray) {
+		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
+		for (PLMSUnitView unitView : targetUnitArray) {
+			MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView);
+			MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView, true);
+			resultArray.addAllOnlyNoContain(attackableLandArray);
+		}
+		return resultArray;
 	}
 
 	public MYArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView) {
@@ -92,7 +102,10 @@ public class PLMSAreaManager {
 	}
 
 	// 移動範囲と味方ユニットがいる地点を除く攻撃範囲の取得
-	public MYArrayList<PLMSLandView> getAttackableLandArray(MYArrayList<PLMSLandView> movableLandArray, PLMSUnitView unitView) {
+	// includeAllLand : 移動先や味方ユニットがいる地点も戻り値に含む
+	public MYArrayList<PLMSLandView> getAttackableLandArray(MYArrayList<PLMSLandView> movableLandArray,
+															PLMSUnitView unitView,
+															boolean includeAllLand) {
 		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
 
 		// 現在地も追加
@@ -102,16 +115,14 @@ public class PLMSAreaManager {
 		for (PLMSLandView moveLandView : movableLandArray) {
 			MYArrayList<PLMSLandView> rangeLandArray = getAroundLandArray(moveLandView.getPoint(), range);
 			for (PLMSLandView rangeLandView : rangeLandArray) {
-				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
-				if (movableLandArray.contains(rangeLandView) || unitView.equals(rangeUnitView)) {
-					// 攻撃不可
-					continue;
-				}
 				if (resultArray.contains(rangeLandView)) {
 					// 登録済み
 					continue;
 				}
-				if (rangeUnitView == null || unitView.isEnemy(rangeUnitView)) {
+				PLMSUnitView rangeUnitView = rangeLandView.getUnitView();
+				if (includeAllLand ||
+						(!movableLandArray.contains(rangeLandView) && (rangeUnitView == null || unitView.isEnemy(rangeUnitView)))) {
+					// includeAllLand が true もしくは移動先でなく味方ユニットがいない
 					resultArray.add(rangeLandView);
 				}
 			}

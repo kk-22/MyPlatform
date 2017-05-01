@@ -29,4 +29,8 @@ public abstract class PLMSWarInterface {
 
 	public abstract void enableInterface();
 	public abstract void disableInterface();
+
+	public void toggleAllDangerArea() {
+		// 攻撃範囲表示するなら override
+	}
 }

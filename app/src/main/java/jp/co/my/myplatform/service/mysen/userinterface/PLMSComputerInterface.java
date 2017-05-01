@@ -83,7 +83,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			}
 			MYArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(actionUnitView);
 			// 戦闘予測取得
-			MYArrayList<PLMSLandView> attackableLandArray = mAreaManager.getAttackableLandArray(movableLandArray, actionUnitView);
+			MYArrayList<PLMSLandView> attackableLandArray = mAreaManager.getAttackableLandArray(movableLandArray, actionUnitView, false);
 			for (PLMSLandView targetLandView : attackableLandArray) {
 				PLMSUnitView targetUnitView = targetLandView.getUnitView();
 				if (targetUnitView == null) {

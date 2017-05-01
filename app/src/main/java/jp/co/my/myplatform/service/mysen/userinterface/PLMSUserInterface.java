@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.mysen.userinterface;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.view.DragEvent;
@@ -21,6 +22,7 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
+import jp.co.my.myplatform.service.mysen.land.PLMSColorCover;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
@@ -29,28 +31,37 @@ import static android.view.View.GONE;
 
 public class PLMSUserInterface extends PLMSWarInterface
 		implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
-
+	// View関係
 	private PLMSInformationView mInformation;
+	private PLMSUnitView mMovingUnitView;
+	private PLMSLandView mTempLandView;					// mMovingUnitView の現在の仮位置
+	private PLMSLandRoute mTempRoute;
+	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
+	private boolean mIsShowingAllDangerArea; // 敵全員の攻撃範囲表示中なら true
 
+	// カバー
+	// TODO: AreaManager にあるカバーもここに移動する
+	private PLMSColorCover mAllDangerCover; // 危険範囲
+
+	// タップ判定
 	private PointF mTouchDownPointF;
 	private long mTouchDownTimeMillis; // ダブルタップ判定用
 	private long mPrevTouchTimeMillis; // ダブルタップ判定用
 	private boolean mIsDragging;
 
-	private PLMSUnitView mMovingUnitView;
-	private PLMSLandView mTempLandView;					// mMovingUnitView の現在の仮位置
-	private PLMSLandRoute mTempRoute;
-	private MYArrayList<PLMSLandRoute> mPrevRouteArray;
-
 	public PLMSUserInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
 		super(argument, armyStrategy);
 		mInformation = argument.getInformationView();
 		mPrevRouteArray = new MYArrayList<>();
+
+		mAllDangerCover = new PLMSColorCover(Color.argb(128, 205, 97, 155));
 	}
 
 	@Override
 	public void enableInterface() {
 		mAreaManager.showAvailableArea(mTargetArmy);
+		updateDangerArea();
+
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(this);
 		}
@@ -67,7 +78,9 @@ public class PLMSUserInterface extends PLMSWarInterface
 			movedUnit(mTempLandView);
 		}
 
+		mAllDangerCover.hideAllCoverViews();
 		mAreaManager.getAvailableAreaCover().hideAllCoverViews();
+
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(null);
 		}
@@ -354,6 +367,26 @@ public class PLMSUserInterface extends PLMSWarInterface
 		}
 	}
 
+	@Override
+	public void toggleAllDangerArea() {
+		mIsShowingAllDangerArea = !mIsShowingAllDangerArea;
+		if (mIsShowingAllDangerArea) {
+			updateDangerArea();
+		} else {
+			mAllDangerCover.hideAllCoverViews();
+		}
+	}
+
+	public void updateDangerArea() {
+		if (mIsShowingAllDangerArea) {
+			mAllDangerCover.hideAllCoverViews();
+
+			MYArrayList<PLMSUnitView> enemyUnitArray = mTargetArmy.getEnemyArmy().getAliveUnitViewArray();
+			MYArrayList<PLMSLandView> dangerLandArray = mAreaManager.getAllAttackableLandArray(enemyUnitArray);
+			mAllDangerCover.showCoverViews(dangerLandArray);
+		}
+	}
+
 	private void beginMoveEvent(PLMSUnitView unitView) {
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
@@ -432,7 +465,10 @@ public class PLMSUserInterface extends PLMSWarInterface
 	}
 
 	private void finishAction() {
-		mArgument.getTurnManager().finishTurnIfNecessary();
+		if (!mArgument.getTurnManager().finishTurnIfNecessary()) {
+			// ターン続行時
+			updateDangerArea();
+		}
 	}
 
 	private void movedUnit(PLMSLandView targetLandView) {
