@@ -220,6 +220,10 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 		return debugText;
 	}
 
+	public String getUnitName() {
+		return mUnitData.getUnitModel().getName();
+	}
+
 	// getter and setter
 	@Override
 	public PLMSUnitView getUnitView() {

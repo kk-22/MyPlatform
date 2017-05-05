@@ -69,4 +69,8 @@ public class PLMSLandView extends FrameLayout {
 		MYLogUtil.outputLog(debugText);
 		return debugText;
 	}
+
+	public String getTextPoint() {
+		return "x=" + mPoint.x + " y=" + mPoint.y;
+	}
 }
