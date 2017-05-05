@@ -80,11 +80,11 @@ public class PLMSAreaManager {
 		mSupportAreaCover.showCoverViews(supportableLandArray);
 	}
 
+	// 指定したユニットのいずれかの攻撃範囲となる PLMSLandView を返す
 	public MYArrayList<PLMSLandView> getAllAttackableLandArray(MYArrayList<PLMSUnitView> targetUnitArray) {
 		MYArrayList<PLMSLandView> resultArray = new MYArrayList<>();
 		for (PLMSUnitView unitView : targetUnitArray) {
-			MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView, true);
-			MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(movableLandArray, unitView, true);
+			MYArrayList<PLMSLandView> attackableLandArray = getAttackableLandArray(unitView);
 			resultArray.addAllOnlyNoContain(attackableLandArray);
 		}
 		return resultArray;
@@ -101,6 +101,11 @@ public class PLMSAreaManager {
 		movableLandArray.addAllOnlyNoContain(mWarpLandArray);
 
 		return movableLandArray;
+	}
+
+	public MYArrayList<PLMSLandView> getAttackableLandArray(PLMSUnitView unitView) {
+		MYArrayList<PLMSLandView> movableLandArray = getMovableLandArray(unitView, true);
+		return getAttackableLandArray(movableLandArray, unitView, true);
 	}
 
 	// 移動範囲と味方ユニットがいる地点を除く攻撃範囲の取得

@@ -9,8 +9,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.common.util.MYOtherUtil;
-import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSLandView;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
@@ -24,6 +24,8 @@ import jp.co.my.myplatform.service.mysen.land.PLMSRouteArray;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 public class PLMSComputerInterface extends PLMSWarInterface {
+
+	private HashMap<PLMSLandView, MYArrayList<PLMSUnitView>> mEnemyRangeHashMap;
 
 	public PLMSComputerInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
 		super(argument, armyStrategy);
@@ -42,7 +44,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				if (rangeDiff != 0) {
 					return rangeDiff;
 				}
-				// 補助スキル無い方は先
+				// 補助スキル無い方が先
 				boolean isAvailable1 = unitView1.getUnitData().getSupportSkillData().isAvailable();
 				boolean isAvailable2 = unitView2.getUnitData().getSupportSkillData().isAvailable();
 				if (isAvailable1 == isAvailable2) {
@@ -66,6 +68,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			return;
 		}
 
+		updateEnemyRange();
 		if (scanBattleAndSupport()) {
 			return;
 		} else if (scanMovement()) {
@@ -82,6 +85,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 
 	private boolean scanBattleAndSupport() {
 		MYArrayList<PLMSBattleForecast> allBattleForecast = new MYArrayList<>();
+		// TODO: 攻撃よりも前に補助スキル使用。攻撃者がいなければ補助使用。
 		MYArrayList<PLMSSupportForecast> allSupportForecast = new MYArrayList<>();
 		for (PLMSUnitView actionUnitView : mTargetArmy.getAliveUnitViewArray()) {
 			if (actionUnitView.isAlreadyAction()) {
@@ -155,6 +159,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 					targetUnitView = enemyUnitView;
 				}
 			}
+//			MYLogUtil.outputLog("move=" +moveUnitView.getUnitName() + " target=" +targetUnitView.getUnitName());
 
 			// ルートを探す
 			HashMap<PLMSLandView, PLMSRouteArray> routeArrayHashMap = mAreaManager.getAllRouteArrayHashMap(moveUnitView);
@@ -175,12 +180,38 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
 		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
 		int enemyDamage = enemyUnit.getUnitData().getCurrentHP() - enemyUnit.getRemainingHP();
-		int score = enemyDamage - selfDamage;
+		int score = 0;
 		if (enemyUnit.getRemainingHP() <= 0) {
-			score += 10000;
+			// 倒せるなら優先
+			score += 1000000;
 		} else if (battleUnit.getRemainingHP() <= 0) {
-			score -= 10000;
+			// 倒されるのは避ける
+			score += -1000000;
 		}
+
+		if (enemyDamage <= 5) {
+			// ダメージが低過ぎなら避ける
+			score += -100000;
+		}
+		if (selfDamage == 0) {
+			// 被ダメ0なら優先
+			score += 10000;
+		}
+		// 高ダメージを優先
+		score += enemyDamage * 100;
+
+		if (battleUnit.getLandView() != null) {
+			// 移動を考慮した点数計算
+			// 敵の攻撃範囲外を優先
+			MYArrayList<PLMSUnitView> rangeUnitArray = mEnemyRangeHashMap.get(battleUnit.getLandView());
+			score += -10 * rangeUnitArray.size();
+
+			// 移動しない地点を優先
+			if (battleUnit.getLandView().equals(battleUnit.getUnitView().getLandView())) {
+				score += 1;
+			}
+		}
+
 		return score;
 	}
 
@@ -226,10 +257,18 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 					}
 					// 1ターン目での移動先から離れている程マイナス
 					int score = -10000 * (oneTurnIndex - i);
-					if (MYPointUtil.isEqualOneSide(targetPoint, landView.getPoint())) {
-						score += 100;
-					}
-					// TODO:敵の攻撃範囲外を優先
+
+					// 敵の攻撃範囲外を優先
+					MYArrayList<PLMSUnitView> rangeUnitArray = mEnemyRangeHashMap.get(landView);
+					score += -1000 * rangeUnitArray.size();
+
+					// 斜め移動を優先
+					Point landPoint = landView.getPoint();
+					int diffX = MYMathUtil.difference(targetPoint.x, landPoint.x);
+					int diffY = MYMathUtil.difference(targetPoint.y, landPoint.y);
+					score += -10 * MYMathUtil.difference(diffX, diffY);
+
+//					MYLogUtil.outputLog("move score=" +score +" " +landView.getTextPoint());
 					if (score > highestScore) {
 						highestScore = score;
 						highestLandView = landView;
@@ -237,6 +276,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				}
 			}
 		}
+//		MYLogUtil.outputLog("move highestScore=" +highestScore+" " +highestLandView.getTextPoint());
 		return highestLandView;
 	}
 
@@ -285,5 +325,22 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				scanNextActionIfNeeded();
 			}
 		});
+	}
+
+	private void updateEnemyRange() {
+		MYArrayList<PLMSUnitView> enemyUnitArray = mTargetArmy.getEnemyArmy().getAliveUnitViewArray();
+		int numberOfEnemy = enemyUnitArray.size();
+		mEnemyRangeHashMap = new HashMap<>();
+		for (PLMSLandView landView : mArgument.getFieldView().getLandViewArray()) {
+			mEnemyRangeHashMap.put(landView, new MYArrayList<PLMSUnitView>(numberOfEnemy));
+		}
+
+		for (PLMSUnitView enemyUnitView : enemyUnitArray) {
+			MYArrayList<PLMSLandView> attackableLandArray = mAreaManager.getAttackableLandArray(enemyUnitView);
+			for (PLMSLandView landView : attackableLandArray) {
+				MYArrayList<PLMSUnitView> rangeUnitArray = mEnemyRangeHashMap.get(landView);
+				rangeUnitArray.add(enemyUnitView);
+			}
+		}
 	}
 }

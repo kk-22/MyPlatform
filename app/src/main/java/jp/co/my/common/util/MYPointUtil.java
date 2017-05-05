@@ -55,6 +55,7 @@ public class MYPointUtil {
 		return 0;
 	}
 
+	// 縦横いずれかの軸が同じ
 	public static boolean isEqualOneSide(Point point1, Point point2) {
 		return  (point1.x == point2.x || point1.y == point2.y);
 	}
