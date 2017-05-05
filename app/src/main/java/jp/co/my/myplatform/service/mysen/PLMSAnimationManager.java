@@ -187,6 +187,18 @@ public class PLMSAnimationManager extends AnimatorListenerAdapter {
 		});
 	}
 
+	public void pauseAnimation() {
+		if (mAnimatorArray.size() > 0) {
+			mAnimatorArray.getFirst().pause();
+		}
+	}
+
+	public void resumeAnimation() {
+		if (mAnimatorArray.size() > 0) {
+			mAnimatorArray.getFirst().resume();
+		}
+	}
+
 	@Override
 	public void onAnimationEnd(Animator animation) {
 		mAnimatorArray.remove(animation);

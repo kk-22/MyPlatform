@@ -18,6 +18,8 @@ public abstract class PLMSWarInterface {
 	PLMSAnimationManager mAnimationManager;
 	PLMSAreaManager mAreaManager;
 
+	boolean mIsEnable;
+
 	public PLMSWarInterface(PLMSArgument argument, PLMSArmyStrategy armyStrategy) {
 		mArgument = argument;
 		mTargetArmy = armyStrategy;
@@ -27,8 +29,21 @@ public abstract class PLMSWarInterface {
 		mAreaManager = argument.getAreaManager();
 	}
 
-	public abstract void enableInterface();
-	public abstract void disableInterface();
+	public void enableInterface() {
+		mIsEnable = true;
+	}
+
+	public void disableInterface() {
+		mIsEnable = false;
+	}
+
+	public void suspendInterface() {
+		mAnimationManager.pauseAnimation();
+	}
+
+	public void resumeInterface() {
+		mAnimationManager.resumeAnimation();
+	}
 
 	public void toggleAllDangerArea() {
 		// 攻撃範囲表示するなら override

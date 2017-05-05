@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import jp.co.my.common.util.MYArrayList;
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
@@ -32,6 +31,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 
 	@Override
 	public void enableInterface() {
+		super.enableInterface();
 		// 移動順にソート
 		Collections.sort(mTargetArmy.getAliveUnitViewArray(), new Comparator<PLMSUnitView>() {
 			@Override
@@ -57,9 +57,15 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 
 	@Override
 	public void disableInterface() {
+		super.disableInterface();
 	}
 
 	private void scanNextAction() {
+		if (!mIsEnable) {
+			// 既に終了済み
+			return;
+		}
+
 		if (scanBattleAndSupport()) {
 			return;
 		} else if (scanMovement()) {
@@ -154,8 +160,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			HashMap<PLMSLandView, PLMSRouteArray> routeArrayHashMap = mAreaManager.getAllRouteArrayHashMap(moveUnitView);
 			PLMSLandView destinationLandView = filterDestinationLandView(moveUnitView, targetUnitView, routeArrayHashMap);
 			if (destinationLandView == null) {
-				// TODO:エラーではないため、動作に問題がなければトーストを消す
-				MYLogUtil.showErrorToast("destination is null. unit=" +moveUnitView +" target=" +targetUnitView);
+				// 移動不可
 				continue;
 			}
 			// 移動

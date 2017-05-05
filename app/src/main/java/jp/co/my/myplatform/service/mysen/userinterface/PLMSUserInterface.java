@@ -64,6 +64,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 
 	@Override
 	public void enableInterface() {
+		super.enableInterface();
 		mAreaManager.showAvailableArea(mTargetArmy);
 		updateDangerArea();
 
@@ -78,6 +79,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 
 	@Override
 	public void disableInterface() {
+		super.disableInterface();
 		if (mMovingUnitView != null) {
 			mMovingUnitView.standby();
 			movedUnit(mTempLandView);

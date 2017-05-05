@@ -52,6 +52,26 @@ public class PLMSWarContent extends PLContentView {
 		loadUnitModels();
 	}
 
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+
+		// 戦闘を再開
+		if (mArgument != null && mArgument.getTurnManager() != null) {
+			mArgument.getTurnManager().getCurrentArmy().getWarInterface().resumeInterface();
+		}
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+
+		// 戦闘を停止
+		if (mArgument != null && mArgument.getTurnManager() != null) {
+			mArgument.getTurnManager().getCurrentArmy().getWarInterface().suspendInterface();
+		}
+	}
+
 	private void initNaviBar() {
 		LinearLayout naviBar = new LinearLayout(getContext());
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_war_navibar, naviBar);
