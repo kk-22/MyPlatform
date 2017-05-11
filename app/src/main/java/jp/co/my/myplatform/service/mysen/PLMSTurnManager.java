@@ -30,8 +30,9 @@ public class PLMSTurnManager {
 
 	// 全員行動済みならターン終了。ターン続行なら false を返す
 	public boolean finishTurnIfNecessary() {
-		if (mCurrentArmy.getEnemyArmy().getAliveUnitViewArray().size() == 0) {
-			// 敵全滅
+		if (mCurrentArmy.getEnemyArmy().getAliveUnitViewArray().size() == 0
+				|| mCurrentArmy.getAliveUnitViewArray().size() == 0) {
+			// 片方が全滅
 			mCurrentArmy.getWarInterface().disableInterface();
 			return true;
 		}
