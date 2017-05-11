@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
@@ -19,8 +20,10 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSBaseForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSBattleUnit;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
+import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
 import jp.co.my.myplatform.service.mysen.land.PLMSLandRoute;
 import jp.co.my.myplatform.service.mysen.land.PLMSRouteArray;
+import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSUnitInterface;
 
 public class PLMSComputerInterface extends PLMSWarInterface {
@@ -84,15 +87,17 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 	}
 
 	private boolean scanBattleAndSupport() {
-		MYArrayList<PLMSBattleForecast> allBattleForecast = new MYArrayList<>();
-		// TODO: 攻撃よりも前に補助スキル使用。攻撃者がいなければ補助使用。
-		MYArrayList<PLMSSupportForecast> allSupportForecast = new MYArrayList<>();
+		PLMSBaseForecast bestForecast = null;
+		int bestScore = Integer.MIN_VALUE;
+		MYArrayList<PLMSUnitView> attackerUnitArray = new MYArrayList<>(); // 攻撃が可能なユニット
 		for (PLMSUnitView actionUnitView : mTargetArmy.getAliveUnitViewArray()) {
 			if (actionUnitView.isAlreadyAction()) {
 				continue;
 			}
 			MYArrayList<PLMSLandView> movableLandArray = mAreaManager.getMovableLandArray(actionUnitView, false);
 			// 戦闘予測取得
+			PLMSBaseForecast highestForecast = null;
+			int highestScore = Integer.MIN_VALUE;
 			MYArrayList<PLMSLandView> attackableLandArray = mAreaManager.getAttackableLandArray(movableLandArray, actionUnitView, false);
 			for (PLMSLandView targetLandView : attackableLandArray) {
 				PLMSUnitView targetUnitView = targetLandView.getUnitView();
@@ -102,7 +107,24 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				MYArrayList<PLMSLandView> attackLandArray = mAreaManager.getAttackLandArrayToTarget(targetUnitView, actionUnitView);
 				MYArrayList<PLMSLandView> moveLandArray = movableLandArray.filterByArray(attackLandArray);
 				for (PLMSLandView moveLandView : moveLandArray) {
-					allBattleForecast.add(new PLMSBattleForecast(actionUnitView, moveLandView, targetUnitView, targetLandView));
+					// バトルのスコア
+					PLMSBattleForecast battleForecast = new PLMSBattleForecast(actionUnitView, moveLandView, targetUnitView, targetLandView);
+					int score = calculateBattleScore(battleForecast);
+					if (highestScore < score) {
+						highestScore = score;
+						highestForecast = battleForecast;
+					}
+				}
+			}
+			if (highestForecast != null) {
+				attackerUnitArray.addIfNoContain(actionUnitView);
+				if (highestScore > 0) {
+					// 撃破されず、一定値以上の与ダメがある戦闘を持つなら補助スキルを使用しない
+					if (bestScore < highestScore) {
+						bestScore = highestScore;
+						bestForecast = highestForecast;
+					}
+					continue;
 				}
 			}
 
@@ -114,31 +136,27 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 					MYArrayList<PLMSLandView> supportLandArray = mAreaManager.getSupportLandArrayToTarget(targetUnitView, actionUnitView);
 					MYArrayList<PLMSLandView> moveLandArray = movableLandArray.filterByArray(supportLandArray);
 					for (PLMSLandView moveLandView : moveLandArray) {
-						allSupportForecast.add(new PLMSSupportForecast(actionUnitView, moveLandView, targetUnitView, targetLandView));
+						// 補助のスコア
+						PLMSSupportForecast supportForecast = new PLMSSupportForecast(actionUnitView, moveLandView, targetUnitView, targetLandView);
+						int score = calculateSupportScore(supportForecast, attackerUnitArray);
+						if (highestScore < score) {
+							highestScore = score;
+							highestForecast = supportForecast;
+						}
 					}
 				}
 			}
-		}
-		if (allBattleForecast.size() == 0) {
-			return false;
-		}
-
-		// 最適な行動の選択
-		MYArrayList<PLMSBattleForecast> highestForecastArray = new MYArrayList<>();
-		int highestScore = Integer.MIN_VALUE;
-		for (PLMSBattleForecast battleForecast : allBattleForecast) {
-			int score = calculateBattleScore(battleForecast);
-
-			if (highestScore == score) {
-				highestForecastArray.add(battleForecast);
-			} else if (highestScore < score) {
-				highestScore = score;
-				highestForecastArray.clear();
-				highestForecastArray.add(battleForecast);
+			if (bestScore < highestScore) {
+				bestScore = highestScore;
+				bestForecast = highestForecast;
 			}
 		}
-		moveUnitIfNeeded(highestForecastArray.getFirst());
-		return true;
+		if (bestForecast != null) {
+			moveUnitIfNeeded(bestForecast);
+			return true;
+		}
+		// 戦闘・補助行動なし
+		return false;
 	}
 
 	private boolean scanMovement() {
@@ -180,18 +198,18 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
 		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
 		int enemyDamage = enemyUnit.getUnitData().getCurrentHP() - enemyUnit.getRemainingHP();
-		int score = 0;
+		int score = 1000000; // 補助より優先させるための初期値
 		if (enemyUnit.getRemainingHP() <= 0) {
 			// 倒せるなら優先
-			score += 1000000;
+			score += 40000;
 		} else if (battleUnit.getRemainingHP() <= 0) {
 			// 倒されるのは避ける
-			score += -1000000;
+			score += -40000;
 		}
 
 		if (enemyDamage <= 5) {
 			// ダメージが低過ぎなら避ける
-			score += -100000;
+			score += -20000;
 		}
 		if (selfDamage == 0) {
 			// 被ダメ0なら優先
@@ -203,8 +221,9 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		if (battleUnit.getLandView() != null) {
 			// 移動を考慮した点数計算
 			// 敵の攻撃範囲外を優先
+			int enemyCount = enemyUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray().size();
 			MYArrayList<PLMSUnitView> rangeUnitArray = mEnemyRangeHashMap.get(battleUnit.getLandView());
-			score += -10 * rangeUnitArray.size();
+			score += 10 * (enemyCount - rangeUnitArray.size());
 
 			// 移動しない地点を優先
 			if (battleUnit.getLandView().equals(battleUnit.getUnitView().getLandView())) {
@@ -212,6 +231,61 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			}
 		}
 
+		return score;
+	}
+
+	private int calculateSupportScore(PLMSSupportForecast supportForecast,
+									  MYArrayList<PLMSUnitView> attackerUnitArray) {
+		int score = 0;
+		PLMSSupportUnit actionUnit = supportForecast.getLeftUnit();
+		PLMSSupportUnit targetUnit = supportForecast.getRightUnit();
+		boolean isAlreadyAction = targetUnit.getUnitView().isAlreadyAction(); // 対象が行動済みか
+		boolean isAttacker = attackerUnitArray.contains(targetUnit.getUnitView()); // 対象が攻撃を行えるか
+
+		PLMSSkillData supportSkill = actionUnit.getUnitData().getSupportSkillData();
+		switch (supportSkill.getEffectType()) {
+			case ONE_TURN_BUFF: {
+				// 対象が移動済みか攻撃予定でなければ使用しない
+				if (!isAlreadyAction && !isAttacker) {
+					return Integer.MIN_VALUE;
+				}
+			}
+			// 回復系
+			case FLUCTUATE_HP:
+			case SAINTS:
+			case REVERSE:
+			case DEDICATION: {
+				// 回復値が大きいほど優先
+				int healPoint = targetUnit.getRemainingHP() - targetUnit.getUnitView().getRemainingHP();
+				score += healPoint * 1000;
+				break;
+			}
+			case CHANGE_POSITION: {
+				// 対象が移動済みでなければ使用しない
+				if (!isAlreadyAction) {
+					return Integer.MIN_VALUE;
+				}
+//				PLMSSupportUnit skillUnit = new PLMSSupportUnit(skillUnitView, skillLandView);
+//				PLMSLandView skillMoveLandView = getMoveLandView(skillUnit, targetUnitView, mSkillModel.getEffectValue());
+//				PLMSLandView targetMoveLandView = getMoveLandView(targetUnitView, skillUnit, mSkillModel.getEffectSubValue());
+//				return  ((mSkillModel.getEffectValue() == 0 || skillMoveLandView != null)
+//						&& (mSkillModel.getEffectSubValue() == 0 || targetMoveLandView != null));
+				break;
+			}
+			case AGAIN_ACTION:
+				break;
+			case MUTUAL_ASSISTANCE:
+			case IKKATU:
+				break;
+			default:
+				MYLogUtil.showErrorToast("calculateSupportScore に未実装のスキル no=" +supportSkill.getEffectType().getInt() +" " +supportSkill.getSkillModel().getName());
+				break;
+		}
+		score += targetUnit.getUnitData().getUnitScore();
+		if (isAttacker) {
+			// 攻撃よりも優先させる
+			score += 2000000;
+		}
 		return score;
 	}
 
@@ -314,13 +388,29 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		mAnimationManager.addAnimator(animator);
 	}
 
-	private void actionOfForecast(PLMSBaseForecast forecast) {
-		final PLMSBattleForecast battleForecast = MYOtherUtil.castObject(forecast, PLMSBattleForecast.class);
-		mAnimationManager.addBattleAnimation(battleForecast);
+	private void actionOfForecast(final PLMSBaseForecast forecast) {
+		PLMSBattleForecast battleForecast = MYOtherUtil.castObject(forecast, PLMSBattleForecast.class);
+		if (battleForecast != null) {
+			mAnimationManager.addBattleAnimation(battleForecast);
+			mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
+				@Override
+				public void run() {
+					PLMSUnitInterface leftUnit = forecast.getLeftUnit();
+					leftUnit.getUnitView().didAction();
+					scanNextActionIfNeeded();
+				}
+			});
+			return;
+		}
+		PLMSSupportForecast supportForecast = MYOtherUtil.castObject(forecast, PLMSSupportForecast.class);
+		PLMSSupportUnit supportUnit = supportForecast.getLeftUnit();
+		PLMSSkillData supportSkill = supportUnit.getUnitData().getSupportSkillData();
+		supportSkill.executeSupportSkill(supportForecast);
+		mAnimationManager.sendTempAnimators();
 		mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
 			@Override
 			public void run() {
-				PLMSUnitInterface leftUnit = battleForecast.getLeftUnit();
+				PLMSUnitInterface leftUnit = forecast.getLeftUnit();
 				leftUnit.getUnitView().didAction();
 				scanNextActionIfNeeded();
 			}

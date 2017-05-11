@@ -437,7 +437,6 @@ public class PLMSSkillData {
 			case AGAIN_ACTION: {
 				PLMSUnitView targetUnitView = targetUnit.getUnitView();
 				targetUnitView.againAction();
-				mArgument.getAreaManager().getAvailableAreaCover().showCoverView(targetUnit.getLandView());
 
 				Animator animator = targetUnitView.makeCommonAnimator();
 				mArgument.getAnimationManager().addTempAnimator(animator, PLMSAnimationManager.ANIMATOR_BUFF);

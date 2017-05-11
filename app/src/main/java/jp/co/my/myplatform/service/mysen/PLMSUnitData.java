@@ -33,6 +33,7 @@ public class PLMSUnitData {
 	private PLMSBranchData mBranch;
 	private PLMSSkillData[] mAllSkills;
 	private MYArrayList<PLMSSkillData> mPassiveSkillArray;
+	private int mUnitScore; // 値が高い程AIの行動対象に優先的に設定される
 
 	private int mMaxHP;
 	private int mCurrentHP;
@@ -74,6 +75,9 @@ public class PLMSUnitData {
 		
 		mMaxHP = mUnitModel.getHitPoint();
 		mCurrentHP = mMaxHP;
+		for (int baseParam : mBaseParams) {
+			mUnitScore += baseParam;
+		}
 		resetParamsForNewTurn();
 	}
 
@@ -182,6 +186,10 @@ public class PLMSUnitData {
 
 	public int getDebuffParameterOfNo(int no) {
 		return mDebuffParams[no];
+	}
+
+	public int getUnitScore() {
+		return mUnitScore;
 	}
 
 	// setter

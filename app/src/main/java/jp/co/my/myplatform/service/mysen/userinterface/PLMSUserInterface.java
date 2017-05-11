@@ -485,6 +485,11 @@ public class PLMSUserInterface extends PLMSWarInterface
 		final PLMSSupportUnit supportUnit = forecast.getLeftUnit();
 		movedUnit(supportUnit.getLandView());
 		PLMSSkillData supportSkill = supportUnit.getUnitData().getSupportSkillData();
+		if (supportSkill.getEffectType() == PLMSSkillData.EffectType.AGAIN_ACTION) {
+			PLMSLandView targetLandView = forecast.getRightUnit().getLandView();
+			mAreaManager.getAvailableAreaCover().showCoverView(targetLandView);
+		}
+
 		supportSkill.executeSupportSkill(forecast);
 		mAnimationManager.sendTempAnimators();
 		mAnimationManager.addAnimationCompletedRunnable(new Runnable() {
