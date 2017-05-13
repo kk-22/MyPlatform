@@ -119,6 +119,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			if (highestForecast != null) {
 				attackerUnitArray.addIfNoContain(actionUnitView);
 				if (highestScore > 0) {
+					// TODO:回復補助スキル持ちなら、敵を倒せる場合以外は回復使用？
 					// 撃破されず、一定値以上の与ダメがある戦闘を持つなら補助スキルを使用しない
 					if (bestScore < highestScore) {
 						bestScore = highestScore;
@@ -160,7 +161,6 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 	}
 
 	private boolean scanMovement() {
-		// TODO:近距離・補助スキルなしユニットを優先的に移動
 		// 移動するユニットを探す
 		for (PLMSUnitView moveUnitView : mTargetArmy.getAliveUnitViewArray()) {
 			if (moveUnitView.isAlreadyAction()) {
@@ -198,7 +198,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
 		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
 		int enemyDamage = enemyUnit.getUnitData().getCurrentHP() - enemyUnit.getRemainingHP();
-		int score = 1000000; // 補助より優先させるための初期値
+		int score = 100000000; // 補助より優先させるための初期値
 		if (enemyUnit.getRemainingHP() <= 0) {
 			// 倒せるなら優先
 			score += 40000;
@@ -222,8 +222,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			// 移動を考慮した点数計算
 			// 敵の攻撃範囲外を優先
 			int enemyCount = enemyUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray().size();
-			MYArrayList<PLMSUnitView> rangeUnitArray = mEnemyRangeHashMap.get(battleUnit.getLandView());
-			score += 10 * (enemyCount - rangeUnitArray.size());
+			score += 10 * (enemyCount - getAttackedCountOfLand(battleUnit.getLandView()));
 
 			// 移動しない地点を優先
 			if (battleUnit.getLandView().equals(battleUnit.getUnitView().getLandView())) {
@@ -239,14 +238,15 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		int score = 0;
 		PLMSSupportUnit actionUnit = supportForecast.getLeftUnit();
 		PLMSSupportUnit targetUnit = supportForecast.getRightUnit();
+		PLMSLandView targetCurrentLandView = targetUnit.getUnitView().getLandView();
 		boolean isAlreadyAction = targetUnit.getUnitView().isAlreadyAction(); // 対象が行動済みか
 		boolean isAttacker = attackerUnitArray.contains(targetUnit.getUnitView()); // 対象が攻撃を行えるか
 
 		PLMSSkillData supportSkill = actionUnit.getUnitData().getSupportSkillData();
 		switch (supportSkill.getEffectType()) {
 			case ONE_TURN_BUFF: {
-				// 対象が移動済みか攻撃予定でなければ使用しない
-				if (!isAlreadyAction && !isAttacker) {
+				// 対象が攻撃予定か、移動済みかつ敵攻撃範囲内でなければ使用しない
+				if (!isAttacker && (!isAlreadyAction || getAttackedCountOfLand(targetCurrentLandView) == 0)) {
 					return Integer.MIN_VALUE;
 				}
 			}
@@ -257,20 +257,26 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			case DEDICATION: {
 				// 回復値が大きいほど優先
 				int healPoint = targetUnit.getRemainingHP() - targetUnit.getUnitView().getRemainingHP();
-				score += healPoint * 1000;
+				score += healPoint * 100000;
 				break;
 			}
 			case CHANGE_POSITION: {
+				// TODO: 移動先の LandView が現状取得できない
+				// TODO: この時点ではルート情報はないため、回り込みで狙う敵に近づけるか判定できない
+				return Integer.MIN_VALUE;
 				// 対象が移動済みでなければ使用しない
-				if (!isAlreadyAction) {
-					return Integer.MIN_VALUE;
-				}
-//				PLMSSupportUnit skillUnit = new PLMSSupportUnit(skillUnitView, skillLandView);
-//				PLMSLandView skillMoveLandView = getMoveLandView(skillUnit, targetUnitView, mSkillModel.getEffectValue());
-//				PLMSLandView targetMoveLandView = getMoveLandView(targetUnitView, skillUnit, mSkillModel.getEffectSubValue());
-//				return  ((mSkillModel.getEffectValue() == 0 || skillMoveLandView != null)
-//						&& (mSkillModel.getEffectSubValue() == 0 || targetMoveLandView != null));
-				break;
+//				if (!isAlreadyAction) {
+//					return Integer.MIN_VALUE;
+//				}
+//				// 被攻撃回数が減る場合にのみ使用
+//				PLMSLandView targetPrevLand = targetUnit.getUnitView().getLandView();
+//				PLMSLandView targetNextLand = targetUnit.getLandView();
+//				int prevDefenceCount = mEnemyRangeHashMap.get(targetPrevLand).size();
+//				int nextDefenceCount = mEnemyRangeHashMap.get(targetNextLand).size();
+//				if (prevDefenceCount <= nextDefenceCount) {
+//					return Integer.MIN_VALUE;
+//				}
+//				break;
 			}
 			case AGAIN_ACTION:
 				break;
@@ -281,10 +287,18 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				MYLogUtil.showErrorToast("calculateSupportScore に未実装のスキル no=" +supportSkill.getEffectType().getInt() +" " +supportSkill.getSkillModel().getName());
 				break;
 		}
-		score += targetUnit.getUnitData().getUnitScore();
+		score += targetUnit.getUnitData().getUnitScore() * 100;
 		if (isAttacker) {
 			// 攻撃よりも優先させる
-			score += 2000000;
+			score += 200000000;
+		}
+		// 敵の攻撃範囲外を優先
+		int enemyCount = actionUnit.getUnitData().getArmyStrategy().getEnemyArmy().getAliveUnitViewArray().size();
+		score += 10 * (enemyCount - getAttackedCountOfLand(actionUnit.getLandView()));
+
+		// 移動しない地点を優先
+		if (actionUnit.getLandView().equals(actionUnit.getUnitView().getLandView())) {
+			score += 1;
 		}
 		return score;
 	}
@@ -432,5 +446,10 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 				rangeUnitArray.add(enemyUnitView);
 			}
 		}
+	}
+
+	// 対象地点へ攻撃可能な敵数の取得
+	private int getAttackedCountOfLand(PLMSLandView landView) {
+		return mEnemyRangeHashMap.get(landView).size();
 	}
 }

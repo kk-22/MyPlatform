@@ -409,11 +409,10 @@ public class PLMSSkillData {
 		}
 	}
 
-	//
 	public void executeSupportSkill(PLMSSupportForecast forecast) {
 		PLMSSupportUnit supportUnit = forecast.getLeftUnit();
 		PLMSSupportUnit targetUnit = forecast.getRightUnit();
-		if (supportUnit.getDiffHP() != 00 || targetUnit.getDiffHP() != 0) {
+		if (supportUnit.getDiffHP() != 0 || targetUnit.getDiffHP() != 0) {
 			// HP変動補助スキル
 			int supportDiffHP = supportUnit.getDiffHP();
 			int targetDiffHP = targetUnit.getDiffHP();
