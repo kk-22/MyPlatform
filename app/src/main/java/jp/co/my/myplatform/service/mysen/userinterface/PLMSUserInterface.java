@@ -133,6 +133,10 @@ public class PLMSUserInterface extends PLMSWarInterface
 				break;
 			}
 			case MotionEvent.ACTION_UP: {
+				if (mDidLongTap) {
+					// ロングタップで敵の攻撃範囲表示後に、クリックによる攻撃範囲を表示しない
+					break;
+				}
 				if (event.getX() < 0 || unitView.getWidth() < event.getX()
 						|| event.getY() < 0 || unitView.getHeight() < event.getY()) {
 					// タップ位置から指を動かして UnitView 外に移動した場合は何もしない
@@ -164,6 +168,9 @@ public class PLMSUserInterface extends PLMSWarInterface
 		if (mMovingUnitView == null) {
 			if (mAreaManager.getAvailableAreaCover().isShowingCover(unitView.getLandView())) {
 				beginMoveEvent(unitView);
+			} else {
+				mAreaManager.hideAllAreaCover();
+				mAreaManager.showActionArea(unitView);
 			}
 			mInformation.updateForUnitData(unitView);
 			return;
@@ -357,6 +364,8 @@ public class PLMSUserInterface extends PLMSWarInterface
 		PLMSLandView landView = (PLMSLandView) v;
 		MYLogUtil.outputLog(" onClick x=" +landView.getPoint().x +" y=" +landView.getPoint().y);
 		if (mMovingUnitView == null) {
+			// 移動ではない範囲表示を解除
+			mAreaManager.hideAllAreaCover();
 			return;
 		}
 		mInformation.updateForUnitData(mMovingUnitView);
@@ -421,6 +430,8 @@ public class PLMSUserInterface extends PLMSWarInterface
 	}
 
 	private void beginMoveEvent(PLMSUnitView unitView) {
+		mAreaManager.hideAllAreaCover();
+
 		mMovingUnitView = unitView;
 		mTempLandView = unitView.getLandView();
 		mPrevRouteArray.addOrMoveLast(new PLMSLandRoute(unitView.getLandView()));
