@@ -29,6 +29,7 @@ import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.model.PLNewsGroupModel;
 import jp.co.my.myplatform.service.model.PLNewsPageModel;
 import jp.co.my.myplatform.service.model.PLNewsSiteModel;
+import jp.co.my.myplatform.service.mysen.PLMSFieldModel;
 import jp.co.my.myplatform.service.mysen.PLMSUnitModel;
 import jp.co.my.myplatform.service.mysen.PLMSWarContent;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
@@ -104,10 +105,10 @@ public class PLDebugView extends PLContentView {
 			itemList.add(new PLDebugButtonItem("MySen", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new PLConfirmationPopover("MySen UnitModel & SkillModel 削除", new PLConfirmationPopover.PLConfirmationListener() {
+					new PLConfirmationPopover("MySen Unit & Skill & Field 削除して再取得", new PLConfirmationPopover.PLConfirmationListener() {
 						@Override
 						public void onClickButton(boolean isYes) {
-							List<Class> classList = Arrays.<Class>asList(PLMSUnitModel.class, PLMSSkillModel.class);
+							List<Class> classList = Arrays.<Class>asList(PLMSFieldModel.class, PLMSSkillModel.class, PLMSUnitModel.class);
 							deleteTable(classList);
 
 							PLAllModelFetcher fetcher = new PLAllModelFetcher(classList, new PLAllModelFetcher.PLAllModelFetcherListener() {
@@ -117,12 +118,14 @@ public class PLDebugView extends PLContentView {
 										MYLogUtil.showErrorToast("UnitModel or SkillModel の取得に失敗");
 										return;
 									}
-									MYArrayList<PLBaseModel> unitArray = modelArrays.get(0);
+									MYArrayList<PLBaseModel> fieldArray = modelArrays.get(0);
+									PLDatabase.saveModelList(fieldArray);
+
+									MYArrayList<PLBaseModel> unitArray = modelArrays.get(2);
 									MYArrayList<PLMSSkillModel> skillArray = new MYArrayList<>();
 									for (PLBaseModel baseModel : modelArrays.get(1)) {
 										skillArray.add((PLMSSkillModel) baseModel);
 									}
-
 									int numberOfUnit = unitArray.size();
 									for (int i = 0; i < numberOfUnit; i++) {
 										PLMSUnitModel unitModel = (PLMSUnitModel) unitArray.get(i);
@@ -130,7 +133,7 @@ public class PLDebugView extends PLContentView {
 									}
 									PLDatabase.saveModelList(unitArray);
 									MYLogUtil.showToast("Modelを保存 unit=" + numberOfUnit +
-											"skill=" +skillArray.size());
+											"skill=" +skillArray.size() + " field=" +fieldArray.size());
 									PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
 								}
 							});
