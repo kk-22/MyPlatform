@@ -9,10 +9,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 
 
 public class PLMSFieldView extends FrameLayout {
@@ -20,7 +19,8 @@ public class PLMSFieldView extends FrameLayout {
 	static final int MAX_X = 6;
 	static final int MAX_Y = 8;
 
-	private LinearLayout mVerticalLinear;
+	private PLMSArgument mArgument;
+	private PLMSFieldModel mFieldModel;
 
 	private int mLandSize;		// 1マスの縦横サイズ
 	private int mLeftMargin;	// mVerticalLinearの左の余白
@@ -32,7 +32,6 @@ public class PLMSFieldView extends FrameLayout {
 	public PLMSFieldView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_field, this);
-		mVerticalLinear = (LinearLayout) findViewById(R.id.vertical_linear);
 		mLandViewArray = new MYArrayList<>();
 		mUnitViewArray = new MYArrayList<>();
 	}
@@ -45,12 +44,10 @@ public class PLMSFieldView extends FrameLayout {
 		this(context, null);
 	}
 
-	public void layoutChildViews(ArrayList<PLMSUnitData> unitDataArray) {
-		mUnitViewArray = new MYArrayList<>();
-		for (PLMSUnitData unitData : unitDataArray) {
-			PLMSUnitView unitView = new PLMSUnitView(getContext(), unitData);
-			mUnitViewArray.add(unitView);
-		}
+	public void initChildViews(PLMSArgument argument, PLMSFieldModel fieldModel) {
+		mArgument = argument;
+		mFieldModel = fieldModel;
+
 		loadFieldView();
 		loadUnitView();
 	}
@@ -85,14 +82,26 @@ public class PLMSFieldView extends FrameLayout {
 		params.height = mLandSize;
 		params.width = mLandSize;
 
-		// TODO: UnitView の初期座標は PLMSBattleView から受け取る
-		for (PLMSUnitView unitView : mUnitViewArray) {
-			Point point = unitView.getUnitData().getFirstPoint();
-			PLMSLandView landView = getLandViewForPoint(point);
-			unitView.moveToLand(landView);
-			unitView.setX(mLeftMargin + point.x * mLandSize);
-			unitView.setY(mTopMargin + point.y * mLandSize);
-			addView(unitView, params);
+		mUnitViewArray = new MYArrayList<>();
+		int armyCount = 0, unitCount;
+		for (PLMSArmyStrategy army : mArgument.getArmyArray()) {
+			MYArrayList<Point> initPointArray = (armyCount == 0) ?
+					mFieldModel.getAttackerInitPointArray() : mFieldModel.getDefenderInitPointArray();
+
+			unitCount = 0;
+			for (PLMSUnitData unitData : army.getUnitDataArray()) {
+				PLMSUnitView unitView = new PLMSUnitView(getContext(), unitData);
+				mUnitViewArray.add(unitView);
+
+				Point point = initPointArray.get(unitCount);
+				PLMSLandView landView = getLandViewForPoint(point);
+				unitView.moveToLand(landView);
+				unitView.setX(mLeftMargin + point.x * mLandSize);
+				unitView.setY(mTopMargin + point.y * mLandSize);
+				addView(unitView, params);
+				unitCount++;
+			}
+			armyCount++;
 		}
 	}
 

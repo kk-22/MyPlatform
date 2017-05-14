@@ -1,7 +1,5 @@
 package jp.co.my.myplatform.service.mysen;
 
-import android.graphics.Point;
-
 import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import jp.co.my.common.util.MYArrayList;
@@ -26,7 +24,6 @@ public class PLMSUnitData {
 	public static final int SKILL_NUMBER = 6;
 
 	private PLMSUnitModel mUnitModel;
-	private Point mFirstPoint;				// 初期位置
 	private PLMSArmyStrategy mArmyStrategy;
 	private PLMSArgument mArgument;
 
@@ -43,10 +40,8 @@ public class PLMSUnitData {
 
 	private int mMoveCount; // 同一ターン内での移動回数
 
-	public PLMSUnitData(PLMSUnitModel unitModel, Point firstPoint,
-						PLMSArmyStrategy armyStrategy, PLMSArgument argument) {
+	public PLMSUnitData(PLMSUnitModel unitModel, PLMSArmyStrategy armyStrategy, PLMSArgument argument) {
 		mUnitModel = unitModel;
-		mFirstPoint = firstPoint;
 		mArmyStrategy = armyStrategy;
 		mArgument = argument;
 		mAllSkills = new PLMSSkillData[SKILL_NUMBER];
@@ -146,10 +141,6 @@ public class PLMSUnitData {
 
 	public int getMoveCount() {
 		return mMoveCount;
-	}
-
-	public Point getFirstPoint() {
-		return mFirstPoint;
 	}
 
 	public PLMSSkillData getSkillOfNo(int no) {

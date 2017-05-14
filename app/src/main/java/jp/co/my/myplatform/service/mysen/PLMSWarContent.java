@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.service.mysen;
 
-import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -8,7 +7,6 @@ import android.widget.LinearLayout;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.my.common.util.MYArrayList;
@@ -27,9 +25,8 @@ import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 public class PLMSWarContent extends PLContentView {
 
-	private ArrayList<PLMSUnitData> mUnitDataArray;
-	private boolean mFinishedLayout;			// OnGlobalLayoutListener が呼ばれたら true
 	private PLMSArgument mArgument;
+	private int mLoadCount;
 
 	public PLMSWarContent() {
 		super();
@@ -39,11 +36,12 @@ public class PLMSWarContent extends PLContentView {
 		mArgument.setFieldView((PLMSFieldView) findViewById(R.id.field_view));
 		mArgument.setAnimationManager(new PLMSAnimationManager(mArgument));
 
+		mLoadCount = 0;
+
 		getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
 				getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				mFinishedLayout = true;
 				startChildLayoutIfNeeded();
 			}
 		});
@@ -134,23 +132,17 @@ public class PLMSWarContent extends PLContentView {
 				}
 
 				// TODO: delete dummy code
-				int x = 0, y = 0;
-				mUnitDataArray = new ArrayList<>();
 				PLMSBlueArmy blueArmy = new PLMSBlueArmy(mArgument, "青軍", PLMSArmyStrategy.INTERFACE_USER);
 				PLMSRedArmy redArmy = new PLMSRedArmy(mArgument, "赤軍", PLMSArmyStrategy.INTERFACE_COMPUTER);
 				blueArmy.setEnemyArmy(redArmy);
 				redArmy.setEnemyArmy(blueArmy);
 				mArgument.setArmyArray(new MYArrayList<>(blueArmy, redArmy));
+				int i = 0;
 				for (PLMSUnitModel unitModel : modelLists) {
-					Point point = new Point(x, y);
-					PLMSArmyStrategy armyStrategy = (y == 0) ? blueArmy : redArmy;
-					PLMSUnitData unitData = new PLMSUnitData(unitModel, point, armyStrategy, mArgument);
-					x = x + 1;
-					if (x == 4) {
-						x = 0;
-						y = 7;
-					}
-					mUnitDataArray.add(unitData);
+					PLMSArmyStrategy armyStrategy = (i / 4 == 0) ? blueArmy : redArmy;
+					PLMSUnitData unitData = new PLMSUnitData(unitModel, armyStrategy, mArgument);
+					armyStrategy.getUnitDataArray().add(unitData);
+					i++;
 				}
 				startChildLayoutIfNeeded();
 			}
@@ -158,10 +150,12 @@ public class PLMSWarContent extends PLContentView {
 	}
 
 	private void startChildLayoutIfNeeded() {
-		if (mUnitDataArray == null || !mFinishedLayout) {
+		mLoadCount++;
+		if (mLoadCount < 2) {
 			return;
 		}
-		mArgument.getFieldView().layoutChildViews(mUnitDataArray);
+		PLMSFieldModel fieldModel = SQLite.select().from(PLMSFieldModel.class).querySingle();
+		mArgument.getFieldView().initChildViews(mArgument, fieldModel);
 		mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
 		mArgument.setTurnManager(new PLMSTurnManager(mArgument));
 	}

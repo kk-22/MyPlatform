@@ -3,6 +3,7 @@ package jp.co.my.myplatform.service.mysen.army;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
+import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.PLMSUnitView;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSComputerInterface;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSUserInterface;
@@ -16,6 +17,7 @@ public abstract class PLMSArmyStrategy {
 	private String mName;
 	private int mInterfaceNo;
 	private PLMSArgument mArgument;
+	private MYArrayList<PLMSUnitData> mUnitDataArray;
 	private MYArrayList<PLMSUnitView> mAliveUnitViewArray;
 	private MYArrayList<PLMSUnitView> mAllUnitViewArray;
 	private PLMSWarInterface mWarInterface;
@@ -25,6 +27,7 @@ public abstract class PLMSArmyStrategy {
 		mArgument = argument;
 		mName = name;
 		mInterfaceNo = interfaceNo;
+		mUnitDataArray = new MYArrayList<>();
 		mAllUnitViewArray = new MYArrayList<>();
 		mAliveUnitViewArray = new MYArrayList<>();
 	}
@@ -71,6 +74,10 @@ public abstract class PLMSArmyStrategy {
 
 	public PLMSWarInterface getWarInterface() {
 		return mWarInterface;
+	}
+
+	public MYArrayList<PLMSUnitData> getUnitDataArray() {
+		return mUnitDataArray;
 	}
 
 	public MYArrayList<PLMSUnitView> getAliveUnitViewArray() {

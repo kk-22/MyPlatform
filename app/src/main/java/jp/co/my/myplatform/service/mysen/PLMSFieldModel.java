@@ -1,5 +1,7 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.graphics.Point;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -7,6 +9,8 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 
@@ -39,6 +43,30 @@ public class PLMSFieldModel extends PLBaseModel {
 	}
 
 	// getter and setter
+	public MYArrayList<Point> getAttackerInitPointArray() {
+		return getInitPointArrayOfText(attackerInitPointsText);
+	}
+
+	public MYArrayList<Point> getDefenderInitPointArray() {
+		return getInitPointArrayOfText(defenderInitPointsText);
+	}
+
+	private MYArrayList<Point> getInitPointArrayOfText(String arrayText) {
+		String[] splitTexts = arrayText.split(",");
+		MYArrayList<Point> result = new MYArrayList<>(splitTexts.length);
+		for (String text : splitTexts) {
+			String[] pointTexts = text.split("-");
+			if (pointTexts.length != 2) {
+				MYLogUtil.showErrorToast("getInitPointArrayOfText initPointArray error : " +name +" " +arrayText);
+				return null;
+			}
+			int x = Integer.valueOf(pointTexts[0]);
+			int y = Integer.valueOf(pointTexts[1]);
+			result.add(new Point(x, y));
+		}
+		return result;
+	}
+
 	public int getNo() {
 		return no;
 	}
