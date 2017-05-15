@@ -661,8 +661,7 @@ public class PLMSSkillData {
 			// フィールド範囲外
 			return null;
 		}
-		PLMSUnitData unitData = moveUnit.getUnitData();
-		if (unitData.moveCost(targetLandView.getLandData()) >= 9) {
+		if (targetLandView.getLandData().canEnterLand(moveUnit.getUnitData())) {
 			// 侵入不可の地形
 			return null;
 		}

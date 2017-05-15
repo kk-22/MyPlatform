@@ -456,7 +456,7 @@ public class PLMSAreaManager {
 			// 移動不可
 			return DO_NOT_ENTER;
 		}
-		int nextRemainingMove = remainingMove - unitView.getUnitData().moveCost(landView.getLandData());
+		int nextRemainingMove = landView.getLandData().getRemainingMovementForce(unitView.getUnitData(), remainingMove);
 		if (nextRemainingMove < 0) {
 			// 移動不可
 			return DO_NOT_ENTER;

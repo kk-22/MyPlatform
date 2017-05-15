@@ -32,6 +32,15 @@ public class PLMSLandData {
 		mLandType = LandType.getType(landNumber % 10);
 	}
 
+	public int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
+		return currentMoveForce - 1;
+	}
+
+	public boolean canEnterLand(PLMSUnitData unitData) {
+		int movementForce = unitData.getBranch().getMovementForce();
+		return (getRemainingMovementForce(unitData, movementForce) >= 0);
+	}
+
 	String getImagePath() {
 		String name;
 		switch (mLandType) {

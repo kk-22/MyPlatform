@@ -76,10 +76,6 @@ public class PLMSUnitData {
 		resetParamsForNewTurn();
 	}
 
-	public int moveCost(PLMSLandData landData) {
-		return 1;
-	}
-
 	public String getSmallImagePath() {
 		return "unit/" +mUnitModel.getNo() +".png";
 	}
