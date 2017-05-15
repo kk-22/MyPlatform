@@ -4,36 +4,23 @@ import jp.co.my.common.util.MYLogUtil;
 
 public class PLMSLandData {
 
-	private enum LandType {
-		GRASSLAND(1), FOREST(2), WATER(3), MOUNTAIN(4), WALL(9);
-
-		final int id;
-		LandType(final int id) {
-			this.id = id;
-		}
-		public int getInt() {
-			return this.id;
-		}
-		public static LandType getType(int no) {
-			LandType[] types = LandType.values();
-			for (LandType type : types) {
-				if (type.getInt() == no) {
-					return type;
-				}
-			}
-			MYLogUtil.showErrorToast("未登録の地形 " +no);
-			return LandType.WALL;
-		}
-	}
-
-	private LandType mLandType;
+	private PLMSLandType mLandType;
 
 	PLMSLandData(int landNumber) {
-		mLandType = LandType.getType(landNumber % 10);
+		switch (landNumber % 10) {
+			case 1: mLandType = new PLMSGrassyPlainLand(); break;
+			case 2: mLandType = new PLMSForestLand(); break;
+			case 3: mLandType = new PLMSWaterLand(); break;
+			case 4: mLandType = new PLMSMountainLand(); break;
+			case 9: mLandType = new PLMSWallLand(); break;
+			default:
+				MYLogUtil.showErrorToast("未登録の地形 " +landNumber);
+				break;
+		}
 	}
 
 	public int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-		return currentMoveForce - 1;
+		return mLandType.getRemainingMovementForce(unitData, currentMoveForce);
 	}
 
 	public boolean canEnterLand(PLMSUnitData unitData) {
@@ -42,27 +29,62 @@ public class PLMSLandData {
 	}
 
 	String getImagePath() {
-		String name;
-		switch (mLandType) {
-			case GRASSLAND:
-				name = "grassland.gif";
-				break;
-			case FOREST:
-				name = "forest.png";
-				break;
-			case WATER:
-				name = "water.png";
-				break;
-			case MOUNTAIN:
-				name = "mountain.jpg";
-				break;
-			case WALL:
-				name = "wall.png";
-				break;
-			default:
-				name = "noCase";
-				break;
+		return "land/" + mLandType.getImageName();
+	}
+
+	private abstract class PLMSLandType {
+		abstract String getImageName();
+		abstract int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce);
+	}
+
+	private class PLMSGrassyPlainLand extends PLMSLandType {
+		@Override
+		String getImageName() {
+			return "grassland.gif";
 		}
-		return "land/" + name;
+		@Override
+		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
+			return currentMoveForce - 1;
+		}
+	}
+	private class PLMSForestLand extends PLMSLandType {
+		@Override
+		String getImageName() {
+			return "forest.png";
+		}
+		@Override
+		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
+			return currentMoveForce - 1;
+		}
+	}
+	private class PLMSWaterLand extends PLMSLandType {
+		@Override
+		String getImageName() {
+			return "water.png";
+		}
+		@Override
+		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
+			return currentMoveForce - 1;
+		}
+	}
+	private class PLMSMountainLand extends PLMSLandType {
+		@Override
+		String getImageName() {
+			return "mountain.jpg";
+		}
+		@Override
+		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
+			return currentMoveForce - 1;
+		}
+	}
+	private class PLMSWallLand extends PLMSLandType {
+		@Override
+		String getImageName() {
+			return "wall.png";
+		}
+		@Override
+		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
+			return Integer.MIN_VALUE;
+		}
 	}
 }
