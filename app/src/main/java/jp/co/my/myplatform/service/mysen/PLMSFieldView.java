@@ -63,12 +63,13 @@ public class PLMSFieldView extends FrameLayout {
 		landParams.width = mLandSize;
 		landParams.height = mLandSize;
 
+		int[][] landNumbers = mFieldModel.getLandNumbers();
 		for (int y = 0; y < MAX_Y; y++) {
 			LinearLayout horizontalLayout = new LinearLayout(getContext());
 			verticalLayout.addView(horizontalLayout);
 
 			for (int x = 0; x < MAX_X; x++) {
-				PLMSLandView landView = new PLMSLandView(getContext());
+				PLMSLandView landView = new PLMSLandView(getContext(), landNumbers[y][x]);
 				landView.setPoint(new Point(x, y));
 				horizontalLayout.addView(landView, landParams);
 				mLandViewArray.add(landView);

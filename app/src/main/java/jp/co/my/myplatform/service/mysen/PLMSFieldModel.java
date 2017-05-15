@@ -43,6 +43,25 @@ public class PLMSFieldModel extends PLBaseModel {
 	}
 
 	// getter and setter
+	public int[][] getLandNumbers() {
+		int[][] result = null;
+		String[] landLines = landsText.split("\n");
+		int i = 0, j;
+		for (String line : landLines) {
+			String[] numbers = line.split(",");
+			j = 0;
+			for (String number : numbers) {
+				if (result == null) {
+					result = new int[landLines.length][numbers.length];
+				}
+				result[i][j] = Integer.valueOf(number);
+				j++;
+			}
+			i++;
+		}
+		return result;
+	}
+
 	public MYArrayList<Point> getAttackerInitPointArray() {
 		return getInitPointArrayOfText(attackerInitPointsText);
 	}

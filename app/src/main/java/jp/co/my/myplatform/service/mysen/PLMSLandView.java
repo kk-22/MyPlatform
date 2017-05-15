@@ -19,12 +19,12 @@ public class PLMSLandView extends FrameLayout {
 	private PLMSUnitView mUnitView;
 	private PLMSLandData mLandData;
 
-	public PLMSLandView(Context context) {
+	public PLMSLandView(Context context, int landNumber) {
 		super(context);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_land, this);
 		mLandImage = (ImageView) findViewById(R.id.image_view);
 
-		mLandData = new PLMSLandData();
+		mLandData = new PLMSLandData(landNumber);
 
 		loadImage();
 	}
