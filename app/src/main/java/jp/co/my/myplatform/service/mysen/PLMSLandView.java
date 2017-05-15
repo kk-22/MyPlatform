@@ -38,12 +38,8 @@ public class PLMSLandView extends FrameLayout {
 	}
 
 	private void loadImage() {
-		String path = "land/" + getImageName();
+		String path = mLandData.getImagePath();
 		mLandImage.setImageBitmap(MYImageUtil.getBitmapFromImagePath(path, getContext()));
-	}
-
-	protected String getImageName() {
-		return "grassland.gif";
 	}
 
 	// getter and setter
