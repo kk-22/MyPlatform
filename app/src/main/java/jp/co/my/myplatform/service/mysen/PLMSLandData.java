@@ -4,6 +4,8 @@ import jp.co.my.common.util.MYLogUtil;
 
 public class PLMSLandData {
 
+	public static final int CAN_NOT_ENTER = 999;
+
 	private PLMSLandType mLandType;
 
 	PLMSLandData(int landNumber) {
@@ -19,13 +21,8 @@ public class PLMSLandData {
 		}
 	}
 
-	public int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-		return mLandType.getRemainingMovementForce(unitData, currentMoveForce);
-	}
-
-	public boolean canEnterLand(PLMSUnitData unitData) {
-		int movementForce = unitData.getBranch().getMovementForce();
-		return (getRemainingMovementForce(unitData, movementForce) >= 0);
+	public int getMovementCost(PLMSUnitData unitData) {
+		return mLandType.getMovementCostEachLand(unitData);
 	}
 
 	String getImagePath() {
@@ -34,7 +31,7 @@ public class PLMSLandData {
 
 	private abstract class PLMSLandType {
 		abstract String getImageName();
-		abstract int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce);
+		abstract int getMovementCostEachLand(PLMSUnitData unitData);
 	}
 
 	private class PLMSGrassyPlainLand extends PLMSLandType {
@@ -43,8 +40,8 @@ public class PLMSLandData {
 			return "grassland.gif";
 		}
 		@Override
-		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-			return currentMoveForce - 1;
+		int getMovementCostEachLand(PLMSUnitData unitData) {
+			return 1;
 		}
 	}
 	private class PLMSForestLand extends PLMSLandType {
@@ -53,8 +50,23 @@ public class PLMSLandData {
 			return "forest.png";
 		}
 		@Override
-		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-			return currentMoveForce - 1;
+		int getMovementCostEachLand(PLMSUnitData unitData) {
+			switch (unitData.getBranch().getMovementType()) {
+				case INFANTRY:
+					if (unitData.getCurrentMovementForce() == 1) {
+						// 移動力が下がっている場合はコスト1で移動可能
+						return 1;
+					}
+					return 2;
+				case ARMOR:
+					return 1;
+				case CAVALRY:
+					return CAN_NOT_ENTER;
+				case FLYING:
+					return 1;
+				default:
+					return CAN_NOT_ENTER;
+			}
 		}
 	}
 	private class PLMSWaterLand extends PLMSLandType {
@@ -63,8 +75,16 @@ public class PLMSLandData {
 			return "water.png";
 		}
 		@Override
-		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-			return currentMoveForce - 1;
+		int getMovementCostEachLand(PLMSUnitData unitData) {
+			switch (unitData.getBranch().getMovementType()) {
+				case FLYING:
+					return 1;
+				case INFANTRY:
+				case ARMOR:
+				case CAVALRY:
+				default:
+					return CAN_NOT_ENTER;
+			}
 		}
 	}
 	private class PLMSMountainLand extends PLMSLandType {
@@ -73,8 +93,16 @@ public class PLMSLandData {
 			return "mountain.jpg";
 		}
 		@Override
-		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-			return currentMoveForce - 1;
+		int getMovementCostEachLand(PLMSUnitData unitData) {
+			switch (unitData.getBranch().getMovementType()) {
+				case FLYING:
+					return 1;
+				case INFANTRY:
+				case ARMOR:
+				case CAVALRY:
+				default:
+					return CAN_NOT_ENTER;
+			}
 		}
 	}
 	private class PLMSWallLand extends PLMSLandType {
@@ -83,8 +111,8 @@ public class PLMSLandData {
 			return "wall.png";
 		}
 		@Override
-		int getRemainingMovementForce(PLMSUnitData unitData, int currentMoveForce) {
-			return Integer.MIN_VALUE;
+		int getMovementCostEachLand(PLMSUnitData unitData) {
+			return CAN_NOT_ENTER;
 		}
 	}
 }

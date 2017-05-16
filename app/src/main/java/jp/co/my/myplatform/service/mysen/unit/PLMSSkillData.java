@@ -21,6 +21,8 @@ import jp.co.my.myplatform.service.mysen.battle.PLMSForecastUnit;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportForecast;
 import jp.co.my.myplatform.service.mysen.battle.PLMSSupportUnit;
 
+import static jp.co.my.myplatform.service.mysen.PLMSLandData.CAN_NOT_ENTER;
+
 public class PLMSSkillData {
 
 
@@ -661,7 +663,7 @@ public class PLMSSkillData {
 			// フィールド範囲外
 			return null;
 		}
-		if (targetLandView.getLandData().canEnterLand(moveUnit.getUnitData())) {
+		if (targetLandView.getLandData().getMovementCost(moveUnit.getUnitData()) == CAN_NOT_ENTER) {
 			// 侵入不可の地形
 			return null;
 		}

@@ -39,6 +39,7 @@ public class PLMSUnitData {
 	private int[] mDebuffParams; // デバフの減算値(正の値)
 
 	private int mMoveCount; // 同一ターン内での移動回数
+	private int mCurrentMovementForce; // 現ターンの移動力
 
 	public PLMSUnitData(PLMSUnitModel unitModel, PLMSArmyStrategy armyStrategy, PLMSArgument argument) {
 		mUnitModel = unitModel;
@@ -70,6 +71,7 @@ public class PLMSUnitData {
 		
 		mMaxHP = mUnitModel.getHitPoint();
 		mCurrentHP = mMaxHP;
+		mCurrentMovementForce = mBranch.getMovementForce();
 		for (int baseParam : mBaseParams) {
 			mUnitScore += baseParam;
 		}
@@ -177,6 +179,10 @@ public class PLMSUnitData {
 
 	public int getUnitScore() {
 		return mUnitScore;
+	}
+
+	public int getCurrentMovementForce() {
+		return mCurrentMovementForce;
 	}
 
 	// setter

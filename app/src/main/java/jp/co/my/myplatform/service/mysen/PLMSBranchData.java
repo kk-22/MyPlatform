@@ -2,7 +2,7 @@ package jp.co.my.myplatform.service.mysen;
 
 public class PLMSBranchData {
 
-	private enum MovementType {
+	public enum MovementType {
 		INFANTRY(1),
 		ARMOR(2),
 		CAVALRY(4),
@@ -161,6 +161,10 @@ public class PLMSBranchData {
 	// getter
 	public int getNo() {
 		return mBranchNo;
+	}
+
+	public MovementType getMovementType() {
+		return mMovementType;
 	}
 
 	public ColorType getColorType() {

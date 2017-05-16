@@ -94,7 +94,7 @@ public class PLMSAreaManager {
 	// includeTeamLand : 味方ユニットがいる地点も戻り値に含む
 	public MYArrayList<PLMSLandView> getMovableLandArray(PLMSUnitView unitView, boolean includeTeamLand) {
 		initLandArrayBySkill(unitView);
-		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
+		int movementForce = unitView.getUnitData().getCurrentMovementForce();
 		MYArrayList<PLMSLandView> movableLandArray = new MYArrayList<>();
 		searchAdjacentMovableArea(unitView.getCurrentPoint(), unitView, includeTeamLand, movementForce, movableLandArray);
 
@@ -236,7 +236,7 @@ public class PLMSAreaManager {
 		}
 
 		initLandArrayBySkill(unitView);
-		int movementForce = unitView.getUnitData().getBranch().getMovementForce();
+		int movementForce = unitView.getUnitData().getCurrentMovementForce();
 		PLMSLandRoute baseRoute = new PLMSLandRoute(unitView.getLandView());
 		MYArrayList<PLMSLandRoute> resultRouteArray = new MYArrayList<>();
 		searchAdjacentRoute(unitView, targetLandView, unitView.getLandView(),
@@ -378,7 +378,7 @@ public class PLMSAreaManager {
 		int remainingPower = prevRoute.getRemainingMovementPower();
 		int nextRemainingMove = getRemainingMoveCost(movingUnitView, focusLandView, remainingPower);
 		if (nextRemainingMove < 0) {
-			int movementForce = movingUnitView.getUnitData().getBranch().getMovementForce();
+			int movementForce = movingUnitView.getUnitData().getCurrentMovementForce();
 			nextRemainingMove = getRemainingMoveCost(movingUnitView, focusLandView, movementForce);
 			if (nextRemainingMove < 0) {
 				// 移動不可の地形
@@ -456,7 +456,7 @@ public class PLMSAreaManager {
 			// 移動不可
 			return DO_NOT_ENTER;
 		}
-		int nextRemainingMove = landView.getLandData().getRemainingMovementForce(unitView.getUnitData(), remainingMove);
+		int nextRemainingMove = remainingMove - landView.getLandData().getMovementCost(unitView.getUnitData());
 		if (nextRemainingMove < 0) {
 			// 移動不可
 			return DO_NOT_ENTER;
@@ -490,7 +490,7 @@ public class PLMSAreaManager {
 		}
 
 		MYArrayList<PLMSLandView> landViewArray = getAroundLandArray(targetUnitView.getLandView().getPoint(), 1);
-		int moveCost = moveUnitView.getUnitData().getBranch().getMovementForce();
+		int moveCost = moveUnitView.getUnitData().getCurrentMovementForce();
 		for (PLMSLandView landView : landViewArray) {
 			if (getRemainingMoveCost(moveUnitView, landView, moveCost) >= 0) {
 				mWarpLandArray.add(landView);
