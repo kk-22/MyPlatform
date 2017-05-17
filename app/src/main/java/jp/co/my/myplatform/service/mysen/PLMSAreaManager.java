@@ -390,10 +390,12 @@ public class PLMSAreaManager {
 		// 探索済みルート判定
 		PLMSLandRoute oldRoute = focusRouteArray.getFirst();
 		if (oldRoute != null) {
-			if (oldRoute.getNumberOfTurn() < numberOfTurn) {
+			int oldRouteScore = oldRoute.getNumberOfTurn() * -10 + oldRoute.getRemainingMovementPower();
+			int newRouteScore = numberOfTurn * -10 + remainingPower;
+			if (newRouteScore < oldRouteScore) {
 				// 最短ルートではない
 				return;
-			} else if (oldRoute.getNumberOfTurn() > numberOfTurn) {
+			} else if (newRouteScore > oldRouteScore) {
 				// 最短ルートが出たため既存のルートを破棄
 				focusRouteArray.clear();
 			}
@@ -414,7 +416,7 @@ public class PLMSAreaManager {
 										HashMap<PLMSLandView, PLMSRouteArray> routeArrayHashMap) {
 		MYArrayList<PLMSLandView> aroundLandArray = getAroundLandArray(focusLandView.getPoint(), 1);
 		for (PLMSLandView aroundLand : aroundLandArray) {
-			PLMSRouteArray routeArray = routeArrayHashMap.get(focusLandView);
+			PLMSRouteArray routeArray = routeArrayHashMap.get(aroundLand);
 			if (!routeArray.isAlreadySearched()) {
 				// 未探索地点を追い続けることで起きる無駄な迂回ルートの大量生成を避ける
 				continue;
