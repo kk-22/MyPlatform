@@ -71,6 +71,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 			return;
 		}
 
+		MYLogUtil.outputLog("scanNextAction");
 		updateEnemyRange();
 		if (scanBattleAndSupport()) {
 			return;
@@ -296,6 +297,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		if (actionUnit.getLandView().equals(actionUnit.getUnitView().getLandView())) {
 			score += 1;
 		}
+//		MYLogUtil.outputLog(" unit=" +actionUnit.getUnitView().getUnitName() +" target=" +targetUnit.getUnitView().getUnitName() +" score=" +score);
 		return score;
 	}
 
