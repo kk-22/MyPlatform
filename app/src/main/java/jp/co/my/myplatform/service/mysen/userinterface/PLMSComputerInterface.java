@@ -196,7 +196,7 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 	private int calculateBattleScore(PLMSBattleForecast battleForecast) {
 		PLMSBattleUnit battleUnit = battleForecast.getLeftUnit();
 		PLMSBattleUnit enemyUnit = battleForecast.getRightUnit();
-		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
+//		int selfDamage = battleUnit.getUnitData().getCurrentHP() - battleUnit.getRemainingHP();
 		int enemyDamage = enemyUnit.getUnitData().getCurrentHP() - enemyUnit.getRemainingHP();
 		int score = 100000000; // 補助より優先させるための初期値
 		if (enemyUnit.getRemainingHP() <= 0) {
@@ -210,10 +210,6 @@ public class PLMSComputerInterface extends PLMSWarInterface {
 		if (enemyDamage <= 5) {
 			// ダメージが低過ぎなら避ける
 			score += -20000;
-		}
-		if (selfDamage == 0) {
-			// 被ダメ0なら優先
-			score += 10000;
 		}
 		// 高ダメージを優先
 		score += enemyDamage * 100;
