@@ -88,6 +88,7 @@ public class PLMSUserInterface extends PLMSWarInterface
 		mAllDangerCover.hideAllCoverViews();
 		mSelectDangerCover.hideAllCoverViews();
 		mAreaManager.getAvailableAreaCover().hideAllCoverViews();
+		mAreaManager.hideAllAreaCover();
 
 		for (PLMSUnitView unitView : mUnitArray) {
 			unitView.setOnTouchListener(null);
