@@ -2,18 +2,27 @@ package jp.co.my.myplatform.service.mysen.setting;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.TextView;
+
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
+import jp.co.my.myplatform.service.mysen.PLMSFieldModel;
+import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
 
 public class PLMSWarSettingContent extends PLContentView {
 
+	private PLMSFieldView mPreviewFieldView;
+	private TextView mFieldNameText;
 	private PLMSArmySetting mLeftArmyView;
 	private PLMSArmySetting mRightArmyView;
 
@@ -22,10 +31,13 @@ public class PLMSWarSettingContent extends PLContentView {
 
 	public PLMSWarSettingContent(PLMSArgument argument) {
 		super();
+		mArgument = argument;
+
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_war_setting, this);
+		mPreviewFieldView = (PLMSFieldView) findViewById(R.id.preview_field);
+		mFieldNameText = (TextView) findViewById(R.id.field_name_text);
 		mLeftArmyView = (PLMSArmySetting) findViewById(R.id.left_army);
 		mRightArmyView = (PLMSArmySetting) findViewById(R.id.right_army);
-		mArgument = argument;
 		mArmyViewArray = new MYArrayList<>(mLeftArmyView, mRightArmyView);
 
 		MYArrayList<PLMSArmyStrategy> armyArray = mArgument.getArmyArray();
@@ -39,6 +51,16 @@ public class PLMSWarSettingContent extends PLContentView {
 		}
 
 		initEvent();
+
+		getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+				PLMSFieldModel fieldModel = SQLite.select().from(PLMSFieldModel.class).querySingle();
+				loadFieldView(fieldModel);
+			}
+		});
 	}
 
 	private void initEvent() {
@@ -48,6 +70,19 @@ public class PLMSWarSettingContent extends PLContentView {
 				execute();
 			}
 		});
+		mPreviewFieldView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MYLogUtil.outputLog("TODO");
+			}
+		});
+	}
+
+	private void loadFieldView(PLMSFieldModel fieldModel) {
+		if (fieldModel == null) return;
+
+		mPreviewFieldView.initForPreview(fieldModel);
+		mFieldNameText.setText(fieldModel.getName());
 	}
 
 	private void execute() {

@@ -44,6 +44,11 @@ public class PLMSFieldView extends FrameLayout {
 		this(context, null);
 	}
 
+	public void initForPreview(PLMSFieldModel fieldModel) {
+		mFieldModel = fieldModel;
+		loadFieldView();
+	}
+
 	public void initChildViews(PLMSArgument argument, PLMSFieldModel fieldModel) {
 		mArgument = argument;
 		mFieldModel = fieldModel;
