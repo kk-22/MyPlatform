@@ -1,6 +1,8 @@
 package jp.co.my.myplatform.service.memo;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.widget.EditText;
 
 import java.io.BufferedReader;
@@ -71,6 +73,11 @@ public class PLMemoReadWriter {
 			writer.write(mEditText.getText().toString());
 			writer.flush();
 			writer.close();
+
+			// PCから閲覧できるようにする
+			Uri textUri = Uri.fromFile(textFile);
+			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, textUri);
+			PLApplication.getContext().sendBroadcast(mediaScanIntent);
 		} catch (IOException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
