@@ -19,19 +19,21 @@ public class PLMSFieldView extends FrameLayout {
 	static final int MAX_X = 6;
 	static final int MAX_Y = 8;
 
-	private PLMSArgument mArgument;
-	private PLMSFieldModel mFieldModel;
+	private LinearLayout mVerticalLayout;
 
 	private int mLandSize;		// 1マスの縦横サイズ
 	private int mLeftMargin;	// mVerticalLinearの左の余白
 	private int mTopMargin;		// mVerticalLinearの上の余白
 
+	private PLMSArgument mArgument;
+	private PLMSFieldModel mFieldModel;
 	private MYArrayList<PLMSLandView> mLandViewArray;
 	private MYArrayList<PLMSUnitView> mUnitViewArray;
 	
 	public PLMSFieldView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_field, this);
+		mVerticalLayout = (LinearLayout) findViewById(R.id.vertical_linear);
 		mLandViewArray = new MYArrayList<>();
 		mUnitViewArray = new MYArrayList<>();
 	}
@@ -45,6 +47,10 @@ public class PLMSFieldView extends FrameLayout {
 	}
 
 	public void initForPreview(PLMSFieldModel fieldModel) {
+		if (mFieldModel != null) {
+			mLandViewArray.clear();
+			mVerticalLayout.removeAllViews();
+		}
 		mFieldModel = fieldModel;
 		loadFieldView();
 	}
@@ -62,7 +68,6 @@ public class PLMSFieldView extends FrameLayout {
 		mLeftMargin = (getWidth() - mLandSize * MAX_X) / 2;
 		mTopMargin = (getHeight() - mLandSize * MAX_Y) / 2;
 
-		LinearLayout verticalLayout = (LinearLayout) findViewById(R.id.vertical_linear);
 		LinearLayout.LayoutParams landParams = new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		landParams.width = mLandSize;
@@ -71,7 +76,7 @@ public class PLMSFieldView extends FrameLayout {
 		int[][] landNumbers = mFieldModel.getLandNumbers();
 		for (int y = 0; y < MAX_Y; y++) {
 			LinearLayout horizontalLayout = new LinearLayout(getContext());
-			verticalLayout.addView(horizontalLayout);
+			mVerticalLayout.addView(horizontalLayout);
 
 			for (int x = 0; x < MAX_X; x++) {
 				PLMSLandView landView = new PLMSLandView(getContext(), landNumbers[y][x]);

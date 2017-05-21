@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.mysen.setting;
 
+import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -8,10 +9,10 @@ import android.widget.TextView;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import jp.co.my.common.util.MYArrayList;
-import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
+import jp.co.my.myplatform.service.layout.PLAbsoluteLayoutController;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSFieldModel;
 import jp.co.my.myplatform.service.mysen.PLMSFieldView;
@@ -28,6 +29,8 @@ public class PLMSWarSettingContent extends PLContentView {
 
 	private PLMSArgument mArgument;
 	private MYArrayList<PLMSArmySetting> mArmyViewArray;
+
+	private PLMSFieldModel mSelectingFieldMode;
 
 	public PLMSWarSettingContent(PLMSArgument argument) {
 		super();
@@ -57,8 +60,8 @@ public class PLMSWarSettingContent extends PLContentView {
 			public void onGlobalLayout() {
 				getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-				PLMSFieldModel fieldModel = SQLite.select().from(PLMSFieldModel.class).querySingle();
-				loadFieldView(fieldModel);
+				mSelectingFieldMode = SQLite.select().from(PLMSFieldModel.class).querySingle();
+				loadFieldView(mSelectingFieldMode);
 			}
 		});
 	}
@@ -73,7 +76,19 @@ public class PLMSWarSettingContent extends PLContentView {
 		mPreviewFieldView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYLogUtil.outputLog("TODO");
+				View targetView = findViewById(R.id.common_setting_layout);
+				new PLMSFieldListPopover(new PLMSFieldRecyclerAdapter.PLMSOnClickFieldListener() {
+					@Override
+					public void onClickField(View view, PLMSFieldModel fieldModel) {
+						PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
+						if (!fieldModel.equals(mSelectingFieldMode)) {
+							loadFieldView(fieldModel);
+						}
+					}
+				}).showPopover(new PLAbsoluteLayoutController(
+						targetView.getWidth(),
+						getHeight() - targetView.getHeight(),
+						new Point(0, targetView.getHeight())));
 			}
 		});
 	}
