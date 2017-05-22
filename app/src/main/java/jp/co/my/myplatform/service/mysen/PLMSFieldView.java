@@ -55,7 +55,15 @@ public class PLMSFieldView extends FrameLayout {
 		loadFieldView();
 	}
 
-	public void initChildViews(PLMSArgument argument, PLMSFieldModel fieldModel) {
+	public void initForWar(PLMSArgument argument, PLMSFieldModel fieldModel) {
+		if (mFieldModel != null) {
+			for (PLMSUnitView unitView : mUnitViewArray) {
+				removeView(unitView);
+			}
+			mUnitViewArray.clear();
+			mLandViewArray.clear();
+			mVerticalLayout.removeAllViews();
+		}
 		mArgument = argument;
 		mFieldModel = fieldModel;
 
@@ -139,5 +147,9 @@ public class PLMSFieldView extends FrameLayout {
 
 	public MYArrayList<PLMSUnitView> getUnitViewArray() {
 		return mUnitViewArray;
+	}
+
+	public PLMSFieldModel getFieldModel() {
+		return mFieldModel;
 	}
 }

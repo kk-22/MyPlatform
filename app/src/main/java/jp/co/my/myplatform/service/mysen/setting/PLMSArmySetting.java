@@ -8,7 +8,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.mysen.PLMSArgument;
+import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
+import jp.co.my.myplatform.service.mysen.army.PLMSBlueArmy;
+import jp.co.my.myplatform.service.mysen.army.PLMSRedArmy;
 
 
 public class PLMSArmySetting extends LinearLayout {
@@ -17,6 +21,7 @@ public class PLMSArmySetting extends LinearLayout {
 	private Switch mInterfaceSwitch;
 
 	private PLMSArmyStrategy mArmyStrategy;
+	private PLMSArgument mArgument;
 
 	public PLMSArmySetting(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -33,6 +38,30 @@ public class PLMSArmySetting extends LinearLayout {
 		this(context, null);
 	}
 
+	public void initProperties(PLMSArmyStrategy armyStrategy, PLMSArgument argument) {
+		mArgument = argument;
+		mArmyStrategy = armyStrategy;
+
+		mNameText.setText(mArmyStrategy.getName());
+		mInterfaceSwitch.setChecked(mArmyStrategy.getInterfaceNo() == PLMSArmyStrategy.INTERFACE_COMPUTER);
+		setBackgroundColor(mArmyStrategy.getAvailableAreaColor());
+	}
+
+	public PLMSArmyStrategy makeArmyInstance() {
+		PLMSArmyStrategy newArmy;
+		// TODO: ifなしでインスタンス湧ける。Strategyパターンやめる？copyする？
+		if (mArmyStrategy instanceof PLMSBlueArmy) {
+			newArmy = new PLMSBlueArmy(mArgument, mArmyStrategy.getName(), getNextInterfaceNo());
+		} else {
+			newArmy = new PLMSRedArmy(mArgument, mArmyStrategy.getName(), getNextInterfaceNo());
+		}
+		for (PLMSUnitData unitData : mArmyStrategy.getUnitDataArray()) {
+			PLMSUnitData newUnitData = new PLMSUnitData(unitData.getUnitModel(), newArmy, mArgument);
+			newArmy.getUnitDataArray().add(newUnitData);
+		}
+		return newArmy;
+	}
+
 	// getter
 	public int getNextInterfaceNo() {
 		if (mInterfaceSwitch.isChecked()) {
@@ -40,14 +69,5 @@ public class PLMSArmySetting extends LinearLayout {
 		} else {
 			return PLMSArmyStrategy.INTERFACE_USER;
 		}
-	}
-
-	// setter
-	public void setArmyStrategy(PLMSArmyStrategy armyStrategy) {
-		mArmyStrategy = armyStrategy;
-
-		mNameText.setText(mArmyStrategy.getName());
-		mInterfaceSwitch.setChecked(mArmyStrategy.getInterfaceNo() == PLMSArmyStrategy.INTERFACE_COMPUTER);
-		setBackgroundColor(mArmyStrategy.getAvailableAreaColor());
 	}
 }

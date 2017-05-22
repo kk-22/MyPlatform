@@ -155,7 +155,7 @@ public class PLMSWarContent extends PLContentView {
 			return;
 		}
 		PLMSFieldModel fieldModel = SQLite.select().from(PLMSFieldModel.class).querySingle();
-		mArgument.getFieldView().initChildViews(mArgument, fieldModel);
+		mArgument.getFieldView().initForWar(mArgument, fieldModel);
 		mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
 		mArgument.setTurnManager(new PLMSTurnManager(mArgument));
 	}

@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
@@ -16,6 +14,7 @@ import jp.co.my.myplatform.service.layout.PLAbsoluteLayoutController;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSFieldModel;
 import jp.co.my.myplatform.service.mysen.PLMSFieldView;
+import jp.co.my.myplatform.service.mysen.PLMSTurnManager;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
@@ -31,6 +30,7 @@ public class PLMSWarSettingContent extends PLContentView {
 	private MYArrayList<PLMSArmySetting> mArmyViewArray;
 
 	private PLMSFieldModel mSelectingFieldMode;
+	private boolean needMakeNewWar;
 
 	public PLMSWarSettingContent(PLMSArgument argument) {
 		super();
@@ -50,7 +50,7 @@ public class PLMSWarSettingContent extends PLContentView {
 		for (int i = 0; i < 2; i++) {
 			PLMSArmySetting armyView = mArmyViewArray.get(i);
 			PLMSArmyStrategy armyStrategy = armyArray.get(i);
-			armyView.setArmyStrategy(armyStrategy);
+			armyView.initProperties(armyStrategy, argument);
 		}
 
 		initEvent();
@@ -59,9 +59,7 @@ public class PLMSWarSettingContent extends PLContentView {
 			@Override
 			public void onGlobalLayout() {
 				getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-				mSelectingFieldMode = SQLite.select().from(PLMSFieldModel.class).querySingle();
-				loadFieldView(mSelectingFieldMode);
+				loadFieldView(mArgument.getFieldView().getFieldModel());
 			}
 		});
 	}
@@ -83,6 +81,7 @@ public class PLMSWarSettingContent extends PLContentView {
 						PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
 						if (!fieldModel.equals(mSelectingFieldMode)) {
 							loadFieldView(fieldModel);
+							needMakeNewWar = true;
 						}
 					}
 				}).showPopover(new PLAbsoluteLayoutController(
@@ -96,24 +95,40 @@ public class PLMSWarSettingContent extends PLContentView {
 	private void loadFieldView(PLMSFieldModel fieldModel) {
 		if (fieldModel == null) return;
 
+		mSelectingFieldMode = fieldModel;
 		mPreviewFieldView.initForPreview(fieldModel);
 		mFieldNameText.setText(fieldModel.getName());
 	}
 
 	private void execute() {
 		MYArrayList<PLMSArmyStrategy> armyArray = mArgument.getArmyArray();
-		for (int i = 0; i < 2; i++) {
-			PLMSArmyStrategy armyStrategy = armyArray.get(i);
-			PLMSArmySetting armyView = mArmyViewArray.get(i);
+		if (needMakeNewWar) {
+			PLMSArmyStrategy leftArmy = mLeftArmyView.makeArmyInstance();
+			PLMSArmyStrategy rightArmy = mRightArmyView.makeArmyInstance();
+			leftArmy.setEnemyArmy(rightArmy);
+			rightArmy.setEnemyArmy(leftArmy);
+			mArgument.setArmyArray(new MYArrayList<>(leftArmy, rightArmy));
 
-			if (armyStrategy.getInterfaceNo() != armyView.getNextInterfaceNo()) {
-				// インターフェースの切り替え
-				PLMSWarInterface prevInterface = armyStrategy.getWarInterface();
-				armyStrategy.setInterfaceNo(armyView.getNextInterfaceNo());
-				PLMSWarInterface nextInterface = armyStrategy.makeInterface();
-				if (mArgument.getTurnManager().getCurrentArmy() == armyStrategy) {
-					prevInterface.disableInterface();
-					nextInterface.enableInterface();
+			PLMSFieldView fieldView = mArgument.getFieldView();
+			fieldView.initForWar(mArgument, mSelectingFieldMode);
+			// TODO: WarContentと共通化？
+			mArgument.setFieldView(fieldView);
+			mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
+			mArgument.setTurnManager(new PLMSTurnManager(mArgument));
+		} else {
+			for (int i = 0; i < 2; i++) {
+				PLMSArmyStrategy armyStrategy = armyArray.get(i);
+				PLMSArmySetting armyView = mArmyViewArray.get(i);
+
+				if (armyStrategy.getInterfaceNo() != armyView.getNextInterfaceNo()) {
+					// インターフェースの切り替え
+					PLMSWarInterface prevInterface = armyStrategy.getWarInterface();
+					armyStrategy.setInterfaceNo(armyView.getNextInterfaceNo());
+					PLMSWarInterface nextInterface = armyStrategy.makeInterface();
+					if (mArgument.getTurnManager().getCurrentArmy() == armyStrategy) {
+						prevInterface.disableInterface();
+						nextInterface.enableInterface();
+					}
 				}
 			}
 		}
