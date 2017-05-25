@@ -12,7 +12,7 @@
             android:id="@+id/sliding_tab"
             android:background="#14f"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="48dp" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
