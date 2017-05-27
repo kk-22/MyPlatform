@@ -13,6 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
+    <LinearLayout
+        android:id="@+id/unit_linear"
+        android:background="#fff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+    </LinearLayout>
+
     <Switch
         android:id="@+id/interface_switch"
         android:layout_gravity="center"

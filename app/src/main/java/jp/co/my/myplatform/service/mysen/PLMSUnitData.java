@@ -1,8 +1,12 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
 import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillData;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
@@ -78,8 +82,9 @@ public class PLMSUnitData {
 		resetParamsForNewTurn();
 	}
 
-	public String getSmallImagePath() {
-		return "unit/" +mUnitModel.getNo() +".png";
+	public Bitmap getImage(Context context) {
+		String path = "unit/" +mUnitModel.getNo() +".png";
+		return MYImageUtil.getBitmapFromImagePath(path, context);
 	}
 
 	public void resetParamsForNewTurn() {

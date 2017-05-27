@@ -5,7 +5,6 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -76,10 +75,7 @@ public class PLMSFieldView extends FrameLayout {
 		mLeftMargin = (getWidth() - mLandSize * MAX_X) / 2;
 		mTopMargin = (getHeight() - mLandSize * MAX_Y) / 2;
 
-		LinearLayout.LayoutParams landParams = new LinearLayout.LayoutParams(
-				ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-		landParams.width = mLandSize;
-		landParams.height = mLandSize;
+		LinearLayout.LayoutParams landParams = new LinearLayout.LayoutParams(mLandSize, mLandSize);
 
 		int[][] landNumbers = mFieldModel.getLandNumbers();
 		for (int y = 0; y < MAX_Y; y++) {
