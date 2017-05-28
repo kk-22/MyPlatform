@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.TextView;
 
 import jp.co.my.common.util.MYArrayList;
@@ -19,12 +20,13 @@ import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
 
-public class PLMSWarSettingContent extends PLContentView {
+public class PLMSWarSettingContent extends PLContentView implements PLMSArmySetting.PLMSWarSettingListener {
 
 	private PLMSFieldView mPreviewFieldView;
 	private TextView mFieldNameText;
 	private PLMSArmySetting mLeftArmyView;
 	private PLMSArmySetting mRightArmyView;
+	private Button mExecuteButton;
 
 	private PLMSArgument mArgument;
 	private MYArrayList<PLMSArmySetting> mArmyViewArray;
@@ -42,6 +44,7 @@ public class PLMSWarSettingContent extends PLContentView {
 		mLeftArmyView = (PLMSArmySetting) findViewById(R.id.left_army);
 		mRightArmyView = (PLMSArmySetting) findViewById(R.id.right_army);
 		mArmyViewArray = new MYArrayList<>(mLeftArmyView, mRightArmyView);
+		mExecuteButton = (Button) findViewById(R.id.execute_button);
 
 		MYArrayList<PLMSArmyStrategy> armyArray = mArgument.getArmyArray();
 		if (armyArray == null) {
@@ -50,7 +53,7 @@ public class PLMSWarSettingContent extends PLContentView {
 		for (int i = 0; i < 2; i++) {
 			PLMSArmySetting armyView = mArmyViewArray.get(i);
 			PLMSArmyStrategy armyStrategy = armyArray.get(i);
-			armyView.initProperties(armyStrategy, argument);
+			armyView.initProperties(armyStrategy, argument, this);
 		}
 
 		initEvent();
@@ -65,7 +68,7 @@ public class PLMSWarSettingContent extends PLContentView {
 	}
 
 	private void initEvent() {
-		findViewById(R.id.execute_button).setOnClickListener(new OnClickListener() {
+		mExecuteButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				execute();
@@ -81,10 +84,11 @@ public class PLMSWarSettingContent extends PLContentView {
 						PLCoreService.getNavigationController().getCurrentView().removeTopPopover();
 						if (!fieldModel.equals(mSelectingFieldMode)) {
 							loadFieldView(fieldModel);
-							needMakeNewWar = true;
+							setNeedMakeNewWar();
 						}
 					}
 				}).showPopover(new PLAbsoluteLayoutController(
+						// mPreviewFieldView を隠さないように表示
 						targetView.getWidth(),
 						getHeight() - targetView.getHeight(),
 						new Point(0, targetView.getHeight())));
@@ -133,5 +137,11 @@ public class PLMSWarSettingContent extends PLContentView {
 			}
 		}
 		PLCoreService.getNavigationController().popView();
+	}
+
+	@Override
+	public void setNeedMakeNewWar() {
+		needMakeNewWar = true;
+		mExecuteButton.setText("再スタート");
 	}
 }

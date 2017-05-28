@@ -92,7 +92,7 @@
 
         <Button
             android:id="@+id/execute_button"
-            android:text="実行"
+            android:text="更新"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>

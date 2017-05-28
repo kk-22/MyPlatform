@@ -27,6 +27,7 @@ public class PLMSArmySetting extends LinearLayout implements PLMSUnitSelectConte
 	private PLMSArmyStrategy mArmyStrategy;
 	private PLMSArgument mArgument;
 	private MYArrayList<PLMSUnitData> mSelectingUnitArray;
+	private PLMSWarSettingListener mListener;
 
 	public PLMSArmySetting(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -54,9 +55,11 @@ public class PLMSArmySetting extends LinearLayout implements PLMSUnitSelectConte
 		this(context, null);
 	}
 
-	public void initProperties(PLMSArmyStrategy armyStrategy, PLMSArgument argument) {
+	public void initProperties(PLMSArmyStrategy armyStrategy, PLMSArgument argument,
+							   PLMSWarSettingListener listener) {
 		mArgument = argument;
 		mArmyStrategy = armyStrategy;
+		mListener = listener;
 
 		mNameText.setText(mArmyStrategy.getName());
 		mInterfaceSwitch.setChecked(mArmyStrategy.getInterfaceNo() == PLMSArmyStrategy.INTERFACE_COMPUTER);
@@ -74,7 +77,8 @@ public class PLMSArmySetting extends LinearLayout implements PLMSUnitSelectConte
 		} else {
 			newArmy = new PLMSRedArmy(mArgument, mArmyStrategy.getName(), getNextInterfaceNo());
 		}
-		for (PLMSUnitData unitData : mArmyStrategy.getUnitDataArray()) {
+		for (PLMSUnitData unitData : mSelectingUnitArray) {
+			// TODO: mSelectingUnitArray は UnitMode にする？
 			PLMSUnitData newUnitData = new PLMSUnitData(unitData.getUnitModel(), newArmy, mArgument);
 			newArmy.getUnitDataArray().add(newUnitData);
 		}
@@ -94,5 +98,10 @@ public class PLMSArmySetting extends LinearLayout implements PLMSUnitSelectConte
 	public void onSelectUnit(MYArrayList<PLMSUnitData> selectingUnitArray) {
 		mSelectingUnitArray = selectingUnitArray;
 		mUnitListView.loadUnitList(mSelectingUnitArray);
+		mListener.setNeedMakeNewWar();
+	}
+
+	interface PLMSWarSettingListener {
+		void setNeedMakeNewWar();
 	}
 }
