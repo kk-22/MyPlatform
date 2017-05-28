@@ -3,8 +3,6 @@ package jp.co.my.myplatform.service.mysen.setting;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,7 +20,7 @@ public class PLMSArmySetting extends LinearLayout {
 
 	private TextView mNameText;
 	private Switch mInterfaceSwitch;
-	private LinearLayout mUnitListLinear;
+	private PLMSUnitListView mUnitListView;
 
 	private PLMSArmyStrategy mArmyStrategy;
 	private PLMSArgument mArgument;
@@ -33,7 +31,7 @@ public class PLMSArmySetting extends LinearLayout {
 		LayoutInflater.from(context).inflate(R.layout.mysen_view_army_setting, this);
 		mNameText = (TextView) findViewById(R.id.name_text);
 		mInterfaceSwitch = (Switch) findViewById(R.id.interface_switch);
-		mUnitListLinear = (LinearLayout) findViewById(R.id.unit_linear);
+		mUnitListView = (PLMSUnitListView) findViewById(R.id.unit_list);
 	}
 
 	public PLMSArmySetting(Context context, AttributeSet attrs){
@@ -51,30 +49,7 @@ public class PLMSArmySetting extends LinearLayout {
 		mNameText.setText(mArmyStrategy.getName());
 		mInterfaceSwitch.setChecked(mArmyStrategy.getInterfaceNo() == PLMSArmyStrategy.INTERFACE_COMPUTER);
 		setBackgroundColor(mArmyStrategy.getAvailableAreaColor());
-
-		loadUnitList(armyStrategy.getUnitDataArray());
-	}
-
-	private void loadUnitList(MYArrayList<PLMSUnitData> unitDataArray) {
-		mUnitListLinear.removeAllViews();
-		mSelectingUnitArray = unitDataArray;
-
-		for (int i = 0; i < 6; i++) {
-			LinearLayout linearLayout = (LinearLayout) View.inflate(getContext(), R.layout.mysen_cell_unit, null);
-			if (i < unitDataArray.size()) {
-				PLMSUnitData unitData = unitDataArray.get(i);
-				ImageView imageView = (ImageView) linearLayout.findViewById(R.id.unit_image);
-				imageView.setImageBitmap(unitData.getImage(getContext()));
-
-				TextView textView = (TextView) linearLayout.findViewById(R.id.unit_name_text);
-				textView.setText(unitData.getUnitModel().getName());
-			}
-
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					0, LinearLayout.LayoutParams.WRAP_CONTENT);
-			params.weight = 1;
-			mUnitListLinear.addView(linearLayout, params);
-		}
+		mUnitListView.loadUnitList(armyStrategy.getUnitDataArray());
 	}
 
 	public PLMSArmyStrategy makeArmyInstance() {
