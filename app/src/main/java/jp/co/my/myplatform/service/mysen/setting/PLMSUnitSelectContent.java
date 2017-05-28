@@ -52,9 +52,40 @@ public class PLMSUnitSelectContent extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_select_unit, this);
 		mUnitListView = (PLMSUnitListView) findViewById(R.id.unit_list);
 		mUnitRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+
+		mUnitListView.loadUnitList(selectingUnitArray);
+
+		PLModelContainer<PLMSUnitModel> container = new PLModelContainer<>(SQLite.select()
+				.from(PLMSUnitModel.class)
+				.orderBy(PLMSUnitModel_Table.no, false));
+		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLMSUnitModel>() {
+			@Override
+			public void onLoad(List<PLMSUnitModel> modelLists) {
+				mAllUnitModels = modelLists;
+				PLMSUnitRecyclerAdapter adapter = new PLMSUnitRecyclerAdapter(getContext());
+				mUnitRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
+				mUnitRecyclerView.setAdapter(adapter);
+			}
+		});
+
+		initEvent();
+	}
+
+	private void initEvent() {
+		mUnitListView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mSelectingUnitArray.clear();
+				reloadList();
+			}
+		});
 		findViewById(R.id.decision_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (mSelectingUnitArray.size() == 0) {
+					MYLogUtil.showToast("ユニット未選択");
+					return;
+				}
 				mListener.onSelectUnit(mSelectingUnitArray);
 				PLCoreService.getNavigationController().popView();
 			}
@@ -77,21 +108,6 @@ public class PLMSUnitSelectContent extends PLContentView {
 						return;
 					}
 				}
-			}
-		});
-
-		mUnitListView.loadUnitList(selectingUnitArray);
-
-		PLModelContainer<PLMSUnitModel> container = new PLModelContainer<>(SQLite.select()
-				.from(PLMSUnitModel.class)
-				.orderBy(PLMSUnitModel_Table.no, false));
-		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLMSUnitModel>() {
-			@Override
-			public void onLoad(List<PLMSUnitModel> modelLists) {
-				mAllUnitModels = modelLists;
-				PLMSUnitRecyclerAdapter adapter = new PLMSUnitRecyclerAdapter(getContext());
-				mUnitRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
-				mUnitRecyclerView.setAdapter(adapter);
 			}
 		});
 	}
