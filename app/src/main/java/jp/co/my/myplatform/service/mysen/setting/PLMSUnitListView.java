@@ -15,6 +15,7 @@ import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 
 public class PLMSUnitListView extends LinearLayout {
 
+	public static final int MAX_NUMBER_UNIT = 6;
 	private MYArrayList<PLMSUnitData> showingUnitArray;
 
 	public PLMSUnitListView(Context context, AttributeSet attrs, int defStyle){
@@ -35,7 +36,7 @@ public class PLMSUnitListView extends LinearLayout {
 		removeAllViews();
 		showingUnitArray = unitDataArray;
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < MAX_NUMBER_UNIT; i++) {
 			LinearLayout linearLayout = (LinearLayout) View.inflate(getContext(), R.layout.mysen_cell_unit, null);
 			if (i < unitDataArray.size()) {
 				PLMSUnitData unitData = unitDataArray.get(i);

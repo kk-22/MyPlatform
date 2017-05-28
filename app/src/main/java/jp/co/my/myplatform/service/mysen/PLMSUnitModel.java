@@ -17,6 +17,7 @@ import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.common.util.MYJsonUtil;
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
 import jp.co.my.myplatform.service.model.PLDatabase;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
@@ -93,6 +94,15 @@ public class PLMSUnitModel extends PLBaseModel {
 	@Override
 	public String getSheetUrl() {
 		return "https://script.google.com/macros/s/AKfycby42Gh5M6Qkc30-KFfsHEncNAUhG-f2B3EhoIj44T--u7hbUoti/exec?sheet=unit";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		PLMSUnitModel unitModel = MYOtherUtil.castObject(obj, PLMSUnitModel.class);
+		if (unitModel != null && no == unitModel.no) {
+			return true;
+		}
+		return super.equals(obj);
 	}
 
 	public Bitmap getImage(Context context) {

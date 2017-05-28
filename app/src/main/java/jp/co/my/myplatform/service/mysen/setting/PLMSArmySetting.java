@@ -3,12 +3,14 @@ package jp.co.my.myplatform.service.mysen.setting;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSUnitData;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
@@ -16,7 +18,7 @@ import jp.co.my.myplatform.service.mysen.army.PLMSBlueArmy;
 import jp.co.my.myplatform.service.mysen.army.PLMSRedArmy;
 
 
-public class PLMSArmySetting extends LinearLayout {
+public class PLMSArmySetting extends LinearLayout implements PLMSUnitSelectContent.PLMSOnSelectUnitListener {
 
 	private TextView mNameText;
 	private Switch mInterfaceSwitch;
@@ -32,6 +34,16 @@ public class PLMSArmySetting extends LinearLayout {
 		mNameText = (TextView) findViewById(R.id.name_text);
 		mInterfaceSwitch = (Switch) findViewById(R.id.interface_switch);
 		mUnitListView = (PLMSUnitListView) findViewById(R.id.unit_list);
+
+		mUnitListView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLMSUnitSelectContent selectContent = new PLMSUnitSelectContent(
+						mArgument, mArmyStrategy,
+						mSelectingUnitArray, PLMSArmySetting.this);
+				PLCoreService.getNavigationController().pushView(selectContent);
+			}
+		});
 	}
 
 	public PLMSArmySetting(Context context, AttributeSet attrs){
@@ -49,7 +61,9 @@ public class PLMSArmySetting extends LinearLayout {
 		mNameText.setText(mArmyStrategy.getName());
 		mInterfaceSwitch.setChecked(mArmyStrategy.getInterfaceNo() == PLMSArmyStrategy.INTERFACE_COMPUTER);
 		setBackgroundColor(mArmyStrategy.getAvailableAreaColor());
-		mUnitListView.loadUnitList(armyStrategy.getUnitDataArray());
+
+		mSelectingUnitArray = armyStrategy.getUnitDataArray();
+		mUnitListView.loadUnitList(mSelectingUnitArray);
 	}
 
 	public PLMSArmyStrategy makeArmyInstance() {
@@ -74,5 +88,11 @@ public class PLMSArmySetting extends LinearLayout {
 		} else {
 			return PLMSArmyStrategy.INTERFACE_USER;
 		}
+	}
+
+	@Override
+	public void onSelectUnit(MYArrayList<PLMSUnitData> selectingUnitArray) {
+		mSelectingUnitArray = selectingUnitArray;
+		mUnitListView.loadUnitList(mSelectingUnitArray);
 	}
 }
