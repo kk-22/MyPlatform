@@ -23,7 +23,7 @@ public class PLMSRedArmy extends PLMSArmyStrategy {
 
 	@Override
 	public int getInformationColor() {
-		return Color.parseColor("#EA5532");
+		return Color.parseColor("#FA6964");
 	}
 
 	@Override
