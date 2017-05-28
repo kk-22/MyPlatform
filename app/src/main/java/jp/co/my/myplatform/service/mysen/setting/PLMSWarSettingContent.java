@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.mysen.setting;
 
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.core.PLCoreService;
@@ -16,6 +18,8 @@ import jp.co.my.myplatform.service.mysen.PLMSArgument;
 import jp.co.my.myplatform.service.mysen.PLMSFieldModel;
 import jp.co.my.myplatform.service.mysen.PLMSFieldView;
 import jp.co.my.myplatform.service.mysen.PLMSTurnManager;
+import jp.co.my.myplatform.service.mysen.PLMSUnitData;
+import jp.co.my.myplatform.service.mysen.PLMSWarContent;
 import jp.co.my.myplatform.service.mysen.army.PLMSArmyStrategy;
 import jp.co.my.myplatform.service.mysen.userinterface.PLMSWarInterface;
 
@@ -119,6 +123,13 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 			mArgument.setFieldView(fieldView);
 			mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
 			mArgument.setTurnManager(new PLMSTurnManager(mArgument));
+
+
+			SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+			editor.putInt(PLMSWarContent.KEY_FIELD_NO, mSelectingFieldMode.getNo());
+			editor.putString(PLMSWarContent.KEY_LEFT_UNIT_NOS, getUnitNosString(leftArmy.getUnitDataArray()));
+			editor.putString(PLMSWarContent.KEY_RIGHT_UNIT_NOS, getUnitNosString(rightArmy.getUnitDataArray()));
+			editor.commit();
 		} else {
 			for (int i = 0; i < 2; i++) {
 				PLMSArmyStrategy armyStrategy = armyArray.get(i);
@@ -137,6 +148,14 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 			}
 		}
 		PLCoreService.getNavigationController().popView();
+	}
+
+	private String getUnitNosString(MYArrayList<PLMSUnitData> unitDataArray) {
+		StringBuilder str = new StringBuilder();
+		for (PLMSUnitData unitData : unitDataArray) {
+			str.append(unitData.getUnitModel().getNo()).append(",");
+		}
+		return str.toString();
 	}
 
 	@Override

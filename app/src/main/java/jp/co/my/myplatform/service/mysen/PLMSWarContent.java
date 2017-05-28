@@ -1,12 +1,15 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
+import com.raizlabs.android.dbflow.sql.language.Condition;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.util.HashMap;
 import java.util.List;
 
 import jp.co.my.common.util.MYArrayList;
@@ -24,6 +27,10 @@ import jp.co.my.myplatform.service.popover.PLPopoverView;
 
 
 public class PLMSWarContent extends PLContentView {
+
+	public static final String KEY_FIELD_NO = "KEY_FIELD_NO";
+	public static final String KEY_LEFT_UNIT_NOS = "KEY_LEFT_UNIT_NOS";
+	public static final String KEY_RIGHT_UNIT_NOS = "KEY_RIGHT_UNIT_NOS";
 
 	private PLMSArgument mArgument;
 	private int mLoadCount;
@@ -120,9 +127,21 @@ public class PLMSWarContent extends PLContentView {
 	}
 
 	private void loadUnitModels() {
+		SharedPreferences preferences = MYLogUtil.getPreference();
+		final String[] leftNos = preferences.getString(KEY_LEFT_UNIT_NOS, "").split(",");
+		final String[] rightNos = preferences.getString(KEY_RIGHT_UNIT_NOS, "").split(",");
+
+		// in に配列ごと渡すと検索できない
+		Condition.In conditionIn = Condition.column(PLMSUnitModel_Table.no.getNameAlias()).in(leftNos[0]);
+		for (int i = 1; i < leftNos.length; i++) {
+			conditionIn.and(leftNos[i]);
+		}
+		for (String rightNo : rightNos) {
+			conditionIn.and(rightNo);
+		}
 		PLModelContainer<PLMSUnitModel> container = new PLModelContainer<>(SQLite.select()
 				.from(PLMSUnitModel.class)
-				.orderBy(PLMSUnitModel_Table.no, false));
+				.where(conditionIn));
 		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLMSUnitModel>() {
 			@Override
 			public void onLoad(List<PLMSUnitModel> modelLists) {
@@ -130,23 +149,34 @@ public class PLMSWarContent extends PLContentView {
 					MYLogUtil.showErrorToast("unit model array is null");
 					return;
 				}
+				HashMap<String, PLMSUnitModel> unitHashMap = new HashMap<>();
+				for (PLMSUnitModel unitModel : modelLists) {
+					unitHashMap.put(String.valueOf(unitModel.getNo()), unitModel);
+				}
 
-				// TODO: delete dummy code
 				PLMSBlueArmy blueArmy = new PLMSBlueArmy(mArgument, "青軍", PLMSArmyStrategy.INTERFACE_USER);
 				PLMSRedArmy redArmy = new PLMSRedArmy(mArgument, "赤軍", PLMSArmyStrategy.INTERFACE_COMPUTER);
 				blueArmy.setEnemyArmy(redArmy);
 				redArmy.setEnemyArmy(blueArmy);
 				mArgument.setArmyArray(new MYArrayList<>(blueArmy, redArmy));
-				int i = 0;
-				for (PLMSUnitModel unitModel : modelLists) {
-					PLMSArmyStrategy armyStrategy = (i / 4 == 0) ? blueArmy : redArmy;
-					PLMSUnitData unitData = new PLMSUnitData(unitModel, armyStrategy, mArgument);
-					armyStrategy.getUnitDataArray().add(unitData);
-					i++;
+
+				for (String str : leftNos) {
+					addUnitToArmy(blueArmy, unitHashMap.get(str));
+				}
+				for (String str : rightNos) {
+					addUnitToArmy(redArmy, unitHashMap.get(str));
 				}
 				startChildLayoutIfNeeded();
 			}
 		});
+	}
+
+	private void addUnitToArmy(PLMSArmyStrategy armyStrategy, PLMSUnitModel unitModel) {
+		if (unitModel == null) {
+			MYLogUtil.showErrorToast("該当Noのユニットなし");
+			return;
+		}
+		armyStrategy.getUnitDataArray().add(new PLMSUnitData(unitModel, armyStrategy, mArgument));
 	}
 
 	private void startChildLayoutIfNeeded() {
@@ -154,9 +184,15 @@ public class PLMSWarContent extends PLContentView {
 		if (mLoadCount < 2) {
 			return;
 		}
-		PLMSFieldModel fieldModel = SQLite.select().from(PLMSFieldModel.class).querySingle();
-		mArgument.getFieldView().initForWar(mArgument, fieldModel);
-		mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
-		mArgument.setTurnManager(new PLMSTurnManager(mArgument));
+
+		SharedPreferences preferences = MYLogUtil.getPreference();
+		int fieldNo = preferences.getInt(KEY_FIELD_NO, 1);
+		PLMSFieldModel fieldModel = SQLite.select().from(PLMSFieldModel.class)
+				.where(PLMSFieldModel_Table.no.eq(fieldNo)).querySingle();
+		if (fieldModel != null) {
+			mArgument.getFieldView().initForWar(mArgument, fieldModel);
+			mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
+			mArgument.setTurnManager(new PLMSTurnManager(mArgument));
+		}
 	}
 }
