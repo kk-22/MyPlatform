@@ -40,7 +40,7 @@ public class PLMSUnitListView extends LinearLayout {
 			if (i < unitDataArray.size()) {
 				PLMSUnitData unitData = unitDataArray.get(i);
 				ImageView imageView = (ImageView) linearLayout.findViewById(R.id.unit_image);
-				imageView.setImageBitmap(unitData.getImage(getContext()));
+				imageView.setImageBitmap(unitData.getUnitModel().getImage(getContext()));
 
 				TextView textView = (TextView) linearLayout.findViewById(R.id.unit_name_text);
 				textView.setText(unitData.getUnitModel().getName());

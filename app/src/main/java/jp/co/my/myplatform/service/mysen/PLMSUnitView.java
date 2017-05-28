@@ -120,7 +120,7 @@ public class PLMSUnitView extends FrameLayout implements PLMSUnitInterface {
 	}
 
 	private void loadImage() {
-		mUnitImageView.setImageBitmap(mUnitData.getImage(getContext()));
+		mUnitImageView.setImageBitmap(mUnitData.getUnitModel().getImage(getContext()));
 	}
 
 	// 現在のバフ補正値に応じて表示更新

@@ -1,5 +1,8 @@
 package jp.co.my.myplatform.service.mysen;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -11,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYImageUtil;
 import jp.co.my.common.util.MYJsonUtil;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.service.model.PLBaseModel;
@@ -89,6 +93,11 @@ public class PLMSUnitModel extends PLBaseModel {
 	@Override
 	public String getSheetUrl() {
 		return "https://script.google.com/macros/s/AKfycby42Gh5M6Qkc30-KFfsHEncNAUhG-f2B3EhoIj44T--u7hbUoti/exec?sheet=unit";
+	}
+
+	public Bitmap getImage(Context context) {
+		String path = "unit/" +getNo() +".png";
+		return MYImageUtil.getBitmapFromImagePath(path, context);
 	}
 
 	public void setAllSkill(MYArrayList<PLMSSkillModel> skillArray) {
