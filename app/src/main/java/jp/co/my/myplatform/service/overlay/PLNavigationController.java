@@ -15,6 +15,8 @@ import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.content.PLHomeView;
 import jp.co.my.myplatform.service.core.PLCoreService;
 
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+
 public class PLNavigationController extends PLOverlayView {
 
 	private FrameLayout mContentFrameLayout;
@@ -53,6 +55,14 @@ public class PLNavigationController extends PLOverlayView {
 		mViewCache = new ArrayList<>();
 
 		pushView(PLHomeView.class);
+	}
+
+	@Override
+	public void viewWillRemove() {
+		// フロントアプリにフォーカスを渡すために外す
+		WindowManager.LayoutParams params = getOverlayParams();
+		params.flags = FLAG_NOT_FOCUSABLE;
+		PLCoreService.getOverlayManager().updateOverlayLayout(this, params);
 	}
 
 	@Override
