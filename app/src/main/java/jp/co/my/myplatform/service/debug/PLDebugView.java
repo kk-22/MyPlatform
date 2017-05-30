@@ -14,6 +14,7 @@ import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import jp.co.my.common.util.MYArrayList;
@@ -104,40 +105,69 @@ public class PLDebugView extends PLContentView {
 			itemList.add(new PLDebugButtonItem("MySen", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new PLListPopover(new PLListPopover.PLListItem("Unit & Skill & Field 削除して再取得", new Runnable() {
-						@Override
-						public void run() {
-							List<Class> classList = Arrays.<Class>asList(PLMSFieldModel.class, PLMSSkillModel.class, PLMSUnitModel.class);
-							deleteTable(classList);
-
-							PLAllModelFetcher fetcher = new PLAllModelFetcher(classList, new PLAllModelFetcher.PLAllModelFetcherListener() {
+					new PLListPopover(
+							new PLListPopover.PLListItem("Unit & Skill & Field 削除して再取得", new Runnable() {
 								@Override
-								public void finishedAllFetchModels(MYArrayList<MYArrayList<PLBaseModel>> modelArrays) {
-									if (modelArrays == null) {
-										MYLogUtil.showErrorToast("UnitModel or SkillModel の取得に失敗");
-										return;
-									}
-									MYArrayList<PLBaseModel> fieldArray = modelArrays.get(0);
-									PLDatabase.saveModelList(fieldArray);
+								public void run() {
+									List<Class> classList = Arrays.<Class>asList(PLMSFieldModel.class, PLMSSkillModel.class, PLMSUnitModel.class);
+									deleteTable(classList);
+									PLAllModelFetcher fetcher = new PLAllModelFetcher(classList, new PLAllModelFetcher.PLAllModelFetcherListener() {
+										@Override
+										public void finishedAllFetchModels(MYArrayList<MYArrayList<PLBaseModel>> modelArrays) {
+											if (modelArrays == null) {
+												MYLogUtil.showErrorToast("UnitModel or SkillModel or FieldModel の取得に失敗");
+												return;
+											}
+											MYArrayList<PLBaseModel> fieldArray = modelArrays.get(0);
+											PLDatabase.saveModelList(fieldArray);
+											saveMysenUnitAndSkill(modelArrays.get(2), modelArrays.get(1));
 
-									MYArrayList<PLBaseModel> unitArray = modelArrays.get(2);
-									MYArrayList<PLMSSkillModel> skillArray = new MYArrayList<>();
-									for (PLBaseModel baseModel : modelArrays.get(1)) {
-										skillArray.add((PLMSSkillModel) baseModel);
-									}
-									int numberOfUnit = unitArray.size();
-									for (int i = 0; i < numberOfUnit; i++) {
-										PLMSUnitModel unitModel = (PLMSUnitModel) unitArray.get(i);
-										unitModel.setAllSkill(skillArray);
-									}
-									PLDatabase.saveModelList(unitArray);
-									MYLogUtil.showToast("Modelを保存 unit=" + numberOfUnit +
-											"skill=" +skillArray.size() + " field=" +fieldArray.size());
-									PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
+											MYLogUtil.showToast("unit skill field の保存完了");
+											PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
+										}
+									});
+									fetcher.startAllModelFetch();
+								}})
+							, new PLListPopover.PLListItem("Unit & Skill 削除して再取得", new Runnable() {
+								@Override
+								public void run() {
+									List<Class> classList = Arrays.<Class>asList(PLMSSkillModel.class, PLMSUnitModel.class);
+									deleteTable(classList);
+									new PLAllModelFetcher(classList, new PLAllModelFetcher.PLAllModelFetcherListener() {
+										@Override
+										public void finishedAllFetchModels(MYArrayList<MYArrayList<PLBaseModel>> modelArrays) {
+											if (modelArrays == null) {
+												MYLogUtil.showErrorToast("UnitModel or SkillModel の取得に失敗");
+												return;
+											}
+											saveMysenUnitAndSkill(modelArrays.get(1), modelArrays.get(0));
+
+											MYLogUtil.showToast("unit skill の保存完了");
+											PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
+										}
+									}).startAllModelFetch();
 								}
-							});
-							fetcher.startAllModelFetch();
-						}})
+							})
+							, new PLListPopover.PLListItem("Field 削除して再取得", new Runnable() {
+								@Override
+								public void run() {
+									List<Class> classList = Collections.<Class>singletonList(PLMSFieldModel.class);
+									deleteTable(classList);
+									new PLAllModelFetcher(classList, new PLAllModelFetcher.PLAllModelFetcherListener() {
+										@Override
+										public void finishedAllFetchModels(MYArrayList<MYArrayList<PLBaseModel>> modelArrays) {
+											if (modelArrays == null) {
+												MYLogUtil.showErrorToast("PLMSFieldModel の取得に失敗");
+												return;
+											}
+											MYArrayList<PLBaseModel> fieldArray = modelArrays.get(0);
+											PLDatabase.saveModelList(fieldArray);
+											MYLogUtil.showToast("field の保存完了");
+											PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
+										}
+									}).startAllModelFetch();
+								}
+							})
 					);
 				}
 			}));
@@ -192,5 +222,18 @@ public class PLDebugView extends PLContentView {
 			database.execSQL("DROP TABLE IF EXISTS " + modelAdapter.getTableName());
 			database.execSQL(modelAdapter.getCreationQuery());
 		}
+	}
+
+	private void saveMysenUnitAndSkill(MYArrayList<PLBaseModel> unitArray, MYArrayList<PLBaseModel> skillArray) {
+		MYArrayList<PLMSSkillModel> skillModelArray = new MYArrayList<>();
+		for (PLBaseModel baseModel : skillArray) {
+			skillModelArray.add((PLMSSkillModel) baseModel);
+		}
+		int numberOfUnit = unitArray.size();
+		for (int i = 0; i < numberOfUnit; i++) {
+			PLMSUnitModel unitModel = (PLMSUnitModel) unitArray.get(i);
+			unitModel.setAllSkill(skillModelArray);
+		}
+		PLDatabase.saveModelList(unitArray);
 	}
 }
