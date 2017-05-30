@@ -50,7 +50,9 @@ public abstract class PLOverlayView extends LinearLayout {
 				WindowManager.LayoutParams.MATCH_PARENT,
 				WindowManager.LayoutParams.TYPE_PHONE,
 				WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL					// タッチイベントを拾わない
-						| WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,		// 画面全体に配置
+						| WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN		// ステータスバーの上まで表示１
+						| WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS		// ステータスバーの上まで表示２
+				,
 				PixelFormat.TRANSLUCENT											//  ウィンドウの透明化
 		);
 	}
