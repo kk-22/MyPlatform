@@ -106,7 +106,10 @@ public class PLMSUnitModel extends PLBaseModel {
 	}
 
 	public Bitmap getImage(Context context) {
-		String path = "unit/" +getImageName();
+		if (imageName == null || imageName.isEmpty()) {
+			return null;
+		}
+		String path = "unit/" +imageName;
 		return MYImageUtil.getBitmapFromImagePath(path, context);
 	}
 
