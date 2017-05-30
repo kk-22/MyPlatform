@@ -61,6 +61,8 @@ public class PLNavigationController extends PLOverlayView {
 	public void viewWillRemove() {
 		// フロントアプリにフォーカスを渡すために外す
 		WindowManager.LayoutParams params = getOverlayParams();
+		params.height = 0;
+		params.width = 0;
 		params.flags = FLAG_NOT_FOCUSABLE;
 		PLCoreService.getOverlayManager().updateOverlayLayout(this, params);
 	}
