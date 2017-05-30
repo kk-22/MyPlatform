@@ -33,7 +33,6 @@ import jp.co.my.myplatform.service.mysen.PLMSFieldModel;
 import jp.co.my.myplatform.service.mysen.PLMSUnitModel;
 import jp.co.my.myplatform.service.mysen.PLMSWarContent;
 import jp.co.my.myplatform.service.mysen.unit.PLMSSkillModel;
-import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.wikipedia.PLWikipediaPageModel;
 
@@ -105,9 +104,9 @@ public class PLDebugView extends PLContentView {
 			itemList.add(new PLDebugButtonItem("MySen", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new PLConfirmationPopover("MySen Unit & Skill & Field 削除して再取得", new PLConfirmationPopover.PLConfirmationListener() {
+					new PLListPopover(new PLListPopover.PLListItem("Unit & Skill & Field 削除して再取得", new Runnable() {
 						@Override
-						public void onClickButton(boolean isYes) {
+						public void run() {
 							List<Class> classList = Arrays.<Class>asList(PLMSFieldModel.class, PLMSSkillModel.class, PLMSUnitModel.class);
 							deleteTable(classList);
 
@@ -138,8 +137,8 @@ public class PLDebugView extends PLContentView {
 								}
 							});
 							fetcher.startAllModelFetch();
-						}
-					}, null);
+						}})
+					);
 				}
 			}));
 		}
