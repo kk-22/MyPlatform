@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import jp.co.my.common.util.MYArrayList;
@@ -31,12 +33,12 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 	private PLMSArmySetting mLeftArmyView;
 	private PLMSArmySetting mRightArmyView;
 	private Button mExecuteButton;
+	private Switch mRestartSwitch;
 
 	private PLMSArgument mArgument;
 	private MYArrayList<PLMSArmySetting> mArmyViewArray;
 
 	private PLMSFieldModel mSelectingFieldMode;
-	private boolean needMakeNewWar;
 
 	public PLMSWarSettingContent(PLMSArgument argument) {
 		super();
@@ -49,6 +51,7 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 		mRightArmyView = (PLMSArmySetting) findViewById(R.id.right_army);
 		mArmyViewArray = new MYArrayList<>(mLeftArmyView, mRightArmyView);
 		mExecuteButton = (Button) findViewById(R.id.execute_button);
+		mRestartSwitch = (Switch) findViewById(R.id.restart_switch);
 
 		MYArrayList<PLMSArmyStrategy> armyArray = mArgument.getArmyArray();
 		if (armyArray == null) {
@@ -98,6 +101,16 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 						new Point(0, targetView.getHeight())));
 			}
 		});
+		mRestartSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					mExecuteButton.setText("再スタート");
+				} else {
+					mExecuteButton.setText("更新");
+				}
+			}
+		});
 	}
 
 	private void loadFieldView(PLMSFieldModel fieldModel) {
@@ -110,7 +123,7 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 
 	private void execute() {
 		MYArrayList<PLMSArmyStrategy> armyArray = mArgument.getArmyArray();
-		if (needMakeNewWar) {
+		if (mRestartSwitch.isChecked()) {
 			PLMSArmyStrategy leftArmy = mLeftArmyView.makeArmyInstance();
 			PLMSArmyStrategy rightArmy = mRightArmyView.makeArmyInstance();
 			leftArmy.setEnemyArmy(rightArmy);
@@ -160,7 +173,6 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 
 	@Override
 	public void setNeedMakeNewWar() {
-		needMakeNewWar = true;
-		mExecuteButton.setText("再スタート");
+		mRestartSwitch.setChecked(true);
 	}
 }

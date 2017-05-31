@@ -85,7 +85,7 @@
             android:layout_height="match_parent"/>
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="66dp">
@@ -95,5 +95,25 @@
             android:text="更新"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:translationZ="2dp"
+            android:layout_gravity="right"
+            android:gravity="center"
+            android:background="#fff"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="再スタート"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Switch
+                android:id="@+id/restart_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
