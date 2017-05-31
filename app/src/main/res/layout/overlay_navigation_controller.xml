@@ -19,7 +19,6 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/navigation_bar_frame"
         android:layout_width="match_parent"
         android:layout_height="55dp">
 
@@ -30,11 +29,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:textSize="10dp"
-            android:text="Back"
-            android:id="@+id/back_button"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:textSize="10sp"
+                android:text="Back"
+                android:id="@+id/back_button"/>
+
+            <FrameLayout
+                android:id="@+id/customize_navigation_layout"
+                android:layout_weight="40"
+                android:layout_width="0dp"
+                android:layout_height="55dp" />
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

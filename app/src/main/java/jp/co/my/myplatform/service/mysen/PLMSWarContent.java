@@ -82,12 +82,6 @@ public class PLMSWarContent extends PLContentView {
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_war_navibar, naviBar);
 		setNavigationBar(naviBar);
 
-		naviBar.findViewById(R.id.back_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				PLCoreService.getNavigationController().popView();
-			}
-		});
 		naviBar.findViewById(R.id.danger_area_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

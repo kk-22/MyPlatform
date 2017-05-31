@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.content;
 
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
@@ -18,7 +19,7 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	private ArrayList<PLPopoverView> mPopoverViews;
 	private ArrayList<WeakReference<PLSavePositionListView>> mListViews;
-	private View mNavigationBar;
+	private ViewGroup mNavigationBar;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
@@ -106,11 +107,11 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 	}
 
 	// getter and setter
-	public View getNavigationBar() {
+	public ViewGroup getNavigationBar() {
 		return mNavigationBar;
 	}
 
-	public void setNavigationBar(View navigationBar) {
+	public void setNavigationBar(ViewGroup navigationBar) {
 		mNavigationBar = navigationBar;
 		if (isCurrentContentView()) {
 			getNavigationController().putNavigationBar(mNavigationBar);

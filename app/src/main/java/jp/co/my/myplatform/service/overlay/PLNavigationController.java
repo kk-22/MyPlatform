@@ -2,6 +2,7 @@ package jp.co.my.myplatform.service.overlay;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -9,7 +10,6 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.content.PLHomeView;
@@ -20,7 +20,8 @@ import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 public class PLNavigationController extends PLOverlayView {
 
 	private FrameLayout mContentFrameLayout;
-	private FrameLayout mNaviBarFrameLayout;
+	private FrameLayout mNaviBarFrame;
+	private ViewGroup mCustomizeNavigationBar;
 	private Button mBackButton;
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
@@ -30,7 +31,7 @@ public class PLNavigationController extends PLOverlayView {
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
 		mContentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
 		mBackButton = (Button) findViewById(R.id.back_button);
-		mNaviBarFrameLayout = (FrameLayout) findViewById(R.id.navigation_bar_frame);
+		mNaviBarFrame = (FrameLayout) findViewById(R.id.customize_navigation_layout);
 
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
 			@Override
@@ -154,17 +155,14 @@ public class PLNavigationController extends PLOverlayView {
 		}
 	}
 
-	public void putNavigationBar(View navigationBar) {
-		View prevNaviBar = mNaviBarFrameLayout.findViewWithTag("navigationBar");
-		if (prevNaviBar != null) {
-			mNaviBarFrameLayout.removeView(prevNaviBar);
+	public void putNavigationBar(ViewGroup navigationBar) {
+		if (mCustomizeNavigationBar != null) {
+			mNaviBarFrame.removeView(mCustomizeNavigationBar);
 		}
+
+		mCustomizeNavigationBar = navigationBar;
 		if (navigationBar != null) {
-			MYViewUtil.removeFromSuperView(mBackButton);
-			navigationBar.setTag("navigationBar");
-			mNaviBarFrameLayout.addView(navigationBar);
-		} else if (mBackButton.getParent() == null) {
-			mNaviBarFrameLayout.addView(mBackButton);
+			mNaviBarFrame.addView(navigationBar);
 		}
 	}
 
