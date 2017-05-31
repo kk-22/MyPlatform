@@ -93,23 +93,37 @@ public class PLMSUnitSelectContent extends PLContentView {
 		findViewById(R.id.random_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int selectedCount = mSelectingUnitArray.size();
-				int allUnitCount = mAllUnitModels.size();
-				if (selectedCount == MAX_NUMBER_UNIT || selectedCount == allUnitCount) {
+				if (!selectUnitByRandom()) {
 					MYLogUtil.showToast("これ以上選択不可");
-					return;
-				}
-				Random random = new Random();
-				while (true) {
-					int index = random.nextInt(allUnitCount);
-					PLMSUnitModel unitModel = mAllUnitModels.get(index);
-					if (getSelectingUnitDataOfModel(unitModel) == null) {
-						addSelectingUnitModel(unitModel);
-						return;
-					}
 				}
 			}
 		});
+		findViewById(R.id.random_button).setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				while (true){
+					if (!selectUnitByRandom())  return true;
+				}
+			}
+		});
+	}
+
+	private boolean selectUnitByRandom() {
+		int selectedCount = mSelectingUnitArray.size();
+		int allUnitCount = mAllUnitModels.size();
+		if (selectedCount == MAX_NUMBER_UNIT || selectedCount == allUnitCount) {
+			return false;
+		}
+
+		Random random = new Random();
+		while (true) {
+			int index = random.nextInt(allUnitCount);
+			PLMSUnitModel unitModel = mAllUnitModels.get(index);
+			if (getSelectingUnitDataOfModel(unitModel) == null) {
+				addSelectingUnitModel(unitModel);
+				return true;
+			}
+		}
 	}
 
 	private void addSelectingUnitModel(PLMSUnitModel unitModel) {
