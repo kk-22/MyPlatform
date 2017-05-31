@@ -451,7 +451,16 @@ public class PLMSAreaManager {
 		return landArray;
 	}
 
-	// 移動不可の場合は負の値を返す
+	// その地形で待機可能なら true
+	private boolean canEnterToLand(PLMSUnitView unitView, PLMSLandView landView) {
+		if (landView.getUnitView() != null) {
+			return false;
+		}
+		int moveCost = unitView.getUnitData().getCurrentMovementForce();
+		return (getRemainingMoveCost(unitView, landView, moveCost) >= 0);
+	}
+
+	// 移動不可の場合は負の値を返す。待機不可でも通過可能なら正の値を返す。
 	private int getRemainingMoveCost(PLMSUnitView unitView, PLMSLandView landView, int remainingMove) {
 		PLMSUnitView landUnitView = landView.getUnitView();
 		if (unitView.equals(landUnitView) || (!isSlipMove && unitView.isEnemy(landUnitView))) {
@@ -492,9 +501,8 @@ public class PLMSAreaManager {
 		}
 
 		MYArrayList<PLMSLandView> landViewArray = getAroundLandArray(targetUnitView.getLandView().getPoint(), 1);
-		int moveCost = moveUnitView.getUnitData().getCurrentMovementForce();
 		for (PLMSLandView landView : landViewArray) {
-			if (getRemainingMoveCost(moveUnitView, landView, moveCost) >= 0) {
+			if (canEnterToLand(moveUnitView, landView)) {
 				mWarpLandArray.add(landView);
 			}
 		}
