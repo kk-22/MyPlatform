@@ -39,9 +39,7 @@ public class PLMSWarContent extends PLContentView {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_war, this);
 		mArgument = new PLMSArgument();
-		mArgument.setInformationView((PLMSInformationView) findViewById(R.id.information_view));
-		mArgument.setFieldView((PLMSFieldView) findViewById(R.id.field_view));
-		mArgument.setAnimationManager(new PLMSAnimationManager(mArgument));
+		initArgument(new PLMSArgument());
 
 		mLoadCount = 0;
 
@@ -75,6 +73,13 @@ public class PLMSWarContent extends PLContentView {
 		if (mArgument != null && mArgument.getTurnManager() != null) {
 			mArgument.getTurnManager().getCurrentArmy().getWarInterface().suspendInterface();
 		}
+	}
+
+	public void initArgument(PLMSArgument argument) {
+		mArgument = argument;
+		argument.setInformationView((PLMSInformationView) findViewById(R.id.information_view));
+		argument.setFieldView((PLMSFieldView) findViewById(R.id.field_view));
+		argument.setAnimationManager(new PLMSAnimationManager(argument));
 	}
 
 	private void initNaviBar() {
@@ -114,7 +119,7 @@ public class PLMSWarContent extends PLContentView {
 		naviBar.findViewById(R.id.setting_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLMSWarSettingContent settingContent = new PLMSWarSettingContent(mArgument);
+				PLMSWarSettingContent settingContent = new PLMSWarSettingContent(mArgument, PLMSWarContent.this);
 				PLCoreService.getNavigationController().pushView(settingContent);
 			}
 		});

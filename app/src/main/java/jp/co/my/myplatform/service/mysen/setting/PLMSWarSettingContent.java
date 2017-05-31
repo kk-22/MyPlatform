@@ -36,13 +36,15 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 	private Switch mRestartSwitch;
 
 	private PLMSArgument mArgument;
+	private PLMSWarContent mWarContent;
 	private MYArrayList<PLMSArmySetting> mArmyViewArray;
 
 	private PLMSFieldModel mSelectingFieldMode;
 
-	public PLMSWarSettingContent(PLMSArgument argument) {
+	public PLMSWarSettingContent(PLMSArgument argument, PLMSWarContent warContent) {
 		super();
 		mArgument = argument;
+		mWarContent = warContent;
 
 		LayoutInflater.from(getContext()).inflate(R.layout.mysen_content_war_setting, this);
 		mPreviewFieldView = (PLMSFieldView) findViewById(R.id.preview_field);
@@ -124,19 +126,21 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 	private void execute() {
 		MYArrayList<PLMSArmyStrategy> armyArray = mArgument.getArmyArray();
 		if (mRestartSwitch.isChecked()) {
+			PLMSArgument newArgument = new PLMSArgument();
+			mWarContent.initArgument(newArgument);
+
 			PLMSArmyStrategy leftArmy = mLeftArmyView.makeArmyInstance();
 			PLMSArmyStrategy rightArmy = mRightArmyView.makeArmyInstance();
 			leftArmy.setEnemyArmy(rightArmy);
 			rightArmy.setEnemyArmy(leftArmy);
-			mArgument.setArmyArray(new MYArrayList<>(leftArmy, rightArmy));
+			newArgument.setArmyArray(new MYArrayList<>(leftArmy, rightArmy));
 
 			PLMSFieldView fieldView = mArgument.getFieldView();
-			fieldView.initForWar(mArgument, mSelectingFieldMode);
+			fieldView.initForWar(newArgument, mSelectingFieldMode);
 			// TODO: WarContentと共通化？
-			mArgument.setFieldView(fieldView);
-			mArgument.setAllUnitViewArray(mArgument.getFieldView().getUnitViewArray());
-			mArgument.setTurnManager(new PLMSTurnManager(mArgument));
-
+			newArgument.setFieldView(fieldView);
+			newArgument.setAllUnitViewArray(newArgument.getFieldView().getUnitViewArray());
+			newArgument.setTurnManager(new PLMSTurnManager(newArgument));
 
 			SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 			editor.putInt(PLMSWarContent.KEY_FIELD_NO, mSelectingFieldMode.getNo());
