@@ -673,8 +673,8 @@ public class PLMSSkillData {
 		}
 		PLMSUnitView landUnitView = targetLandView.getUnitView();
 		PLMSUnitView ignoreUnitView = ignoreUnit.getUnitView();
-		if (landUnitView != null && !ignoreUnitView.equals(landUnitView)) {
-			// 他のユニットが移動先にいる
+		if (landUnitView != null && !landUnitView.equals(moveUnit.getUnitView()) && !landUnitView.equals(ignoreUnitView)) {
+			// スキル使用ユニット・スキル対象以外のユニットが移動先にいる
 			return null;
 		}
 		PLMSLandView currentLandView = moveUnit.getLandView();
