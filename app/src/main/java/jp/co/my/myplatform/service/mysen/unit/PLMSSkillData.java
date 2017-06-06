@@ -336,13 +336,15 @@ public class PLMSSkillData {
 					mArgument.getAreaManager().addWarpUnitView(unitView, moveUnit.getUnitView());
 				}
 				break;
-			case WARP_TO_TEAM_OF_LESS_HP:
-				for (PLMSUnitView unitView : moveUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray()) {
+			case WARP_TO_TEAM_OF_LESS_HP: {
+				PLMSUnitView moveUnitView = moveUnit.getUnitView();
+				for (PLMSUnitView unitView : moveUnit.getUnitData().getArmyStrategy().getAliveUnitViewArray(moveUnitView)) {
 					if (getRemainingHPRatio(unitView) <= mSkillModel.getEffectValue()) {
 						mArgument.getAreaManager().addWarpUnitView(unitView, moveUnit.getUnitView());
 					}
 				}
 				break;
+			}
 			case BLOCK_ENEMY_MOVE:
 				mArgument.getAreaManager().addBlockUnitView(skillUnit.getUnitView());
 				break;
@@ -510,9 +512,11 @@ public class PLMSSkillData {
 		}
 	}
 
-	private float getRemainingHPRatio(PLMSUnitInterface unitView) {
+ 	// HPの割合を返す（0 ～ 100）
+	private int getRemainingHPRatio(PLMSUnitInterface unitView) {
 		PLMSUnitData unitData = unitView.getUnitData();
-		return unitData.getCurrentHP() / unitData.getMaxHP() * 100;
+		float ratio = (float)unitData.getCurrentHP() / unitData.getMaxHP();
+		return (int)(ratio * 100);
 	}
 
 	// battleUnit : 戦闘を行った自身もしくは味方ユニット
