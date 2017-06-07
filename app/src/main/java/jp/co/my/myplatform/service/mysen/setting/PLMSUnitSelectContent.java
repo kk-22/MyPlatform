@@ -101,6 +101,9 @@ public class PLMSUnitSelectContent extends PLContentView {
 		findViewById(R.id.random_button).setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
+				if (mSelectingUnitArray.size() == MAX_NUMBER_UNIT) {
+					mSelectingUnitArray.clear();
+				}
 				while (true){
 					if (!selectUnitByRandom())  return true;
 				}
