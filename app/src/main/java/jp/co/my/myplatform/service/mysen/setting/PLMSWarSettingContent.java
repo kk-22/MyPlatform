@@ -129,8 +129,8 @@ public class PLMSWarSettingContent extends PLContentView implements PLMSArmySett
 			PLMSArgument newArgument = new PLMSArgument();
 			mWarContent.initArgument(newArgument);
 
-			PLMSArmyStrategy leftArmy = mLeftArmyView.makeArmyInstance();
-			PLMSArmyStrategy rightArmy = mRightArmyView.makeArmyInstance();
+			PLMSArmyStrategy leftArmy = mLeftArmyView.makeArmyInstance(newArgument);
+			PLMSArmyStrategy rightArmy = mRightArmyView.makeArmyInstance(newArgument);
 			leftArmy.setEnemyArmy(rightArmy);
 			rightArmy.setEnemyArmy(leftArmy);
 			newArgument.setArmyArray(new MYArrayList<>(leftArmy, rightArmy));

@@ -69,17 +69,17 @@ public class PLMSArmySetting extends LinearLayout implements PLMSUnitSelectConte
 		mUnitListView.loadUnitList(mSelectingUnitArray);
 	}
 
-	public PLMSArmyStrategy makeArmyInstance() {
+	public PLMSArmyStrategy makeArmyInstance(PLMSArgument argument) {
 		PLMSArmyStrategy newArmy;
 		// TODO: ifなしでインスタンス分ける。Strategyパターンやめる？copyする？
 		if (mArmyStrategy instanceof PLMSBlueArmy) {
-			newArmy = new PLMSBlueArmy(mArgument, mArmyStrategy.getName(), getNextInterfaceNo());
+			newArmy = new PLMSBlueArmy(argument, mArmyStrategy.getName(), getNextInterfaceNo());
 		} else {
-			newArmy = new PLMSRedArmy(mArgument, mArmyStrategy.getName(), getNextInterfaceNo());
+			newArmy = new PLMSRedArmy(argument, mArmyStrategy.getName(), getNextInterfaceNo());
 		}
 		for (PLMSUnitData unitData : mSelectingUnitArray) {
 			// TODO: mSelectingUnitArray は UnitMode にする？
-			PLMSUnitData newUnitData = new PLMSUnitData(unitData.getUnitModel(), newArmy, mArgument);
+			PLMSUnitData newUnitData = new PLMSUnitData(unitData.getUnitModel(), newArmy, argument);
 			newArmy.getUnitDataArray().add(newUnitData);
 		}
 		return newArmy;
