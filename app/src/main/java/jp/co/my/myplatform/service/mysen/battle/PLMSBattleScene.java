@@ -1,5 +1,7 @@
 package jp.co.my.myplatform.service.mysen.battle;
 
+import jp.co.my.myplatform.service.mysen.PLMSBranchData;
+
 public class PLMSBattleScene {
 
 	private PLMSBattleUnit mAttackerUnit;
@@ -17,11 +19,13 @@ public class PLMSBattleScene {
 		calculateDamage();
 	}
 
+	// TODO: givingDamageOfBattleUnit と共通化
 	private void calculateDamage() {
+		PLMSBranchData attackerBranch = mAttackerUnit.getUnitData().getBranch();
 		int attack = mAttackerUnit.getTotalAttack();
 		int defense = mDefenderUnit.getDefenseForEnemyAttack();
 		int damage = Math.max(0, attack - defense);
-		mDefenderDiffHP = damage * -1;
+		mDefenderDiffHP = (int) (damage * attackerBranch.getDamageRatio() * -1);
 		mDefenderRemainingHP = mDefenderUnit.getUnitData().calculateBattleRemainingHP(mDefenderUnit.getRemainingHP(), mDefenderDiffHP);
 
 		mAttackerDiffHP = 0;

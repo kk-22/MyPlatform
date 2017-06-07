@@ -46,6 +46,7 @@ public class PLMSBranchData {
 	private WeaponType mWeaponType;
 	private int mAttackRange;
 	private boolean mIsPhysicalAttack;
+	private float mDamageRatio; // ダメージ補正
 
 
 	public PLMSBranchData(int no) {
@@ -136,6 +137,25 @@ public class PLMSBranchData {
 				mColorType = ColorType.WHITE;
 				break;
 		}
+
+		switch (mWeaponType) {
+			case SWORD:
+			case SPEAR:
+			case AXE:
+			case BOW:
+			case SHURIKEN:
+			case RED_MAGIC:
+			case BLUE_MAGIC:
+			case GREEN_MAGIC:
+			case RED_BREATH:
+			case BLUE_BREATH:
+			case GREEN_BREATH:
+				mDamageRatio = 1;
+				break;
+			case STAFF:
+				mDamageRatio = (float) 0.5;
+				break;
+		}
 	}
 
 	private MovementType getMovementType(int no) {
@@ -183,12 +203,16 @@ public class PLMSBranchData {
 		return mIsPhysicalAttack;
 	}
 
+	public float getDamageRatio() {
+		return mDamageRatio;
+	}
+
 	/*
-	3すくみの相性を返す
-	+1 = 有利
-	 0 = 通常
-	-1 = 不利
-	 */
+		3すくみの相性を返す
+		+1 = 有利
+		 0 = 通常
+		-1 = 不利
+		 */
 	public int threeWayCompatibility(PLMSBranchData enemyBranch) {
 		switch (enemyBranch.getColorType()) {
 			case RED:

@@ -48,10 +48,12 @@ public class PLMSBattleForecast extends PLMSBaseForecast {
 		createScene();
 	}
 
+	// TODO: calculateDamage と共通化
 	// 戦闘 Info に表示するダメージ値
 	public int givingDamageOfBattleUnit(PLMSBattleUnit battleUnit) {
 		PLMSBattleUnit enemyUnit = battleUnit.getAnotherUnit();
 		int damage = battleUnit.getTotalAttack() - enemyUnit.getDefenseForEnemyAttack();
+		damage = (int)(damage * battleUnit.getUnitData().getBranch().getDamageRatio());
 		return Math.max(0, damage);
 	}
 
