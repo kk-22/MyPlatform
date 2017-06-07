@@ -269,6 +269,7 @@ public class PLMSSkillData {
 			case CONTINUOUSLY_CHASE_ATTACK:
 			case PREEMPTIVE_ATTACK:
 			case ALL_RANGE_COUNTER:
+			case PROTECT_WEAKNESS_ATTACK:
 				battleUnit.addSkill(this);
 				break;
 			case CONTINUOUSLY_ATTACK:

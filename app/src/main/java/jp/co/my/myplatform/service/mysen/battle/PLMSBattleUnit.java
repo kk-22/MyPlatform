@@ -46,17 +46,17 @@ public class PLMSBattleUnit extends PLMSForecastUnit {
 	}
 
 	public void initParamsWithThreeWayRatio(int threeWayRatio) {
-		// 正負どちらでも0に近い値を採用する
-		// Math.floor は負の値の時にも低い値を採用するため使用不可
-		int plusDamage = getBattleAttack() * threeWayRatio / 100 * mThreeWayCompatibility;
-		mTotalAttack = getBattleAttack() + plusDamage;
-
-		// TODO: 先に1.5倍してから相性補正値を計算
+		int numberOfAttack = getBattleAttack();
 		if (getUnitData().getWeaponSkillData().isWeaknessBranch(mAnotherUnit)
 				&& !mAnotherUnit.getSkillEffectArray().contains(PLMSSkillData.EffectType.PROTECT_WEAKNESS_ATTACK)) {
 			mIsWeaknessAttack = true;
-			mTotalAttack = (int)Math.floor(mTotalAttack * 1.5);
+			numberOfAttack = (int)Math.floor(numberOfAttack * 1.5);
 		}
+
+		// 正負どちらでも0に近い値を採用する
+		// Math.floor は負の値の時にも低い値を採用するため使用不可
+		int plusDamage = numberOfAttack * threeWayRatio / 100 * mThreeWayCompatibility;
+		mTotalAttack = numberOfAttack + plusDamage;
 	}
 
 	private int getBattleParameterOfNo(int no) {
