@@ -577,20 +577,22 @@ public class PLMSUserInterface extends PLMSWarInterface
 	}
 
 	private boolean shouldDoubleTapEvent() {
-		long upTimeMillis = System.currentTimeMillis();
-		if (mPrevTouchTimeMillis > 0 && upTimeMillis - mPrevTouchTimeMillis < 250) {
-			mPrevTouchTimeMillis = 0;
-			mTouchDownTimeMillis = 0;
-			return true;
-		}
-
-		if (upTimeMillis - mTouchDownTimeMillis < 250) {
-			mPrevTouchTimeMillis = mTouchDownTimeMillis;
-		} else {
-			mPrevTouchTimeMillis = 0;
-		}
-		mTouchDownTimeMillis = 0;
+		// 参考元ゲームのオプションに合わせて、ダブルタップで行動終了機能を無効化
 		return false;
+//		long upTimeMillis = System.currentTimeMillis();
+//		if (mPrevTouchTimeMillis > 0 && upTimeMillis - mPrevTouchTimeMillis < 250) {
+//			mPrevTouchTimeMillis = 0;
+//			mTouchDownTimeMillis = 0;
+//			return true;
+//		}
+//
+//		if (upTimeMillis - mTouchDownTimeMillis < 250) {
+//			mPrevTouchTimeMillis = mTouchDownTimeMillis;
+//		} else {
+//			mPrevTouchTimeMillis = 0;
+//		}
+//		mTouchDownTimeMillis = 0;
+//		return false;
 	}
 
 	private boolean shouldLongTapEvent(PLMSUnitView unitView, MotionEvent event) {
