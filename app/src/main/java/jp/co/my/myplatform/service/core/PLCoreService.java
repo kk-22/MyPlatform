@@ -60,7 +60,7 @@ public class PLCoreService extends Service {
 			actionIntent(intent);
 		}
 		// クラッシュ後の再起動でログが流れるのを防ぐ
-		return START_NOT_STICKY;
+		return START_STICKY;
 	}
 
 	@Override
