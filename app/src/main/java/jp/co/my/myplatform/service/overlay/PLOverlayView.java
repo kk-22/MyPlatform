@@ -34,16 +34,6 @@ public abstract class PLOverlayView extends LinearLayout {
 		);
 	}
 
-	protected WindowManager.LayoutParams getBaseParamsForDataView() {
-		return new WindowManager.LayoutParams(
-				WindowManager.LayoutParams.MATCH_PARENT,
-				WindowManager.LayoutParams.MATCH_PARENT,
-				WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-				WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,		// タッチイベントを拾わない
-				PixelFormat.TRANSLUCENT									// ウィンドウの透明化
-		);
-	}
-
 	protected WindowManager.LayoutParams getBaseParamsForNavigationView() {
 		return new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.MATCH_PARENT,
