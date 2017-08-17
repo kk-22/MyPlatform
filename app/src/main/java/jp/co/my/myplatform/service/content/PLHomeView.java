@@ -8,6 +8,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.app.PLAppStrategy;
 import jp.co.my.myplatform.service.app.PLFireEmblemApp;
 import jp.co.my.myplatform.service.browser.PLHistoryBrowserView;
+import jp.co.my.myplatform.service.calculator.PLCACalculatorContent;
 import jp.co.my.myplatform.service.core.PLApplication;
 import jp.co.my.myplatform.service.core.PLCoreService;
 import jp.co.my.myplatform.service.debug.PLDebugView;
@@ -100,16 +101,16 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
 			}
 		});
-		findViewById(R.id.wikipedia_button).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.calculator_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
+				PLCoreService.getNavigationController().pushView(PLCACalculatorContent.class);
 			}
 		});
 	}
 
 	private void showMenu() {
-		String[] titles = {"サービス終了", "ボタン非表示", "アプリ一覧"};
+		String[] titles = {"サービス終了", "ボタン非表示", "アプリ一覧", "Wikipedia"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -128,6 +129,11 @@ public class PLHomeView extends PLContentView {
 						PLCoreService.getNavigationController().pushView(PLAppListView.class);
 						break;
 					}
+					case 3: {
+						PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
+						break;
+					}
+
 				}
 			}
 		}).showPopover();

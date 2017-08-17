@@ -32,8 +32,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="wikipedia"
-                android:id="@+id/wikipedia_button"/>
+                android:text="電卓"
+                android:id="@+id/calculator_button"/>
         </LinearLayout>
 
         <LinearLayout
