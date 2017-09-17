@@ -79,7 +79,8 @@ public class PLCACalculatorContent extends PLContentView implements View.OnClick
 		String lastValue = values[values.length - 1];
 		if (value.equals("+") || value.equals("-") || value.equals("×") || value.equals("/")) {
 			if (!lastIsNumber) {
-				return;
+				// 演算子を消す
+				mInputString.deleteCharAt(mInputString.length() - 1);
 			}
 			if (lastValue.charAt(lastValue.length() - 1) == '.') {
 				// 余計な小数点を削る
