@@ -63,10 +63,10 @@
 
         <ImageButton
             style="@style/HighlightImageButton"
-            android:background="@drawable/stop"
+            android:background="@drawable/down_arrow_off"
             android:layout_width="57dp"
             android:layout_height="57dp"
-            android:id="@+id/stop_button"/>
+            android:id="@+id/down_button"/>
 
         <Space
             android:layout_weight="1"

@@ -187,11 +187,12 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 				onForwardKey();
 			}
 		});
-		findViewById(R.id.stop_button).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.down_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mCurrentWebView.stopLoading();
-				updateArrowButtonImage();
+				int currentY = mCurrentWebView.getScrollY();
+				int moveY = (int)(mCurrentWebView.getHeight() * 0.7);
+				mCurrentWebView.setScrollY(currentY + moveY);
 			}
 		});
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
