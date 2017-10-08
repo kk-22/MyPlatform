@@ -113,7 +113,12 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				new PLTextFieldPopover(new PLTextFieldPopover.OnEnterListener() {
 					@Override
 					public boolean onEnter(View v, String text) {
-						String urlStr = "https://www.google.co.jp/search?q=" + text;
+						String urlStr;
+						if (text.startsWith("http")) {
+							urlStr = text;
+						} else {
+							urlStr = "https://www.google.co.jp/search?q=" + text;
+						}
 						mWebView.loadUrl(urlStr);
 						return true;
 					}
