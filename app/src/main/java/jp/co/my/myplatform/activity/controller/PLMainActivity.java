@@ -12,6 +12,7 @@ import android.os.Process;
 import android.provider.Settings;
 import android.view.View;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -35,6 +36,8 @@ public class PLMainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		setButtonEvent();
+
+		FirebaseMessaging.getInstance().subscribeToTopic("MyPlatformFCM");
 
 		Intent intent = getIntent();
 		if (intent.getBooleanExtra(KEY_LOGIN_TWITTER, false)) {

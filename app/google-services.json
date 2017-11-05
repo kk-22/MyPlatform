@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "305287558819",
+    "firebase_url": "https://myplatform-dorann.firebaseio.com",
+    "project_id": "myplatform-dorann",
+    "storage_bucket": "myplatform-dorann.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305287558819:android:4c65cf2459716caa",
+        "android_client_info": {
+          "package_name": "jp.co.my.myplatform.myplatform"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305287558819-ul1v0sldrenmfi36ce2869f9vn3bh22s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "jp.co.my.myplatform.myplatform",
+            "certificate_hash": "90228283a31f366a65766f1f6b43ec8d25283ad8"
+          }
+        },
+        {
+          "client_id": "305287558819-a36ea9t22iveu8j1045ftghgma75og0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-8xqwdElhkCy_WQzsE0wP4nARDX_5dtQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305287558819-a36ea9t22iveu8j1045ftghgma75og0k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

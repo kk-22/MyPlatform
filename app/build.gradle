@@ -54,4 +54,10 @@ dependencies {
     compile('com.twitter.sdk.android:twitter:2.3.1@aar') {
         transitive = true;
     }
+
+    compile 'com.google.firebase:firebase-core:11.0.4'
+    compile 'com.google.firebase:firebase-messaging:11.0.4'
 }
+
+// ADD THIS AT THE BOTTOM
+apply plugin: 'com.google.gms.google-services'

@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.service.overlay;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.content.PLHomeView;
@@ -25,6 +27,7 @@ public class PLNavigationController extends PLOverlayView {
 	private Button mBackButton;
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
+	private Handler mMainHandler;
 
 	public PLNavigationController() {
 		super();
@@ -54,6 +57,7 @@ public class PLNavigationController extends PLOverlayView {
 		});
 
 		mViewCache = new ArrayList<>();
+		mMainHandler = new Handler();
 
 		pushView(PLHomeView.class);
 	}
@@ -71,6 +75,15 @@ public class PLNavigationController extends PLOverlayView {
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
 		return getBaseParamsForNavigationView();
+	}
+
+	public <T extends PLContentView> void pushInMainThread(final Class<T> clazz) {
+		MYOtherUtil.runOnUiThread(PLCoreService.getContext(), mMainHandler, new Runnable() {
+			@Override
+			public void run() {
+				pushView(clazz);
+			}
+		});
 	}
 
 	@SuppressWarnings("unchecked")
