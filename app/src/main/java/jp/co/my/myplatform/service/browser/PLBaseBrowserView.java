@@ -60,13 +60,13 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
-				willChangePage("Loading page", url);
+				willChangePage("Loading page", url, false);
 			}
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				super.onPageFinished(view, url);
-				willChangePage(view.getTitle(), url);
+				willChangePage(view.getTitle(), url, true);
 			}
 		});
 	}
@@ -94,7 +94,7 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 		mShowButton.setVisibility(View.VISIBLE);
 	}
 
-	protected void willChangePage(String title, String url) {
+	protected void willChangePage(String title, String url, boolean isFinished) {
 		// サブクラスで実装
 	}
 
@@ -103,20 +103,38 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 		if (removeTopPopover()) {
 			// 子ビューがあったときのみWebView戻る処理を行わない
 			return true;
-		} if (mCurrentWebView.canGoBack()) {
-			mCurrentWebView.goBack();
+		} if (canGoHistory(true)) {
+			goHistory(true);
 			return true;
 		}
 		PLCoreService.getNavigationController().popView();
 		return true;
 	}
+
+	protected boolean canGoHistory(boolean isBack) {
+		if (isBack) {
+			return mCurrentWebView.canGoBack();
+		}
+		return mCurrentWebView.canGoForward();
+	}
+
+	protected void goHistory(boolean isBack) {
+		if (isBack) {
+			mCurrentWebView.goBack();
+		} else {
+			mCurrentWebView.goForward();
+		}
+	}
+
 	private void onForwardKey() {
-		mCurrentWebView.goForward();
+		if (canGoHistory(false)) {
+			goHistory(false);
+		}
 	}
 
 	private void updateArrowButtonImage() {
 		boolean backTag = Boolean.valueOf((String)mBackButton.getTag());
-		if (mCurrentWebView.canGoBack() != backTag) {
+		if (canGoHistory(true) != backTag) {
 			if (backTag) {
 				mBackButton.setBackgroundResource(R.drawable.back_arrow_off);
 			} else {
@@ -125,7 +143,7 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 			mBackButton.setTag(String.valueOf(!backTag));
 		}
 		boolean forwarTag = Boolean.valueOf((String)mForwardButton.getTag());
-		if (mCurrentWebView.canGoForward() != forwarTag) {
+		if (canGoHistory(false) != forwarTag) {
 			if (forwarTag) {
 				mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
 			} else {

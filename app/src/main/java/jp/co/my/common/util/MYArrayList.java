@@ -71,6 +71,18 @@ public class MYArrayList<E> extends ArrayList<E> {
 		}
 	}
 
+	public void removeLast() {
+		remove(getLast());
+	}
+
+	// 指定した要素とそれ以降の要素を全て削除
+	public void removeToLastFromIndex(int index) {
+		int numberOfRemove = size() - index;
+		for (int i = 0; i < numberOfRemove; i++) {
+			removeLast();
+		}
+	}
+
 	public E getNextOfObject(E object) {
 		int index = indexOf(object);
 		if (index == -1) {

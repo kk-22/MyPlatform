@@ -7,6 +7,11 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+
 public class MYLogUtil {
 	private static final String LOG_FILE_NAME = "MyLog";
 	private static final String TOAST_TAG = "toastLog";
@@ -128,5 +133,24 @@ public class MYLogUtil {
 
 	public static SharedPreferences.Editor getPreferenceEditor() {
 		return getPreference().edit();
+	}
+
+	public static void saveObject(Object object, String key) {
+		Gson gson = new Gson();
+		String json = gson.toJson(object);
+		getPreferenceEditor().putString(key, json).apply();
+	}
+
+	public static <T> T loadObject(Class<T> klass, String key) {
+		Gson gson = new Gson();
+		String userSettingString = getPreference().getString(key, "");
+		return gson.fromJson(userSettingString, klass);
+	}
+
+	public static <T> MYArrayList<T> loadArrayList(String key) {
+		Type collectionType = new TypeToken<MYArrayList<T>>(){}.getType();
+		String json = getPreference().getString(key, "");
+		Gson gson = new Gson();
+		return gson.fromJson(json, collectionType);
 	}
 }
