@@ -55,17 +55,28 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 			return;
 		}
 
-		if (0 <= mHistoryIndex && mHistoryIndex < mUrlHistories.size() && !mUrlHistories.get(mHistoryIndex).equals(url)) {
-			// 戻る・進むボタン以外のページ読み込みは mHistoryIndex より先の履歴を削除
-			mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
+		if (0 <= mHistoryIndex && mHistoryIndex < mUrlHistories.size()) {
+			// 戻るボタンによる履歴表示か、履歴から新ページ読み込み
+			getCurrentWebView().clearHistory();
+			if (mUrlHistories.get(mHistoryIndex).equals(url)) {
+				// 戻るボタンによる履歴表示は copyBackForwardList と被る履歴を削除
+				mUrlHistories.removeLast();
+			} else {
+				//  新ページ読み込みは mHistoryIndex より先の履歴を削除
+				mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
+			}
 			mHistoryIndex++;
 		}
 
 		MYArrayList<String> saveUrls = new MYArrayList<>(mUrlHistories);
-		WebBackForwardList list = getCurrentWebView().copyBackForwardList() ;
-		for (int i = 0 ; i < list.getSize(); i ++) {
+		WebBackForwardList list = getCurrentWebView().copyBackForwardList();
+		for (int i = 0 ; i <= list.getCurrentIndex(); i ++) {
 			String urlString = list.getItemAtIndex(i).getUrl() ;
 			saveUrls.add(urlString);
+		}
+		if (0 == saveUrls.size() || !saveUrls.getLast().equals(url)) {
+			// 新規ページは copyBackForwardList で取得できないため追加
+			saveUrls.add(url);
 		}
 		MYLogUtil.saveObject(saveUrls, KEY_URL_HISTORIES);
 	}
@@ -112,7 +123,6 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 		} else {
 			mHistoryIndex++;
 		}
-		getCurrentWebView().clearHistory();
 		getCurrentWebView().loadUrl(mUrlHistories.get(mHistoryIndex));
 	}
 }
