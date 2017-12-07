@@ -85,8 +85,9 @@ public class PLNewsListView extends FrameLayout {
 				mAdapter.renewalAllPage(pageArray);
 				for (PLNewsPageModel page : pageArray) {
 					if (page.isPartitionCell()) {
-						// 新着線へスクロール
-						mListView.setSelection(pageArray.indexOf(page) - 7);
+						int numberOfShowingCell = mListView.getLastVisiblePosition() - mListView.getFirstVisiblePosition();
+						// 新着線とその下の旧セルがいくつか見える位置へスクロール
+						mListView.setSelection(pageArray.indexOf(page) - (int)(numberOfShowingCell * 0.8));
 						break;
 					}
 				}
