@@ -39,10 +39,29 @@ public class PLHomeView extends PLContentView {
 				showMenu();
 			}
 		});
-		findViewById(R.id.mysen_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.size_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
+				new PLListPopover(
+						new PLListPopover.PLListItem("上半分", new Runnable() {
+							@Override
+							public void run() {
+								PLCoreService.getNavigationController().resizeNavigation(true, false);
+							}
+						})
+						, new PLListPopover.PLListItem("全画面", new Runnable() {
+							@Override
+							public void run() {
+								PLCoreService.getNavigationController().resizeNavigation(false, false);
+							}
+						})
+						, new PLListPopover.PLListItem("下半分", new Runnable() {
+							@Override
+							public void run() {
+								PLCoreService.getNavigationController().resizeNavigation(true, true);
+							}
+						})
+				);
 			}
 		});
 		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
@@ -110,7 +129,7 @@ public class PLHomeView extends PLContentView {
 	}
 
 	private void showMenu() {
-		String[] titles = {"サービス終了", "ボタン非表示", "アプリ一覧", "Wikipedia"};
+		String[] titles = {"サービス終了", "ボタン非表示", "アプリ一覧", "Wikipedia", "MySen"};
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -131,6 +150,10 @@ public class PLHomeView extends PLContentView {
 					}
 					case 3: {
 						PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
+						break;
+					}
+					case 4: {
+						PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
 						break;
 					}
 

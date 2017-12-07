@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.service.overlay;
 
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYOtherUtil;
+import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.service.content.PLContentView;
 import jp.co.my.myplatform.service.content.PLHomeView;
@@ -177,6 +179,20 @@ public class PLNavigationController extends PLOverlayView {
 		if (navigationBar != null) {
 			mNaviBarFrame.addView(navigationBar);
 		}
+	}
+
+	public void resizeNavigation(boolean isHalf, boolean isBottom) {
+		WindowManager.LayoutParams params = getOverlayParams();
+		if (isHalf) {
+			params.height = MYViewUtil.getDisplaySize(getContext()).y / 2;
+			params.flags = FLAG_NOT_FOCUSABLE;
+		}
+		if (isBottom) {
+			params.gravity = Gravity.BOTTOM;
+		} else {
+			params.gravity = Gravity.TOP;
+		}
+		PLCoreService.getOverlayManager().updateOverlayLayout(this, params);
 	}
 
 	private void changeCurrentView(PLContentView view) {
