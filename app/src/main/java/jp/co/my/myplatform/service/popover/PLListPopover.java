@@ -11,35 +11,37 @@ public class PLListPopover extends PLPopoverView {
 
 	private ListView mListView;
 
-	// Deprecated
+	// Deprecated. Use showItems method,
 	public PLListPopover(String[] titles,
 						 AdapterView.OnItemClickListener clickListener) {
-		super(R.layout.popover_title_list);
-
+		this();
 		createList(titles);
 		mListView.setOnItemClickListener(clickListener);
 	}
 
-	public PLListPopover(final PLListItem... listItems) {
+	private PLListPopover() {
 		super(R.layout.popover_title_list);
+	}
 
+	public static void showItems(final PLListItem... listItems) {
+		final PLListPopover popover = new PLListPopover();
 		int numberOfItems = listItems.length;
 		String[] titles = new String[numberOfItems];
 		for (int i = 0; i < numberOfItems; i++) {
 			titles[i] = listItems[i].mTitle;
 		}
-		createList(titles);
+		popover.createList(titles);
 
-		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		popover.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				PLListPopover.this.removeFromContentView();
+				popover.removeFromContentView();
 
 				PLListItem listItem = listItems[position];
 				listItem.mClickedRunnable.run();
 			}
 		});
-		showPopover();
+		popover.showPopover();
 	}
 
 	private void createList(String[] titles) {

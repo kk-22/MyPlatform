@@ -105,7 +105,7 @@ public class PLDebugView extends PLContentView {
 			itemList.add(new PLDebugButtonItem("MySen", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new PLListPopover(
+					PLListPopover.showItems(
 							new PLListPopover.PLListItem("Unit & Skill & Field 削除して再取得", new Runnable() {
 								@Override
 								public void run() {

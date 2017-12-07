@@ -42,7 +42,7 @@ public class PLHomeView extends PLContentView {
 		findViewById(R.id.size_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLListPopover(
+				PLListPopover.showItems(
 						new PLListPopover.PLListItem("上半分", new Runnable() {
 							@Override
 							public void run() {
