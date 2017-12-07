@@ -12,7 +12,7 @@ import java.util.Objects;
 public class PLWebPageModel extends BaseModel {
 
 	public static int TAB_NO_NONE					= -1;
-	public static int TAB_NO_CURRENT				= 0;
+	public static int TAB_NO_CURRENT				= 0; // Deprecated
 	public static int BOOKMARK_DIRECTORY_NO_NONE	= -1;
 	public static int BOOKMARK_DIRECTORY_NO_ROOT	= 0;
 

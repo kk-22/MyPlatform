@@ -135,13 +135,23 @@ public class MYLogUtil {
 		return getPreference().edit();
 	}
 
-	public static void saveObject(Object object, String key) {
-		Gson gson = new Gson();
-		String json = gson.toJson(object);
-		getPreferenceEditor().putString(key, json).apply();
+
+	public static SharedPreferences.Editor saveObject(String key, Object object) {
+		return saveObject(key, object, false);
 	}
 
-	public static <T> T loadObject(Class<T> klass, String key) {
+	public static SharedPreferences.Editor saveObject(String key, Object object, boolean willApply) {
+		Gson gson = new Gson();
+		String json = gson.toJson(object);
+		SharedPreferences.Editor editor = getPreferenceEditor();
+		editor.putString(key, json);
+		if (willApply) {
+			editor.apply();
+		}
+		return editor;
+	}
+
+	public static <T> T loadObject(String key, Class<T> klass) {
 		Gson gson = new Gson();
 		String userSettingString = getPreference().getString(key, "");
 		return gson.fromJson(userSettingString, klass);

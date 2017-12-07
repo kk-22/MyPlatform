@@ -2,27 +2,17 @@ package jp.co.my.myplatform.service.browser;
 
 import android.webkit.WebBackForwardList;
 
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-
-import java.util.List;
-
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.service.model.PLModelContainer;
-import jp.co.my.myplatform.service.model.PLWebPageModel;
-import jp.co.my.myplatform.service.model.PLWebPageModel_Table;
 
 public class PLHistoryBrowserView extends PLBaseBrowserView {
 
 	public static final String KEY_URL_HISTORIES = "KEY_URL_HISTORIES";
+	public static final String KEY_URL_INDEX = "KEY_URL_INDEX";
 
-	/**
-	 * 現在表示中の mUrlHistories の位置を指す
-	 * -1 : 履歴なし
-	 * mUrlHistories.size() : 履歴を表示していない
-	 */
-	private int mHistoryIndex;
+	private int mHistoryIndex; // 現在表示中の mUrlHistories の位置を指す
 	private MYArrayList<String> mUrlHistories; // 前回アプリ起動中の履歴
+	private String mLoadingUrl; // onPageStartedの引数のURL
 
 	public PLHistoryBrowserView() {
 		super();
@@ -31,9 +21,8 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 			mUrlHistories = new MYArrayList<>();
 			mHistoryIndex = -1;
 		} else {
-			// 最後の履歴はloadFirstPageメソッドで開くページと被るため取り除く
-			mUrlHistories.removeLast();
-			mHistoryIndex = mUrlHistories.size(); // 最大値より1多い数
+			int savedIndex = MYLogUtil.getPreference().getInt(KEY_URL_INDEX, mUrlHistories.size() - 1);
+			mHistoryIndex = Math.min(mUrlHistories.size() - 1, savedIndex);
 		}
 
 		loadFirstPage();
@@ -41,70 +30,44 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 
 	@Override
 	protected void willChangePage(String title, String url, boolean isFinished) {
-		// TODO: 前のモデルを使いまわすべき
-		List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
-				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-				.queryList();
-		PLWebPageModel model = new PLWebPageModel(title, url, null);
-		model.save();
-		for (PLWebPageModel pageModel : pageArray) {
-			pageModel.delete();
-		}
-		if (isFinished) {
-			// 読み込み開始時のみ履歴保存処理を行う
+		// TODO: delete
+		MYLogUtil.outputLog("willChangePage isFinish=" +isFinished +" " +url);
+
+		if (isFinished && url.equals(mLoadingUrl)) {
+			// リダイレクト以外の読み込み完了時は履歴更新なし
+			mLoadingUrl = null;
 			return;
 		}
+		mLoadingUrl = url;
 
-		if (0 <= mHistoryIndex && mHistoryIndex < mUrlHistories.size()) {
-			// 戻るボタンによる履歴表示か、履歴から新ページ読み込み
-			getCurrentWebView().clearHistory();
-			if (mUrlHistories.get(mHistoryIndex).equals(url)) {
-				// 戻るボタンによる履歴表示は copyBackForwardList と被る履歴を削除
-				mUrlHistories.removeLast();
+		if (mHistoryIndex == -1 || !mUrlHistories.get(mHistoryIndex).equals(url)) {
+			// 進む戻るボタンによる移動以外のケースは履歴更新
+			if (isFinished) {
+				// リダイレクトでURLが変更されたため最後のURLを変更
+				mUrlHistories.set(mHistoryIndex, url);
 			} else {
 				//  新ページ読み込みは mHistoryIndex より先の履歴を削除
 				mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
+				mUrlHistories.add(url);
+				mHistoryIndex++;
 			}
-			mHistoryIndex++;
 		}
-
-		MYArrayList<String> saveUrls = new MYArrayList<>(mUrlHistories);
-		WebBackForwardList list = getCurrentWebView().copyBackForwardList();
-		for (int i = 0 ; i <= list.getCurrentIndex(); i ++) {
-			String urlString = list.getItemAtIndex(i).getUrl() ;
-			saveUrls.add(urlString);
-		}
-		if (0 == saveUrls.size() || !saveUrls.getLast().equals(url)) {
-			// 新規ページは copyBackForwardList で取得できないため追加
-			saveUrls.add(url);
-		}
-		MYLogUtil.saveObject(saveUrls, KEY_URL_HISTORIES);
+		MYLogUtil.saveObject(KEY_URL_HISTORIES, mUrlHistories, false)
+				.putInt(KEY_URL_INDEX, mHistoryIndex)
+				.apply();
 	}
 
 	private void loadFirstPage() {
-		PLModelContainer<PLWebPageModel> container = new PLModelContainer<>(SQLite.select()
-				.from(PLWebPageModel.class)
-				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_CURRENT))
-				.limit(1));
-		container.loadList(null, new PLModelContainer.PLOnModelLoadMainListener<PLWebPageModel>() {
-			@Override
-			public void onLoad(List<PLWebPageModel> modelLists) {
-				if (modelLists.size() == 0) {
-					getCurrentWebView().loadUrl("http://news.yahoo.co.jp/");
-					return;
-				}
-				getCurrentWebView().loadUrl(modelLists.get(0).getUrl());
-			}
-		});
+		if (mUrlHistories.size() == 0) {
+			mUrlHistories.add("https://www.google.co.jp");
+			mHistoryIndex = 0;
+		}
+		String url = mUrlHistories.get(mHistoryIndex);
+		getCurrentWebView().loadUrl(url);
 	}
 
 	@Override
 	protected boolean canGoHistory(boolean isBack) {
-		boolean result = super.canGoHistory(isBack);
-		if (result) {
-			return result;
-		}
-
 		if (isBack) {
 			return (mHistoryIndex > 0);
 		}
@@ -113,16 +76,26 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 
 	@Override
 	protected void goHistory(boolean isBack) {
-		if (super.canGoHistory(isBack)) {
-			super.goHistory(isBack);
-			return;
-		}
-
 		if (isBack) {
-			mHistoryIndex--;
+			mHistoryIndex = Math.max(0, mHistoryIndex - 1);
 		} else {
-			mHistoryIndex++;
+			mHistoryIndex = Math.min(mUrlHistories.size() - 1, mHistoryIndex + 1);
 		}
-		getCurrentWebView().loadUrl(mUrlHistories.get(mHistoryIndex));
+		String nextUrl = mUrlHistories.get(mHistoryIndex);
+
+		PLWebView webView = getCurrentWebView();
+		webView.stopLoading();
+
+		MYLogUtil.outputLog("load next url " +nextUrl);
+
+		WebBackForwardList list = getCurrentWebView().copyBackForwardList();
+		for (int i = list.getSize() - 1; 0 <= i; i--) {
+			String urlString = list.getItemAtIndex(i).getUrl();
+			if (nextUrl.equals(urlString)) {
+				webView.goBackOrForward(i - list.getCurrentIndex());
+				return;
+			}
+		}
+		webView.loadUrl(nextUrl);
 	}
 }

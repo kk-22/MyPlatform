@@ -100,7 +100,10 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						break;
 					}
 					case LIST_INDEX_CLEAR_HISTORIES: {
-						MYLogUtil.getPreferenceEditor().remove(PLHistoryBrowserView.KEY_URL_HISTORIES).apply();
+						MYLogUtil.getPreferenceEditor()
+								.remove(PLHistoryBrowserView.KEY_URL_HISTORIES)
+								.remove(PLHistoryBrowserView.KEY_URL_INDEX)
+								.apply();
 						removeFromContentView();
 						break;
 					}
