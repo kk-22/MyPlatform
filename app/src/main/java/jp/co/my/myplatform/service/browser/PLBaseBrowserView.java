@@ -213,6 +213,13 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 				mCurrentWebView.setScrollY(currentY + moveY);
 			}
 		});
+		findViewById(R.id.down_button).setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				hideToolbar();
+				return true;
+			}
+		});
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
