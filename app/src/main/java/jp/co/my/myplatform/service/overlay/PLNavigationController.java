@@ -24,18 +24,26 @@ import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 public class PLNavigationController extends PLOverlayView {
 
 	private FrameLayout mContentFrameLayout;
+	private FrameLayout mBottomFrame;
 	private FrameLayout mNaviBarFrame;
 	private ViewGroup mCustomizeNavigationBar;
 	private Button mBackButton;
+	private Button mNavigationButton;
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
 	private Handler mMainHandler;
+
+	// ハーフモード用
+	private boolean mIsHalf;
+	private int mGravity;
 
 	public PLNavigationController() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
 		mContentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
 		mBackButton = (Button) findViewById(R.id.back_button);
+		mNavigationButton = (Button) findViewById(R.id.navigation_button);
+		mBottomFrame = (FrameLayout) findViewById(R.id.bottom_frame);
 		mNaviBarFrame = (FrameLayout) findViewById(R.id.customize_navigation_layout);
 
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
@@ -57,6 +65,12 @@ public class PLNavigationController extends PLOverlayView {
 				return true;
 			}
 		});
+		mNavigationButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MYViewUtil.toggleVisibility(mBottomFrame, true);
+			}
+		});
 
 		mViewCache = new ArrayList<>();
 		mMainHandler = new Handler();
@@ -76,7 +90,18 @@ public class PLNavigationController extends PLOverlayView {
 
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
-		return getBaseParamsForNavigationView();
+		WindowManager.LayoutParams params = getBaseParamsForNavigationView();
+		if (mIsHalf) {
+			params.height = MYViewUtil.getDisplaySize(getContext()).y / 2;
+			params.flags = FLAG_NOT_FOCUSABLE;
+			mNavigationButton.setVisibility(VISIBLE);
+			mBottomFrame.setVisibility(GONE);
+		} else {
+			mNavigationButton.setVisibility(GONE);
+			mBottomFrame.setVisibility(VISIBLE);
+		}
+		params.gravity = mGravity;
+		return params;
 	}
 
 	public <T extends PLContentView> void pushInMainThread(final Class<T> clazz) {
@@ -182,17 +207,13 @@ public class PLNavigationController extends PLOverlayView {
 	}
 
 	public void resizeNavigation(boolean isHalf, boolean isBottom) {
-		WindowManager.LayoutParams params = getOverlayParams();
-		if (isHalf) {
-			params.height = MYViewUtil.getDisplaySize(getContext()).y / 2;
-			params.flags = FLAG_NOT_FOCUSABLE;
-		}
+		mIsHalf = isHalf;
 		if (isBottom) {
-			params.gravity = Gravity.BOTTOM;
+			mGravity = Gravity.BOTTOM;
 		} else {
-			params.gravity = Gravity.TOP;
+			mGravity = Gravity.TOP;
 		}
-		PLCoreService.getOverlayManager().updateOverlayLayout(this, params);
+		PLCoreService.getOverlayManager().updateOverlayLayout(this, getOverlayParams());
 	}
 
 	private void changeCurrentView(PLContentView view) {

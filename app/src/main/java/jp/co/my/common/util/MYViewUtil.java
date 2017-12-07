@@ -25,4 +25,15 @@ public class MYViewUtil {
 		parentView.removeView(view);
 		return true;
 	}
+
+	// isGone : trueの時、非表示にしたスペース分詰める
+	public static void toggleVisibility(View view, boolean isGone) {
+		if (view.getVisibility() != View.VISIBLE) {
+			view.setVisibility(View.VISIBLE);
+		} else if (isGone) {
+			view.setVisibility(View.GONE);
+		} else {
+			view.setVisibility(View.INVISIBLE);
+		}
+	}
 }

@@ -11,14 +11,28 @@
         android:layout_height="22dp"/>
 
     <FrameLayout
-        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF">
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF">
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/navigation_button"
+            android:text="N"
+            android:visibility="gone"
+            android:layout_gravity="end"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
     </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/bottom_frame"
         android:layout_width="match_parent"
         android:layout_height="55dp">
 
