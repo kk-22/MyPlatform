@@ -26,7 +26,10 @@ public class PLFrontButtonView extends PLOverlayView {
 		mButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().displayNavigationIfNeeded();
+				PLNavigationController navigation = PLCoreService.getNavigationController();
+				if (!navigation.displayNavigationIfNeeded()) {
+					navigation.hideNavigationIfNeeded();
+				}
 			}
 		});
 		mButton.setOnLongClickListener(new OnLongClickListener() {
