@@ -1,13 +1,13 @@
 package jp.co.my.myplatform.service.core;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -30,19 +30,18 @@ public class PLFirebaseMessagingService extends FirebaseMessagingService {
 				PendingIntent.FLAG_ONE_SHOT);
 
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-				.setSmallIcon(R.mipmap.ic_launcher)
+				.setSmallIcon(R.drawable.added_favorite)
 				.setAutoCancel(true)
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+				.setCategory(Notification.CATEGORY_SERVICE)
+				.setContentTitle(text)
+				.setVibrate(new long[0]) // Heads-upのために必要
+				.setPriority(NotificationCompat.PRIORITY_MAX)
+				.setVisibility(Notification.VISIBILITY_PUBLIC)
 				.setContentIntent(pendingIntent);
 		NotificationManager notificationManager =
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		if (notificationManager != null) {
 			notificationManager.notify(0 , notificationBuilder.build());
-		}
-
-		Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		if (vibrator != null) {
-			vibrator.vibrate(2000);
 		}
 
 		// 10秒間画面点灯
