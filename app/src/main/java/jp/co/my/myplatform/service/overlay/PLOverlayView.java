@@ -16,6 +16,10 @@ public abstract class PLOverlayView extends LinearLayout {
 		// remove前に必要な処理をoverrideして実装
 	}
 
+	protected void updateLayout() {
+		PLCoreService.getOverlayManager().updateOverlayLayout(this, getOverlayParams());
+	}
+
 	abstract public WindowManager.LayoutParams getOverlayParams();
 
 	protected LayoutParams createMatchParams() {

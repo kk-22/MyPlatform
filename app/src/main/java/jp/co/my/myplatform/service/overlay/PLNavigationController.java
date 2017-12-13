@@ -71,6 +71,19 @@ public class PLNavigationController extends PLOverlayView {
 				MYViewUtil.toggleVisibility(mBottomFrame, true);
 			}
 		});
+		mNavigationButton.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				mIsHalf = !mIsHalf;
+				updateLayout();
+				if (mIsHalf) {
+					mBottomFrame.setVisibility(GONE);
+				} else {
+					mBottomFrame.setVisibility(VISIBLE);
+				}
+				return true;
+			}
+		});
 
 		mViewCache = new ArrayList<>();
 		mMainHandler = new Handler();
@@ -94,10 +107,8 @@ public class PLNavigationController extends PLOverlayView {
 		if (mIsHalf) {
 			params.height = MYViewUtil.getDisplaySize(getContext()).y / 2;
 			params.flags = FLAG_NOT_FOCUSABLE;
-			mNavigationButton.setVisibility(VISIBLE);
 			mBottomFrame.setVisibility(GONE);
 		} else {
-			mNavigationButton.setVisibility(GONE);
 			mBottomFrame.setVisibility(VISIBLE);
 		}
 		params.gravity = mGravity;
@@ -213,7 +224,7 @@ public class PLNavigationController extends PLOverlayView {
 		} else {
 			mGravity = Gravity.TOP;
 		}
-		PLCoreService.getOverlayManager().updateOverlayLayout(this, getOverlayParams());
+		updateLayout();
 	}
 
 	private void changeCurrentView(PLContentView view) {
@@ -237,5 +248,9 @@ public class PLNavigationController extends PLOverlayView {
 	// getter
 	public PLContentView getCurrentView() {
 		return mCurrentView;
+	}
+
+	public void setNavigationButtonVisibility(int visibility) {
+		mNavigationButton.setVisibility(visibility);
 	}
 }

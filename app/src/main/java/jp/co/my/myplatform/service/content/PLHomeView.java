@@ -17,6 +17,7 @@ import jp.co.my.myplatform.service.memo.PLMemoEditorView;
 import jp.co.my.myplatform.service.mysen.PLMSWarContent;
 import jp.co.my.myplatform.service.news.PLNewsPagerView;
 import jp.co.my.myplatform.service.overlay.PLLockView;
+import jp.co.my.myplatform.service.overlay.PLNavigationController;
 import jp.co.my.myplatform.service.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.service.popover.PLListPopover;
 import jp.co.my.myplatform.service.twitter.PLTWListView;
@@ -46,19 +47,25 @@ public class PLHomeView extends PLContentView {
 						new PLListPopover.PLListItem("上半分", new Runnable() {
 							@Override
 							public void run() {
-								PLCoreService.getNavigationController().resizeNavigation(true, false);
+								PLNavigationController navigation = PLCoreService.getNavigationController();
+								navigation.setNavigationButtonVisibility(View.VISIBLE);
+								navigation.resizeNavigation(true, false);
 							}
 						})
 						, new PLListPopover.PLListItem("全画面", new Runnable() {
 							@Override
 							public void run() {
-								PLCoreService.getNavigationController().resizeNavigation(false, false);
+								PLNavigationController navigation = PLCoreService.getNavigationController();
+								navigation.setNavigationButtonVisibility(View.GONE);
+								navigation.resizeNavigation(false, false);
 							}
 						})
 						, new PLListPopover.PLListItem("下半分", new Runnable() {
 							@Override
 							public void run() {
-								PLCoreService.getNavigationController().resizeNavigation(true, true);
+								PLNavigationController navigation = PLCoreService.getNavigationController();
+								navigation.setNavigationButtonVisibility(View.VISIBLE);
+								navigation.resizeNavigation(true, true);
 							}
 						})
 				);
