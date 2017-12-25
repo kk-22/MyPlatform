@@ -23,6 +23,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 public class PLNavigationController extends PLOverlayView {
 
+	private View mStatusBar;
 	private FrameLayout mContentFrameLayout;
 	private FrameLayout mBottomFrame;
 	private FrameLayout mNaviBarFrame;
@@ -40,6 +41,7 @@ public class PLNavigationController extends PLOverlayView {
 	public PLNavigationController() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
+		mStatusBar = findViewById(R.id.status_bar_view);
 		mContentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
 		mBackButton = (Button) findViewById(R.id.back_button);
 		mNavigationButton = (Button) findViewById(R.id.navigation_button);
@@ -76,11 +78,6 @@ public class PLNavigationController extends PLOverlayView {
 			public boolean onLongClick(View v) {
 				mIsHalf = !mIsHalf;
 				updateLayout();
-				if (mIsHalf) {
-					mBottomFrame.setVisibility(GONE);
-				} else {
-					mBottomFrame.setVisibility(VISIBLE);
-				}
 				return true;
 			}
 		});
@@ -107,12 +104,21 @@ public class PLNavigationController extends PLOverlayView {
 		if (mIsHalf) {
 			params.height = MYViewUtil.getDisplaySize(getContext()).y / 2;
 			params.flags = FLAG_NOT_FOCUSABLE;
-			mBottomFrame.setVisibility(GONE);
-		} else {
-			mBottomFrame.setVisibility(VISIBLE);
 		}
 		params.gravity = mGravity;
 		return params;
+	}
+
+	@Override
+	protected void updateLayout() {
+		if (mIsHalf) {
+			mStatusBar.setVisibility(GONE);
+			mBottomFrame.setVisibility(GONE);
+		} else {
+			mStatusBar.setVisibility(VISIBLE);
+			mBottomFrame.setVisibility(VISIBLE);
+		}
+		super.updateLayout();
 	}
 
 	public <T extends PLContentView> void pushInMainThread(final Class<T> clazz) {
