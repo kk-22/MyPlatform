@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
-    <jp.co.my.myplatform.service.mysen.setting.PLMSUnitListView
+    <jp.co.my.myplatform.mysen.setting.PLMSUnitListView
         android:id="@+id/unit_list"
         android:orientation="horizontal"
         android:layout_width="match_parent"

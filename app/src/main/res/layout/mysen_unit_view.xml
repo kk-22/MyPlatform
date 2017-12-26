@@ -28,7 +28,7 @@
         android:layout_width="15dp"
         android:layout_height="15dp"/>
 
-    <jp.co.my.myplatform.service.mysen.PLMSHitPointBar
+    <jp.co.my.myplatform.mysen.PLMSHitPointBar
         android:id="@+id/hp_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

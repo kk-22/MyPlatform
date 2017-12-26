@@ -17,11 +17,11 @@
         android:layout_height="match_parent">
 
         <!-- ユニット単独時の表示 -->
-        <jp.co.my.myplatform.service.mysen.information.PLMSUnitInfoView
+        <jp.co.my.myplatform.mysen.information.PLMSUnitInfoView
             android:id="@+id/unit_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </jp.co.my.myplatform.service.mysen.information.PLMSUnitInfoView>
+        </jp.co.my.myplatform.mysen.information.PLMSUnitInfoView>
 
         <!-- 戦闘時の表示 -->
         <FrameLayout
@@ -44,12 +44,12 @@
                     android:layout_height="match_parent">
 
                     <!-- 左ユニットの情報 -->
-                    <jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView
+                    <jp.co.my.myplatform.mysen.information.PLMSForecastInfoView
                         android:id="@+id/left_forecast_info"
                         android:layout_weight="4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
-                    </jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView>
+                    </jp.co.my.myplatform.mysen.information.PLMSForecastInfoView>
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -82,12 +82,12 @@
                     </LinearLayout>
 
                     <!-- 右ユニットの情報 -->
-                    <jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView
+                    <jp.co.my.myplatform.mysen.information.PLMSForecastInfoView
                         android:id="@+id/right_forecast_info"
                         android:layout_weight="4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
-                    </jp.co.my.myplatform.service.mysen.information.PLMSForecastInfoView>
+                    </jp.co.my.myplatform.mysen.information.PLMSForecastInfoView>
 
                 </LinearLayout>
 

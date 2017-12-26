@@ -4,14 +4,14 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <jp.co.my.myplatform.service.browser.PLWebView
+    <jp.co.my.myplatform.browser.PLWebView
         android:id="@+id/su_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true">
         <requestFocus/>
-    </jp.co.my.myplatform.service.browser.PLWebView>
+    </jp.co.my.myplatform.browser.PLWebView>
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"

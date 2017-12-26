@@ -5,7 +5,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <jp.co.my.myplatform.service.view.PLSavePositionListView
+    <jp.co.my.myplatform.view.PLSavePositionListView
         android:id="@+id/tweet_list"
         android:clickable="true"
         android:descendantFocusability="blocksDescendants"
@@ -13,7 +13,7 @@
         android:focusableInTouchMode="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </jp.co.my.myplatform.service.view.PLSavePositionListView>
+    </jp.co.my.myplatform.view.PLSavePositionListView>
 
     <LinearLayout
         android:orientation="vertical"

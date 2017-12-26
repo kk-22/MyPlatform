@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <jp.co.my.myplatform.service.view.PLSelectTimeView
+        <jp.co.my.myplatform.view.PLSelectTimeView
             android:id="@+id/time_select_view"
             android:layout_weight="5"
             android:layout_width="match_parent"

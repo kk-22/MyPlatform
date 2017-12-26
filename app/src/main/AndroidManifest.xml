@@ -3,13 +3,13 @@
           package="jp.co.my.myplatform">
 
     <application
-        android:name=".service.core.PLApplication"
+        android:name=".core.PLApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.controller.PLMainActivity">
+        <activity android:name=".activity.PLMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -17,21 +17,21 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.core.PLCoreService"></service>
+        <service android:name=".core.PLCoreService"></service>
 
-        <service android:name=".service.core.PLFirebaseInstanceIdService">
+        <service android:name=".core.PLFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".service.core.PLFirebaseMessagingService">
+            android:name=".core.PLFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".service.core.PLBroadcastReceiver"></receiver>
+        <receiver android:name=".core.PLBroadcastReceiver"></receiver>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="ae20c152d0c78c1f9cc9c9055ed48110ddb754de" />

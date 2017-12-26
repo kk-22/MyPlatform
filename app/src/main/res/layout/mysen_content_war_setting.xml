@@ -20,7 +20,7 @@
             android:layout_width="100dp"
             android:layout_height="match_parent">
 
-            <jp.co.my.myplatform.service.mysen.PLMSFieldView
+            <jp.co.my.myplatform.mysen.PLMSFieldView
                 android:id="@+id/preview_field"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
-        <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
+        <jp.co.my.myplatform.mysen.setting.PLMSArmySetting
             android:id="@+id/left_army"
             android:layout_weight="5"
             android:layout_width="0dp"
@@ -78,7 +78,7 @@
                 android:layout_height="0dp"/>
         </LinearLayout>
 
-        <jp.co.my.myplatform.service.mysen.setting.PLMSArmySetting
+        <jp.co.my.myplatform.mysen.setting.PLMSArmySetting
             android:id="@+id/right_army"
             android:layout_weight="5"
             android:layout_width="0dp"

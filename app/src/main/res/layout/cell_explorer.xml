@@ -6,7 +6,7 @@
               android:layout_width="match_parent"
               android:layout_height="130dp">
 
-    <jp.co.my.myplatform.service.view.PLLoadImageView
+    <jp.co.my.myplatform.view.PLLoadImageView
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:id="@+id/load_image_view"
