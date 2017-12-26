@@ -85,10 +85,10 @@ public class PLHomeView extends PLContentView {
 				PLCoreService.getOverlayManager().addOverlayView(lockView);
 			}
 		});
-		findViewById(R.id.debug_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.games_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLDebugView.class);
+
 			}
 		});
 		findViewById(R.id.memo_button).setOnClickListener(new View.OnClickListener() {
@@ -136,37 +136,45 @@ public class PLHomeView extends PLContentView {
 	}
 
 	private void showMenu() {
-		String[] titles = {"サービス終了", "ボタン非表示", "アプリ一覧", "Wikipedia", "MySen"};
-		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				PLHomeView.this.removeTopPopover();
-				switch (position) {
-					case 0: {
+		PLListPopover.showItems(
+				new PLListPopover.PLListItem("サービス終了", new Runnable() {
+					@Override
+					public void run() {
 						stopService();
-						break;
 					}
-					case 1: {
+				}),
+				new PLListPopover.PLListItem("ボタン非表示", new Runnable() {
+					@Override
+					public void run() {
 						PLCoreService.getNavigationController().hideNavigationIfNeeded();
 						PLCoreService.getOverlayManager().removeFrontOverlays();
-						break;
 					}
-					case 2: {
+				}),
+				new PLListPopover.PLListItem("アプリ一覧", new Runnable() {
+					@Override
+					public void run() {
 						PLCoreService.getNavigationController().pushView(PLAppListView.class);
-						break;
 					}
-					case 3: {
+				}),
+				new PLListPopover.PLListItem("Wikipedia", new Runnable() {
+					@Override
+					public void run() {
 						PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
-						break;
 					}
-					case 4: {
+				}),
+				new PLListPopover.PLListItem("MySen", new Runnable() {
+					@Override
+					public void run() {
 						PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
-						break;
 					}
-
-				}
-			}
-		}).showPopover();
+				}),
+				new PLListPopover.PLListItem("デバッグ", new Runnable() {
+					@Override
+					public void run() {
+						PLCoreService.getNavigationController().pushView(PLDebugView.class);
+					}
+				})
+		);
 	}
 
 	private void stopService() {
