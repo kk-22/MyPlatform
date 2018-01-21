@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.overlay;
 
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import jp.co.my.myplatform.core.PLCoreService;
 import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 public class PLNavigationController extends PLOverlayView {
+
+	private static final String KEY_NAVIGATION_VISIBLE = "KEY_NAVIGATION_VISIBLE";
 
 	private View mStatusBar;
 	private FrameLayout mContentFrameLayout;
@@ -84,6 +87,9 @@ public class PLNavigationController extends PLOverlayView {
 
 		mViewCache = new ArrayList<>();
 		mMainHandler = new Handler();
+		if (MYLogUtil.getPreference().getBoolean(KEY_NAVIGATION_VISIBLE, false)) {
+			mNavigationButton.setVisibility(VISIBLE);
+		}
 
 		pushView(PLHomeContent.class);
 	}
@@ -258,5 +264,9 @@ public class PLNavigationController extends PLOverlayView {
 
 	public void setNavigationButtonVisibility(int visibility) {
 		mNavigationButton.setVisibility(visibility);
+		boolean isVisible = (visibility == VISIBLE);
+		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+		editor.putBoolean(KEY_NAVIGATION_VISIBLE, isVisible);
+		editor.apply();
 	}
 }
