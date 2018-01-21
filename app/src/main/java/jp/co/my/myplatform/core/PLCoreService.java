@@ -14,7 +14,7 @@ import android.widget.RemoteViews;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.app.PLAppStrategy;
-import jp.co.my.myplatform.content.PLSetAlarmView;
+import jp.co.my.myplatform.content.PLAlarmContent;
 import jp.co.my.myplatform.overlay.PLNavigationController;
 import jp.co.my.myplatform.overlay.PLOverlayManager;
 
@@ -59,7 +59,10 @@ public class PLCoreService extends Service {
 		if (intent != null) {
 			actionIntent(intent);
 		}
-		// クラッシュ後の再起動でログが流れるのを防ぐ
+		// デバッグ用
+//		PLCoreService.getNavigationController().pushView(PLCACalculatorContent.class);
+//		return START_NOT_STICKY; // クラッシュ後の再起動でログが流れるのを防ぐ
+
 		return START_STICKY;
 	}
 
@@ -99,8 +102,8 @@ public class PLCoreService extends Service {
 			sNavigationController.displayNavigationIfNeeded();
 			if (className.equals(PLNavigationController.class.getCanonicalName())) {
 				// ナビゲーション表示のみ
-			} else if (className.equals(PLSetAlarmView.class.getCanonicalName())) {
-				PLSetAlarmView alarmView = PLCoreService.getNavigationController().pushView(PLSetAlarmView.class);
+			} else if (className.equals(PLAlarmContent.class.getCanonicalName())) {
+				PLAlarmContent alarmView = PLCoreService.getNavigationController().pushView(PLAlarmContent.class);
 				alarmView.startAlarm();
 			}
 		}
@@ -117,7 +120,7 @@ public class PLCoreService extends Service {
 
 		if (intent.getBooleanExtra(KEY_CANCEL_ALARM, false)) {
 			MYLogUtil.showToast("アラームキャンセル");
-			PLSetAlarmView.stopAlarm();
+			PLAlarmContent.stopAlarm();
 
 		}
 	}
