@@ -87,6 +87,7 @@ public class PLNavigationController extends PLOverlayView {
 
 		mViewCache = new ArrayList<>();
 		mMainHandler = new Handler();
+		mGravity = Gravity.TOP;
 		if (MYLogUtil.getPreference().getBoolean(KEY_NAVIGATION_VISIBLE, false)) {
 			mNavigationButton.setVisibility(VISIBLE);
 		}
