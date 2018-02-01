@@ -36,7 +36,15 @@ public class PLRelativeLayoutController extends PLAbstractLayoutController {
 			view.setTranslationY(relativePointY);
 		} else {
 			// 収まるように上方向にずらす
-			view.setTranslationY(parentSize.y - mRelativeView.getHeight() - viewSizeY);
+			float tempY = parentSize.y - mRelativeView.getHeight() - viewSizeY;
+			if (tempY < 0) {
+				// 上方向にはみ出す分だけ高さを小さくする
+				ViewGroup.LayoutParams params = view.getLayoutParams();
+				params.height = (int)(viewSizeY + tempY);
+				view.setLayoutParams(params);
+				tempY = 0;
+			}
+			view.setTranslationY(tempY);
 		}
 	}
 }
