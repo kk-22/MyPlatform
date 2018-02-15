@@ -66,6 +66,12 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 				super.onPageFinished(view, url);
 				willChangePage(view.getTitle(), url, true);
 			}
+
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				willLoadPage(url);
+				return super.shouldOverrideUrlLoading(view, url);
+			}
 		});
 	}
 
@@ -90,6 +96,10 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 	public void hideToolbar() {
 		mToolbar.setVisibility(View.GONE);
 		mShowButton.setVisibility(View.VISIBLE);
+	}
+
+	protected void willLoadPage(String url) {
+		// サブクラスで実装
 	}
 
 	protected void willChangePage(String title, String url, boolean isFinished) {

@@ -13,6 +13,7 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 	private int mHistoryIndex; // 現在表示中の mUrlHistories の位置を指す
 	private MYArrayList<String> mUrlHistories; // 前回アプリ起動中の履歴
 	private String mLoadingUrl; // onPageStartedの引数のURL
+	private boolean mIsLoading; // リダイレクト判定用
 
 	public PLHistoryBrowserView() {
 		super();
@@ -29,28 +30,35 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 	}
 
 	@Override
-	protected void willChangePage(String title, String url, boolean isFinished) {
-		// TODO: delete
-		MYLogUtil.outputLog("willChangePage isFinish=" +isFinished +" " +url);
-
-		if (isFinished && url.equals(mLoadingUrl)) {
-			// リダイレクト以外の読み込み完了時は履歴更新なし
-			mLoadingUrl = null;
+	protected void willLoadPage(String url) {
+		if (!mIsLoading) {
+			// 読み込み終了後のリンクタップ
 			return;
 		}
-		mLoadingUrl = url;
+		String currentUrl = getCurrentWebView().getUrl();
+		if (mUrlHistories.get(mHistoryIndex).equals(currentUrl)) {
+			// 読み込み完了前のリンクタップ
+			return;
+		}
+		// リダイレクト時のURLを履歴から除くためにindexをずらす
+		mHistoryIndex = Math.max(0, mHistoryIndex - 1);
+		mLoadingUrl = null;
+		mIsLoading = false;
+	}
+
+	@Override
+	protected void willChangePage(String title, String url, boolean isFinished) {
+		mIsLoading = !isFinished;
+		if (isFinished) {
+			// 読み込み完了時は履歴更新なし
+			return;
+		}
 
 		if (mHistoryIndex == -1 || !mUrlHistories.get(mHistoryIndex).equals(url)) {
-			// 進む戻るボタンによる移動以外のケースは履歴更新
-			if (isFinished) {
-				// リダイレクトでURLが変更されたため最後のURLを変更
-				mUrlHistories.set(mHistoryIndex, url);
-			} else {
-				//  新ページ読み込みは mHistoryIndex より先の履歴を削除
-				mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
-				mUrlHistories.add(url);
-				mHistoryIndex++;
-			}
+			// 進む戻るボタン以外でのページ移動は、現在のページより先の履歴を削除
+			mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
+			mUrlHistories.add(url);
+			mHistoryIndex++;
 		}
 		MYLogUtil.saveObject(KEY_URL_HISTORIES, mUrlHistories, false)
 				.putInt(KEY_URL_INDEX, mHistoryIndex)
@@ -58,11 +66,12 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 	}
 
 	private void loadFirstPage() {
+		String url;
 		if (mUrlHistories.size() == 0) {
-			mUrlHistories.add("https://www.google.co.jp");
-			mHistoryIndex = 0;
+			url = "https://news.yahoo.co.jp/";
+		} else {
+			url = mUrlHistories.get(mHistoryIndex);
 		}
-		String url = mUrlHistories.get(mHistoryIndex);
 		getCurrentWebView().loadUrl(url);
 	}
 
@@ -85,8 +94,6 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 
 		PLWebView webView = getCurrentWebView();
 		webView.stopLoading();
-
-		MYLogUtil.outputLog("load next url " +nextUrl);
 
 		WebBackForwardList list = getCurrentWebView().copyBackForwardList();
 		for (int i = list.getSize() - 1; 0 <= i; i--) {
