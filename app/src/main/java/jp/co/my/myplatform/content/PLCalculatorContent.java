@@ -4,10 +4,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
 
 public class PLCalculatorContent extends PLContentView implements View.OnClickListener {
+
+	private static final String KEY_LAST_INPUT_STRING = "KEY_LAST_INPUT_STRING";
 
 	private TextView mCacheText;
 	private TextView mEntryText;
@@ -21,7 +24,8 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		mEntryText = (TextView)findViewById(R.id.entry_text);
 		mTotalText = (TextView)findViewById(R.id.total_text);
 
-		mInputString = new StringBuilder("0");
+		String initialString = MYLogUtil.getPreference().getString(KEY_LAST_INPUT_STRING, "0");
+		mInputString = new StringBuilder(initialString);
 		updateAllText();
 
 		findViewById(R.id.clear_all_button).setOnClickListener(this);
@@ -114,6 +118,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		}
 		mInputString.append(value);
 		updateAllText();
+		MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, new String(mInputString)).apply();
 	}
 
 	private void clearAll() {
