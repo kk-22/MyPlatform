@@ -100,13 +100,13 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 				return;
 			}
 
-			if (value.equals("0")){
+			if (value.equals("0")) {
 				if (lastValue.equals("0")) {
 					return;
 				}
 			} else {
 				// 1 ～ 9
-				if (lastValue.equals("0")) {
+				if (lastValue.equals("0") && lastIsNumber) {
 					// 余計な0を削る
 					mInputString.deleteCharAt(mInputString.length() - 1);
 				}
