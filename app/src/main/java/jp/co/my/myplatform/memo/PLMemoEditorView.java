@@ -1,11 +1,8 @@
 package jp.co.my.myplatform.memo;
 
-import android.content.Context;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 
@@ -29,7 +26,7 @@ public class PLMemoEditorView extends PLContentView {
 	public PLMemoEditorView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
-		mEditText = (EditText) findViewById(R.id.memo_edit);
+		mEditText = findViewById(R.id.memo_edit);
 
 		mReadWriter = new PLMemoReadWriter(mEditText);
 		mInputObserver = new PLMemoInputObserver(mEditText);
@@ -43,12 +40,6 @@ public class PLMemoEditorView extends PLContentView {
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
 		mReadWriter.saveToFile();
-	}
-
-	@Override
-	public boolean onBackKey() {
-		changeToViewMode();
-		return super.onBackKey();
 	}
 
 	private void initEditTextEvent() {
@@ -75,42 +66,6 @@ public class PLMemoEditorView extends PLContentView {
 				return false;
 			}
 		});
-		mEditText.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				if (isEditMode()) {
-					return false;
-				}
-				changeToEditMode();
-				// キーボード表示
-				mEditText.requestFocus();
-				InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-				inputMethod.showSoftInput(mEditText, 0);
-				return true;
-			}
-		});
-		mEditText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				changeToEditMode();
-				// ちらつき防止
-				mEditText.setVisibility(View.VISIBLE);
-				findViewById(R.id.button_linear).setVisibility(View.VISIBLE);
-			}
-		});
-	}
-
-	private void changeToEditMode() {
-		mEditText.setHeight(EDIT_MODE_HEIGHT);
-		mEditText.setFocusable(true);
-		mEditText.setFocusableInTouchMode(true);
-	}
-
-	private void changeToViewMode() {
-		int rootHeight = PLMemoEditorView.this.getHeight();
-		mEditText.setHeight(rootHeight - 200);
-		mEditText.setFocusable(false);
 	}
 
 	private void initButtonEvent() {
@@ -129,18 +84,6 @@ public class PLMemoEditorView extends PLContentView {
 				// 現在のファイル保存
 				mReadWriter.saveToFile();
 				displayFileList();
-			}
-		});
-		findViewById(R.id.change_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (isEditMode()) {
-					InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-					inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-					changeToViewMode();
-				} else {
-					changeToEditMode();
-				}
 			}
 		});
 
@@ -212,9 +155,5 @@ public class PLMemoEditorView extends PLContentView {
 				}
 			}
 		}).showPopover();
-	}
-
-	private boolean isEditMode() {
-		return (mEditText.getHeight() == EDIT_MODE_HEIGHT);
 	}
 }
