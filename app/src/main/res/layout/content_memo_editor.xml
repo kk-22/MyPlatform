@@ -54,8 +54,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
                 <Button
-                    android:id="@+id/change_button"
-                    android:text="↓↑"
+                    android:id="@+id/line_up_button"
+                    android:text="行を上へ"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
@@ -72,12 +72,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
                 <Space
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"/>
                 <Button
                     android:id="@+id/delete_button"
                     android:text="Delete"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/line_down_button"
+                    android:text="行を下へ"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
