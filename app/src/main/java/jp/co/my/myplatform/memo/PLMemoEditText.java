@@ -11,16 +11,22 @@ public class PLMemoEditText extends EditText {
 
 	private static final int NUMBER_OF_NONEXISTENT_LINES = -1; // 存在しない行数
 
-	public PLMemoEditText(Context context) {
-		super(context);
-	}
-
 	public PLMemoEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public PLMemoEditText(Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
+	void deleteSelectionLine() {
+		int currentLines = getSelectionNumberOfLines();
+		int startIndex = getIndexOfLines(currentLines, true);
+		int endIndex = getIndexOfLines(currentLines + 1, true);
+		if (startIndex == endIndex) {
+			// 最終行に文字がないケース。一番最後の改行コードを削除
+			startIndex = Math.max(0, startIndex - 1);
+		}
+
+		Editable text = getText();
+		text.delete(startIndex, endIndex);
+		setSelection(startIndex);
 	}
 
 	void moveSelectionLine(boolean toDown) {
@@ -39,20 +45,20 @@ public class PLMemoEditText extends EditText {
 		int middleIndex = Math.max(currentIndex, targetIndex);
 		int endIndex = getIndexOfLines(overLines, true);
 		// 行を入れ替えた文章を作成してセット
-		Editable prevText = this.getText();
+		Editable prevText = getText();
 		String nextString = prevText.subSequence(0, startIndex).toString()
 				+ prevText.subSequence(middleIndex, endIndex).toString()
 				+ prevText.subSequence(startIndex, middleIndex).toString()
 				+ prevText.subSequence(endIndex, prevText.length());
-		this.setText(nextString);
+		setText(nextString);
 		// 移動先の行端へカーソルを移動
-		this.setSelection(getTailIndexOfLines(targetLines));
+		setSelection(getTailIndexOfLines(targetLines));
 	}
 
 	private int getSelectionNumberOfLines() {
 		int lineCount = 1;
-		Editable text = this.getText();
-		int endIndex = this.getSelectionEnd();
+		Editable text = getText();
+		int endIndex = getSelectionEnd();
 		for (int i = 0; i < endIndex; i++) {
 			if (text.charAt(i) == '\n') {
 				lineCount++;
@@ -68,7 +74,7 @@ public class PLMemoEditText extends EditText {
 			return NUMBER_OF_NONEXISTENT_LINES;
 		}
 		int lineCount = 1;
-		Editable text = this.getText();
+		Editable text = getText();
 		int i = 0;
 		int length = text.length();
 		for (; i < length; i++) {
@@ -89,10 +95,14 @@ public class PLMemoEditText extends EditText {
 
 	// 行端の位置を取得
 	private int getTailIndexOfLines(int numberOfLines) {
+		if (numberOfLines <= 0) {
+			return 0;
+		}
+
 		int nextLinesIndex = getIndexOfLines(numberOfLines + 1, false);
 		if (nextLinesIndex == NUMBER_OF_NONEXISTENT_LINES) {
-			int length = this.length();
-			if (this.getText().charAt(length - 1) == '\n') {
+			int length = length();
+			if (getText().charAt(length - 1) == '\n') {
 				return length - 1;
 			}
 			return length;

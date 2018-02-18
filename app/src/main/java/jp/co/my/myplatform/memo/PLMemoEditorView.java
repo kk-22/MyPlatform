@@ -106,6 +106,12 @@ public class PLMemoEditorView extends PLContentView {
 				mEditText.moveSelectionLine(true);
 			}
 		});
+		findViewById(R.id.delete_line_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mEditText.deleteSelectionLine();
+			}
+		});
 	}
 
 	private void displayFileList() {

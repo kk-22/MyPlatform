@@ -79,10 +79,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
 
-                <Space
+                <Button
+                    android:id="@+id/delete_line_button"
+                    android:text="行削除"
                     android:layout_weight="1"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="wrap_content"/>
 
                 <Button
                     android:id="@+id/line_down_button"
