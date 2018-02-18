@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp">
 
-            <EditText
+            <jp.co.my.myplatform.memo.PLMemoEditText
                 android:id="@+id/memo_edit"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
