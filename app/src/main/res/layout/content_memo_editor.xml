@@ -42,13 +42,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
 
-                <Space
+                <Button
+                    android:id="@+id/back_button"
+                    android:text="←"
                     android:layout_weight="1"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="wrap_content"/>
 
                 <Button
-                    android:id="@+id/next_button"
+                    android:id="@+id/forward_button"
                     android:text="→"
                     android:layout_weight="1"
                     android:layout_width="0dp"

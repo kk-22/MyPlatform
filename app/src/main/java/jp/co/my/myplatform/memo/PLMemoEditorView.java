@@ -17,11 +17,8 @@ import jp.co.my.myplatform.popover.PLTextFieldPopover;
 
 public class PLMemoEditorView extends PLContentView {
 
-	private static final int EDIT_MODE_HEIGHT = 1150;				// 入力モード中のEditTextの高さ
-
 	private PLMemoEditText mEditText;
 	private PLMemoReadWriter mReadWriter;
-	private PLMemoInputObserver mInputObserver;
 
 	public PLMemoEditorView() {
 		super();
@@ -29,7 +26,6 @@ public class PLMemoEditorView extends PLContentView {
 		mEditText = findViewById(R.id.memo_edit);
 
 		mReadWriter = new PLMemoReadWriter(mEditText);
-		mInputObserver = new PLMemoInputObserver(mEditText);
 		initEditTextEvent();
 		initButtonEvent();
 
@@ -52,17 +48,6 @@ public class PLMemoEditorView extends PLContentView {
 				} else if (keyCode != KeyEvent.KEYCODE_ENTER || event.getAction() != KeyEvent.ACTION_DOWN) {
 					return false;
 				}
-
-
-//				String replaceText = "\nテスト";
-//				int start = mEditText.getSelectionStart();
-//				int end = mEditText.getSelectionEnd();
-//				Editable editable = mEditText.getText();
-//				editable.replace(Math.min( start, end ), Math.max( start, end ), replaceText );
-
-				MYLogUtil.outputLog("changed");
-//				PLMemoEditor.this.set
-
 				return false;
 			}
 		});
@@ -76,6 +61,18 @@ public class PLMemoEditorView extends PLContentView {
 				// TODO:入力事に保存でsaveボタン不要にできる
 				mReadWriter.saveToFile();
 				MYLogUtil.showToast("Save to file");
+			}
+		});
+		findViewById(R.id.back_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mEditText.goBack();
+			}
+		});
+		findViewById(R.id.forward_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mEditText.goForward();
 			}
 		});
 		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {

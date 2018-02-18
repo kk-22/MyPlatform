@@ -3,16 +3,43 @@ package jp.co.my.myplatform.memo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
+import jp.co.my.common.util.MYArrayList;
+
 @SuppressLint("AppCompatCustomView")
-public class PLMemoEditText extends EditText {
+public class PLMemoEditText extends EditText implements TextWatcher {
 
 	private static final int NUMBER_OF_NONEXISTENT_LINES = -1; // 存在しない行数
+	private static final int NO_HISTORY_INDEX = -1;
+
+	private int mInputStartLength; // 入力開始時の文字数
+	private int mHistoryIndex;
+	private boolean disableHistory; // true なら履歴の保存をしない
+	private MYArrayList<CharSequence> mTextHistories;
 
 	public PLMemoEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mHistoryIndex = NO_HISTORY_INDEX;
+		mTextHistories = new MYArrayList<>();
+		addTextChangedListener(this);
+	}
+
+	void goBack() {
+		if (mHistoryIndex <= 0) {
+			return;
+		}
+		loadHistory(true);
+	}
+
+	void goForward() {
+		if (mTextHistories.size() <= mHistoryIndex + 1) {
+			return;
+		}
+		loadHistory(false);
 	}
 
 	void deleteSelectionLine() {
@@ -108,5 +135,55 @@ public class PLMemoEditText extends EditText {
 			return length;
 		}
 		return nextLinesIndex - 1;
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		mInputStartLength = s.toString().length();
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	}
+
+	@Override
+	public void afterTextChanged(Editable s) {
+		if (s.toString().length() < mInputStartLength) {
+			return;
+		}
+		Object[] spanned = s.getSpans(0, s.length(), Object.class);
+		if (spanned == null) {
+			return;
+		}
+		boolean unfixed = false;
+		for (Object obj : spanned) {
+			if ((s.getSpanFlags(obj) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING) {
+				unfixed = true;
+			}
+		}
+		if (!unfixed) {
+			// 半角数字の入力か、文字を確定したケース
+			didEnter();
+		}
+	}
+
+	private void didEnter() {
+		if (disableHistory) {
+			return;
+		}
+		mHistoryIndex++;
+		mTextHistories.removeToLastFromIndex(mHistoryIndex);
+		mTextHistories.add(getText().toString());
+	}
+
+	private void loadHistory(boolean isBack) {
+		if (isBack) {
+			mHistoryIndex--;
+		} else {
+			mHistoryIndex++;
+		}
+		disableHistory = true;
+		setText(mTextHistories.get(mHistoryIndex));
+		disableHistory = false;
 	}
 }
