@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
+import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.popover.PLTextFieldPopover;
 
@@ -90,38 +91,10 @@ public class PLMemoEditorView extends PLContentView {
 		});
 
 		// 2行目
-		findViewById(R.id.set_name_button).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLTextFieldPopover(new PLTextFieldPopover.OnEnterListener() {
-					@Override
-					public boolean onEnter(View v, String text) {
-						if (mReadWriter.renameCurrentFile(text)) {
-							MYLogUtil.showToast("リネーム成功");
-						} else {
-							MYLogUtil.showToast("リネームに成功しました");
-						}
-						return true;
-					}
-				}).showPopover();
-			}
-		});
-		findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String[] titles = {"削除する"};
-				new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						PLMemoEditorView.this.removeTopPopover();
-						if (mReadWriter.deleteCurrentFile()) {
-							MYLogUtil.showToast("削除成功");
-						} else {
-							MYLogUtil.showToast("削除に失敗しました");
-						}
-						displayFileList();
-					}
-				}).showPopover();
+				displayFileOperationPopup();
 			}
 		});
 		findViewById(R.id.line_up_button).setOnClickListener(new OnClickListener() {
@@ -169,6 +142,41 @@ public class PLMemoEditorView extends PLContentView {
 				}
 			}
 		}).showPopover();
+	}
+
+	private void displayFileOperationPopup() {
+		PLListPopover.showItems(new PLListPopover.PLListItem("リネーム", new Runnable() {
+			@Override
+			public void run() {
+				new PLTextFieldPopover(new PLTextFieldPopover.OnEnterListener() {
+					@Override
+					public boolean onEnter(View v, String text) {
+						if (mReadWriter.renameCurrentFile(text)) {
+							MYLogUtil.showToast("リネーム成功");
+						} else {
+							MYLogUtil.showToast("リネームに成功しました");
+						}
+						return true;
+					}
+				}).showPopover();
+			}
+		}), new PLListPopover.PLListItem("削除", new Runnable() {
+			@Override
+			public void run() {
+				new PLConfirmationPopover("削除する", new PLConfirmationPopover.PLConfirmationListener() {
+					@Override
+					public void onClickButton(boolean isYes) {
+						PLMemoEditorView.this.removeTopPopover();
+						if (mReadWriter.deleteCurrentFile()) {
+							MYLogUtil.showToast("削除成功");
+						} else {
+							MYLogUtil.showToast("削除に失敗しました");
+						}
+						displayFileList();
+					}
+				}, null);
+			}
+		}));
 	}
 
 	private int getSelectionNumberOfLines() {
