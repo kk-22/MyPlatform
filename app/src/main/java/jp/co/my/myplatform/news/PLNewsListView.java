@@ -30,13 +30,13 @@ public class PLNewsListView extends FrameLayout {
 	private ListView mListView;
 	private PLNewsListAdapter mAdapter;
 
-	private PLNewsPagerView mPagerView;
+	private PLNewsPagerContent mPagerContent;
 	private PLNewsGroupModel mGroupModel;
 	private PLRSSFetcher mRssFetcher;
 
-	public PLNewsListView(PLNewsPagerView pagerView, PLNewsGroupModel group) {
-		super(pagerView.getContext());
-		mPagerView = pagerView;
+	public PLNewsListView(PLNewsPagerContent pagerContent, PLNewsGroupModel group) {
+		super(pagerContent.getContext());
+		mPagerContent = pagerContent;
 		mGroupModel = group;
 
 		LayoutInflater.from(getContext()).inflate(R.layout.view_news_list, this);
@@ -110,7 +110,7 @@ public class PLNewsListView extends FrameLayout {
 				}
 				PLNavigationController navigation = PLCoreService.getNavigationController();
 
-				PLNewsBrowserView browserView = new PLNewsBrowserView(pageModel);
+				PLNewsBrowserContent browserView = new PLNewsBrowserContent(pageModel);
 				navigation.pushView(browserView);
 
 				// 既読
@@ -168,7 +168,7 @@ public class PLNewsListView extends FrameLayout {
 					}
 					case 1: {
 						Delete.table(PLBadWordModel.class);
-						mPagerView.fetchBadWord();
+						mPagerContent.fetchBadWord();
 						return;
 					}
 					case 2: {

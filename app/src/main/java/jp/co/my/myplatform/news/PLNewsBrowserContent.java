@@ -5,15 +5,15 @@ import android.graphics.Color;
 import android.webkit.WebSettings;
 
 import jp.co.my.common.util.MYLogUtil;
-import jp.co.my.myplatform.browser.PLBaseBrowserView;
+import jp.co.my.myplatform.browser.PLBaseBrowserContent;
 import jp.co.my.myplatform.browser.PLWebView;
 
-public class PLNewsBrowserView extends PLBaseBrowserView {
+public class PLNewsBrowserContent extends PLBaseBrowserContent {
 
 	private PLNewsPageModel mPageModel;
 
 	@SuppressLint("SetJavaScriptEnabled")
-	public PLNewsBrowserView(PLNewsPageModel page) {
+	public PLNewsBrowserContent(PLNewsPageModel page) {
 		super();
 		mPageModel = page;
 

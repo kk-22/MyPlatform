@@ -7,19 +7,19 @@ import android.widget.AdapterView;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.app.PLAppStrategy;
 import jp.co.my.myplatform.app.PLFireEmblemApp;
-import jp.co.my.myplatform.browser.PLHistoryBrowserView;
+import jp.co.my.myplatform.browser.PLHistoryBrowserContent;
 import jp.co.my.myplatform.core.PLApplication;
 import jp.co.my.myplatform.core.PLCoreService;
-import jp.co.my.myplatform.debug.PLDebugView;
-import jp.co.my.myplatform.explorer.PLExplorerView;
-import jp.co.my.myplatform.memo.PLMemoEditorView;
+import jp.co.my.myplatform.debug.PLDebugContent;
+import jp.co.my.myplatform.explorer.PLExplorerContent;
+import jp.co.my.myplatform.memo.PLMemoEditorContent;
 import jp.co.my.myplatform.mysen.PLMSWarContent;
-import jp.co.my.myplatform.news.PLNewsPagerView;
+import jp.co.my.myplatform.news.PLNewsPagerContent;
 import jp.co.my.myplatform.overlay.PLLockView;
 import jp.co.my.myplatform.overlay.PLNavigationController;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
-import jp.co.my.myplatform.twitter.PLTWListView;
+import jp.co.my.myplatform.twitter.PLTWListContent;
 import jp.co.my.myplatform.wikipedia.PLWikipediaViewer;
 
 public class PLHomeContent extends PLContentView {
@@ -73,7 +73,7 @@ public class PLHomeContent extends PLContentView {
 		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLTWListView.class);
+				PLCoreService.getNavigationController().pushView(PLTWListContent.class);
 			}
 		});
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
@@ -93,25 +93,25 @@ public class PLHomeContent extends PLContentView {
 		findViewById(R.id.memo_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLMemoEditorView.class);
+				PLCoreService.getNavigationController().pushView(PLMemoEditorContent.class);
 			}
 		});
 		findViewById(R.id.browser_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLHistoryBrowserView.class);
+				PLCoreService.getNavigationController().pushView(PLHistoryBrowserContent.class);
 			}
 		});
 		findViewById(R.id.explorer_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLExplorerView.class);
+				PLCoreService.getNavigationController().pushView(PLExplorerContent.class);
 			}
 		});
 		findViewById(R.id.news_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLNewsPagerView.class);
+				PLCoreService.getNavigationController().pushView(PLNewsPagerContent.class);
 			}
 		});
 		findViewById(R.id.application_button).setOnClickListener(new View.OnClickListener() {
@@ -170,7 +170,7 @@ public class PLHomeContent extends PLContentView {
 				new PLListPopover.PLListItem("デバッグ", new Runnable() {
 					@Override
 					public void run() {
-						PLCoreService.getNavigationController().pushView(PLDebugView.class);
+						PLCoreService.getNavigationController().pushView(PLDebugContent.class);
 					}
 				})
 		);

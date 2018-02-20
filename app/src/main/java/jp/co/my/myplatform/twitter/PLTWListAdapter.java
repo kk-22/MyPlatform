@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
-import jp.co.my.myplatform.browser.PLBaseBrowserView;
+import jp.co.my.myplatform.browser.PLBaseBrowserContent;
 import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
@@ -36,12 +36,12 @@ import retrofit2.Call;
  */
 public class PLTWListAdapter implements ListAdapter {
 
-	private PLTWListView mListView;
+	private PLTWListContent mListContent;
 	private TweetTimelineListAdapter mTweetAdapter;
 
-	public PLTWListAdapter(PLTWListView listView, TweetTimelineListAdapter tweetAdapter) {
+	public PLTWListAdapter(PLTWListContent listContent, TweetTimelineListAdapter tweetAdapter) {
 		super();
-		mListView = listView;
+		mListContent = listContent;
 		mTweetAdapter = tweetAdapter;
 	}
 
@@ -60,7 +60,7 @@ public class PLTWListAdapter implements ListAdapter {
 					@Override
 					public void success(Result<Tweet> result) {
 						MYLogUtil.showToast("destroy success");
-						mListView.refreshList();
+						mListContent.refreshList();
 					}
 					@Override
 					public void failure(TwitterException exception) {
@@ -105,7 +105,7 @@ public class PLTWListAdapter implements ListAdapter {
 	}
 
 	private void openBrowser(String url) {
-		PLBaseBrowserView browserView = new PLBaseBrowserView();
+		PLBaseBrowserContent browserView = new PLBaseBrowserContent();
 		browserView.getCurrentWebView().loadUrl(url);
 		PLCoreService.getNavigationController().pushView(browserView);
 	}

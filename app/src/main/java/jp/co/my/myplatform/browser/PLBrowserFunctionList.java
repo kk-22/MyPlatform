@@ -28,7 +28,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	}
 
 	private PLWebView mWebView;
-	private PLBaseBrowserView mBrowserView;
+	private PLBaseBrowserContent mBrowserContent;
 	private PLWebPageModel mSavedPageModel;
 
 	private ListView mListView;
@@ -36,10 +36,10 @@ public class PLBrowserFunctionList extends PLPopoverView {
 	private ImageButton mScriptButton;
 	private ImageButton mReloadButton;
 
-	public PLBrowserFunctionList(PLBaseBrowserView browserView) {
+	public PLBrowserFunctionList(PLBaseBrowserContent browserContent) {
 		super(R.layout.popover_browser_function);
-		mBrowserView = browserView;
-		mWebView = browserView.getCurrentWebView();
+		mBrowserContent = browserContent;
+		mWebView = browserContent.getCurrentWebView();
 
 		mSavedPageModel = SQLite.select().from(PLWebPageModel.class)
 				.where(PLWebPageModel_Table.tabNo.eq(PLWebPageModel.TAB_NO_NONE))
@@ -86,7 +86,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 						new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-								mBrowserView.removeTopPopover();
+								mBrowserContent.removeTopPopover();
 								PLCoreService.getNavigationController().hideNavigationIfNeeded();
 								// ブラウザで開く
 								Uri uri = Uri.parse(mWebView.getUrl());
@@ -99,14 +99,14 @@ public class PLBrowserFunctionList extends PLPopoverView {
 					}
 					case LIST_INDEX_CLEAR_HISTORIES: {
 						MYLogUtil.getPreferenceEditor()
-								.remove(PLHistoryBrowserView.KEY_URL_HISTORIES)
-								.remove(PLHistoryBrowserView.KEY_URL_INDEX)
+								.remove(PLHistoryBrowserContent.KEY_URL_HISTORIES)
+								.remove(PLHistoryBrowserContent.KEY_URL_INDEX)
 								.apply();
 						removeFromContentView();
 						break;
 					}
 					case LIST_INDEX_HIDE_BAR: {
-						mBrowserView.hideToolbar();
+						mBrowserContent.hideToolbar();
 						removeFromContentView();
 						break;
 					}

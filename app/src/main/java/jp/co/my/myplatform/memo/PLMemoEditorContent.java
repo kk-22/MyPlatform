@@ -16,13 +16,13 @@ import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.popover.PLTextFieldPopover;
 
-public class PLMemoEditorView extends PLContentView {
+public class PLMemoEditorContent extends PLContentView {
 
 	private PLMemoEditText mEditText;
 	private PLMemoReadWriter mReadWriter;
 	private Button mBackButton, mForwardButton;
 
-	public PLMemoEditorView() {
+	public PLMemoEditorContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
 		mBackButton = findViewById(R.id.back_button);
@@ -132,7 +132,7 @@ public class PLMemoEditorView extends PLContentView {
 		new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				PLMemoEditorView.this.removeTopPopover();
+				PLMemoEditorContent.this.removeTopPopover();
 
 				if (files.length == position) {
 					// 新規ファイル
@@ -176,7 +176,7 @@ public class PLMemoEditorView extends PLContentView {
 				new PLConfirmationPopover("削除する", new PLConfirmationPopover.PLConfirmationListener() {
 					@Override
 					public void onClickButton(boolean isYes) {
-						PLMemoEditorView.this.removeTopPopover();
+						PLMemoEditorContent.this.removeTopPopover();
 						if (mReadWriter.deleteCurrentFile()) {
 							MYLogUtil.showToast("削除成功");
 						} else {

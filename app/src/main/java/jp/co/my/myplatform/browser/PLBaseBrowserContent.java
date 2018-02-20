@@ -25,7 +25,7 @@ import jp.co.my.myplatform.popover.PLActionListPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.view.PLFlickGestureRegistrant;
 
-public class PLBaseBrowserView extends PLContentView implements PLActionListPopover.PLActionListListener<PLWebPageModel> {
+public class PLBaseBrowserContent extends PLContentView implements PLActionListPopover.PLActionListListener<PLWebPageModel> {
 	private final String[] DISABLE_URLS = {"https://drive.google.com/"
 			, "https://docs.google.com/spreadsheets/", "https://docs.google.com/document/"};
 
@@ -34,7 +34,7 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 	private ProgressBar mProgressBar;
 	private LinearLayout mToolbar;
 
-	public PLBaseBrowserView() {
+	public PLBaseBrowserContent() {
 		super();
 
 		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
@@ -239,13 +239,13 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 				for (PLWebPageModel model : pageArray) {
 					titleArray.add(model.getTitle());
 				}
-				new PLActionListPopover<>(titleArray, pageArray, PLBaseBrowserView.this).showPopover(new PLRelativeLayoutController(v));
+				new PLActionListPopover<>(titleArray, pageArray, PLBaseBrowserContent.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.function_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new PLBrowserFunctionList(PLBaseBrowserView.this).showPopover(new PLRelativeLayoutController(v));
+				new PLBrowserFunctionList(PLBaseBrowserContent.this).showPopover(new PLRelativeLayoutController(v));
 			}
 		});
 		findViewById(R.id.show_toolbar_button).setOnClickListener(new OnClickListener() {
@@ -292,7 +292,7 @@ public class PLBaseBrowserView extends PLContentView implements PLActionListPopo
 						object.delete();
 						listPopover.removeObject(object);
 						// アクションPopoverだけ削除してリストは残す
-						PLBaseBrowserView.this.removeTopPopover();
+						PLBaseBrowserContent.this.removeTopPopover();
 						break;
 					}
 				}

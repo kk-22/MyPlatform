@@ -20,7 +20,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.popover.PLListPopover;
 
-public class PLExplorerView extends PLContentView implements PLExplorerRecyclerAdapter.PLOnClickFileListener
+public class PLExplorerContent extends PLContentView implements PLExplorerRecyclerAdapter.PLOnClickFileListener
 		, PLImagePopover.PLOnSetImageListener {
 
 	private static final String KEY_LAST_PATH = "KEY_LAST_PATH";
@@ -31,7 +31,7 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 	private RecyclerView mRecyclerView;
 	private PLExplorerRecyclerAdapter mAdapter;
 
-	public PLExplorerView() {
+	public PLExplorerContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_explorer, this);
 		mPathText = (TextView) findViewById(R.id.path_text);
@@ -81,7 +81,7 @@ public class PLExplorerView extends PLContentView implements PLExplorerRecyclerA
 				} else {
 					MYLogUtil.showErrorToast(file.getName() +"の削除に失敗");
 				}
-				PLExplorerView.this.removeTopPopover();
+				PLExplorerContent.this.removeTopPopover();
 			}
 		}).showPopover();
 	}

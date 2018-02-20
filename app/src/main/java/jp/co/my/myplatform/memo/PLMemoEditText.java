@@ -20,7 +20,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	private int mHistoryIndex;
 	private boolean disableHistory; // true なら履歴の保存をしない
 	private MYArrayList<CharSequence> mTextHistories;
-	private PLMemoEditorView mEditorContent;
+	private PLMemoEditorContent mEditorContent;
 
 	public PLMemoEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -199,7 +199,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 	// setter
 
-	public void setEditorContent(PLMemoEditorView editorContent) {
+	public void setEditorContent(PLMemoEditorContent editorContent) {
 		mEditorContent = editorContent;
 	}
 }

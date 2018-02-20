@@ -37,12 +37,12 @@ import jp.co.my.myplatform.mysen.unit.PLMSSkillModel;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.wikipedia.PLWikipediaPageModel;
 
-public class PLDebugView extends PLContentView {
+public class PLDebugContent extends PLContentView {
 
 	private ListView mListView;
 	private PLDebugListAdapter mAdapter;
 
-	public PLDebugView() {
+	public PLDebugContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_debug, this);
 		mListView = (ListView) findViewById(R.id.debug_list);
@@ -63,7 +63,7 @@ public class PLDebugView extends PLContentView {
 					new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							PLDebugView.this.removeTopPopover();
+							PLDebugContent.this.removeTopPopover();
 							if (position == 0) {
 //								PLCoreService.getNavigationController().pushView(PLAppListView.class);
 //								getContext().deleteDatabase(PLDatabase.NAME + ".db");
@@ -94,7 +94,7 @@ public class PLDebugView extends PLContentView {
 					new PLListPopover(titles, new AdapterView.OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							PLDebugView.this.removeTopPopover();
+							PLDebugContent.this.removeTopPopover();
 							ArrayList<Class> classAray = new ArrayList<>();
 							classAray.add(PLWikipediaPageModel.class);
 							deleteTable(classAray);

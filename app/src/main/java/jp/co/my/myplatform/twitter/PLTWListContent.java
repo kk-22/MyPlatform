@@ -26,14 +26,14 @@ import jp.co.my.myplatform.view.PLFlickGestureRegistrant;
 import jp.co.my.myplatform.view.PLSavePositionListView;
 import retrofit2.Call;
 
-public class PLTWListView extends PLContentView {
+public class PLTWListContent extends PLContentView {
 
 	private PLSavePositionListView mListView;
 	private TwitterListTimeline mTimeline;
 	private PLTWListAdapter mAdapter;
 	private PLFlickGestureRegistrant mFlickRegistrant;
 
-	public PLTWListView() {
+	public PLTWListContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_tweet_list, this);
 		mListView = (PLSavePositionListView) findViewById(R.id.tweet_list);
@@ -56,7 +56,7 @@ public class PLTWListView extends PLContentView {
 						.setTimeline(mTimeline)
 						.setViewStyle(R.style.tw__TweetDarkWithActionsStyle)
 						.build();
-				mAdapter = new PLTWListAdapter(PLTWListView.this, tweetAdapter);
+				mAdapter = new PLTWListAdapter(PLTWListContent.this, tweetAdapter);
 				mListView.setAdapter(mAdapter);
 			}
 			@Override

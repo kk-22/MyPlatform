@@ -22,13 +22,13 @@ import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.database.PLDatabase;
 import jp.co.my.myplatform.database.PLModelContainer;
 
-public class PLNewsPagerView extends PLContentView {
+public class PLNewsPagerContent extends PLContentView {
 
 	private Handler mHandler;
 	private List<PLNewsGroupModel> mNewsGroupArray;
 	private PLSiteFetcher mSiteFetcher;
 
-	public PLNewsPagerView() {
+	public PLNewsPagerContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_news_pager, this);
 		mNewsGroupArray = new ArrayList<>();
@@ -156,7 +156,7 @@ public class PLNewsPagerView extends PLContentView {
 
 		@Override
 		public Object instantiateItem(ViewGroup collection, int position) {
-			PLNewsListView listView = new PLNewsListView(PLNewsPagerView.this, mNewsGroupArray.get(position));
+			PLNewsListView listView = new PLNewsListView(PLNewsPagerContent.this, mNewsGroupArray.get(position));
 			collection.addView(listView);
 			return listView;
 		}

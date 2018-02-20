@@ -5,7 +5,7 @@ import android.webkit.WebBackForwardList;
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 
-public class PLHistoryBrowserView extends PLBaseBrowserView {
+public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 
 	public static final String KEY_URL_HISTORIES = "KEY_URL_HISTORIES";
 	public static final String KEY_URL_INDEX = "KEY_URL_INDEX";
@@ -15,7 +15,7 @@ public class PLHistoryBrowserView extends PLBaseBrowserView {
 	private String mLoadingUrl; // onPageStartedの引数のURL
 	private boolean mIsLoading; // リダイレクト判定用
 
-	public PLHistoryBrowserView() {
+	public PLHistoryBrowserContent() {
 		super();
 		mUrlHistories = MYLogUtil.loadArrayList(KEY_URL_HISTORIES);
 		if (mUrlHistories == null) {
