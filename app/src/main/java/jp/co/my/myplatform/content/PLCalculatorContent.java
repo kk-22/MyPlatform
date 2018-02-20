@@ -20,13 +20,14 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 	public PLCalculatorContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator, this);
-		mCacheText = (TextView)findViewById(R.id.cache_text);
-		mEntryText = (TextView)findViewById(R.id.entry_text);
-		mTotalText = (TextView)findViewById(R.id.total_text);
+		mCacheText = findViewById(R.id.cache_text);
+		mEntryText = findViewById(R.id.entry_text);
+		mTotalText = findViewById(R.id.total_text);
 
-		String initialString = MYLogUtil.getPreference().getString(KEY_LAST_INPUT_STRING, "0");
-		mInputString = new StringBuilder(initialString);
-		updateAllText();
+		String cacheText = MYLogUtil.getPreference().getString(KEY_LAST_INPUT_STRING, "");
+		mCacheText.setText(new StringBuilder(cacheText));
+
+		mInputString = new StringBuilder("0");
 
 		findViewById(R.id.clear_all_button).setOnClickListener(this);
 		findViewById(R.id.clear_entry_button).setOnClickListener(this);
@@ -118,7 +119,6 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		}
 		mInputString.append(value);
 		updateAllText();
-		MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, new String(mInputString)).apply();
 	}
 
 	private void clearAll() {
@@ -173,6 +173,9 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 			totalString = String.valueOf(totalValue);
 		}
 		mTotalText.setText(totalString);
+
+		String saveText = mEntryText.getText() + "=" +mTotalText.getText();
+		MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, saveText).apply();
 	}
 
 	private void deleteInputString(boolean isOneChar) {
