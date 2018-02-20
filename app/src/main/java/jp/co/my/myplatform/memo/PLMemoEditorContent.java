@@ -149,6 +149,7 @@ public class PLMemoEditorContent extends PLContentView {
 				} else {
 					mReadWriter.loadFromFile(name);
 					mReadWriter.loadedMemo(name, true);
+					mEditText.clearHistory();
 				}
 			}
 		}).showPopover();

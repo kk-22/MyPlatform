@@ -29,6 +29,12 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		addTextChangedListener(this);
 	}
 
+	void clearHistory() {
+		mHistoryIndex = NO_HISTORY_INDEX;
+		mTextHistories.clear();
+		mEditorContent.updateButtons();
+	}
+
 	boolean hasBackText() {
 		return (0 < mHistoryIndex);
 	}
