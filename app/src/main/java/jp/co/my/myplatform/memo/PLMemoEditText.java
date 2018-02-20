@@ -20,6 +20,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	private int mHistoryIndex;
 	private boolean disableHistory; // true なら履歴の保存をしない
 	private MYArrayList<CharSequence> mTextHistories;
+	private PLMemoEditorView mEditorContent;
 
 	public PLMemoEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -28,18 +29,24 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		addTextChangedListener(this);
 	}
 
+	boolean hasBackText() {
+		return (0 < mHistoryIndex);
+	}
+
+	boolean hasForwardText() {
+		return (mHistoryIndex + 1 < mTextHistories.size());
+	}
+
 	void goBack() {
-		if (mHistoryIndex <= 0) {
-			return;
+		if (hasBackText()) {
+			loadHistory(true);
 		}
-		loadHistory(true);
 	}
 
 	void goForward() {
-		if (mTextHistories.size() <= mHistoryIndex + 1) {
-			return;
+		if (hasForwardText()) {
+			loadHistory(false);
 		}
-		loadHistory(false);
 	}
 
 	void deleteSelectionLine() {
@@ -54,6 +61,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		Editable text = getText();
 		text.delete(startIndex, endIndex);
 		setSelection(startIndex);
+		saveHistory();
 	}
 
 	void moveSelectionLine(boolean toDown) {
@@ -163,17 +171,18 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		}
 		if (!unfixed) {
 			// 半角数字の入力か、文字を確定したケース
-			didEnter();
+			saveHistory();
 		}
 	}
 
-	private void didEnter() {
+	private void saveHistory() {
 		if (disableHistory) {
 			return;
 		}
 		mHistoryIndex++;
 		mTextHistories.removeToLastFromIndex(mHistoryIndex);
 		mTextHistories.add(getText().toString());
+		mEditorContent.updateButtons();
 	}
 
 	private void loadHistory(boolean isBack) {
@@ -185,5 +194,12 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		disableHistory = true;
 		setText(mTextHistories.get(mHistoryIndex));
 		disableHistory = false;
+		mEditorContent.updateButtons();
+	}
+
+	// setter
+
+	public void setEditorContent(PLMemoEditorView editorContent) {
+		mEditorContent = editorContent;
 	}
 }

@@ -4,6 +4,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,11 +20,15 @@ public class PLMemoEditorView extends PLContentView {
 
 	private PLMemoEditText mEditText;
 	private PLMemoReadWriter mReadWriter;
+	private Button mBackButton, mForwardButton;
 
 	public PLMemoEditorView() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
+		mBackButton = findViewById(R.id.back_button);
+		mForwardButton = findViewById(R.id.forward_button);
 		mEditText = findViewById(R.id.memo_edit);
+		mEditText.setEditorContent(this);
 
 		mReadWriter = new PLMemoReadWriter(mEditText);
 		initEditTextEvent();
@@ -36,6 +41,11 @@ public class PLMemoEditorView extends PLContentView {
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
 		mReadWriter.saveToFile();
+	}
+
+	void updateButtons() {
+		mBackButton.setEnabled(mEditText.hasBackText());
+		mForwardButton.setEnabled(mEditText.hasForwardText());
 	}
 
 	private void initEditTextEvent() {
@@ -63,13 +73,13 @@ public class PLMemoEditorView extends PLContentView {
 				MYLogUtil.showToast("Save to file");
 			}
 		});
-		findViewById(R.id.back_button).setOnClickListener(new OnClickListener() {
+		mBackButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mEditText.goBack();
 			}
 		});
-		findViewById(R.id.forward_button).setOnClickListener(new OnClickListener() {
+		mForwardButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mEditText.goForward();
