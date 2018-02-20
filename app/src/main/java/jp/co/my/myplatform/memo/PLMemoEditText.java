@@ -19,7 +19,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	private int mInputStartLength; // 入力開始時の文字数
 	private int mHistoryIndex;
 	private boolean disableHistory; // true なら履歴の保存をしない
-	private MYArrayList<CharSequence> mTextHistories;
+	private MYArrayList<String> mTextHistories;
 	private PLMemoEditorContent mEditorContent;
 
 	public PLMemoEditText(Context context, AttributeSet attrs) {
@@ -162,6 +162,9 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 	@Override
 	public void afterTextChanged(Editable s) {
+		if (s.toString().equals(currentHistoryText())) {
+			return;
+		}
 		if (s.toString().length() < mInputStartLength) {
 			return;
 		}
@@ -201,6 +204,13 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		setText(mTextHistories.get(mHistoryIndex));
 		disableHistory = false;
 		mEditorContent.updateButtons();
+	}
+
+	private String currentHistoryText() {
+		if (mHistoryIndex == NO_HISTORY_INDEX) {
+			return null;
+		}
+		return mTextHistories.get(mHistoryIndex);
 	}
 
 	// setter
