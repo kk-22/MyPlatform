@@ -147,9 +147,9 @@ public class PLMemoEditorContent extends PLContentView {
 				if (name.equals(mReadWriter.getCurrentName())) {
 					MYLogUtil.showToast("既に開いています");
 				} else {
+					mEditText.clearHistory();
 					mReadWriter.loadFromFile(name);
 					mReadWriter.loadedMemo(name, true);
-					mEditText.clearHistory();
 				}
 			}
 		}).showPopover();

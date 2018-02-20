@@ -30,6 +30,8 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	void clearHistory() {
+		// 次の新しいメモ読み込み時に mTextHistories に保存されるように空文字をセット
+		setText("");
 		mHistoryIndex = NO_HISTORY_INDEX;
 		mTextHistories.clear();
 		mEditorContent.updateButtons();
@@ -195,15 +197,33 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	private void loadHistory(boolean isBack) {
+		String prevText = getText().toString();
+		String lastSaveText = currentHistoryText();
+		if (!prevText.equals(lastSaveText)) {
+			// 差分があるため現在のメモを履歴へ保存
+			saveHistory();
+			mHistoryIndex--;
+		}
+
 		if (isBack) {
 			mHistoryIndex--;
 		} else {
 			mHistoryIndex++;
 		}
 		disableHistory = true;
-		setText(mTextHistories.get(mHistoryIndex));
+		String nextText = currentHistoryText();
+		setText(nextText);
 		disableHistory = false;
 		mEditorContent.updateButtons();
+
+		// 差分の位置へカーソルを移動
+		int length = Math.min(prevText.length(), nextText.length());
+		for (int i = 0; i < length; i++) {
+			if (prevText.charAt(i) != nextText.charAt(i)) {
+				setSelection(i);
+				break;
+			}
+		}
 	}
 
 	private String currentHistoryText() {
