@@ -3,8 +3,8 @@ package jp.co.my.myplatform.overlay;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.view.DragEvent;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -12,53 +12,55 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.core.PLCoreService;
 
-public class PLDragDropView extends PLOverlayView {
+public class PLPointSelectView extends PLOverlayView {
 	public static final String KEY_HORIZONTAL_MARGIN = "KEY_HORIZONTAL_MARGIN";
 	public static final String KEY_VERTICAL_MARGIN = "KEY_VERTICAL_MARGIN";
 
 	PLOverlayView mMoveView;
 
-	public PLDragDropView(PLOverlayView view) {
+	public PLPointSelectView(PLOverlayView view) {
 		super();
 		mMoveView = view;
-
 		setLayoutParams(createMatchParams());
 		setBackgroundColor(Color.parseColor("#334444FF"));
-		setOnDragListener(new OnDragListener() {
+
+		setOnTouchListener(new OnTouchListener() {
 			@Override
-			public boolean onDrag(View v, DragEvent event) {
-				switch (event.getAction())	{
-					case DragEvent.ACTION_DRAG_STARTED:
-					case DragEvent.ACTION_DRAG_ENTERED:
-					case DragEvent.ACTION_DRAG_LOCATION:
-					case DragEvent.ACTION_DRAG_EXITED:
-						return true;
-					case DragEvent.ACTION_DROP: {
-						finishDragEvent(event);
-						return true;
-					}
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						break;
+					case MotionEvent.ACTION_UP:
+						performClick();
+						didClick(event);
+						break;
 					default:
 						break;
 				}
 				return false;
 			}
 		});
-		setOnClickListener(new OnClickListener() {
+		setOnLongClickListener(new OnLongClickListener() {
 			@Override
-			public void onClick(View v) {
-				// ドラッグ失敗時の解除用
+			public boolean onLongClick(View v) {
+				// キャンセル用
 				PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
-				overlayManager.removeOverlayView(PLDragDropView.this);
+				overlayManager.removeOverlayView(PLPointSelectView.this);
+				return true;
 			}
 		});
 	}
 
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
-		return getBaseParamsForFullView();
+		// 座標にずれが発生しないように座標選択対象のオーバーレイと同じparamsを返す
+		WindowManager.LayoutParams params = getBaseParamsForButtonView();
+		params.width = WindowManager.LayoutParams.MATCH_PARENT;
+		params.height = WindowManager.LayoutParams.MATCH_PARENT;
+		return params;
 	}
 
-	private void finishDragEvent(DragEvent event) {
+	private void didClick(MotionEvent event) {
 		float positionX = event.getX() - mMoveView.getWidth() / 2;
 		float positionY = event.getY() - mMoveView.getHeight() / 2;
 		Point screenSize = MYViewUtil.getDisplaySize(getContext());

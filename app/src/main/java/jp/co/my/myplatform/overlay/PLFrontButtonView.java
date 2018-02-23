@@ -1,6 +1,5 @@
 package jp.co.my.myplatform.overlay;
 
-import android.content.ClipData;
 import android.content.SharedPreferences;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,14 +34,9 @@ public class PLFrontButtonView extends PLOverlayView {
 		mButton.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				// ドラッグ&ドロップで受け渡しするデータ(使わないのでダミー)
-				ClipData tmpData = ClipData.newPlainText("dummy", "dummy");
-				View.DragShadowBuilder shadow = new View.DragShadowBuilder(v);
-				v.startDrag(tmpData, shadow, v, 0);
-
 				PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
-				if (overlayManager.getOverlayView(PLDragDropView.class) == null) {
-					overlayManager.addOverlayView(new PLDragDropView(PLFrontButtonView.this));
+				if (overlayManager.getOverlayView(PLPointSelectView.class) == null) {
+					overlayManager.addOverlayView(new PLPointSelectView(PLFrontButtonView.this));
 				}
 				return true;
 			}
@@ -52,8 +46,8 @@ public class PLFrontButtonView extends PLOverlayView {
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
 		SharedPreferences pref = MYLogUtil.getPreference();
-		Float horizontal = pref.getFloat(PLDragDropView.KEY_HORIZONTAL_MARGIN, 0);
-		Float vertical = pref.getFloat(PLDragDropView.KEY_VERTICAL_MARGIN, 0);
+		Float horizontal = pref.getFloat(PLPointSelectView.KEY_HORIZONTAL_MARGIN, 0);
+		Float vertical = pref.getFloat(PLPointSelectView.KEY_VERTICAL_MARGIN, 0);
 
 		WindowManager.LayoutParams params = getBaseParamsForButtonView();
 		params.gravity = Gravity.TOP | Gravity.LEFT;
