@@ -29,6 +29,12 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		addTextChangedListener(this);
 	}
 
+	// 外のクラスからsetOnTouchListenerを呼ぶのに必要
+	@Override
+	public boolean performClick() {
+		return super.performClick();
+	}
+
 	void clearHistory() {
 		// 次の新しいメモ読み込み時に mTextHistories に保存されるように空文字をセット
 		setText("");

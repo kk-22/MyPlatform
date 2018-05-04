@@ -1,10 +1,13 @@
 package jp.co.my.myplatform.memo;
 
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ScrollView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,12 +24,14 @@ public class PLMemoEditorContent extends PLContentView {
 	private PLMemoEditText mEditText;
 	private PLMemoReadWriter mReadWriter;
 	private Button mBackButton, mForwardButton;
+	private ScrollView mScrollView;
 
 	public PLMemoEditorContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
 		mBackButton = findViewById(R.id.back_button);
 		mForwardButton = findViewById(R.id.forward_button);
+		mScrollView = findViewById(R.id.scroll_view);
 		mEditText = findViewById(R.id.memo_edit);
 		mEditText.setEditorContent(this);
 
@@ -57,6 +62,16 @@ public class PLMemoEditorContent extends PLContentView {
 					return onBackKey();
 				} else if (keyCode != KeyEvent.KEYCODE_ENTER || event.getAction() != KeyEvent.ACTION_DOWN) {
 					return false;
+				}
+				return false;
+			}
+		});
+		mEditText.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					v.performClick(); // onTouchメソッドの必須処理
+					scrollIfNeeded(event);
 				}
 				return false;
 			}
@@ -188,5 +203,34 @@ public class PLMemoEditorContent extends PLContentView {
 				}, null);
 			}
 		}));
+	}
+
+	// カーソル位置がキーボードにより隠れる場合、スクロールする
+	private void scrollIfNeeded(MotionEvent event) {
+		int scrollY = mScrollView.getScrollY();
+		float tapRelativeY = event.getY() - scrollY;
+		int scrollHeight = mScrollView.getHeight();
+		int showingHeight = (int)(scrollHeight * 0.7); // キーボード表示中のScrollViewの可視範囲
+		if (tapRelativeY < showingHeight) {
+			// キーボードに隠れない位置
+			return;
+		}
+		// カーソル位置がキーボードにより隠れる場合、スクロールする
+		final int nextScrollY = scrollY +  (scrollHeight - showingHeight);
+		int lackHeight = (nextScrollY + scrollHeight) - mEditText.getHeight();
+		if (lackHeight > 0) {
+			// 末尾の行をタップした場合は、スクロールできるように改行追加
+			int lineHeight = mEditText.getLineHeight();
+			for (; 0 < lackHeight ; lackHeight -= lineHeight) {
+				mEditText.append("\n");
+			}
+		}
+		// 改行追加時に高さ自動計算後にscrollToを実行する必要があるためディレイ
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mScrollView.scrollTo(mScrollView.getScrollX(), nextScrollY);
+			}
+		}, 1);
 	}
 }

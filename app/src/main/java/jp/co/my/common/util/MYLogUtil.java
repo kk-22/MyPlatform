@@ -82,6 +82,11 @@ public class MYLogUtil {
 		writeLogFile(text);
 	}
 
+	// デバッグ用
+	public static void dummyLine() {
+		outputLog("dummy line");
+	}
+
 	/*
 	ログファイル操作
 	 */
