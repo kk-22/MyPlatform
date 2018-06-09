@@ -251,6 +251,7 @@ public class PLNavigationController extends PLOverlayView {
 		mContentFrameLayout.addView(view, createMatchParams());
 		mCurrentView = view;
 
+		mNavigationButton.setVisibility(view.getNavigationButtonVisibility());
 		putNavigationBar(view.getNavigationBar());
 	}
 

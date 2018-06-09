@@ -118,6 +118,10 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		}
 	}
 
+	public int getNavigationButtonVisibility() {
+		return VISIBLE;
+	}
+
 	protected ArrayList<PLPopoverView> getPopoverViews() {
 		return mPopoverViews;
 	}
