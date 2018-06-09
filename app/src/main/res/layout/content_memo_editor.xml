@@ -8,6 +8,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <LinearLayout
+            android:background="#FFFF99"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+            <Button
+                android:id="@+id/close_button"
+                android:text="×"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/delete_line_button"
+                android:text="行削除"
+                android:textSize="8sp"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/line_up_button"
+                android:text="行上げ"
+                android:textSize="8sp"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/line_down_button"
+                android:text="行下げ"
+                android:textSize="8sp"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/back_button"
+                android:text="←"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/forward_button"
+                android:text="→"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
         <ScrollView
             android:id="@+id/scroll_view"
             android:fillViewport="true"
@@ -26,76 +72,36 @@
         </ScrollView>
 
         <LinearLayout
-            android:id="@+id/button_linear"
             android:background="#FFFF99"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="50dp">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-                <Button
-                    android:id="@+id/list_button"
-                    android:text="一覧"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/list_button"
+                android:text="一覧"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
 
-                <Button
-                    android:id="@+id/back_button"
-                    android:text="←"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/file_button"
+                android:text="FILE"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
 
-                <Button
-                    android:id="@+id/forward_button"
-                    android:text="→"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-                <Button
-                    android:id="@+id/line_up_button"
-                    android:text="行を上へ"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+            <Button
+                android:id="@+id/save_button"
+                android:text="save"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-                <Button
-                    android:id="@+id/file_button"
-                    android:text="FILE"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-
-                <Button
-                    android:id="@+id/save_button"
-                    android:text="save"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-
-                <Button
-                    android:id="@+id/delete_line_button"
-                    android:text="行削除"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-
-                <Button
-                    android:id="@+id/line_down_button"
-                    android:text="行を下へ"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+            <Space
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

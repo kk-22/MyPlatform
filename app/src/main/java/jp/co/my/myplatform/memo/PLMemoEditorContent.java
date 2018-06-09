@@ -1,10 +1,12 @@
 package jp.co.my.myplatform.memo;
 
+import android.content.Context;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
+import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.popover.PLTextFieldPopover;
@@ -23,12 +26,13 @@ public class PLMemoEditorContent extends PLContentView {
 
 	private PLMemoEditText mEditText;
 	private PLMemoReadWriter mReadWriter;
-	private Button mBackButton, mForwardButton;
+	private Button mBackButton, mForwardButton, mCloseButton;
 	private ScrollView mScrollView;
 
 	public PLMemoEditorContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_memo_editor, this);
+		mCloseButton = findViewById(R.id.close_button);
 		mBackButton = findViewById(R.id.back_button);
 		mForwardButton = findViewById(R.id.forward_button);
 		mScrollView = findViewById(R.id.scroll_view);
@@ -79,13 +83,13 @@ public class PLMemoEditorContent extends PLContentView {
 	}
 
 	private void initButtonEvent() {
-		// 1行目
-		findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
+		// 上段1行目
+		mCloseButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO:入力事に保存でsaveボタン不要にできる
-				mReadWriter.saveToFile();
-				MYLogUtil.showToast("Save to file");
+				InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+				inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+				PLCoreService.getNavigationController().popView();
 			}
 		});
 		mBackButton.setOnClickListener(new OnClickListener() {
@@ -100,26 +104,18 @@ public class PLMemoEditorContent extends PLContentView {
 				mEditText.goForward();
 			}
 		});
-		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// 現在のファイル保存
-				mReadWriter.saveToFile();
-				displayFileList();
-			}
-		});
-
-		// 2行目
-		findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				displayFileOperationPopup();
-			}
-		});
 		findViewById(R.id.line_up_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mEditText.moveSelectionLine(false);
+			}
+		});
+
+		// 上段2行目
+		findViewById(R.id.delete_line_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mEditText.deleteSelectionLine();
 			}
 		});
 		findViewById(R.id.line_down_button).setOnClickListener(new OnClickListener() {
@@ -128,10 +124,28 @@ public class PLMemoEditorContent extends PLContentView {
 				mEditText.moveSelectionLine(true);
 			}
 		});
-		findViewById(R.id.delete_line_button).setOnClickListener(new OnClickListener() {
+
+		// 下段
+		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mEditText.deleteSelectionLine();
+				// 現在のファイル保存
+				mReadWriter.saveToFile();
+				displayFileList();
+			}
+		});
+		findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				displayFileOperationPopup();
+			}
+		});
+		findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO:入力事に保存でsaveボタン不要にできる
+				mReadWriter.saveToFile();
+				MYLogUtil.showToast("Save to file");
 			}
 		});
 	}
