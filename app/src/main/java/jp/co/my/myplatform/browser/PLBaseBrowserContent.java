@@ -76,6 +76,11 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 	}
 
 	@Override
+	public int getNavigationButtonVisibility() {
+		return VISIBLE;
+	}
+
+	@Override
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
 		if (mCurrentWebView != null) {

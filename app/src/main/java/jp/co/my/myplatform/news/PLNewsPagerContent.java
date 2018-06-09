@@ -39,6 +39,11 @@ public class PLNewsPagerContent extends PLContentView {
 	}
 
 	@Override
+	public int getNavigationButtonVisibility() {
+		return VISIBLE;
+	}
+
+	@Override
 	public void viewWillDisappear() {
 		super.viewWillDisappear();
 		mSiteFetcher.cancelAllRequest();

@@ -52,11 +52,6 @@ public class PLMemoEditorContent extends PLContentView {
 		mReadWriter.saveToFile();
 	}
 
-	@Override
-	public int getNavigationButtonVisibility() {
-		return GONE;
-	}
-
 	void updateButtons() {
 		mBackButton.setEnabled(mEditText.hasBackText());
 		mForwardButton.setEnabled(mEditText.hasForwardText());
