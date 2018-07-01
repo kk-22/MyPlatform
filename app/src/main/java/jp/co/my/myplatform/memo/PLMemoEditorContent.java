@@ -83,7 +83,7 @@ public class PLMemoEditorContent extends PLContentView {
 	}
 
 	private void initButtonEvent() {
-		// 上段1行目
+		// 上段
 		mCloseButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -110,8 +110,6 @@ public class PLMemoEditorContent extends PLContentView {
 				mEditText.moveSelectionLine(false);
 			}
 		});
-
-		// 上段2行目
 		findViewById(R.id.delete_line_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -122,6 +120,12 @@ public class PLMemoEditorContent extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				mEditText.moveSelectionLine(true);
+			}
+		});
+		findViewById(R.id.hide_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
 		});
 

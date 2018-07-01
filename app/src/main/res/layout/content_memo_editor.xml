@@ -12,7 +12,7 @@
             android:background="#FFFF99"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="wrap_content">
             <Button
                 android:id="@+id/close_button"
                 android:text="×"
@@ -50,6 +50,24 @@
                 android:id="@+id/forward_button"
                 android:text="→"
                 android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:background="#FFFF99"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/hide_button"
+                android:text="非表示"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <Space
+                android:layout_weight="24"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
