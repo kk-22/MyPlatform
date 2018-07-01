@@ -50,6 +50,15 @@ public class PLOverlayManager {
 		}
 	}
 
+	public void clearFocus(PLOverlayView willRemoveView) {
+		// フロントアプリにフォーカスを渡すために外す
+		WindowManager.LayoutParams params = (WindowManager.LayoutParams) willRemoveView.getLayoutParams();
+		params.height = 0;
+		params.width = 0;
+		params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+		updateOverlayLayout(willRemoveView, params);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends PLOverlayView> T getOverlayView(Class<T> clazz) {
 		for (PLOverlayView view : mOverlayViews) {

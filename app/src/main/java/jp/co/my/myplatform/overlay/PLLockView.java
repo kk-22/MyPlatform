@@ -38,6 +38,8 @@ public class PLLockView extends PLOverlayView {
 
 	@Override
 	public void viewWillRemove() {
+		PLCoreService.getOverlayManager().clearFocus(this);
+
 		// 画面ロック時に変えた設定を元に戻す
 		PLDeviceSetting.revertScreenBrightness();
 		if (mWakeLockReleaseHandler != null) {
