@@ -28,14 +28,14 @@
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/line_up_button"
-                android:text="行上げ"
+                android:text="行↑"
                 android:textSize="8sp"
                 android:layout_weight="4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/line_down_button"
-                android:text="行下げ"
+                android:text="行↓"
                 android:textSize="8sp"
                 android:layout_weight="4"
                 android:layout_width="0dp"
