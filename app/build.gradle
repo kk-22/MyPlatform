@@ -16,7 +16,7 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
@@ -39,25 +39,25 @@ android {
 
 def dbflow_version = "3.1.1"
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:percent:26.1.0'
-    compile 'com.android.support:support-v4:26.1.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:percent:26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
 
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+    implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
 
-    compile "com.android.support:recyclerview-v7:26.1.0"
-    compile('com.twitter.sdk.android:twitter:2.3.1@aar') {
+    implementation "com.android.support:recyclerview-v7:26.1.0"
+    implementation('com.twitter.sdk.android:twitter:2.3.1@aar') {
         transitive = true;
     }
 
-    compile 'com.google.firebase:firebase-core:11.8.0'
-    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.1.0'
 
-    compile 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.2'
 }
 
 // ADD THIS AT THE BOTTOM
