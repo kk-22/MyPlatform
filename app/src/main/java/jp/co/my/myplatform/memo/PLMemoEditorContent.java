@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.io.File;
@@ -104,7 +105,6 @@ public class PLMemoEditorContent extends PLContentView {
 	}
 
 	private void initButtonEvent() {
-		// 上段
 		mCloseButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -150,8 +150,10 @@ public class PLMemoEditorContent extends PLContentView {
 			}
 		});
 
-		// 下段
-		findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
+		LinearLayout naviBar = new LinearLayout(getContext());
+		LayoutInflater.from(getContext()).inflate(R.layout.navivar_memo_editor, naviBar);
+		setNavigationBar(naviBar);
+		naviBar.findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// 現在のファイル保存
@@ -159,18 +161,16 @@ public class PLMemoEditorContent extends PLContentView {
 				displayFileList();
 			}
 		});
-		findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
+		naviBar.findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				displayFileOperationPopup();
 			}
 		});
-		findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
+		naviBar.findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO:入力事に保存でsaveボタン不要にできる
 				mReadWriter.saveToFile();
-				MYLogUtil.showToast("Save to file");
 			}
 		});
 	}

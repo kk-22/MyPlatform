@@ -122,7 +122,7 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		return GONE;
 	}
 
-	protected ArrayList<PLPopoverView> getPopoverViews() {
+	public ArrayList<PLPopoverView> getPopoverViews() {
 		return mPopoverViews;
 	}
 }
