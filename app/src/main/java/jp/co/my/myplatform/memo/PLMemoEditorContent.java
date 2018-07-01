@@ -28,6 +28,7 @@ public class PLMemoEditorContent extends PLContentView {
 	private PLMemoReadWriter mReadWriter;
 	private Button mBackButton, mForwardButton, mCloseButton;
 	private ScrollView mScrollView;
+	private int mPrevScrollY;
 
 	public PLMemoEditorContent() {
 		super();
@@ -44,6 +45,26 @@ public class PLMemoEditorContent extends PLContentView {
 		initButtonEvent();
 
 		mReadWriter.loadFirstMemo();
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+
+		// ナビゲーション再表示後のスクロール位置変更を元に戻す
+		(new Handler()).postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mScrollView.setScrollY(mPrevScrollY);
+			}
+		}, 100);
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		mReadWriter.saveToFile();
+		mPrevScrollY = mScrollView.getScrollY();
 	}
 
 	@Override
