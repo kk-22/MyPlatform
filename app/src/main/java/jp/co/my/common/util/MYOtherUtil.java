@@ -18,6 +18,7 @@ public class MYOtherUtil {
 	}
 
 	// 型チェックとキャスト
+	// equals メソッド内ではワーニングを抑えるために、このメソッドを使わずに getClass() でクラス判定すること
 	@SuppressWarnings("unchecked") // instanceof 比較ができないことで発生する型未チェック警告を抑制
 	public static <T> T castObject(Object object, Class<T> klass) {
 		if (object != null && (object.getClass() == klass)) {

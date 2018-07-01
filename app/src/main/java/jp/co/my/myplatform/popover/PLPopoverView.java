@@ -41,6 +41,13 @@ public class PLPopoverView extends FrameLayout {
 	}
 
 	public void showPopover(PLAbstractLayoutController layout, PLContentView contentView) {
+		for (PLPopoverView popoverView : contentView.getPopoverViews()) {
+			if (popoverView.equals(this)) {
+				// 既に表示中
+				return;
+			}
+		}
+
 		mLayout = layout;
 		setSubViewPosition();
 		contentView.addPopover(this);

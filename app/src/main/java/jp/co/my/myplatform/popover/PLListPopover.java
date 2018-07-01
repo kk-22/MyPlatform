@@ -5,11 +5,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.Arrays;
+
 import jp.co.my.myplatform.R;
 
 public class PLListPopover extends PLPopoverView {
 
 	private ListView mListView;
+	private PLListItem[] mItems;
+	private String[] mTitles;
 
 	// Deprecated. Use showItems method,
 	public PLListPopover(String[] titles,
@@ -25,6 +29,8 @@ public class PLListPopover extends PLPopoverView {
 
 	public static void showItems(final PLListItem... listItems) {
 		final PLListPopover popover = new PLListPopover();
+		popover.mItems = listItems;
+
 		int numberOfItems = listItems.length;
 		String[] titles = new String[numberOfItems];
 		for (int i = 0; i < numberOfItems; i++) {
@@ -44,12 +50,22 @@ public class PLListPopover extends PLPopoverView {
 		popover.showPopover();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		PLListPopover popover = (PLListPopover) obj;
+		return Arrays.equals(mItems, popover.mItems) || Arrays.equals(mTitles, popover.mTitles);
+	}
+
 	private void createList(String[] titles) {
+		mTitles = titles;
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_simple_title,
 				titles);
 
-		mListView = (ListView) findViewById(R.id.title_list);
+		mListView = findViewById(R.id.title_list);
 		mListView.setAdapter(adapter);
 	}
 
