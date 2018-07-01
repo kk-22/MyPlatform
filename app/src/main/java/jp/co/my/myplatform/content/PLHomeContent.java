@@ -79,9 +79,7 @@ public class PLHomeContent extends PLContentView {
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().hideNavigationIfNeeded();
-				PLLockView lockView = new PLLockView();
-				PLCoreService.getOverlayManager().addOverlayView(lockView);
+				showLockList();
 			}
 		});
 		findViewById(R.id.games_button).setOnClickListener(new View.OnClickListener() {
@@ -174,6 +172,54 @@ public class PLHomeContent extends PLContentView {
 					}
 				})
 		);
+	}
+
+	private void showLockList() {
+		PLListPopover.showItems(
+				new PLListPopover.PLListItem("Wakelockなし", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(-1);
+					}
+				}),
+				new PLListPopover.PLListItem("3分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(3);
+					}
+				}),
+				new PLListPopover.PLListItem("5分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(5);
+					}
+				}),
+				new PLListPopover.PLListItem("7分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(7);
+					}
+				}),
+				new PLListPopover.PLListItem("10分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(10);
+					}
+				}),
+				new PLListPopover.PLListItem("15分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(15);
+					}
+				})
+		);
+	}
+
+	private void displayLockView(int keepScreenMin) {
+		PLCoreService.getNavigationController().hideNavigationIfNeeded();
+		PLLockView lockView = new PLLockView();
+		lockView.keepScreenWithLock(keepScreenMin);
+		PLCoreService.getOverlayManager().addOverlayView(lockView);
 	}
 
 	private void stopService() {
