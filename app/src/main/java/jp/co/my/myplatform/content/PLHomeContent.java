@@ -85,7 +85,7 @@ public class PLHomeContent extends PLContentView {
 		findViewById(R.id.games_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				showGameList();
 			}
 		});
 		findViewById(R.id.memo_button).setOnClickListener(new View.OnClickListener() {
@@ -159,16 +159,21 @@ public class PLHomeContent extends PLContentView {
 						PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
 					}
 				}),
-				new PLListPopover.PLListItem("MySen", new Runnable() {
-					@Override
-					public void run() {
-						PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
-					}
-				}),
 				new PLListPopover.PLListItem("デバッグ", new Runnable() {
 					@Override
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLDebugContent.class);
+					}
+				})
+		);
+	}
+
+	private void showGameList() {
+		PLListPopover.showItems(
+				new PLListPopover.PLListItem("MySen", new Runnable() {
+					@Override
+					public void run() {
+						PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
 					}
 				})
 		);
