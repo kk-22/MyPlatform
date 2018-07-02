@@ -52,12 +52,12 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				R.layout.cell_simple_title,
 				titles);
 
-		mListView = (ListView) findViewById(R.id.function_list);
+		mListView = findViewById(R.id.function_list);
 		mListView.setAdapter(adapter);
 
-		mAddBookmarkButton = (ImageButton) findViewById(R.id.add_bookmark_button);
-		mScriptButton = (ImageButton) findViewById(R.id.script_button);
-		mReloadButton = (ImageButton) findViewById(R.id.reload_button);
+		mAddBookmarkButton = findViewById(R.id.add_bookmark_button);
+		mScriptButton = findViewById(R.id.script_button);
+		mReloadButton = findViewById(R.id.reload_button);
 
 		initClickEvent();
 		updateAddBookmarkImage();
@@ -103,6 +103,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 								.remove(PLHistoryBrowserContent.KEY_URL_INDEX)
 								.apply();
 						removeFromContentView();
+						PLCoreService.getNavigationController().popView();
 						break;
 					}
 					case LIST_INDEX_HIDE_BAR: {

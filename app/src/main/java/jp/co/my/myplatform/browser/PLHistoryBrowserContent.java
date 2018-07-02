@@ -12,7 +12,6 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 
 	private int mHistoryIndex; // 現在表示中の mUrlHistories の位置を指す
 	private MYArrayList<String> mUrlHistories; // 前回アプリ起動中の履歴
-	private String mLoadingUrl; // onPageStartedの引数のURL
 	private boolean mIsLoading; // リダイレクト判定用
 
 	public PLHistoryBrowserContent() {
@@ -42,7 +41,6 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 		}
 		// リダイレクト時のURLを履歴から除くためにindexをずらす
 		mHistoryIndex = Math.max(0, mHistoryIndex - 1);
-		mLoadingUrl = null;
 		mIsLoading = false;
 	}
 
@@ -55,14 +53,25 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 		}
 
 		if (mHistoryIndex == -1 || !mUrlHistories.get(mHistoryIndex).equals(url)) {
-			// 進む戻るボタン以外でのページ移動は、現在のページより先の履歴を削除
-			mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
-			mUrlHistories.add(url);
-			mHistoryIndex++;
+			String currentUrl = getCurrentWebView().getUrl();
+			if (mHistoryIndex >= 0
+					&& !url.equals(currentUrl)
+					&& !mUrlHistories.get(mHistoryIndex).equals(currentUrl)) {
+				// google検索結果画面からページを開いた際のurlが検索結果のurlである問題用
+				addToHistory(currentUrl);
+			}
+			addToHistory(url);
 		}
 		MYLogUtil.saveObject(KEY_URL_HISTORIES, mUrlHistories, false)
 				.putInt(KEY_URL_INDEX, mHistoryIndex)
 				.apply();
+	}
+
+	private void addToHistory(String url) {
+		// 現在のページより先の履歴を削除
+		mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
+		mUrlHistories.add(url);
+		mHistoryIndex++;
 	}
 
 	private void loadFirstPage() {
@@ -85,6 +94,17 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 
 	@Override
 	protected void goHistory(boolean isBack) {
+		String currentUrl = getCurrentWebView().getUrl();
+		if (!mIsLoading && !mUrlHistories.get(mHistoryIndex).equals(currentUrl)) {
+			// google検索結果画面からページを開いた際のurlが検索結果のurlである問題用
+			addToHistory(currentUrl);
+			if (!canGoHistory(isBack)) {
+				// 遷移先が無くなった
+				updateArrowButtonImage();
+				return;
+			}
+		}
+
 		if (isBack) {
 			mHistoryIndex = Math.max(0, mHistoryIndex - 1);
 		} else {

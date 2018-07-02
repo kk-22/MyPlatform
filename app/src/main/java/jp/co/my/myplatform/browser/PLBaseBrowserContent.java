@@ -38,12 +38,12 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 		super();
 
 		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
-		mBackButton = (ImageButton) findViewById(R.id.back_button);
-		mForwardButton = (ImageButton) findViewById(R.id.forward_button);
-		mShowButton = (ImageButton) findViewById(R.id.show_toolbar_button);
-		mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-		mCurrentWebView = (PLWebView) findViewById(R.id.su_web_view);
-		mToolbar = (LinearLayout) findViewById(R.id.browser_toolbar);
+		mBackButton = findViewById(R.id.back_button);
+		mForwardButton = findViewById(R.id.forward_button);
+		mShowButton = findViewById(R.id.show_toolbar_button);
+		mProgressBar = findViewById(R.id.progressBar);
+		mCurrentWebView = findViewById(R.id.su_web_view);
+		mToolbar = findViewById(R.id.browser_toolbar);
 		initButtonEvent();
 
 		mCurrentWebView.setWebChromeClient(new WebChromeClient() {
@@ -145,7 +145,7 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 		}
 	}
 
-	private void updateArrowButtonImage() {
+	protected void updateArrowButtonImage() {
 		boolean backTag = Boolean.valueOf((String)mBackButton.getTag());
 		if (canGoHistory(true) != backTag) {
 			if (backTag) {
@@ -155,14 +155,14 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 			}
 			mBackButton.setTag(String.valueOf(!backTag));
 		}
-		boolean forwarTag = Boolean.valueOf((String)mForwardButton.getTag());
-		if (canGoHistory(false) != forwarTag) {
-			if (forwarTag) {
+		boolean forwardTag = Boolean.valueOf((String)mForwardButton.getTag());
+		if (canGoHistory(false) != forwardTag) {
+			if (forwardTag) {
 				mForwardButton.setBackgroundResource(R.drawable.forward_arrow_off);
 			} else {
 				mForwardButton.setBackgroundResource(R.drawable.forward_arrow_on);
 			}
-			mForwardButton.setTag(String.valueOf(!forwarTag));
+			mForwardButton.setTag(String.valueOf(!forwardTag));
 		}
 	}
 
