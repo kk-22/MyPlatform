@@ -6,8 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -43,14 +41,5 @@ public class PLFirebaseMessagingService extends FirebaseMessagingService {
 		if (notificationManager != null) {
 			notificationManager.notify(0 , notificationBuilder.build());
 		}
-
-		// 10秒間画面点灯
-		PLWakeLockManager.getInstance().incrementKeepScreen();
-		new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				PLWakeLockManager.getInstance().decrementKeepScreen();
-			}
-		}, 10000);
 	}
 }
