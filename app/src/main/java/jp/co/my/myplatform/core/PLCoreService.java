@@ -15,6 +15,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.app.PLAppStrategy;
 import jp.co.my.myplatform.content.PLAlarmContent;
+import jp.co.my.myplatform.content.PLHomeContent;
 import jp.co.my.myplatform.overlay.PLNavigationController;
 import jp.co.my.myplatform.overlay.PLOverlayManager;
 
@@ -111,6 +112,7 @@ public class PLCoreService extends Service {
 		if (intent.getBooleanExtra(KEY_ACTION_SHOW, false)) {
 			sOverlayManager.addFrontOverlays();
 			sNavigationController.displayNavigationIfNeeded();
+			sNavigationController.pushView(PLHomeContent.class);
 		}
 
 		if (intent.getBooleanExtra(KEY_INTENT_FROM_BROADCAST, false)) {
