@@ -36,7 +36,7 @@ public class PLTWListContent extends PLContentView {
 	public PLTWListContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_tweet_list, this);
-		mListView = (PLSavePositionListView) findViewById(R.id.tweet_list);
+		mListView = findViewById(R.id.tweet_list);
 		addListView(mListView);
 
 		initList();
@@ -46,6 +46,11 @@ public class PLTWListContent extends PLContentView {
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		return mFlickRegistrant.transmitTapEvent(ev) ||  super.dispatchTouchEvent(ev);
+	}
+
+	@Override
+	public int getNavigationButtonVisibility() {
+		return VISIBLE;
 	}
 
 	private void initList() {
