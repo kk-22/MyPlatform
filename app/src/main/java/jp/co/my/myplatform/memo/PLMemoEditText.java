@@ -8,7 +8,10 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
+import java.util.Objects;
+
 import jp.co.my.common.util.MYArrayList;
+import jp.co.my.common.util.MYStringUtil;
 
 @SuppressLint("AppCompatCustomView")
 public class PLMemoEditText extends EditText implements TextWatcher {
@@ -18,6 +21,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 	private int mInputStartLength; // 入力開始時の文字数
 	private int mHistoryIndex;
+	private boolean mIsDeleting; // 文字削除はtrue。削除以外の操作でfalse
 	private boolean disableHistory; // true なら履歴の保存をしない
 	private MYArrayList<String> mTextHistories;
 	private PLMemoEditorContent mEditorContent;
@@ -64,6 +68,9 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	void deleteSelectionLine() {
+		// キーボードの削除と区別するためにfalseセット
+		mIsDeleting = false;
+
 		int currentLines = getSelectionNumberOfLines();
 		int startIndex = getIndexOfLines(currentLines, true);
 		int endIndex = getIndexOfLines(currentLines + 1, true);
@@ -75,7 +82,6 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		Editable text = getText();
 		text.delete(startIndex, endIndex);
 		setSelection(startIndex);
-		saveHistory();
 	}
 
 	void moveSelectionLine(boolean toDown) {
@@ -169,20 +175,35 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	@Override
-	public void afterTextChanged(Editable s) {
-		if (s.toString().equals(currentHistoryText())) {
+	public void afterTextChanged(Editable editable) {
+		String string = editable.toString();
+		if (string.equals(currentHistoryText())) {
 			return;
 		}
-		if (s.toString().length() < mInputStartLength) {
+		int diff = string.length() - mInputStartLength;
+		if (diff < 0) {
+			// 文字削除時
+			String prevString = Objects.requireNonNull(currentHistoryText());
+			String deletedText = MYStringUtil.diffString(string, prevString);
+			if (mIsDeleting && mHistoryIndex != NO_HISTORY_INDEX) {
+				// 2文字目以降の削除の場合は履歴を上書き保存するためにindexをずらす
+				mHistoryIndex--;
+			}
+			// 改行コードを消した場合は次回にindexをずらさない
+			mIsDeleting = !deletedText.contains("\n");
+			saveHistory();
 			return;
 		}
-		Object[] spanned = s.getSpans(0, s.length(), Object.class);
+		// 削除以外
+		mIsDeleting = false;
+
+		Object[] spanned = editable.getSpans(0, editable.length(), Object.class);
 		if (spanned == null) {
 			return;
 		}
 		boolean unfixed = false;
 		for (Object obj : spanned) {
-			if ((s.getSpanFlags(obj) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING) {
+			if ((editable.getSpanFlags(obj) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING) {
 				unfixed = true;
 			}
 		}
@@ -221,6 +242,8 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		setText(nextText);
 		disableHistory = false;
 		mEditorContent.updateButtons();
+
+		mIsDeleting = false;
 
 		// 差分の位置へカーソルを移動
 		int length = Math.min(prevText.length(), nextText.length());
