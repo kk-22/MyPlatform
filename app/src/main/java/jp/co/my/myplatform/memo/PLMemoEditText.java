@@ -23,7 +23,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	private int mInputStartLength; // 入力開始時の文字数
 	private int mHistoryIndex;
 	private int mPrevDeleteLines; // 前回文字削除した行数
-	private boolean disableHistory; // true なら履歴の保存をしない
+	private boolean mDisableHistory; // true なら履歴の保存をしない
 	private MYArrayList<String> mTextHistories;
 	private PLMemoEditorContent mEditorContent;
 
@@ -179,14 +179,14 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	@Override
 	public void afterTextChanged(Editable editable) {
 		String string = editable.toString();
-		if (string.equals(currentHistoryText())) {
+		if (string.equals(getCurrentHistoryText())) {
 			return;
 		}
 		int diff = string.length() - mInputStartLength;
 		if (diff < 0) {
 			// 文字削除時
 			int currentLines = getSelectionNumberOfLines();
-			String prevString = Objects.requireNonNull(currentHistoryText());
+			String prevString = Objects.requireNonNull(getCurrentHistoryText());
 			String deletedText = MYStringUtil.diffString(string, prevString);
 			boolean isDeletedLineBreak = (currentLines == mPrevDeleteLines - 1 && deletedText.contains("\n"));
 			if (currentLines == mPrevDeleteLines || isDeletedLineBreak) {
@@ -226,7 +226,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	private void saveHistory() {
-		if (disableHistory) {
+		if (mDisableHistory) {
 			return;
 		}
 		mHistoryIndex++;
@@ -239,7 +239,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		didFinishDeleting();
 
 		String prevText = getText().toString();
-		String lastSaveText = currentHistoryText();
+		String lastSaveText = getCurrentHistoryText();
 		if (!prevText.equals(lastSaveText)) {
 			// 差分があるため現在のメモを履歴へ保存
 			saveHistory();
@@ -251,10 +251,10 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		} else {
 			mHistoryIndex++;
 		}
-		disableHistory = true;
-		String nextText = currentHistoryText();
+		mDisableHistory = true;
+		String nextText = getCurrentHistoryText();
 		setText(nextText);
-		disableHistory = false;
+		mDisableHistory = false;
 		mEditorContent.updateButtons();
 
 		// 差分の位置へカーソルを移動
@@ -267,7 +267,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		}
 	}
 
-	private String currentHistoryText() {
+	private String getCurrentHistoryText() {
 		if (mHistoryIndex == NO_HISTORY_INDEX) {
 			return null;
 		}
