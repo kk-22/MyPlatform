@@ -252,19 +252,31 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 			mHistoryIndex++;
 		}
 		mDisableHistory = true;
-		String nextText = getCurrentHistoryText();
+		String nextText = Objects.requireNonNull(getCurrentHistoryText());
 		setText(nextText);
 		mDisableHistory = false;
 		mEditorContent.updateButtons();
 
 		// 差分の位置へカーソルを移動
-		int length = Math.min(prevText.length(), nextText.length());
+		int prevLength = prevText.length();
+		int nextLength = nextText.length();
+		int length = Math.min(prevLength, nextLength);
+		int focusIndex = nextLength;
 		for (int i = 0; i < length; i++) {
 			if (prevText.charAt(i) != nextText.charAt(i)) {
-				setSelection(i);
+				focusIndex = i;
 				break;
 			}
 		}
+		if (prevLength < nextLength && focusIndex != nextLength) {
+			// 文字削除前にロードする場合、削除していた文字の次へカーソルを当てる
+			focusIndex += (nextLength - prevLength);
+			if (nextText.charAt(focusIndex) == '\n') {
+				// 編集した行の末尾にカーソルを当てるためにデクリメント
+				focusIndex--;
+			}
+		}
+		setSelection(focusIndex);
 	}
 
 	private String getCurrentHistoryText() {
