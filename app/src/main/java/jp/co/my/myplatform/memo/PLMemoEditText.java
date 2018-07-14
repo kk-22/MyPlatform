@@ -17,11 +17,12 @@ import jp.co.my.common.util.MYStringUtil;
 public class PLMemoEditText extends EditText implements TextWatcher {
 
 	private static final int NUMBER_OF_NONEXISTENT_LINES = -1; // 存在しない行数
+	private static final int NONE_DELETE_LINES = -1; // 削除した行が無い
 	private static final int NO_HISTORY_INDEX = -1;
 
 	private int mInputStartLength; // 入力開始時の文字数
 	private int mHistoryIndex;
-	private boolean mIsDeleting; // 文字削除はtrue。削除以外の操作でfalse
+	private int mPrevDeleteLines; // 前回文字削除した行数
 	private boolean disableHistory; // true なら履歴の保存をしない
 	private MYArrayList<String> mTextHistories;
 	private PLMemoEditorContent mEditorContent;
@@ -68,8 +69,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	void deleteSelectionLine() {
-		// キーボードの削除と区別するためにfalseセット
-		mIsDeleting = false;
+		didFinishDeleting();
 
 		int currentLines = getSelectionNumberOfLines();
 		int startIndex = getIndexOfLines(currentLines, true);
@@ -85,6 +85,8 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	void moveSelectionLine(boolean toDown) {
+		didFinishDeleting();
+
 		int currentLines = getSelectionNumberOfLines();
 		int targetLines = (toDown) ? currentLines + 1 : currentLines - 1;
 		int targetIndex = getIndexOfLines(targetLines, false);
@@ -183,19 +185,25 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		int diff = string.length() - mInputStartLength;
 		if (diff < 0) {
 			// 文字削除時
+			int currentLines = getSelectionNumberOfLines();
 			String prevString = Objects.requireNonNull(currentHistoryText());
 			String deletedText = MYStringUtil.diffString(string, prevString);
-			if (mIsDeleting && mHistoryIndex != NO_HISTORY_INDEX) {
+			boolean isDeletedLineBreak = (currentLines == mPrevDeleteLines - 1 && deletedText.contains("\n"));
+			if (currentLines == mPrevDeleteLines || isDeletedLineBreak) {
 				// 2文字目以降の削除の場合は履歴を上書き保存するためにindexをずらす
 				mHistoryIndex--;
 			}
-			// 改行コードを消した場合は次回にindexをずらさない
-			mIsDeleting = !deletedText.contains("\n");
+			if (isDeletedLineBreak) {
+				// 次回にindexをずらさないためにリセット
+				mPrevDeleteLines = NONE_DELETE_LINES;
+			} else {
+				mPrevDeleteLines = currentLines;
+			}
 			saveHistory();
 			return;
 		}
 		// 削除以外
-		mIsDeleting = false;
+		didFinishDeleting();
 
 		Object[] spanned = editable.getSpans(0, editable.length(), Object.class);
 		if (spanned == null) {
@@ -213,6 +221,10 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		}
 	}
 
+	private void didFinishDeleting() {
+		mPrevDeleteLines = NONE_DELETE_LINES;
+	}
+
 	private void saveHistory() {
 		if (disableHistory) {
 			return;
@@ -224,6 +236,8 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	private void loadHistory(boolean isBack) {
+		didFinishDeleting();
+
 		String prevText = getText().toString();
 		String lastSaveText = currentHistoryText();
 		if (!prevText.equals(lastSaveText)) {
@@ -242,8 +256,6 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		setText(nextText);
 		disableHistory = false;
 		mEditorContent.updateButtons();
-
-		mIsDeleting = false;
 
 		// 差分の位置へカーソルを移動
 		int length = Math.min(prevText.length(), nextText.length());
