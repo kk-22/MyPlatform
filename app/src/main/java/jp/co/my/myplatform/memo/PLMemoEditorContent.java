@@ -1,7 +1,10 @@
 package jp.co.my.myplatform.memo;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Handler;
+import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -149,6 +152,12 @@ public class PLMemoEditorContent extends PLContentView {
 				PLCoreService.getNavigationController().hideNavigationIfNeeded();
 			}
 		});
+		findViewById(R.id.copy_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				displayClipboardList();
+			}
+		});
 
 		LinearLayout naviBar = new LinearLayout(getContext());
 		LayoutInflater.from(getContext()).inflate(R.layout.navivar_memo_editor, naviBar);
@@ -242,6 +251,57 @@ public class PLMemoEditorContent extends PLContentView {
 				}, null);
 			}
 		}));
+	}
+
+	private void displayClipboardList() {
+		PLListPopover.showItems(
+				new PLListPopover.PLListItem("コピー", new Runnable() {
+					@Override
+					public void run() {
+						copyToClipboard(false);
+					}
+				})
+				, new PLListPopover.PLListItem("切り取り", new Runnable() {
+					@Override
+					public void run() {
+						copyToClipboard(true);
+					}
+				})
+				, new PLListPopover.PLListItem("貼り付け", new Runnable() {
+					@Override
+					public void run() {
+						ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+						if (null == clipboardManager) {
+							return;
+						}
+						ClipData.Item item = clipboardManager.getPrimaryClip().getItemAt(0);
+						String text = item.getText().toString();
+						int start = mEditText.getSelectionStart();
+						int end = mEditText.getSelectionEnd();
+						Editable editable = mEditText.getText();
+						editable.replace(Math.min(start, end), Math.max(start, end), text);
+					}
+				})
+		);
+	}
+
+	private void copyToClipboard(boolean needCut) {
+		int start = mEditText.getSelectionStart();
+		int end = mEditText.getSelectionEnd();
+		Editable editable = mEditText.getText();
+		String selectingString = editable.subSequence(Math.min(start, end), Math.max(start, end)).toString();
+		if (selectingString.isEmpty()) {
+			return;
+		}
+		ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+		if (null == clipboardManager) {
+			return;
+		}
+		clipboardManager.setPrimaryClip(ClipData.newPlainText("", selectingString));
+
+		if (needCut) {
+			editable.delete(Math.min(start, end), Math.max(start, end));
+		}
 	}
 
 	// カーソル位置がキーボードにより隠れる場合、スクロールする
