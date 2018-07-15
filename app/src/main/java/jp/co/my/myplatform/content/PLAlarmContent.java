@@ -67,9 +67,6 @@ public class PLAlarmContent extends PLContentView {
 		}
 		mAlarmCount = 0;
 		PLWakeLockManager.getInstance().incrementKeepCPU();
-		// 1度だけ画面点灯。バックライト点灯時間がスヌーズ秒より短い場合は消灯する。
-		PLWakeLockManager.getInstance().incrementKeepScreen();
-		PLWakeLockManager.getInstance().decrementKeepScreen();
 
 		sAlarmHandler = new Handler();
 		sAlarmHandler.postDelayed(new Runnable() {
@@ -78,6 +75,10 @@ public class PLAlarmContent extends PLContentView {
 				mAlarmCount++;
 				Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 				vibrator.vibrate(400);
+
+				// 1度だけ画面点灯。バックライト点灯時間がスヌーズ秒より短い場合は消灯する。
+				PLWakeLockManager.getInstance().incrementKeepScreen();
+				PLWakeLockManager.getInstance().decrementKeepScreen();
 
 				if (mAlarmCount < 7) {
 					MYLogUtil.showToast("alarm count=" +mAlarmCount);
