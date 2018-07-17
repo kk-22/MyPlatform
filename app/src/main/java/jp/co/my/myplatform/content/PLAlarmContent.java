@@ -77,6 +77,7 @@ public class PLAlarmContent extends PLContentView {
 				if (vibrator != null) {
 					long milliseconds = 400;
 					if (2 < mAlarmCount) {
+						// 振動を強くする
 						milliseconds *= (mAlarmCount + 1) / 2;
 					}
 					vibrator.vibrate(milliseconds);
@@ -90,7 +91,12 @@ public class PLAlarmContent extends PLContentView {
 					MYLogUtil.showToast("alarm count=" +mAlarmCount);
 					SharedPreferences pref = MYLogUtil.getPreference();
 					int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 1);
-					sAlarmHandler.postDelayed(this, snoozeSec * 1000);
+					int delayMills = snoozeSec * 1000;
+					if (2 < mAlarmCount) {
+						// 離席時用に間隔を伸ばす
+						delayMills *= (mAlarmCount - 2) * 3;
+					}
+					sAlarmHandler.postDelayed(this, delayMills);
 					return;
 				}
 
