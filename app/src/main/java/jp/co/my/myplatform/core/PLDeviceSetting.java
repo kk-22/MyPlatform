@@ -10,10 +10,23 @@ public class PLDeviceSetting {
 
 	private static final String KEY_DEFAULT_SCREEN_BRIGHTNESS = "DefaultScreenBrightness";
 	// スクリーン明るさ
-	public static final int MIN_SCREEN_BRIGHTNESS = 1;
+	private static final int MIN_SCREEN_BRIGHTNESS = 1;
 
 	public static void revertAllSetting() {
 		revertScreenBrightness();
+	}
+
+	// 画面消灯時間の設定
+	// Android7 では10秒未満を設定しても10秒になる模様
+	public static void setScreenOffTimeout(int millisecond) {
+		Context context = PLApplication.getContext();
+		Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, millisecond);
+	}
+
+	// 画面消灯時間の取得
+	public static int getScreenOffTimeout() {
+		Context context = PLApplication.getContext();
+		return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, -1);
 	}
 
 	// 画面明度最小に設定し、前の値を保存

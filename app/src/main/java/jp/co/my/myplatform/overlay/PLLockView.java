@@ -63,8 +63,22 @@ public class PLLockView extends PLOverlayView {
 		mWakeLockReleaseHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
+				PLWakeLockManager.getInstance().incrementKeepCPU();
 				PLWakeLockManager.getInstance().decrementKeepScreen();
+
+				// ロック解除後のタップを防止するために画面を消灯させる
 				mWakeLockReleaseHandler = null;
+				final int prevTimeout = PLDeviceSetting.getScreenOffTimeout();
+				PLDeviceSetting.setScreenOffTimeout(5000);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// ロック解除
+						PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
+						PLDeviceSetting.setScreenOffTimeout(prevTimeout);
+						PLWakeLockManager.getInstance().decrementKeepCPU();
+					}
+				}, 15000);
 			}
 		}, minute * 60000);
 	}
