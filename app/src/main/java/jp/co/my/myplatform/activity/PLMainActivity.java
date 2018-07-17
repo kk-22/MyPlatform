@@ -1,15 +1,17 @@
 package jp.co.my.myplatform.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -49,26 +51,26 @@ public class PLMainActivity extends Activity {
 	}
 
 	private boolean enablePermission() {
-		if (Build.VERSION.SDK_INT < 23) {
-			return true;
-		}
-
-		String settingAction = null;
+		boolean result = true;
+		// 権限管理画面を介す必要のある許可確認
 		if (!Settings.canDrawOverlays(this)) {
-			settingAction = Settings.ACTION_MANAGE_OVERLAY_PERMISSION;
-		} else if (!Settings.System.canWrite(this)) {
-			settingAction = Settings.ACTION_MANAGE_WRITE_SETTINGS;
+			Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+			startActivityForResult(intent, 1234);
+			result = false;
+		}
+		if (!Settings.System.canWrite(this)) {
+			Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + getPackageName()));
+			startActivityForResult(intent, 1235);
+			result = false;
 		}
 
-		if (settingAction== null) {
-			// パーミッション設定済み
-			return true;
+		String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+		if (ContextCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, permissions, 1);
+			result = false;
 		}
-		// パーミッション設定画面表示
-		Intent intent = new Intent(settingAction,
-				Uri.parse("package:" + getPackageName()));
-		startActivityForResult(intent, 1234);
-		return false;
+
+		return result;
 	}
 
 	public boolean canGetUsage(Context context) {
