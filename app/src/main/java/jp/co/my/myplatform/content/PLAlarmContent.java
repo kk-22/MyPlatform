@@ -74,7 +74,13 @@ public class PLAlarmContent extends PLContentView {
 			public void run() {
 				mAlarmCount++;
 				Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-				vibrator.vibrate(400);
+				if (vibrator != null) {
+					long milliseconds = 400;
+					if (2 < mAlarmCount) {
+						milliseconds *= (mAlarmCount + 1) / 2;
+					}
+					vibrator.vibrate(milliseconds);
+				}
 
 				// 1度だけ画面点灯。バックライト点灯時間がスヌーズ秒より短い場合は消灯する。
 				PLWakeLockManager.getInstance().incrementKeepScreen();
