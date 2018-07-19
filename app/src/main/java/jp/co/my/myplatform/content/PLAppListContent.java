@@ -21,31 +21,25 @@ import jp.co.my.myplatform.core.PLCoreService;
 public class PLAppListContent extends PLContentView {
 
 	ListView mListView;
-	ArrayList<ComponentName> mComponentArray;
+	ArrayList<String> mPackageNameArray;
 
 	public PLAppListContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_app_list, this);
 
-		mComponentArray = getForegroundAppList(5);
-		int componentCuont = mComponentArray.size();
-		String[] titles = new String[componentCuont];
-		for (int i = 0; i < componentCuont; i++) {
-			ComponentName componentName = mComponentArray.get(i);
-			titles[i] = componentName.getPackageName();
-		}
-
+		mPackageNameArray = getForegroundAppList(5);
+		String[] titles = mPackageNameArray.toArray(new String[mPackageNameArray.size()]);
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_simple_title,
 				titles);
 
-		mListView = (ListView) findViewById(R.id.app_list);
+		mListView = findViewById(R.id.app_list);
 		mListView.setAdapter(adapter);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				ComponentName componentName = mComponentArray.get(position);
-			 	Uri uri = Uri.parse("package:" +componentName.getPackageName());
+				String packageName = mPackageNameArray.get(position);
+			 	Uri uri = Uri.parse("package:" +packageName);
 				Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				getContext().startActivity(intent);
@@ -55,9 +49,9 @@ public class PLAppListContent extends PLContentView {
 		});
 	}
 
-	public ArrayList<ComponentName> getForegroundAppList(int size) {
+	public ArrayList<String> getForegroundAppList(int size) {
 		Context context = getContext();
-		ArrayList<ComponentName> nameList = new ArrayList<ComponentName>();
+		ArrayList<String> nameList = new ArrayList<>();
 		long currentTime = System.currentTimeMillis();
 		UsageStatsManager usageStats = (UsageStatsManager) context.getSystemService("usagestats");
 		long interval = 3600;
@@ -70,8 +64,10 @@ public class PLAppListContent extends PLContentView {
 					// 使いやすいようにcomponentNameに変えています。
 					String packageName = event.getPackageName();
 					ComponentName name = new ComponentName(packageName, event.getClassName());
-					// 古い順に取得されるので先頭から追加して新しい順に直す
-					nameList.add(0, name);
+					if (!nameList.contains(packageName)) {
+						// 古い順に取得されるので先頭から追加して新しい順に直す
+						nameList.add(0, packageName);
+					}
 				}
 			}
 			interval *= 10;
