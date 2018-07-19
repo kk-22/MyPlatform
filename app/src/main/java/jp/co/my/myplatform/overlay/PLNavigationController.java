@@ -149,6 +149,15 @@ public class PLNavigationController extends PLOverlayView {
 				MYLogUtil.showExceptionToast(e);
 				return null;
 			}
+		} else if (clazz != PLHomeContent.class) {
+			// 履歴の重複を無くす
+			int index = mViewCache.indexOf(view);
+			int nextIndex = index + 1;
+			if (nextIndex > 0 && mViewCache.get(nextIndex) instanceof PLHomeContent) {
+				// 2連続Homeになるのを防ぐ
+				mViewCache.remove(nextIndex);
+			}
+			mViewCache.remove(view);
 		}
 		return pushView(view);
 	}
