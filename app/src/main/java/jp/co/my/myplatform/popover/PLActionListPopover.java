@@ -26,10 +26,21 @@ public class PLActionListPopover<T> extends PLPopoverView {
 		mTitleList = titleList;
 		mObjectList = objectList;
 		mListener = listener;
-		mListView = (ListView) findViewById(R.id.list);
+		mListView = findViewById(R.id.list);
 
 		initClickEvent();
 		updateList();
+	}
+
+	@Override
+	void didFinishLayout() {
+		super.didFinishLayout();
+		mListView.post(new Runnable() {
+			@Override
+			public void run() {
+				mListView.setSelection(mListView.getCount() - 1);
+			}
+		});
 	}
 
 	public void removeObject(T ignoreObject) {
@@ -37,10 +48,10 @@ public class PLActionListPopover<T> extends PLPopoverView {
 		mObjectList.remove(index);
 		mTitleList.remove(index);
 		updateList();
+		mListView.setSelection(mListView.getCount() - 1);
 	}
 
 	public void updateList() {
-		// TODO: 全件表示中。tabNo == -1を表示に変更
 		PLActionListAdapter adapter = new PLActionListAdapter(getContext());
 		adapter.addAll(mTitleList);
 		mListView.setAdapter(adapter);
