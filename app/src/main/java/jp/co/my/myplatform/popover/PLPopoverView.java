@@ -53,6 +53,9 @@ public class PLPopoverView extends FrameLayout {
 		contentView.addPopover(this);
 	}
 
+	void didFinishLayout() {
+	}
+
 	public void popoverWillRemove() {
 	}
 
@@ -73,6 +76,7 @@ public class PLPopoverView extends FrameLayout {
 				// サイズが設定された後のタイミングで位置調整
 				FrameLayout frameLayout = (FrameLayout) getParent();
 				mLayout.controlLayout(mPopView, frameLayout);
+				didFinishLayout();
 			}
 		});
 	}

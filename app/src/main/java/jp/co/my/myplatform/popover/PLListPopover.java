@@ -75,6 +75,17 @@ public class PLListPopover extends PLPopoverView {
 		return Arrays.equals(mItems, popover.mItems) || Arrays.equals(mTitles, popover.mTitles);
 	}
 
+	@Override
+	void didFinishLayout() {
+		super.didFinishLayout();
+		mListView.post(new Runnable() {
+			@Override
+			public void run() {
+				mListView.setSelection(mListView.getCount() - 1);
+			}
+		});
+	}
+
 	private void createList(String[] titles) {
 		mTitles = titles;
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
