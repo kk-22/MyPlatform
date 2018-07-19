@@ -3,6 +3,7 @@ package jp.co.my.myplatform.popover;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.Arrays;
@@ -17,10 +18,18 @@ public class PLListPopover extends PLPopoverView {
 
 	// Deprecated. Use showItems method,
 	public PLListPopover(String[] titles,
-						 AdapterView.OnItemClickListener clickListener) {
+						 final AdapterView.OnItemClickListener clickListener) {
 		this();
 		createList(titles);
-		mListView.setOnItemClickListener(clickListener);
+		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				clickListener.onItemClick(parent, view, position, id);
+				if (getParent() != null) {
+					removeFromContentView();
+				}
+			}
+		});
 	}
 
 	private PLListPopover() {
@@ -48,6 +57,13 @@ public class PLListPopover extends PLPopoverView {
 			}
 		});
 		popover.showPopover();
+	}
+
+	public PLListPopover setMatchWidth() {
+		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mListView.getLayoutParams();
+		params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+		mListView.setLayoutParams(params);
+		return this;
 	}
 
 	@Override

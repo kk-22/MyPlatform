@@ -3,6 +3,7 @@ package jp.co.my.myplatform.browser;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -212,10 +213,24 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 				onBackKey();
 			}
 		});
+		mBackButton.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				showHistoryList();
+				return true;
+			}
+		});
 		mForwardButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				onForwardKey();
+			}
+		});
+		mForwardButton.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				showHistoryList();
+				return true;
 			}
 		});
 		findViewById(R.id.down_button).setOnClickListener(new OnClickListener() {
@@ -236,7 +251,6 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO: 全件表示中。tabNo == -1を表示に変更
 				List<PLWebPageModel> pageArray = SQLite.select().from(PLWebPageModel.class)
 						.where(PLWebPageModel_Table.bookmarkDirectoryNo.greaterThanOrEq(PLWebPageModel.BOOKMARK_DIRECTORY_NO_ROOT))
 						.queryList();
@@ -261,6 +275,38 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 			}
 		});
 	}
+
+	private void showHistoryList() {
+		new PLListPopover(historyTitles(), new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				loadHistoryOfIndex(position);
+			}
+		}).setMatchWidth().showPopover(new PLRelativeLayoutController(mBackButton));
+	}
+
+	String[] historyTitles() {
+		WebBackForwardList list = mCurrentWebView.copyBackForwardList() ;
+		int size = list.getSize();
+		int currentIndex = list.getCurrentIndex();
+		String[] titles = new String[size];
+		for (int i = 0; i < size; i++) {
+			String title = list.getItemAtIndex(i).getTitle();
+			if (i == currentIndex) {
+				titles[i] = "■＞" +title;
+			} else {
+				titles[i] = title;
+			}
+		}
+		return titles;
+	}
+
+	void loadHistoryOfIndex(int index) {
+		WebBackForwardList list = mCurrentWebView.copyBackForwardList() ;
+		int step = index - list.getCurrentIndex();
+		mCurrentWebView.goBackOrForward(step);
+	}
+
 
 	public PLWebView getCurrentWebView() {
 		return mCurrentWebView;

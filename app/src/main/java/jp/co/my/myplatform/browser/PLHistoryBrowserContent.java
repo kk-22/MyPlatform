@@ -67,6 +67,27 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 				.apply();
 	}
 
+	@Override
+	String[] historyTitles() {
+		int size = mUrlHistories.size();
+		String[] titles = new String[size];
+		for (int i = 0; i < size; i++) {
+			String title = mUrlHistories.get(i);
+			if (i == mHistoryIndex) {
+				titles[i] = "■＞" +title;
+			} else {
+				titles[i] = title;
+			}
+		}
+		return titles;
+	}
+
+	@Override
+	void loadHistoryOfIndex(int index) {
+		mHistoryIndex = index;
+		loadCurrentHistoryUrl();
+	}
+
 	private void addToHistory(String url) {
 		// 現在のページより先の履歴を削除
 		mUrlHistories.removeToLastFromIndex(mHistoryIndex + 1);
@@ -110,6 +131,10 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 		} else {
 			mHistoryIndex = Math.min(mUrlHistories.size() - 1, mHistoryIndex + 1);
 		}
+		loadCurrentHistoryUrl();
+	}
+
+	private void loadCurrentHistoryUrl() {
 		String nextUrl = mUrlHistories.get(mHistoryIndex);
 
 		PLWebView webView = getCurrentWebView();

@@ -6,5 +6,6 @@
           android:layout_height="50dp"
           android:textAppearance="?android:attr/textAppearanceMedium"
           android:textColor="@android:color/black"
+          android:maxLines="2"
           android:gravity="center|left"
           android:id="@+id/TextView"/>
