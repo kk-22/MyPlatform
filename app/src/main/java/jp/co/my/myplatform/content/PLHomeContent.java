@@ -187,28 +187,10 @@ public class PLHomeContent extends PLContentView {
 						displayLockView(-1);
 					}
 				}),
-				new PLListPopover.PLListItem("1分", new Runnable() {
+				new PLListPopover.PLListItem("15分", new Runnable() {
 					@Override
 					public void run() {
-						displayLockView(1);
-					}
-				}),
-				new PLListPopover.PLListItem("3分", new Runnable() {
-					@Override
-					public void run() {
-						displayLockView(3);
-					}
-				}),
-				new PLListPopover.PLListItem("5分", new Runnable() {
-					@Override
-					public void run() {
-						displayLockView(5);
-					}
-				}),
-				new PLListPopover.PLListItem("7分", new Runnable() {
-					@Override
-					public void run() {
-						displayLockView(7);
+						displayLockView(15);
 					}
 				}),
 				new PLListPopover.PLListItem("10分", new Runnable() {
@@ -217,10 +199,28 @@ public class PLHomeContent extends PLContentView {
 						displayLockView(10);
 					}
 				}),
-				new PLListPopover.PLListItem("15分", new Runnable() {
+				new PLListPopover.PLListItem("7分", new Runnable() {
 					@Override
 					public void run() {
-						displayLockView(15);
+						displayLockView(7);
+					}
+				}),
+				new PLListPopover.PLListItem("5分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(5);
+					}
+				}),
+				new PLListPopover.PLListItem("3分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(3);
+					}
+				}),
+				new PLListPopover.PLListItem("1分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(1);
 					}
 				})
 		);
