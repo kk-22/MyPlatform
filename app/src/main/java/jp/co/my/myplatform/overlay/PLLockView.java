@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Switch;
 
 import jp.co.my.myplatform.R;
@@ -13,22 +14,32 @@ import jp.co.my.myplatform.core.PLWakeLockManager;
 
 public class PLLockView extends PLOverlayView {
 	private Handler mWakeLockReleaseHandler;
+	private boolean mIsStrongLock; // trueならロック画面が非表示にならず、閉じるの操作が複雑になる
+	private Switch mSwitch1, mSwitch2;
+	private Button mStrongButton;
 
 	public PLLockView() {
 		super();
 
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.overlay_lock_view, this);
-		final Switch switch1 = view.findViewById(R.id.switch1);
-		final Switch switch2 = view.findViewById(R.id.switch2);
+		mSwitch1 = view.findViewById(R.id.switch1);
+		mSwitch2 = view.findViewById(R.id.switch2);
 		view.findViewById(R.id.open_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!switch1.isChecked() || !switch2.isChecked()) {
-					switch1.setChecked(false);
-					switch2.setChecked(false);
+				if (!mSwitch1.isChecked() || !mSwitch2.isChecked()) {
+					mSwitch1.setChecked(false);
+					mSwitch2.setChecked(false);
 					return;
 				}
 				PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
+			}
+		});
+		mStrongButton = view.findViewById(R.id.strong_button);
+		mStrongButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				enableStrongLock();
 			}
 		});
 
@@ -56,6 +67,7 @@ public class PLLockView extends PLOverlayView {
 
 	public void keepScreenWithLock(int minute) {
 		if (minute <= 0) {
+			enableStrongLock();
 			return;
 		}
 		PLWakeLockManager.getInstance().incrementKeepScreen();
@@ -63,11 +75,14 @@ public class PLLockView extends PLOverlayView {
 		mWakeLockReleaseHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				PLWakeLockManager.getInstance().incrementKeepCPU();
 				PLWakeLockManager.getInstance().decrementKeepScreen();
+				mWakeLockReleaseHandler = null;
+				if (mIsStrongLock) {
+					return;
+				}
 
 				// ロック解除後のタップを防止するために画面を消灯させる
-				mWakeLockReleaseHandler = null;
+				PLWakeLockManager.getInstance().incrementKeepCPU();
 				final int prevTimeout = PLDeviceSetting.getScreenOffTimeout();
 				PLDeviceSetting.setScreenOffTimeout(5000);
 				new Handler().postDelayed(new Runnable() {
@@ -81,5 +96,17 @@ public class PLLockView extends PLOverlayView {
 				}, 15000);
 			}
 		}, minute * 60000);
+	}
+
+	private void enableStrongLock() {
+		if (mIsStrongLock) {
+			return;
+		}
+		mIsStrongLock = true;
+		mSwitch1.setChecked(false);
+		mSwitch2.setChecked(false);
+		mSwitch1.setEnabled(true);
+		mSwitch2.setEnabled(true);
+		mStrongButton.setVisibility(View.GONE);
 	}
 }
