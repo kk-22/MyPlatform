@@ -141,6 +141,12 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 	}
 
 	private void equalEvent() {
+		String currentString = new String(mInputString);
+		String[] values = currentString.split("[^0-9.]");
+		if (values.length <= 1) {
+			// 演算不可
+			return;
+		}
 		String cacheString = mEntryText.getText() + "=" +mTotalText.getText();
 		mCacheText.setText(cacheString);
 		clearEntry();
