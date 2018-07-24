@@ -269,9 +269,10 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 			}
 		}
 		if (prevLength < nextLength && focusIndex != nextLength) {
-			// 文字削除前にロードする場合、削除していた文字の次へカーソルを当てる
+			// TODO: 削除行と次の行の1文字目が同じ場合位置がずれる
+			// 文字削除前にロードする場合、削除し直せるように削除していた文字の次へカーソルを当てる
 			focusIndex += (nextLength - prevLength);
-			if (nextText.charAt(focusIndex) == '\n') {
+			if (nextText.charAt(focusIndex - 1) == '\n') {
 				// 編集した行の末尾にカーソルを当てるためにデクリメント
 				focusIndex--;
 			}
