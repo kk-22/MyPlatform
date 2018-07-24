@@ -2,6 +2,7 @@ package jp.co.my.myplatform.content;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 
 	private static final String KEY_LAST_INPUT_STRING = "KEY_LAST_INPUT_STRING";
 
-	private TextView mCacheText;
+	private Button mCacheTextButton;
 	private TextView mEntryText;
 	private TextView mTotalText;
 	private StringBuilder mInputString;
@@ -23,15 +24,16 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 	public PLCalculatorContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator, this);
-		mCacheText = findViewById(R.id.cache_text);
+		mCacheTextButton = findViewById(R.id.cache_button);
 		mEntryText = findViewById(R.id.entry_text);
 		mTotalText = findViewById(R.id.total_text);
 
 		String cacheText = MYLogUtil.getPreference().getString(KEY_LAST_INPUT_STRING, "");
-		mCacheText.setText(new StringBuilder(cacheText));
+		mCacheTextButton.setText(new StringBuilder(cacheText));
 
 		mInputString = new StringBuilder("0");
 
+		mCacheTextButton.setOnClickListener(this);
 		findViewById(R.id.clear_all_button).setOnClickListener(this);
 		findViewById(R.id.clear_entry_button).setOnClickListener(this);
 		findViewById(R.id.back_button).setOnClickListener(this);
@@ -56,6 +58,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.cache_button: revertCache(); break;
 			case R.id.clear_all_button: clearAll(); break;
 			case R.id.clear_entry_button: clearEntry(); break;
 			case R.id.back_button: backOneChar(); break;
@@ -127,7 +130,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 	private void clearAll() {
 		deleteInputString(false);
 		updateAllText();
-		mCacheText.setText("");
+		mCacheTextButton.setText("");
 	}
 
 	private void clearEntry() {
@@ -140,16 +143,32 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		updateAllText();
 	}
 
-	private void equalEvent() {
+	private boolean equalEvent() {
 		String currentString = new String(mInputString);
 		String[] values = currentString.split("[^0-9.]");
 		if (values.length <= 1) {
 			// 演算不可
-			return;
+			return false;
 		}
 		String cacheString = mEntryText.getText() + "=" +mTotalText.getText();
-		mCacheText.setText(cacheString);
+		mCacheTextButton.setText(cacheString);
 		clearEntry();
+		return true;
+	}
+
+	private void revertCache() {
+		String cacheText = mCacheTextButton.getText().toString();
+		String[] values = cacheText.split("=");
+		if (values.length < 2) {
+			return;
+		}
+		// キャッシュ文字列と交換
+		if (!equalEvent()) {
+			mCacheTextButton.setText("");
+		}
+		mInputString.setLength(0);
+		mInputString.append(values[0]);
+		updateAllText();
 	}
 
 	private void updateAllText() {
