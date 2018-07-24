@@ -4,6 +4,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
@@ -149,30 +152,29 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 
 		String[] values = lineString.split("[^0-9.]");
 		String[] signs = lineString.split("[0-9.]+");
-		float totalValue = 0;
-		for (int i = 0; i < values.length && i < signs.length; i++) {
-			float currentValue = Float.valueOf(values[i]);
+		BigDecimal temp = new BigDecimal(values[0]);
+		int length = Math.min(values.length, signs.length);
+		for (int i = 1; i < length; i++) {
+			String currentValue = values[i];
 			String sign = signs[i];
-			if (sign.equals("+")) {
-				totalValue += currentValue;
-			} else if (sign.equals("-")) {
-				totalValue -= currentValue;
-			} else if (sign.equals("×")) {
-				totalValue *= currentValue;
-			} else if (sign.equals("/")) {
-				totalValue /= currentValue;
-			} else {
-				totalValue = currentValue;
+			switch (sign) {
+				case "+":
+					temp = temp.add(new BigDecimal(currentValue));
+					break;
+				case "-":
+					temp = temp.subtract(new BigDecimal(currentValue));
+					break;
+				case "×":
+					temp = temp.multiply(new BigDecimal(currentValue));
+					break;
+				case "/":
+					temp = temp.divide(new BigDecimal(currentValue), 4, BigDecimal.ROUND_DOWN);
+					break;
+				default:
+					break;
 			}
 		}
-
-		String totalString;
-		if (totalValue == (int)totalValue) {
-			totalString = String.valueOf((int)totalValue);
-		} else {
-			totalString = String.valueOf(totalValue);
-		}
-		mTotalText.setText(totalString);
+		mTotalText.setText(new DecimalFormat("#.##").format(temp));
 
 		String saveText = mEntryText.getText() + "=" +mTotalText.getText();
 		MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, saveText).apply();
