@@ -268,6 +268,10 @@ public class PLNavigationController extends PLOverlayView {
 		return mCurrentView;
 	}
 
+	public boolean isHalf() {
+		return mIsHalf;
+	}
+
 	public void setNavigationButtonVisibility(int visibility) {
 		mNavigationButton.setVisibility(visibility);
 		boolean isVisible = (visibility == VISIBLE);
