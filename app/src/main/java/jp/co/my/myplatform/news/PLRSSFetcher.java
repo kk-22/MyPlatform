@@ -138,8 +138,8 @@ public class PLRSSFetcher {
 					Response.ErrorListener error = new Response.ErrorListener() {
 						@Override
 						public void onErrorResponse(VolleyError error) {
-							MYLogUtil.outputErrorLog("Fetch page error " + error.toString());
-							countUpFetch();
+							MYLogUtil.outputErrorLog("Fetch page error " +site.getUrl() + " " + error.toString());
+							countUpFetch(site);
 						}
 					};
 					PLInputStreamRequest request = new PLInputStreamRequest(site.getUrl(),listener, error);
@@ -162,14 +162,14 @@ public class PLRSSFetcher {
 						} else {
 							mParsedPageArray.addAll(pageList);
 						}
-						countUpFetch();
+						countUpFetch(site);
 					}
 				});
 			}
 		}).start();
 	}
 
-	private void countUpFetch() {
+	private void countUpFetch(PLNewsSiteModel siteModel) {
 		if (mState == FetchState.FETCH_STATE_NONE) {
 			return;
 		}
@@ -178,7 +178,7 @@ public class PLRSSFetcher {
 		if (mFetchedCount < mRequestCount) {
 			return;
 		}
-
+		MYLogUtil.outputLog("Last site name:" +siteModel.getName() +" url:" +siteModel.getUrl());
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
