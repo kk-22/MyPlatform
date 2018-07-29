@@ -193,6 +193,10 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 					temp = temp.multiply(new BigDecimal(currentValue));
 					break;
 				case "/":
+					BigDecimal currentDecimal = new BigDecimal(currentValue);
+					if (currentDecimal.floatValue() == 0) {
+						continue;
+					}
 					temp = temp.divide(new BigDecimal(currentValue), 4, BigDecimal.ROUND_DOWN);
 					break;
 				default:
