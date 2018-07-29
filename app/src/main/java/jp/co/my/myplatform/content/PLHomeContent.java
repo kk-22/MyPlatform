@@ -70,12 +70,6 @@ public class PLHomeContent extends PLContentView {
 				);
 			}
 		});
-		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLTWListContent.class);
-			}
-		});
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
