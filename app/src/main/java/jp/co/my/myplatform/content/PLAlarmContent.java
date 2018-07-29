@@ -80,6 +80,7 @@ public class PLAlarmContent extends PLContentView {
 						// 振動を強くする
 						milliseconds *= (mAlarmCount + 1) / 2;
 					}
+					MYLogUtil.outputLog(" vibrato milliseconds=" +milliseconds +" count=" +mAlarmCount);
 					vibrator.vibrate(milliseconds);
 				}
 

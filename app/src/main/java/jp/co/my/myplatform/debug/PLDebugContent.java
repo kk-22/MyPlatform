@@ -34,6 +34,7 @@ import jp.co.my.myplatform.mysen.PLMSFieldModel;
 import jp.co.my.myplatform.mysen.PLMSUnitModel;
 import jp.co.my.myplatform.mysen.PLMSWarContent;
 import jp.co.my.myplatform.mysen.unit.PLMSSkillModel;
+import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.wikipedia.PLWikipediaPageModel;
 
@@ -209,6 +210,28 @@ public class PLDebugContent extends PLContentView {
 				public void onClick(View v) {
 					System.gc();
 					initDebugItem();
+				}
+			}));
+		}
+		{
+			itemList.add(new PLDebugTitleItem("Log"));
+			itemList.add(new PLDebugButtonItem("表示", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (MYLogUtil.openLogFile()) {
+						PLCoreService.getNavigationController().hideNavigationIfNeeded();
+					}
+				}
+			}));
+			itemList.add(new PLDebugButtonItem("削除", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new PLConfirmationPopover("メモを削除", new PLConfirmationPopover.PLConfirmationListener() {
+						@Override
+						public void onClickButton(boolean isYes) {
+							MYLogUtil.deleteLogFile();
+						}
+					}, null);
 				}
 			}));
 		}

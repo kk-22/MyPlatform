@@ -1,7 +1,7 @@
 package jp.co.my.common.util;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
@@ -10,10 +10,22 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import jp.co.my.myplatform.core.PLApplication;
 
 public class MYLogUtil {
-	private static final String LOG_FILE_NAME = "MyLog";
+	private static final String LOG_FILE_NAME = "my_log.txt";
 	private static final String TOAST_TAG = "toastLog";
 	private static Context sContext;
 	private static boolean sIsWriteLog;
@@ -91,45 +103,58 @@ public class MYLogUtil {
 	ログファイル操作
 	 */
 	private static void writeLogFile(String text) {
-//		if (!sIsWriteLog) {
-//			return;
-//		}
-//		SimpleDateFormat dataFormat = new SimpleDateFormat("MM/dd HH:mm:ss ");
-//		String entryStr = dataFormat.format(new Date()) + text +"\n";
-//		try {
-//			FileOutputStream fileOutputstream = sContext.openFileOutput(LOG_FILE_NAME, Context.MODE_PRIVATE | Context.MODE_APPEND);
-//			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutputstream));
-//			writer.write(entryStr);
-//			writer.close();
-//		} catch (IOException e) {
-//			MYLogUtil.showExceptionToast(e);
-//		}
+		if (!sIsWriteLog) {
+			return;
+		}
+		SimpleDateFormat dataFormat = new SimpleDateFormat("MM/dd HH:mm:ss ");
+		String entryStr = dataFormat.format(new Date()) + text +"\n";
+		try {
+			File file = getLogFile();
+			FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream,"Shift-JIS");
+			PrintWriter writer = new PrintWriter(new BufferedWriter(outputStreamWriter));
+			writer.write(entryStr);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			MYLogUtil.showExceptionToast(e);
+		}
 	}
 
-	public static void displayLogDialog(Activity activity) {
-//		FileInputStream fileInputStream;
-//		BufferedReader reader;
-//		try {
-//			fileInputStream = sContext.openFileInput(LOG_FILE_NAME);
-//			reader = new BufferedReader(new InputStreamReader(fileInputStream,"UTF-8"));
-//			StringBuffer stringBuffer = new StringBuffer();
-//			String line;
-//			while ((line = reader.readLine()) != null) {
-//				stringBuffer.append(line);
-//				stringBuffer.append("\n");
-//			}
-//			reader.close();
-//
-//			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-//			alertDialogBuilder.setMessage(stringBuffer.toString());
-//			alertDialogBuilder.create().show();
-//		} catch (IOException e) {
-//			MYLogUtil.showExceptionToast(e);
-//		}
+	public static boolean openLogFile() {
+		File textFile = getLogFile();
+		if (!textFile.exists()) {
+			MYLogUtil.showToast("ログファイルなし");
+			return false;
+		}
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(textFile));
+			StringBuilder stringBuilder = new StringBuilder();
+			String lineStr;
+			while((lineStr = reader.readLine()) != null){
+				stringBuilder.append(lineStr).append("\n");
+			}
+			reader.close();
+
+			Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
+			sContext.startActivity(intent);
+			return true;
+		} catch (Exception e) {
+			showExceptionToast(e);
+			return false;
+		}
+	}
+
+	private static File getLogFile() {
+		return new File(PLApplication.appRootPath(), LOG_FILE_NAME);
 	}
 
 	public static void deleteLogFile() {
-		sContext.deleteFile(LOG_FILE_NAME);
+		getLogFile().delete();
 	}
 
 	public static SharedPreferences getPreference() {
