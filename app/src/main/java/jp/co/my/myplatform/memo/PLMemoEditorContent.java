@@ -71,12 +71,6 @@ public class PLMemoEditorContent extends PLContentView {
 		mPrevScrollY = mScrollView.getScrollY();
 	}
 
-	@Override
-	public void viewWillDisappear() {
-		super.viewWillDisappear();
-		mReadWriter.saveToFile();
-	}
-
 	void updateButtons() {
 		mBackButton.setEnabled(mEditText.hasBackText());
 		mForwardButton.setEnabled(mEditText.hasForwardText());

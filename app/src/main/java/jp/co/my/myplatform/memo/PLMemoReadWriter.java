@@ -26,6 +26,7 @@ public class PLMemoReadWriter {
 
 	private EditText mEditText;
 	private String mCurrentName;
+	private String mPrevText;
 
 	public PLMemoReadWriter(EditText editText) {
 		mEditText = editText;
@@ -58,8 +59,13 @@ public class PLMemoReadWriter {
 	public void saveToFile() {
 		// TODO: if text size is 0, don't save.
 		// TODO: 文字があったテキストが0文字になったら削除
-		// TODO: 変更フラグを持って、未変更ならスキップ
 		// TODO: use async?
+		String nextText = mEditText.getText().toString();
+		if (nextText.equals(mPrevText)) {
+			return;
+		}
+		mPrevText = nextText;
+
 		String path = getDirectoryPath();
 		File directory = new File(path);
 		if (!directory.exists() && directory.mkdirs()) {
@@ -70,7 +76,7 @@ public class PLMemoReadWriter {
 		File textFile = new File(directory, mCurrentName);
 		try {
 			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(textFile)));
-			writer.write(mEditText.getText().toString());
+			writer.write(nextText);
 			writer.flush();
 			writer.close();
 
@@ -103,7 +109,9 @@ public class PLMemoReadWriter {
 		} catch (IOException e) {
 			MYLogUtil.showExceptionToast(e);
 		}
-		mEditText.setText(stringBuilder.toString());
+		String nextText = stringBuilder.toString();
+		mPrevText = nextText;
+		mEditText.setText(nextText);
 		return true;
 	}
 
