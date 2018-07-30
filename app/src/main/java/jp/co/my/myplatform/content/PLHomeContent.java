@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.app.PLAppStrategy;
 import jp.co.my.myplatform.app.PLFireEmblemApp;
+import jp.co.my.myplatform.browser.PLBaseBrowserContent;
 import jp.co.my.myplatform.browser.PLHistoryBrowserContent;
 import jp.co.my.myplatform.core.PLApplication;
 import jp.co.my.myplatform.core.PLCoreService;
@@ -92,6 +93,14 @@ public class PLHomeContent extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLHistoryBrowserContent.class);
+			}
+		});
+		findViewById(R.id.twitter_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLBaseBrowserContent browserView = new PLBaseBrowserContent();
+				browserView.getCurrentWebView().loadUrl("https://twitter.com/dorann217/lists/%E3%83%AA%E3%82%B9%E3%83%88");
+				PLCoreService.getNavigationController().pushView(browserView);
 			}
 		});
 		findViewById(R.id.explorer_button).setOnClickListener(new View.OnClickListener() {
