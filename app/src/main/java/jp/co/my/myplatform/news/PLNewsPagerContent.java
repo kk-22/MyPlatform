@@ -132,11 +132,11 @@ public class PLNewsPagerContent extends PLContentView {
 	}
 
 	private void createViewPager() {
-		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+		ViewPager viewPager = findViewById(R.id.view_pager);
 		viewPager.setAdapter(new PLNewsFragmentPagerAdapter());
 		viewPager.setOffscreenPageLimit(mNewsGroupArray.size());
 
-		SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tab);
+		SlidingTabLayout slidingTabLayout = findViewById(R.id.sliding_tab);
 		slidingTabLayout.setViewPager(viewPager);
 		slidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
 			@Override

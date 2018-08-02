@@ -40,9 +40,9 @@ public class PLNewsListView extends FrameLayout {
 		mGroupModel = group;
 
 		LayoutInflater.from(getContext()).inflate(R.layout.view_news_list, this);
-		mListView = (ListView) findViewById(R.id.page_list);
-		mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.news_refresh);
+		mListView = findViewById(R.id.page_list);
+		mProgressBar = findViewById(R.id.progress_bar);
+		mSwipeLayout = findViewById(R.id.news_refresh);
 
 		initSwipeLayout();
 		initFetcher();

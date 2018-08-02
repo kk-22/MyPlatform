@@ -41,7 +41,7 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 	}
 
 	public static void setBackgroundColorToView(View view, boolean isAlreadyRead) {
-		TextView pageText = (TextView) view.findViewById(R.id.page_title_text);
+		TextView pageText = view.findViewById(R.id.page_title_text);
 		if (isAlreadyRead) {
 			pageText.setTextColor(Color.LTGRAY);
 		} else {
@@ -60,8 +60,8 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 			LayoutInflater inflater = LayoutInflater.from(getContext());
 			convertView = inflater.inflate(R.layout.cell_news_partition, parent, false);
 		}
-		TextView dateText = (TextView) convertView.findViewById(R.id.date_text);
-		TextView titleText = (TextView) convertView.findViewById(R.id.partition_title_text);
+		TextView dateText = convertView.findViewById(R.id.date_text);
+		TextView titleText = convertView.findViewById(R.id.partition_title_text);
 
 		dateText.setText(page.getPostedString());
 		titleText.setText(page.getTitle());
@@ -73,9 +73,9 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 			LayoutInflater inflater = LayoutInflater.from(getContext());
 			convertView = inflater.inflate(R.layout.cell_news_page, parent, false);
 		}
-		TextView dateText = (TextView) convertView.findViewById(R.id.date_text);
-		TextView siteText = (TextView) convertView.findViewById(R.id.site_name_text);
-		TextView pageText = (TextView) convertView.findViewById(R.id.page_title_text);
+		TextView dateText = convertView.findViewById(R.id.date_text);
+		TextView siteText = convertView.findViewById(R.id.site_name_text);
+		TextView pageText = convertView.findViewById(R.id.page_title_text);
 
 		dateText.setText(page.getPostedString());
 		pageText.setText(page.getTitle());
