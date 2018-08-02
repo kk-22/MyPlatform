@@ -19,7 +19,7 @@ import jp.co.my.common.util.MYLogUtil;
 public class PLRSSParser {
 
 	// TODO: delete this value
-	private static final int MAX_SITE_NUM = 5;		// 1つのサイトからの最大ページ取得数
+	private static final int MAX_SITE_NUM = 20;		// 1つのサイトからの最大ページ取得数
 
 	private PLRSSParser() {}
 
@@ -34,19 +34,15 @@ public class PLRSSParser {
 		} catch (XmlPullParserException | IOException e) {
 			MYLogUtil.showExceptionToast(e);
 		} finally {
-			if (bufferedInputStream != null) {
-				try {
-					bufferedInputStream.close();
-				} catch (IOException e) {
-					MYLogUtil.showExceptionToast(e);
-				}
+			try {
+				bufferedInputStream.close();
+			} catch (IOException e) {
+				MYLogUtil.showExceptionToast(e);
 			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					MYLogUtil.showExceptionToast(e);
-				}
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				MYLogUtil.showExceptionToast(e);
 			}
 		}
 		if (pageArray == null) {
