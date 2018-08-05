@@ -30,23 +30,22 @@ public class PLWakeLockManager {
 	}
 
 	synchronized public void incrementKeepCPU() {
-		MYLogUtil.outputLog("CPUのインクリメント mKeepCPUCount=" +mKeepCPUCount);
 		if (mKeepCPUCount == 0 && mKeepScreenCount == 0) {
 			keepCPU();
 		}
 		mKeepCPUCount++;
+		MYLogUtil.outputLog("CPUのインクリメントを実施 mKeepCPUCount=" +mKeepCPUCount);
 	}
 
 	synchronized public void incrementKeepScreen() {
-		MYLogUtil.outputLog("Screenのインクリメント mKeepScreenCount=" +mKeepScreenCount);
 		if (mKeepScreenCount == 0) {
 			keepScreen();
 		}
 		mKeepScreenCount++;
+		MYLogUtil.outputLog("Screenのインクリメントを実施 mKeepScreenCount=" +mKeepScreenCount);
 	}
 
 	synchronized public void decrementKeepCPU() {
-		MYLogUtil.outputLog("CPUのデクリメント mKeepCPUCount=" +mKeepCPUCount);
 		mKeepCPUCount--;
 		if (mKeepCPUCount < 0) {
 			MYLogUtil.showErrorToast("decrementKeepCPU mKeepCPUCount=" +mKeepCPUCount);
@@ -54,13 +53,13 @@ public class PLWakeLockManager {
 
 		if (mKeepCPUCount <= 0 && mKeepScreenCount <= 0) {
 			releaseWakeLockIfNeeded();
+			MYLogUtil.outputLog("CPU解放");
 		} else {
-			MYLogUtil.outputLog("他で使用中　mKeepCPUCount=" +mKeepCPUCount +", mKeepScreenCount=" +mKeepScreenCount);
+			MYLogUtil.outputLog("CPUは他で使用中　mKeepCPUCount=" +mKeepCPUCount +", mKeepScreenCount=" +mKeepScreenCount);
 		}
 	}
 
 	synchronized public void decrementKeepScreen() {
-		MYLogUtil.outputLog("Screenのデクリメント mKeepScreenCount=" +mKeepScreenCount);
 		mKeepScreenCount--;
 		if (mKeepScreenCount < 0) {
 			MYLogUtil.showErrorToast("decrementKeepScreen mKeepScreenCount=" +mKeepScreenCount);
@@ -72,6 +71,7 @@ public class PLWakeLockManager {
 			keepCPU();
 			MYLogUtil.outputLog("他のためにCPU保持　mKeepCPUCount=" +mKeepCPUCount +", mKeepScreenCount=" +mKeepScreenCount);
 		} else {
+			MYLogUtil.outputLog("Screen解放");
 			releaseWakeLockIfNeeded();
 		}
 	}
@@ -81,8 +81,10 @@ public class PLWakeLockManager {
 		releaseWakeLockIfNeeded();
 
 		PowerManager powerManager = (PowerManager)mContext.getSystemService(Context.POWER_SERVICE);
-		mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyPlatform");
-		mWakeLock.acquire();
+		if (powerManager != null) {
+			mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyPlatform");
+			mWakeLock.acquire();
+		}
 	}
 
 	private void keepScreen() {
@@ -91,17 +93,19 @@ public class PLWakeLockManager {
 
 		// SCREEN_DIM_WAKE_LOCK のDeprecate代用はgetWindow()しかない
 		PowerManager powerManager = (PowerManager)mContext.getSystemService(Context.POWER_SERVICE);
-		mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
-				| PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyPlatform");
-		mWakeLock.acquire();
+		if (powerManager != null) {
+			mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
+					| PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyPlatform");
+			mWakeLock.acquire();
+		}
 	}
 
 	private void releaseWakeLockIfNeeded() {
-		MYLogUtil.outputLog("wakeLockリリース可能か判定");
 		if (mWakeLock == null || !mWakeLock.isHeld()) {
+			MYLogUtil.outputLog("wakeLockリリース不要");
 			return;
 		}
-		MYLogUtil.outputLog("wakeLockをリリース");
+		MYLogUtil.outputLog("wakeLockリリース完了");
 		mWakeLock.release();
 		mWakeLock = null;
 	}

@@ -46,10 +46,10 @@ public class PLAlarmContent extends PLContentView {
 	public PLAlarmContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_set_alarm, this);
-		mStartButton = (Button) findViewById(R.id.set_alarm_button);
-		mCancelButton = (Button) findViewById(R.id.cancel_alarm_button);
-		mSnoozeRadio = (RadioGroup) findViewById(R.id.snooze_radio_group);
-		mSelectTimeView = (PLSelectTimeView) findViewById(R.id.time_select_view);
+		mStartButton = findViewById(R.id.set_alarm_button);
+		mCancelButton = findViewById(R.id.cancel_alarm_button);
+		mSnoozeRadio = findViewById(R.id.snooze_radio_group);
+		mSelectTimeView = findViewById(R.id.time_select_view);
 
 		setButtonEvent();
 	}
@@ -65,6 +65,7 @@ public class PLAlarmContent extends PLContentView {
 			MYLogUtil.showErrorToast("すでにアラームが開始しています count=" +mAlarmCount);
 			return;
 		}
+		MYLogUtil.outputLog("アラーム開始");
 		mAlarmCount = 0;
 		PLWakeLockManager.getInstance().incrementKeepCPU();
 
@@ -169,6 +170,7 @@ public class PLAlarmContent extends PLContentView {
 
 	// 予約したアラーム解除
 	private static void cancelAlarm() {
+		MYLogUtil.outputLog("アラームキャンセル");
 		// TODO: timerからコール時にインスタンスが破棄済みなためクラッシュ
 		if (isExistPendingIntent()) {
 			PendingIntent alarmSender = createPendingIntent();

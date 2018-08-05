@@ -29,14 +29,7 @@ public class PLWebView extends WebView {
 	}
 
 	@Override
-	protected void onFinishInflate() {
-		MYLogUtil.outputLog("onFinishInflate");
-		super.onFinishInflate();
-	}
-
-	@Override
 	protected void onAttachedToWindow() {
-		MYLogUtil.outputLog("onAttachedToWindow");
 		super.onAttachedToWindow();
 
 		onResume();
@@ -45,7 +38,6 @@ public class PLWebView extends WebView {
 
 	@Override
 	protected void onDetachedFromWindow() {
-		MYLogUtil.outputLog("onDetachedFromWindow");
 		super.onDetachedFromWindow();
 
 		onPause();

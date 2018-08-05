@@ -253,7 +253,6 @@ public class PLRSSFetcher {
 				public void execute(DatabaseWrapper databaseWrapper) {
 					mGroupModel.save();
 					for (PLNewsPageModel site : removePageArray) {
-						MYLogUtil.outputLog("delete " + site.getTitle());
 						site.delete();
 					}
 					PLDatabase.saveModelList(savePageArray, true);
