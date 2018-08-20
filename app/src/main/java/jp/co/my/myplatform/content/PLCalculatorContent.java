@@ -23,7 +23,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 
 	public PLCalculatorContent() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator_big, this);
 		mCacheTextButton = findViewById(R.id.cache_button);
 		mEntryText = findViewById(R.id.entry_text);
 		mTotalText = findViewById(R.id.total_text);
