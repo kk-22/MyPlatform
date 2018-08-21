@@ -218,8 +218,10 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		}
 		mTotalText.setText(new DecimalFormat("#.##").format(temp));
 
-		String saveText = mEntryText.getText() + "=" +mTotalText.getText();
-		MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, saveText).apply();
+		if (!lineString.equals("0")) {
+			String saveText = lineString + "=" +mTotalText.getText();
+			MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, saveText).apply();
+		}
 	}
 
 	private void deleteInputString(boolean isOneChar) {
