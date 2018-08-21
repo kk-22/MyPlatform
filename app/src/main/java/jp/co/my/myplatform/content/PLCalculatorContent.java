@@ -1,7 +1,9 @@
 package jp.co.my.myplatform.content;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -10,12 +12,14 @@ import java.text.DecimalFormat;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.core.PLCoreService;
 
 
 public class PLCalculatorContent extends PLContentView implements View.OnClickListener {
 
 	private static final String KEY_LAST_INPUT_STRING = "KEY_LAST_INPUT_STRING";
 
+	private ViewGroup mHeaderView;
 	private Button mCacheTextButton;
 	private TextView mEntryText;
 	private TextView mTotalText;
@@ -23,10 +27,19 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 
 	public PLCalculatorContent() {
 		super();
-		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator_big, this);
-		mCacheTextButton = findViewById(R.id.cache_button);
-		mEntryText = findViewById(R.id.entry_text);
-		mTotalText = findViewById(R.id.total_text);
+		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator, this);
+		mHeaderView = findViewById(R.id.header);
+		if (PLCoreService.getNavigationController().isHalf()) {
+			mHeaderView.removeAllViews();
+			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			if (inflater != null) {
+				inflater.inflate(R.layout.view_calculator_header_small, mHeaderView);
+			}
+		}
+
+		mCacheTextButton = mHeaderView.findViewById(R.id.cache_button);
+		mEntryText = mHeaderView.findViewById(R.id.entry_text);
+		mTotalText = mHeaderView.findViewById(R.id.total_text);
 
 		String cacheText = MYLogUtil.getPreference().getString(KEY_LAST_INPUT_STRING, "");
 		mCacheTextButton.setText(new StringBuilder(cacheText));

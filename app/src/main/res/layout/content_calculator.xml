@@ -5,49 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/cache_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#00000000"
-        android:ellipsize="start"
-        android:gravity="end"
-        android:singleLine="true"
-        android:textColor="#888"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/entry_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+    <include
+        android:id="@+id/header"
+        layout="@layout/view_calculator_header_big"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttons_background_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <TextView
-        android:id="@+id/entry_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="54dp"
-        android:ellipsize="start"
-        android:gravity="end"
-        android:singleLine="true"
-        android:text="0"
-        android:textColor="#000"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/total_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cache_button" />
-    <TextView
-        android:id="@+id/total_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="start"
-        android:gravity="end"
-        android:singleLine="true"
-        android:text="0"
-        android:textColor="#00f"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entry_text" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
     <View
@@ -57,7 +21,7 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/total_text"
+        app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 
