@@ -36,7 +36,7 @@
         app:layout_constraintHorizontal_weight="0.2"
         app:layout_constraintStart_toStartOf="@+id/buttons_background_view"
         app:layout_constraintTop_toTopOf="@id/buttons_background_view"
-        app:layout_constraintBottom_toTopOf="@id/multiplication_button"/>
+        app:layout_constraintBottom_toTopOf="@id/seven_button"/>
     <Button
         android:id="@+id/clear_all_button"
         style="@style/CalculatorButton.Other"
@@ -47,7 +47,7 @@
         app:layout_constraintLeft_toRightOf="@+id/clear_entry_button"
         app:layout_constraintStart_toEndOf="@+id/clear_entry_button"
         app:layout_constraintTop_toTopOf="@id/buttons_background_view"
-        app:layout_constraintBottom_toTopOf="@id/multiplication_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/clear_entry_button"/>
     <Button
         android:id="@+id/back_button"
         style="@style/CalculatorButton.Other"
@@ -58,7 +58,7 @@
         app:layout_constraintLeft_toRightOf="@+id/clear_all_button"
         app:layout_constraintStart_toEndOf="@+id/clear_all_button"
         app:layout_constraintTop_toTopOf="@id/buttons_background_view"
-        app:layout_constraintBottom_toTopOf="@id/multiplication_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/clear_entry_button"/>
     <Button
         android:id="@+id/divide_button"
         style="@style/CalculatorButton.Other"
@@ -69,7 +69,7 @@
         app:layout_constraintLeft_toRightOf="@+id/back_button"
         app:layout_constraintStart_toEndOf="@+id/back_button"
         app:layout_constraintTop_toTopOf="@id/buttons_background_view"
-        app:layout_constraintBottom_toTopOf="@id/multiplication_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/clear_entry_button"/>
 
 
 
@@ -85,7 +85,7 @@
         app:layout_constraintHorizontal_weight="0.2"
         app:layout_constraintStart_toStartOf="@+id/buttons_background_view"
         app:layout_constraintTop_toBottomOf="@id/clear_entry_button"
-        app:layout_constraintBottom_toTopOf="@id/minus_button"/>
+        app:layout_constraintBottom_toTopOf="@id/four_button"/>
     <Button
         android:id="@+id/eight_button"
         style="@style/CalculatorButton.Number"
@@ -96,7 +96,7 @@
         app:layout_constraintLeft_toRightOf="@+id/seven_button"
         app:layout_constraintStart_toEndOf="@+id/seven_button"
         app:layout_constraintTop_toBottomOf="@id/clear_all_button"
-        app:layout_constraintBottom_toTopOf="@id/minus_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/seven_button"/>
     <Button
         android:id="@+id/nine_button"
         style="@style/CalculatorButton.Number"
@@ -107,10 +107,10 @@
         app:layout_constraintLeft_toRightOf="@+id/eight_button"
         app:layout_constraintStart_toEndOf="@+id/eight_button"
         app:layout_constraintTop_toBottomOf="@id/back_button"
-        app:layout_constraintBottom_toTopOf="@id/minus_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/seven_button"/>
     <Button
         android:id="@+id/multiplication_button"
-        style="@style/CalculatorButton.Number"
+        style="@style/CalculatorButton.Other"
         android:text="×"
         app:layout_constraintEnd_toEndOf="@+id/buttons_background_view"
         app:layout_constraintHorizontal_bias="0.5"
@@ -118,7 +118,7 @@
         app:layout_constraintLeft_toRightOf="@+id/nine_button"
         app:layout_constraintStart_toEndOf="@+id/nine_button"
         app:layout_constraintTop_toBottomOf="@id/divide_button"
-        app:layout_constraintBottom_toTopOf="@id/minus_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/seven_button"/>
 
 
 
@@ -135,7 +135,7 @@
         app:layout_constraintHorizontal_weight="0.2"
         app:layout_constraintStart_toStartOf="@+id/buttons_background_view"
         app:layout_constraintTop_toBottomOf="@id/seven_button"
-        app:layout_constraintBottom_toTopOf="@id/plus_button"/>
+        app:layout_constraintBottom_toTopOf="@id/one_button"/>
     <Button
         android:id="@+id/five_button"
         style="@style/CalculatorButton.Number"
@@ -146,7 +146,7 @@
         app:layout_constraintLeft_toRightOf="@+id/four_button"
         app:layout_constraintStart_toEndOf="@+id/four_button"
         app:layout_constraintTop_toBottomOf="@id/eight_button"
-        app:layout_constraintBottom_toTopOf="@id/plus_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/four_button"/>
     <Button
         android:id="@+id/six_button"
         style="@style/CalculatorButton.Number"
@@ -157,7 +157,7 @@
         app:layout_constraintLeft_toRightOf="@+id/five_button"
         app:layout_constraintStart_toEndOf="@+id/five_button"
         app:layout_constraintTop_toBottomOf="@id/nine_button"
-        app:layout_constraintBottom_toTopOf="@id/plus_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/four_button"/>
     <Button
         android:id="@+id/minus_button"
         style="@style/CalculatorButton.Other"
@@ -168,7 +168,7 @@
         app:layout_constraintLeft_toRightOf="@+id/six_button"
         app:layout_constraintStart_toEndOf="@+id/six_button"
         app:layout_constraintTop_toBottomOf="@id/multiplication_button"
-        app:layout_constraintBottom_toTopOf="@id/plus_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/four_button"/>
 
 
 
@@ -183,7 +183,7 @@
         app:layout_constraintHorizontal_weight="0.2"
         app:layout_constraintStart_toStartOf="@+id/buttons_background_view"
         app:layout_constraintTop_toBottomOf="@id/four_button"
-        app:layout_constraintBottom_toTopOf="@id/equal_button"/>
+        app:layout_constraintBottom_toTopOf="@id/space_button"/>
     <Button
         android:id="@+id/two_button"
         style="@style/CalculatorButton.Number"
@@ -194,7 +194,7 @@
         app:layout_constraintLeft_toRightOf="@+id/one_button"
         app:layout_constraintStart_toEndOf="@+id/one_button"
         app:layout_constraintTop_toBottomOf="@id/five_button"
-        app:layout_constraintBottom_toTopOf="@id/equal_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/one_button"/>
     <Button
         android:id="@+id/three_button"
         style="@style/CalculatorButton.Number"
@@ -205,7 +205,7 @@
         app:layout_constraintLeft_toRightOf="@+id/two_button"
         app:layout_constraintStart_toEndOf="@+id/two_button"
         app:layout_constraintTop_toBottomOf="@id/six_button"
-        app:layout_constraintBottom_toTopOf="@id/equal_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/one_button"/>
     <Button
         android:id="@+id/plus_button"
         style="@style/CalculatorButton.Other"
@@ -216,7 +216,7 @@
         app:layout_constraintLeft_toRightOf="@+id/three_button"
         app:layout_constraintStart_toEndOf="@+id/three_button"
         app:layout_constraintTop_toBottomOf="@id/minus_button"
-        app:layout_constraintBottom_toTopOf="@id/equal_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/one_button"/>
 
 
 
@@ -243,7 +243,7 @@
         app:layout_constraintLeft_toRightOf="@+id/space_button"
         app:layout_constraintStart_toEndOf="@+id/space_button"
         app:layout_constraintTop_toBottomOf="@id/two_button"
-        app:layout_constraintBottom_toBottomOf="@+id/buttons_background_view"/>
+        app:layout_constraintBottom_toBottomOf="@id/space_button"/>
     <Button
         android:id="@+id/point_button"
         style="@style/CalculatorButton.Number"
@@ -254,7 +254,7 @@
         app:layout_constraintLeft_toRightOf="@+id/zero_button"
         app:layout_constraintStart_toEndOf="@+id/zero_button"
         app:layout_constraintTop_toBottomOf="@id/three_button"
-        app:layout_constraintBottom_toBottomOf="@+id/buttons_background_view"/>
+        app:layout_constraintBottom_toBottomOf="@id/space_button"/>
     <Button
         android:id="@+id/equal_button"
         style="@style/CalculatorButton.Other"
@@ -265,6 +265,6 @@
         app:layout_constraintLeft_toRightOf="@+id/point_button"
         app:layout_constraintStart_toEndOf="@+id/point_button"
         app:layout_constraintTop_toBottomOf="@id/plus_button"
-        app:layout_constraintBottom_toBottomOf="@+id/buttons_background_view"/>
+        app:layout_constraintBottom_toBottomOf="@id/space_button"/>
 
 </android.support.constraint.ConstraintLayout>
