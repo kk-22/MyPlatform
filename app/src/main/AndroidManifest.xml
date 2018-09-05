@@ -19,11 +19,6 @@
 
         <service android:name=".core.PLCoreService"></service>
 
-        <service android:name=".core.PLFirebaseInstanceIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
         <service
             android:name=".core.PLFirebaseMessagingService">
             <intent-filter>

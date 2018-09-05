@@ -11,6 +11,7 @@ import jp.co.my.myplatform.browser.PLBaseBrowserContent;
 import jp.co.my.myplatform.browser.PLHistoryBrowserContent;
 import jp.co.my.myplatform.core.PLApplication;
 import jp.co.my.myplatform.core.PLCoreService;
+import jp.co.my.myplatform.core.PLFirebaseMessagingService;
 import jp.co.my.myplatform.debug.PLDebugContent;
 import jp.co.my.myplatform.explorer.PLExplorerContent;
 import jp.co.my.myplatform.memo.PLMemoEditorContent;
@@ -20,7 +21,6 @@ import jp.co.my.myplatform.overlay.PLLockView;
 import jp.co.my.myplatform.overlay.PLNavigationController;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
-import jp.co.my.myplatform.twitter.PLTWListContent;
 import jp.co.my.myplatform.wikipedia.PLWikipediaViewer;
 
 public class PLHomeContent extends PLContentView {
@@ -160,6 +160,12 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
+					}
+				}),
+				new PLListPopover.PLListItem("FCM", new Runnable() {
+					@Override
+					public void run() {
+						PLFirebaseMessagingService.outputToken();
 					}
 				}),
 				new PLListPopover.PLListItem("デバッグ", new Runnable() {

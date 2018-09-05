@@ -8,14 +8,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.io.IOException;
 import java.util.Map;
 
+import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
 public class PLFirebaseMessagingService extends FirebaseMessagingService {
+
+	private static final String FCM_SENDER_ID = "305287558819";
 
 	@SuppressLint("WrongThread")
 	@Override
@@ -41,5 +46,19 @@ public class PLFirebaseMessagingService extends FirebaseMessagingService {
 		if (notificationManager != null) {
 			notificationManager.notify(0 , notificationBuilder.build());
 		}
+	}
+
+	public static void outputToken() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					String token = FirebaseInstanceId.getInstance().getToken(FCM_SENDER_ID, "FCM");
+					MYLogUtil.outputLog("FCM token=" +token);
+				} catch (IOException e) {
+					MYLogUtil.showExceptionToast(e);
+				}
+			}
+		}).start();
 	}
 }
