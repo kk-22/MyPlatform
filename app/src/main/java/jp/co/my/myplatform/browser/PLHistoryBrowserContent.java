@@ -9,6 +9,7 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 
 	public static final String KEY_URL_HISTORIES = "KEY_URL_HISTORIES";
 	public static final String KEY_URL_INDEX = "KEY_URL_INDEX";
+	public static final String KEY_SCRIPT_ENABLED = "KEY_SCRIPT_ENABLED";
 
 	private int mHistoryIndex; // 現在表示中の mUrlHistories の位置を指す
 	private MYArrayList<String> mUrlHistories; // 前回アプリ起動中の履歴
@@ -23,6 +24,8 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 		} else {
 			int savedIndex = MYLogUtil.getPreference().getInt(KEY_URL_INDEX, mUrlHistories.size() - 1);
 			mHistoryIndex = Math.min(mUrlHistories.size() - 1, savedIndex);
+			boolean scriptEnabled =  MYLogUtil.getPreference().getBoolean(KEY_SCRIPT_ENABLED, true);
+			getCurrentWebView().getSettings().setJavaScriptEnabled(scriptEnabled);
 		}
 
 		loadFirstPage();
@@ -52,8 +55,9 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 			return;
 		}
 
+		PLWebView webView = getCurrentWebView();
 		if (mHistoryIndex == -1 || !mUrlHistories.get(mHistoryIndex).equals(url)) {
-			String currentUrl = getCurrentWebView().getUrl();
+			String currentUrl = webView.getUrl();
 			if (mHistoryIndex >= 0
 					&& !url.equals(currentUrl)
 					&& !mUrlHistories.get(mHistoryIndex).equals(currentUrl)) {
@@ -64,6 +68,7 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 		}
 		MYLogUtil.saveObject(KEY_URL_HISTORIES, mUrlHistories, false)
 				.putInt(KEY_URL_INDEX, mHistoryIndex)
+				.putBoolean(KEY_SCRIPT_ENABLED, webView.getSettings().getJavaScriptEnabled())
 				.apply();
 	}
 
