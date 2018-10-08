@@ -138,8 +138,10 @@ public class PLAlarmContent extends PLContentView {
 				if (!mSelectTimeView.isZeroAll()) {
 					PendingIntent alarmSender = createPendingIntent();
 					AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-					alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
-					PLCoreService.getNavigationController().popView();
+					if (alarmManager != null) {
+						alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeInMillis, alarmSender);
+						PLCoreService.getNavigationController().popView();
+					}
 				} else {
 					startAlarm();
 				}
@@ -175,8 +177,10 @@ public class PLAlarmContent extends PLContentView {
 		if (isExistPendingIntent()) {
 			PendingIntent alarmSender = createPendingIntent();
 			AlarmManager alarmManager = (AlarmManager) PLCoreService.getContext().getSystemService(Context.ALARM_SERVICE);
-			alarmManager.cancel(alarmSender);
-			alarmSender.cancel();
+			if (alarmManager != null) {
+				alarmManager.cancel(alarmSender);
+				alarmSender.cancel();
+			}
 		}
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 		editor.remove(KEY_ALARM_TIME);
