@@ -20,7 +20,6 @@ import jp.co.my.myplatform.overlay.PLLockView;
 import jp.co.my.myplatform.overlay.PLNavigationController;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
-import jp.co.my.myplatform.wikipedia.PLWikipediaViewer;
 
 public class PLHomeContent extends PLContentView {
 
@@ -152,12 +151,6 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLAppListContent.class);
-					}
-				}),
-				new PLListPopover.PLListItem("Wikipedia", new Runnable() {
-					@Override
-					public void run() {
-						PLCoreService.getNavigationController().pushView(PLWikipediaViewer.class);
 					}
 				}),
 				new PLListPopover.PLListItem("FCM", new Runnable() {

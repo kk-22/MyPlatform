@@ -27,7 +27,6 @@ import jp.co.my.myplatform.news.PLNewsPageModel;
 import jp.co.my.myplatform.news.PLNewsSiteModel;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
-import jp.co.my.myplatform.wikipedia.PLWikipediaPageModel;
 
 public class PLDebugContent extends PLContentView {
 
@@ -75,21 +74,6 @@ public class PLDebugContent extends PLContentView {
 								classArray.add(PLBadWordModel.class);
 							}
 							deleteTable(classArray);
-						}
-					}).showPopover();
-				}
-			}));
-			itemList.add(new PLDebugButtonItem("wikipedia", new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					String[] titles = {"PLWikipediaPageModel"};
-					new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							PLDebugContent.this.removeTopPopover();
-							ArrayList<Class> classAray = new ArrayList<>();
-							classAray.add(PLWikipediaPageModel.class);
-							deleteTable(classAray);
 						}
 					}).showPopover();
 				}
