@@ -4,9 +4,7 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,9 +18,9 @@ public class PLNewsPageModel extends BaseModel {
 	@PrimaryKey(autoincrement = true)
 	private int no;
 	@ForeignKey
-	ForeignKeyContainer<PLNewsGroupModel> groupForeign;
+	PLNewsGroupModel groupForeign;
 	@ForeignKey
-	ForeignKeyContainer<PLNewsSiteModel> siteForeign;
+	PLNewsSiteModel siteForeign;
 
 	@Column
 	private String title;
@@ -72,22 +70,20 @@ public class PLNewsPageModel extends BaseModel {
 		this.no = no;
 	}
 
-	public void associateGroup(PLNewsGroupModel model) {
-		this.groupForeign = FlowManager.getContainerAdapter(PLNewsGroupModel.class)
-				.toForeignKeyContainer(model);
-	}
-
-	public ForeignKeyContainer<PLNewsGroupModel> getGroupForeign() {
+	public PLNewsGroupModel getGroupForeign() {
 		return groupForeign;
 	}
 
-	public void associateSite(PLNewsSiteModel model) {
-		this.siteForeign = FlowManager.getContainerAdapter(PLNewsSiteModel.class)
-				.toForeignKeyContainer(model);
+	public void setGroupForeign(PLNewsGroupModel groupForeign) {
+		this.groupForeign = groupForeign;
 	}
 
-	public ForeignKeyContainer<PLNewsSiteModel> getSiteForeign() {
+	public PLNewsSiteModel getSiteForeign() {
 		return siteForeign;
+	}
+
+	public void setSiteForeign(PLNewsSiteModel siteForeign) {
+		this.siteForeign = siteForeign;
 	}
 
 	public String getTitle() {

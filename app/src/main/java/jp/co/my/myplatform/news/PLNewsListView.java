@@ -128,7 +128,7 @@ public class PLNewsListView extends FrameLayout {
 				if (page.isPartitionCell()) {
 					return false;
 				}
-				PLNewsSiteModel site = page.getSiteForeign().load();
+				PLNewsSiteModel site = page.getSiteForeign();
 				MYLogUtil.showToast(site.getName() +"\n" +site.getUrl());
 				return true;
 			}

@@ -1,7 +1,6 @@
 package jp.co.my.myplatform.news;
 
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ModelContainer;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -12,7 +11,6 @@ import java.util.Calendar;
 import jp.co.my.myplatform.database.PLDatabase;
 import jp.co.my.myplatform.database.PLModelContainer;
 
-@ModelContainer
 @Table(database = PLDatabase.class)
 public class PLNewsGroupModel extends BaseModel {
 
