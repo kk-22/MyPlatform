@@ -15,7 +15,6 @@ import jp.co.my.myplatform.core.PLFirebaseMessagingService;
 import jp.co.my.myplatform.debug.PLDebugContent;
 import jp.co.my.myplatform.explorer.PLExplorerContent;
 import jp.co.my.myplatform.memo.PLMemoEditorContent;
-import jp.co.my.myplatform.mysen.PLMSWarContent;
 import jp.co.my.myplatform.news.PLNewsPagerContent;
 import jp.co.my.myplatform.overlay.PLLockView;
 import jp.co.my.myplatform.overlay.PLNavigationController;
@@ -80,7 +79,6 @@ public class PLHomeContent extends PLContentView {
 		findViewById(R.id.games_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showGameList();
 			}
 		});
 		findViewById(R.id.memo_button).setOnClickListener(new View.OnClickListener() {
@@ -172,17 +170,6 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLDebugContent.class);
-					}
-				})
-		);
-	}
-
-	private void showGameList() {
-		PLListPopover.showItems(
-				new PLListPopover.PLListItem("MySen", new Runnable() {
-					@Override
-					public void run() {
-						PLCoreService.getNavigationController().pushView(PLMSWarContent.class);
 					}
 				})
 		);
