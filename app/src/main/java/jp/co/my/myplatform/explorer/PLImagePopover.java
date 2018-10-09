@@ -12,12 +12,12 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.popover.PLPopoverView;
-import jp.co.my.myplatform.view.PLLoadImageView;
+import jp.co.my.myplatform.view.PLScalableImageView;
 
 public class PLImagePopover extends PLPopoverView {
 
 	private int mCurrentIndex;
-	private PLLoadImageView mLoadImage;
+	private PLScalableImageView mLoadImage;
 	private List<File> mImageFileList;
 	private LruCache<String, Bitmap> mCache;
 	private PLOnSetImageListener mListener;
@@ -25,7 +25,7 @@ public class PLImagePopover extends PLPopoverView {
 	public PLImagePopover(List<File> fileList, File imageFile, LruCache<String, Bitmap> imageCache) {
 		super(R.layout.popover_full_image);
 		mCache = imageCache;
-		mLoadImage = (PLLoadImageView) findViewById(R.id.load_image_view);
+		mLoadImage = findViewById(R.id.load_image_view);
 
 		mImageFileList = new ArrayList<>();
 		for (File file : fileList) {
@@ -43,6 +43,14 @@ public class PLImagePopover extends PLPopoverView {
 		initClickEvent();
 	}
 
+	@Override
+	public void removeFromContentView() {
+		super.removeFromContentView();
+		if (mListener != null) {
+			mListener.onSetImage(null);
+		}
+	}
+
 	private void setImage(int index) {
 		mCurrentIndex = index;
 		File file = mImageFileList.get(index);
@@ -54,13 +62,16 @@ public class PLImagePopover extends PLPopoverView {
 	}
 
 	private void initClickEvent() {
-		mLoadImage.setOnClickListener(new OnClickListener() {
+		findViewById(R.id.top_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLImagePopover.this.removeFromContentView();
-				if (mListener != null) {
-					mListener.onSetImage(null);
-				}
+			}
+		});
+		findViewById(R.id.bottom_view).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PLImagePopover.this.removeFromContentView();
 			}
 		});
 		findViewById(R.id.left_view).setOnClickListener(new OnClickListener() {
@@ -82,7 +93,8 @@ public class PLImagePopover extends PLPopoverView {
 				}
 				setImage(index);
 			}
-		});	}
+		});
+	}
 
 	public interface PLOnSetImageListener {
 		void onSetImage(File file);

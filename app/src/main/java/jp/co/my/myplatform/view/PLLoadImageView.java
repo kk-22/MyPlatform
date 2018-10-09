@@ -18,10 +18,9 @@ import java.io.InputStream;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
-public class PLLoadImageView extends FrameLayout {
+public class PLLoadImageView extends android.support.v7.widget.AppCompatImageView {
 
 	private File mFile;
-	private ImageView mImageView;
 	private LruCache<String, Bitmap> mCache;
 	private PLImageLoadTask mLoadTask;
 
@@ -33,14 +32,11 @@ public class PLLoadImageView extends FrameLayout {
 	}
 	public PLLoadImageView(Context context, AttributeSet attrs, int defStyle){
 		super(context, attrs, defStyle);
-
-		LayoutInflater.from(context).inflate(R.layout.view_load_image, this);
-		mImageView = (ImageView)findViewById(R.id.image_view);
 	}
 
 	public void loadImageResource(@DrawableRes int resId) {
 		cancelLoadTask();
-		mImageView.setImageResource(resId);
+		setImageResource(resId);
 	}
 
 	public void loadImageFile(File imageFile, LruCache<String, Bitmap> cache) {
@@ -50,11 +46,11 @@ public class PLLoadImageView extends FrameLayout {
 		cancelLoadTask();
 		Bitmap image = mCache.get(mFile.getName());
 		if (image != null) {
-			mImageView.setImageBitmap(image);
+			setImageBitmap(image);
 			return;
 		}
 
-		mImageView.setImageResource(R.drawable.file);
+		setImageResource(R.drawable.file);
 		mLoadTask = new PLImageLoadTask();
 		mLoadTask.execute(mFile);
 	}
@@ -113,7 +109,7 @@ public class PLLoadImageView extends FrameLayout {
 			if (bitmap == null) {
 				return;
 			}
-			mImageView.setImageBitmap(bitmap);
+			setImageBitmap(bitmap);
 			mCache.put(mFile.getName(), bitmap);
 		}
 
