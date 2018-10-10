@@ -8,10 +8,13 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.my.common.util.MYLogUtil;
+
 public class PLModelContainer<TModel extends BaseModel> {
 
 	private List<TModel> mModelList;
 	private BaseModelQueriable<TModel> mQuery;
+	private Thread mLoadingThread; // Modelの読み込み最中のスレッド
 
 	public PLModelContainer(BaseModelQueriable<TModel> query) {
 		mQuery = query;
@@ -52,16 +55,21 @@ public class PLModelContainer<TModel extends BaseModel> {
 			, final PLOnModelLoadThreadListener<TModel> threadListener
 			, final PLOnModelLoadMainListener<TModel> mainListener) {
 		final Handler mainHandler = createHandlerIfNecessary(mainListener);
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				if (needQuery) {
 					mModelList = mQuery.queryList();
+					mLoadingThread = null;
 				}
 				executeThreadListenerIfNecessary(true, threadListener);
 				executeMainListenerIfNecessary(mainHandler, mainListener);
 			}
-		}).start();
+		});
+		thread.start();
+		if (needQuery) {
+			mLoadingThread = thread;
+		}
 	}
 
 	private Handler createHandlerIfNecessary(PLOnModelLoadMainListener mainListener) {
@@ -102,6 +110,16 @@ public class PLModelContainer<TModel extends BaseModel> {
 				mainListener.onLoad(mModelList);
 			}
 		});
+	}
+
+	public void waitUntilFinishLoad() {
+		if (mLoadingThread != null) {
+			try {
+				mLoadingThread.join();
+			} catch (InterruptedException e) {
+				MYLogUtil.showExceptionToast(e);
+			}
+		}
 	}
 
 	public static abstract class PLOnModelLoadThreadListener<TModel> {

@@ -217,6 +217,7 @@ public class PLRSSFetcher {
 		// 新旧PageModelのマージ
 		final ArrayList<PLNewsPageModel> removePageArray = new ArrayList<>();
 		ArrayList<PLNewsPageModel> remainPageArray = new ArrayList<>();
+		mGroupModel.getPageContainer().waitUntilFinishLoad();
 		for (PLNewsPageModel oldPage : mGroupModel.getPageContainer().getModelList()) {
 			int newIndex = fetchPageArray.indexOf(oldPage);
 			if (newIndex == -1) {
