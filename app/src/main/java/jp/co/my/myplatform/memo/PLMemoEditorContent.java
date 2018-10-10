@@ -302,27 +302,29 @@ public class PLMemoEditorContent extends PLContentView {
 		int scrollY = mScrollView.getScrollY();
 		float tapRelativeY = event.getY() - scrollY;
 		int scrollHeight = mScrollView.getHeight();
-		int showingHeight = (int)(scrollHeight * 0.7); // キーボード表示中のScrollViewの可視範囲
+		int showingHeight = (int)(scrollHeight * 0.4); // キーボード表示中のScrollViewの可視範囲
 		if (tapRelativeY < showingHeight) {
 			// キーボードに隠れない位置
 			return;
 		}
 		// カーソル位置がキーボードにより隠れる場合、スクロールする
-		final int nextScrollY = scrollY +  (scrollHeight - showingHeight);
+		final int nextScrollY = scrollY +  ((int)tapRelativeY - showingHeight);
 		int lackHeight = (nextScrollY + scrollHeight) - mEditText.getHeight();
-		if (lackHeight > 0) {
+		if (lackHeight <= 0) {
+			mScrollView.scrollTo(mScrollView.getScrollX(), nextScrollY);
+		} else {
 			// 末尾の行をタップした場合は、スクロールできるように改行追加
 			int lineHeight = mEditText.getLineHeight();
 			for (; 0 < lackHeight ; lackHeight -= lineHeight) {
 				mEditText.append("\n");
 			}
+			// 改行追加による高さ自動計算後にscrollToを実行する必要があるためディレイ
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mScrollView.scrollTo(mScrollView.getScrollX(), nextScrollY);
+				}
+			}, 1);
 		}
-		// 改行追加時に高さ自動計算後にscrollToを実行する必要があるためディレイ
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				mScrollView.scrollTo(mScrollView.getScrollX(), nextScrollY);
-			}
-		}, 1);
 	}
 }
