@@ -143,8 +143,8 @@ public class PLHomeContent extends PLContentView {
 				new PLListPopover.PLListItem("ボタン非表示", new Runnable() {
 					@Override
 					public void run() {
-						PLCoreService.getNavigationController().hideNavigationIfNeeded();
 						PLCoreService.getOverlayManager().removeFrontOverlays();
+						PLCoreService.getNavigationController().hideNavigationIfNeeded();
 					}
 				}),
 				new PLListPopover.PLListItem("アプリ一覧", new Runnable() {
