@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.view.LongClickRepeatAdapter;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.core.PLCoreService;
@@ -43,6 +44,9 @@ public class PLMemoEditorContent extends PLContentView {
 		mScrollView = findViewById(R.id.scroll_view);
 		mEditText = findViewById(R.id.memo_edit);
 		mEditText.setEditorContent(this);
+
+		LongClickRepeatAdapter.bless(mBackButton, mForwardButton,
+				findViewById(R.id.line_down_button), findViewById(R.id.line_up_button));
 
 		mReadWriter = new PLMemoReadWriter(mEditText);
 		initEditTextEvent();
