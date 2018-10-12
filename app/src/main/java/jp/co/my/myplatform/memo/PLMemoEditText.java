@@ -88,17 +88,18 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	void moveSelectionLine(boolean toDown) {
 		didFinishDeleting();
 
-		int currentLines = getSelectionNumberOfLines(false);
-		int targetLines = (toDown) ? currentLines + 1 : currentLines - 1;
+		int currentStartLines = getSelectionNumberOfLines(true);
+		int currentEndLines = getSelectionNumberOfLines(false);
+		int targetLines = (toDown) ? currentEndLines + 1 : currentStartLines - 1;
 		int targetIndex = getIndexOfLines(targetLines, false);
 		if (targetIndex == NUMBER_OF_NONEXISTENT_LINES) {
 			// 入れ替え対象の行が存在しない
 			return;
 		}
 		// 入れ替え行の文字列を指定するために、文字列の開始と終了位置を取得
-		int maxLines = Math.max(currentLines, targetLines);
+		int maxLines = Math.max(currentEndLines, targetLines);
 		int overLines = maxLines + 1;
-		int currentIndex = getIndexOfLines(currentLines, true);
+		int currentIndex = getIndexOfLines(currentStartLines, true);
 		int startIndex = Math.min(currentIndex, targetIndex);
 		int middleIndex = Math.max(currentIndex, targetIndex);
 		int endIndex = getIndexOfLines(overLines, true);
@@ -107,8 +108,19 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		String replaceString = editable.subSequence(middleIndex, endIndex).toString()
 				+ editable.subSequence(startIndex, middleIndex).toString();
 		editable.replace(startIndex, endIndex, replaceString);
-		// 移動先の行端へカーソルを移動
-		setSelection(getTailIndexOfLines(targetLines));
+		if (currentStartLines == currentEndLines) {
+			// 1行のみ選択していた場合、移動先の行端へカーソルを移動
+			setSelection(getTailIndexOfLines(targetLines));
+		} else {
+			// 複数行選択していた場合、連続して行移動できるように移動行全体を選択
+			if (toDown) {
+				int numberOfTargetChar = endIndex - middleIndex;
+				setSelection(startIndex + numberOfTargetChar, endIndex - 1);
+			} else {
+				int numberOfMovedChar = endIndex - middleIndex;
+				setSelection(startIndex, startIndex + numberOfMovedChar - 1);
+			}
+		}
 	}
 
 	private int getSelectionNumberOfLines(boolean isStart) {
