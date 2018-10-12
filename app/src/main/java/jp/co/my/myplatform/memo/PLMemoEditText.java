@@ -102,13 +102,11 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		int startIndex = Math.min(currentIndex, targetIndex);
 		int middleIndex = Math.max(currentIndex, targetIndex);
 		int endIndex = getIndexOfLines(overLines, true);
-		// 行を入れ替えた文章を作成してセット
-		Editable prevText = getText();
-		String nextString = prevText.subSequence(0, startIndex).toString()
-				+ prevText.subSequence(middleIndex, endIndex).toString()
-				+ prevText.subSequence(startIndex, middleIndex).toString()
-				+ prevText.subSequence(endIndex, prevText.length());
-		setText(nextString);
+		// 行を入れ替える
+		Editable editable = getText();
+		String replaceString = editable.subSequence(middleIndex, endIndex).toString()
+				+ editable.subSequence(startIndex, middleIndex).toString();
+		editable.replace(startIndex, endIndex, replaceString);
 		// 移動先の行端へカーソルを移動
 		setSelection(getTailIndexOfLines(targetLines));
 	}
