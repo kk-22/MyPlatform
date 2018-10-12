@@ -79,7 +79,7 @@ public class PLNewsListAdapter extends ArrayAdapter<PLNewsPageModel> {
 
 		dateText.setText(page.getPostedString());
 		pageText.setText(page.getTitle());
-		PLNewsSiteModel site = page.getSiteForeign();
+		PLNewsSiteModel site = page.getSiteModel();
 		if (site != null) {
 			siteText.setText(site.getName());
 		}

@@ -1,7 +1,6 @@
 package jp.co.my.myplatform.news;
 
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -13,9 +12,9 @@ public class PLBadWordModel extends BaseModel {
 
 	@PrimaryKey(autoincrement = false)
 	private int no;
-	@ForeignKey
-	PLNewsGroupModel groupForeign;
 
+	@Column
+	private int groupNo;
 	@Column
 	private String word;
 
@@ -31,12 +30,12 @@ public class PLBadWordModel extends BaseModel {
 		this.no = no;
 	}
 
-	public PLNewsGroupModel getGroupForeign() {
-		return groupForeign;
+	public int getGroupNo() {
+		return groupNo;
 	}
 
-	public void setGroupForeign(PLNewsGroupModel groupForeign) {
-		this.groupForeign = groupForeign;
+	public void setGroupNo(int groupNo) {
+		this.groupNo = groupNo;
 	}
 
 	public String getWord() {

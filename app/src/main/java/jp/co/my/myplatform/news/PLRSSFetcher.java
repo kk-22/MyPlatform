@@ -237,7 +237,6 @@ public class PLRSSFetcher {
 			mGroupModel.save();
 		} else {
 			PLNewsPageModel partition = new PLNewsPageModel();
-			partition.setGroupForeign(mGroupModel);
 			partition.setPostedDate(Calendar.getInstance());
 			partition.setTitle("新着" + fetchPageArray.size() + "件");
 

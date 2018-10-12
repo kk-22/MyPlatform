@@ -1,9 +1,9 @@
 package jp.co.my.myplatform.news;
 
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.text.SimpleDateFormat;
@@ -17,11 +17,11 @@ public class PLNewsPageModel extends BaseModel {
 
 	@PrimaryKey(autoincrement = true)
 	private int no;
-	@ForeignKey
-	PLNewsGroupModel groupForeign;
-	@ForeignKey
-	PLNewsSiteModel siteForeign;
 
+	@Column
+	private int groupNo;
+	@Column
+	private int siteNo;
 	@Column
 	private String title;
 	@Column
@@ -32,6 +32,8 @@ public class PLNewsPageModel extends BaseModel {
 	private int positionNo;
 	@Column
 	private boolean alreadyRead;
+
+	private PLNewsSiteModel siteModel;
 
 	public PLNewsPageModel() {
 		super();
@@ -70,20 +72,20 @@ public class PLNewsPageModel extends BaseModel {
 		this.no = no;
 	}
 
-	public PLNewsGroupModel getGroupForeign() {
-		return groupForeign;
+	public int getGroupNo() {
+		return groupNo;
 	}
 
-	public void setGroupForeign(PLNewsGroupModel groupForeign) {
-		this.groupForeign = groupForeign;
+	public void setGroupNo(int groupNo) {
+		this.groupNo = groupNo;
 	}
 
-	public PLNewsSiteModel getSiteForeign() {
-		return siteForeign;
+	public int getSiteNo() {
+		return siteNo;
 	}
 
-	public void setSiteForeign(PLNewsSiteModel siteForeign) {
-		this.siteForeign = siteForeign;
+	public void setSiteNo(int siteNo) {
+		this.siteNo = siteNo;
 	}
 
 	public String getTitle() {
@@ -124,5 +126,20 @@ public class PLNewsPageModel extends BaseModel {
 
 	public void setAlreadyRead(boolean alreadyRead) {
 		this.alreadyRead = alreadyRead;
+	}
+
+	public PLNewsSiteModel getSiteModel() {
+		if (siteModel == null) {
+			siteModel = SQLite.select()
+					.from(PLNewsSiteModel.class)
+					.where(PLNewsSiteModel_Table.no.eq(siteNo))
+					.querySingle();
+		}
+		return siteModel;
+	}
+
+	public void setSiteModel(PLNewsSiteModel siteModel) {
+		siteNo = siteModel.getNo();
+		this.siteModel = siteModel;
 	}
 }

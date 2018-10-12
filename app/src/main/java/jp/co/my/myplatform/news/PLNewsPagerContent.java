@@ -94,7 +94,7 @@ public class PLNewsPagerContent extends PLContentView {
 					 int siteCount = siteArray.size();
 					 for (int j = 0; j < siteCount; j++) {
 						 PLNewsSiteModel site = siteArray.get(j);
-						 site.setGroupForeign(group);
+						 site.setGroupNo(group.getNo());
 					 }
 					 PLDatabase.saveModelList(siteArray);
 				 }
@@ -122,7 +122,7 @@ public class PLNewsPagerContent extends PLContentView {
 					int siteCount = wordArray.size();
 					for (int j = 0; j < siteCount; j++) {
 						PLBadWordModel site = wordArray.get(j);
-						site.setGroupForeign(group);
+						site.setGroupNo(group.getNo());
 					}
 					PLDatabase.saveModelList(wordArray);
 				}

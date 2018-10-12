@@ -14,7 +14,7 @@ import jp.co.my.myplatform.database.PLModelContainer;
 @Table(database = PLDatabase.class)
 public class PLNewsGroupModel extends BaseModel {
 
-	@PrimaryKey(autoincrement = false)
+	@PrimaryKey
 	private int no;
 
 	@Column
@@ -98,7 +98,7 @@ public class PLNewsGroupModel extends BaseModel {
 		if (siteContainer == null) {
 			siteContainer = new PLModelContainer<>(SQLite.select()
 					.from(PLNewsSiteModel.class)
-					.where(PLNewsSiteModel_Table.groupForeign_no.eq(no)));
+					.where(PLNewsSiteModel_Table.groupNo.eq(no)));
 		}
 		return siteContainer;
 	}
@@ -107,7 +107,7 @@ public class PLNewsGroupModel extends BaseModel {
 		if (pageContainer == null) {
 			pageContainer = new PLModelContainer<>(SQLite.select()
 					.from(PLNewsPageModel.class)
-					.where(PLNewsPageModel_Table.groupForeign_no.eq(no)));
+					.where(PLNewsPageModel_Table.groupNo.eq(no)));
 		}
 		return pageContainer;
 	}
@@ -116,7 +116,7 @@ public class PLNewsGroupModel extends BaseModel {
 		if (badWordContainer == null) {
 			badWordContainer = new PLModelContainer<>(SQLite.select()
 					.from(PLBadWordModel.class)
-					.where(PLBadWordModel_Table.groupForeign_no.eq(no)));
+					.where(PLBadWordModel_Table.groupNo.eq(no)));
 		}
 		return badWordContainer;
 	}

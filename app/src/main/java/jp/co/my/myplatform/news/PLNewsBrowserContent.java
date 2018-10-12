@@ -25,7 +25,7 @@ public class PLNewsBrowserContent extends PLBaseBrowserContent {
 		PLWebView webView = getCurrentWebView();
 		webView.loadUrl(mPageModel.getUrl());
 
-		PLNewsSiteModel site = mPageModel.getSiteForeign();
+		PLNewsSiteModel site = mPageModel.getSiteModel();
 		if (site == null) {
 			MYLogUtil.showErrorToast("site is null");
 			return;
