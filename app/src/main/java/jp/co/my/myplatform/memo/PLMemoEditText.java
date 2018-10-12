@@ -70,10 +70,11 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 	void deleteSelectionLine() {
 		didFinishDeleting();
+		int startLines = getSelectionNumberOfLines(true);
+		int endLines = getSelectionNumberOfLines(false);
 
-		int currentLines = getSelectionNumberOfLines();
-		int startIndex = getIndexOfLines(currentLines, true);
-		int endIndex = getIndexOfLines(currentLines + 1, true);
+		int startIndex = getIndexOfLines(startLines, true);
+		int endIndex = getIndexOfLines(endLines + 1, true);
 		if (startIndex == endIndex) {
 			// 最終行に文字がないケース。一番最後の改行コードを削除
 			startIndex = Math.max(0, startIndex - 1);
@@ -87,7 +88,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	void moveSelectionLine(boolean toDown) {
 		didFinishDeleting();
 
-		int currentLines = getSelectionNumberOfLines();
+		int currentLines = getSelectionNumberOfLines(false);
 		int targetLines = (toDown) ? currentLines + 1 : currentLines - 1;
 		int targetIndex = getIndexOfLines(targetLines, false);
 		if (targetIndex == NUMBER_OF_NONEXISTENT_LINES) {
@@ -112,10 +113,10 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		setSelection(getTailIndexOfLines(targetLines));
 	}
 
-	private int getSelectionNumberOfLines() {
+	private int getSelectionNumberOfLines(boolean isStart) {
 		int lineCount = 1;
 		Editable text = getText();
-		int endIndex = getSelectionEnd();
+		int endIndex = (isStart) ? getSelectionStart() : getSelectionEnd();
 		for (int i = 0; i < endIndex; i++) {
 			if (text.charAt(i) == '\n') {
 				lineCount++;
@@ -185,7 +186,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		int diff = string.length() - mInputStartLength;
 		if (diff < 0) {
 			// 文字削除時
-			int currentLines = getSelectionNumberOfLines();
+			int currentLines = getSelectionNumberOfLines(false);
 			String prevString = Objects.requireNonNull(getCurrentHistoryText());
 			String deletedText = MYStringUtil.diffString(string, prevString);
 			boolean isDeletedLineBreak = (currentLines == mPrevDeleteLines - 1 && deletedText.contains("\n"));
