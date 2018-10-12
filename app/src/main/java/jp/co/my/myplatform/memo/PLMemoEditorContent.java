@@ -319,9 +319,11 @@ public class PLMemoEditorContent extends PLContentView {
 		} else {
 			// 末尾の行をタップした場合は、スクロールできるように改行追加
 			int lineHeight = mEditText.getLineHeight();
+			StringBuilder builder = new StringBuilder();
 			for (; 0 < lackHeight ; lackHeight -= lineHeight) {
-				mEditText.append("\n");
+				builder.append("\n");
 			}
+			mEditText.append(builder.toString());
 			// 改行追加による高さ自動計算後にscrollToを実行する必要があるためディレイ
 			new Handler().postDelayed(new Runnable() {
 				@Override
