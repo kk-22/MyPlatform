@@ -176,12 +176,6 @@ public class PLHomeContent extends PLContentView {
 						displayLockView(-1);
 					}
 				}),
-				new PLListPopover.PLListItem("15分", new Runnable() {
-					@Override
-					public void run() {
-						displayLockView(15);
-					}
-				}),
 				new PLListPopover.PLListItem("10分", new Runnable() {
 					@Override
 					public void run() {
@@ -204,6 +198,12 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						displayLockView(3);
+					}
+				}),
+				new PLListPopover.PLListItem("2分", new Runnable() {
+					@Override
+					public void run() {
+						displayLockView(2);
 					}
 				}),
 				new PLListPopover.PLListItem("1分", new Runnable() {
