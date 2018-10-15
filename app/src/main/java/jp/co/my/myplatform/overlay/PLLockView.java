@@ -15,21 +15,21 @@ import jp.co.my.myplatform.core.PLWakeLockManager;
 public class PLLockView extends PLOverlayView {
 	private Handler mWakeLockReleaseHandler;
 	private boolean mIsStrongLock; // trueならロック画面が非表示にならず、閉じるの操作が複雑になる
-	private Switch mSwitch1, mSwitch2;
+	private Switch mLockSwitch1, mLockSwitch2;
 	private Button mStrongButton;
 
 	public PLLockView() {
 		super();
 
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.overlay_lock_view, this);
-		mSwitch1 = view.findViewById(R.id.switch1);
-		mSwitch2 = view.findViewById(R.id.switch2);
+		mLockSwitch1 = view.findViewById(R.id.switch1);
+		mLockSwitch2 = view.findViewById(R.id.switch2);
 		view.findViewById(R.id.open_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!mSwitch1.isChecked() || !mSwitch2.isChecked()) {
-					mSwitch1.setChecked(false);
-					mSwitch2.setChecked(false);
+				if (!mLockSwitch1.isChecked() || !mLockSwitch2.isChecked()) {
+					mLockSwitch1.setChecked(false);
+					mLockSwitch2.setChecked(false);
 					return;
 				}
 				PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
@@ -103,10 +103,10 @@ public class PLLockView extends PLOverlayView {
 			return;
 		}
 		mIsStrongLock = true;
-		mSwitch1.setChecked(false);
-		mSwitch2.setChecked(false);
-		mSwitch1.setEnabled(true);
-		mSwitch2.setEnabled(true);
+		mLockSwitch1.setChecked(false);
+		mLockSwitch2.setChecked(false);
+		mLockSwitch1.setEnabled(true);
+		mLockSwitch2.setEnabled(true);
 		mStrongButton.setVisibility(View.GONE);
 	}
 }
