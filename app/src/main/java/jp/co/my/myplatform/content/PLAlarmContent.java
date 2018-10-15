@@ -92,7 +92,7 @@ public class PLAlarmContent extends PLContentView {
 				if (mAlarmCount < 7) {
 					MYLogUtil.showToast("alarm count=" +mAlarmCount);
 					SharedPreferences pref = MYLogUtil.getPreference();
-					int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 1);
+					int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 10);
 					int delayMills = snoozeSec * 1000;
 					if (2 < mAlarmCount) {
 						// 離席時用に間隔を伸ばす
@@ -211,6 +211,11 @@ public class PLAlarmContent extends PLContentView {
 	}
 
 	private void setDefaultTimeIfNecessary() {
+		if (sAlarmHandler != null) {
+			mCancelButton.setEnabled(true);
+			return;
+		}
+
 		SharedPreferences pref = MYLogUtil.getPreference();
 		Long timeInMillis = pref.getLong(KEY_ALARM_TIME, 0);
 		if (timeInMillis == 0) {

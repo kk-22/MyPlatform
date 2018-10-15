@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Switch;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.content.PLAlarmContent;
 import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.core.PLDeviceSetting;
 import jp.co.my.myplatform.core.PLWakeLockManager;
@@ -15,7 +16,7 @@ import jp.co.my.myplatform.core.PLWakeLockManager;
 public class PLLockView extends PLOverlayView {
 	private Handler mWakeLockReleaseHandler;
 	private boolean mIsStrongLock; // trueならロック画面が非表示にならず、閉じるの操作が複雑になる
-	private Switch mLockSwitch1, mLockSwitch2;
+	private Switch mLockSwitch1, mLockSwitch2, mAlarmSwitch;
 	private Button mStrongButton;
 
 	public PLLockView() {
@@ -24,6 +25,7 @@ public class PLLockView extends PLOverlayView {
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.overlay_lock_view, this);
 		mLockSwitch1 = view.findViewById(R.id.switch1);
 		mLockSwitch2 = view.findViewById(R.id.switch2);
+		mAlarmSwitch = view.findViewById(R.id.alarm_switch);
 		view.findViewById(R.id.open_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -77,23 +79,17 @@ public class PLLockView extends PLOverlayView {
 			public void run() {
 				PLWakeLockManager.getInstance().decrementKeepScreen();
 				mWakeLockReleaseHandler = null;
-				if (mIsStrongLock) {
-					return;
+				if (mAlarmSwitch.isChecked()) {
+					// 指定時間経過を通知するためにアラームを鳴らす
+					PLAlarmContent alarmContent = new PLAlarmContent();
+					alarmContent.startAlarm();
+					PLCoreService.getNavigationController().pushView(alarmContent);
+					PLCoreService.getNavigationController().displayNavigationIfNeeded();
 				}
-
-				// ロック解除後のタップを防止するために画面を消灯させる
-				PLWakeLockManager.getInstance().incrementKeepCPU();
-				final int prevTimeout = PLDeviceSetting.getScreenOffTimeout();
-				PLDeviceSetting.setScreenOffTimeout(5000);
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// ロック解除
-						PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
-						PLDeviceSetting.setScreenOffTimeout(prevTimeout);
-						PLWakeLockManager.getInstance().decrementKeepCPU();
-					}
-				}, 15000);
+				if (!mIsStrongLock) {
+					// ロック解除
+					PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
+				}
 			}
 		}, minute * 60000);
 	}
