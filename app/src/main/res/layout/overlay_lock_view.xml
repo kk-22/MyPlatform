@@ -30,6 +30,7 @@
         android:layout_weight="0.5">
 
         <TextView
+            android:id="@+id/alarm_text"
             android:textColor="#fff"
             android:textSize="20dp"
             android:text="Alarm"

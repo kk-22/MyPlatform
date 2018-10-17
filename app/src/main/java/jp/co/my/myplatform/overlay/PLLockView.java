@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLAlarmContent;
@@ -18,15 +19,17 @@ public class PLLockView extends PLOverlayView {
 	private boolean mIsStrongLock; // trueならロック画面が非表示にならず、閉じるの操作が複雑になる
 	private Switch mLockSwitch1, mLockSwitch2, mAlarmSwitch;
 	private Button mStrongButton;
+	private TextView mAlarmText;
 
 	public PLLockView() {
 		super();
 
-		View view = LayoutInflater.from(getContext()).inflate(R.layout.overlay_lock_view, this);
-		mLockSwitch1 = view.findViewById(R.id.switch1);
-		mLockSwitch2 = view.findViewById(R.id.switch2);
-		mAlarmSwitch = view.findViewById(R.id.alarm_switch);
-		view.findViewById(R.id.open_button).setOnClickListener(new OnClickListener() {
+		LayoutInflater.from(getContext()).inflate(R.layout.overlay_lock_view, this);
+		mLockSwitch1 = findViewById(R.id.switch1);
+		mLockSwitch2 = findViewById(R.id.switch2);
+		mAlarmSwitch = findViewById(R.id.alarm_switch);
+		mAlarmText = findViewById(R.id.alarm_text);
+		findViewById(R.id.open_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (!mLockSwitch1.isChecked() || !mLockSwitch2.isChecked()) {
@@ -37,7 +40,7 @@ public class PLLockView extends PLOverlayView {
 				PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
 			}
 		});
-		mStrongButton = view.findViewById(R.id.strong_button);
+		mStrongButton = findViewById(R.id.strong_button);
 		mStrongButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -103,6 +106,10 @@ public class PLLockView extends PLOverlayView {
 		mLockSwitch2.setChecked(false);
 		mLockSwitch1.setEnabled(true);
 		mLockSwitch2.setEnabled(true);
-		mStrongButton.setVisibility(View.GONE);
+		mStrongButton.setVisibility(View.INVISIBLE);
+		mAlarmSwitch.setVisibility(View.INVISIBLE);
+		if (mAlarmSwitch.isChecked()) {
+			mAlarmText.append(" ON");
+		}
 	}
 }
