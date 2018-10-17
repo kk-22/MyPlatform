@@ -4,45 +4,57 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
+import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.core.PLCoreService;
+import jp.co.my.myplatform.popover.PLListPopover;
 
 
 public class PLCalculatorContent extends PLContentView implements View.OnClickListener {
 
-	private static final String KEY_LAST_INPUT_STRING = "KEY_LAST_INPUT_STRING";
+	private static final String KEY_LAST_INPUT_STRINGS = "KEY_LAST_INPUT_STRINGS";
+	private static final int MAX_HISTORIES_COUNT = 5;
 
-	private ViewGroup mHeaderView;
 	private Button mCacheTextButton;
 	private TextView mEntryText;
 	private TextView mTotalText;
 	private StringBuilder mInputString;
+	private MYArrayList<String> mHistories;
 
 	public PLCalculatorContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator, this);
-		mHeaderView = findViewById(R.id.header);
+		ViewGroup headerView = findViewById(R.id.header);
 		if (PLCoreService.getNavigationController().isHalf()) {
-			mHeaderView.removeAllViews();
+			headerView.removeAllViews();
 			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			if (inflater != null) {
-				inflater.inflate(R.layout.view_calculator_header_small, mHeaderView);
+				inflater.inflate(R.layout.view_calculator_header_small, headerView);
 			}
 		}
 
-		mCacheTextButton = mHeaderView.findViewById(R.id.cache_button);
-		mEntryText = mHeaderView.findViewById(R.id.entry_text);
-		mTotalText = mHeaderView.findViewById(R.id.total_text);
+		mCacheTextButton = headerView.findViewById(R.id.cache_button);
+		mEntryText = headerView.findViewById(R.id.entry_text);
+		mTotalText = headerView.findViewById(R.id.total_text);
 
-		String cacheText = MYLogUtil.getPreference().getString(KEY_LAST_INPUT_STRING, "");
-		mCacheTextButton.setText(new StringBuilder(cacheText));
+		mHistories = MYLogUtil.loadArrayList(KEY_LAST_INPUT_STRINGS);
+		if (mHistories == null) {
+			mHistories = new MYArrayList<>();
+		}
+		String lastText = mHistories.getLast();
+		if (lastText == null) {
+			lastText = "";
+		}
+		mCacheTextButton.setText(new StringBuilder(lastText));
 
 		mInputString = new StringBuilder("0");
 
@@ -71,7 +83,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.cache_button: revertCache(); break;
+			case R.id.cache_button: showHistories(); break;
 			case R.id.clear_all_button: clearAll(); break;
 			case R.id.clear_entry_button: clearEntry(); break;
 			case R.id.back_button: backOneChar(); break;
@@ -92,6 +104,13 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 			case R.id.eight_button: addValue("8"); break;
 			case R.id.nine_button: addValue("9"); break;
 		}
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		equalEvent();
+		MYLogUtil.saveObject(KEY_LAST_INPUT_STRINGS, mHistories, true);
 	}
 
 	private void addValue(String value) {
@@ -144,6 +163,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		deleteInputString(false);
 		updateAllText();
 		mCacheTextButton.setText("");
+		mHistories.clear();
 	}
 
 	private void clearEntry() {
@@ -165,16 +185,39 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		}
 		String cacheString = mEntryText.getText() + "=" +mTotalText.getText();
 		mCacheTextButton.setText(cacheString);
+		mHistories.add(cacheString);
+		if (MAX_HISTORIES_COUNT < mHistories.size()) {
+			mHistories.remove(0);
+		}
 		clearEntry();
 		return true;
 	}
 
-	private void revertCache() {
-		String cacheText = mCacheTextButton.getText().toString();
-		String[] values = cacheText.split("=");
+	private void showHistories() {
+		int count = mHistories.size();
+		if (count == 0) {
+			return;
+		}
+		ArrayList<String> titleArray = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			titleArray.add(mHistories.get(i).replace("=", "\n="));
+		}
+		new PLListPopover(titleArray.toArray(new String[0]), new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				revertCache(position);
+			}
+		}).showPopover();
+	}
+
+	private void revertCache(int index) {
+		String nextText = mHistories.get(index);
+		String[] values = nextText.split("=");
 		if (values.length < 2) {
 			return;
 		}
+		mHistories.remove(index);
+
 		// キャッシュ文字列と交換
 		if (!equalEvent()) {
 			mCacheTextButton.setText("");
@@ -217,11 +260,6 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 			}
 		}
 		mTotalText.setText(new DecimalFormat("#.##").format(temp));
-
-		if (!lineString.equals("0")) {
-			String saveText = lineString + "=" +mTotalText.getText();
-			MYLogUtil.getPreferenceEditor().putString(KEY_LAST_INPUT_STRING, saveText).apply();
-		}
 	}
 
 	private void deleteInputString(boolean isOneChar) {
