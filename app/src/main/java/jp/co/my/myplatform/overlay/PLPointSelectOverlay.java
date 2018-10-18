@@ -12,13 +12,13 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.core.PLCoreService;
 
-public class PLPointSelectView extends PLOverlayView {
+public class PLPointSelectOverlay extends PLOverlayView {
 	public static final String KEY_HORIZONTAL_MARGIN = "KEY_HORIZONTAL_MARGIN";
 	public static final String KEY_VERTICAL_MARGIN = "KEY_VERTICAL_MARGIN";
 
 	PLOverlayView mMoveView;
 
-	public PLPointSelectView(PLOverlayView view) {
+	public PLPointSelectOverlay(PLOverlayView view) {
 		super();
 		mMoveView = view;
 		setLayoutParams(createMatchParams());
@@ -45,7 +45,7 @@ public class PLPointSelectView extends PLOverlayView {
 			public boolean onLongClick(View v) {
 				// キャンセル用
 				PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
-				overlayManager.removeOverlayView(PLPointSelectView.this);
+				overlayManager.removeOverlayView(PLPointSelectOverlay.this);
 				return true;
 			}
 		});

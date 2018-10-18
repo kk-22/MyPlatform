@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.core.PLCoreService;
-import jp.co.my.myplatform.overlay.PLNavigationController;
+import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.popover.PLPopoverView;
 import jp.co.my.myplatform.view.PLSavePositionListView;
 
@@ -120,7 +120,7 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 	}
 
 	public int getNavigationButtonVisibility() {
-		PLNavigationController navigationController = PLCoreService.getNavigationController();
+		PLNavigationOverlay navigationController = PLCoreService.getNavigationController();
 		if (navigationController != null && navigationController.isHalf()) {
 			// 戻るボタンを表示できるように常に表示
 			return VISIBLE;

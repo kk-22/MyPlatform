@@ -23,7 +23,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.core.PLBroadcastReceiver;
 import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.core.PLWakeLockManager;
-import jp.co.my.myplatform.overlay.PLFrontButtonView;
+import jp.co.my.myplatform.overlay.PLFrontButtonOverlay;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.view.PLSelectTimeView;
 
@@ -187,7 +187,7 @@ public class PLAlarmContent extends PLContentView {
 		editor.remove(KEY_SNOOZE_SEC);
 		editor.commit();
 
-		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
+		PLFrontButtonOverlay buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonOverlay.class);
 		buttonView.clearText(PLAlarmContent.class);
 
 		PLCoreService.getCoreService().showDefaultNotification();
@@ -255,7 +255,7 @@ public class PLAlarmContent extends PLContentView {
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 		String text = format.format(calendar.getTime());
 
-		PLFrontButtonView buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonView.class);
+		PLFrontButtonOverlay buttonView = PLCoreService.getOverlayManager().getOverlayView(PLFrontButtonOverlay.class);
 		buttonView.setText(this.getClass(), 8, text);
 	}
 

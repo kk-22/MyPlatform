@@ -20,7 +20,7 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.database.PLModelContainer;
-import jp.co.my.myplatform.overlay.PLNavigationController;
+import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.popover.PLListPopover;
 
 public class PLNewsListView extends FrameLayout {
@@ -108,7 +108,7 @@ public class PLNewsListView extends FrameLayout {
 				if (pageModel.isPartitionCell()) {
 					return;
 				}
-				PLNavigationController navigation = PLCoreService.getNavigationController();
+				PLNavigationOverlay navigation = PLCoreService.getNavigationController();
 
 				PLNewsBrowserContent browserView = new PLNewsBrowserContent(pageModel);
 				navigation.pushView(browserView);

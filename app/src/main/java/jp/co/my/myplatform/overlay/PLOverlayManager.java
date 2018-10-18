@@ -84,11 +84,11 @@ public class PLOverlayManager {
 			return;
 		}
 		mIsShowingFrontViews = true;
-		addOverlayView(new PLFrontButtonView());
+		addOverlayView(new PLFrontButtonOverlay());
 	}
 
 	public void removeFrontOverlays() {
-		removeOverlayView(PLFrontButtonView.class);
+		removeOverlayView(PLFrontButtonOverlay.class);
 		mIsShowingFrontViews = false;
 	}
 }

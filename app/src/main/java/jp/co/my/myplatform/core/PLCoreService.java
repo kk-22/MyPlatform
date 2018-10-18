@@ -16,7 +16,7 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.app.PLAppStrategy;
 import jp.co.my.myplatform.content.PLAlarmContent;
 import jp.co.my.myplatform.content.PLHomeContent;
-import jp.co.my.myplatform.overlay.PLNavigationController;
+import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.overlay.PLOverlayManager;
 
 public class PLCoreService extends Service {
@@ -31,7 +31,7 @@ public class PLCoreService extends Service {
 	private static PLVolleyHelper sVolleyHelper;
 	private static PLAppStrategy sAppStrategy;
 	private static PLOverlayManager sOverlayManager;
-	private static PLNavigationController sNavigationController;
+	private static PLNavigationOverlay sNavigationController;
 	private static PLCoreService sCoreService;
 
 	private boolean mIsRunning;					// 多重起動対策
@@ -54,7 +54,7 @@ public class PLCoreService extends Service {
 			sAppStrategy = new PLAppStrategy();
 			sOverlayManager = new PLOverlayManager(this);
 			sOverlayManager.addFrontOverlays();
-			sNavigationController = new PLNavigationController();
+			sNavigationController = new PLNavigationOverlay();
 		}
 
 		if (intent != null) {
@@ -101,7 +101,7 @@ public class PLCoreService extends Service {
 			MYLogUtil.outputLog("indent className = " + className);
 			sOverlayManager.addFrontOverlays();
 			sNavigationController.displayNavigationIfNeeded();
-			if (className.equals(PLNavigationController.class.getCanonicalName())) {
+			if (className.equals(PLNavigationOverlay.class.getCanonicalName())) {
 				// ナビゲーション表示のみ
 			} else if (className.equals(PLAlarmContent.class.getCanonicalName())) {
 				PLAlarmContent alarmView = PLCoreService.getNavigationController().pushView(PLAlarmContent.class);
@@ -168,7 +168,7 @@ public class PLCoreService extends Service {
 		return sOverlayManager;
 	}
 
-	public static PLNavigationController getNavigationController() {
+	public static PLNavigationOverlay getNavigationController() {
 		return sNavigationController;
 	}
 

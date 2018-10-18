@@ -13,7 +13,7 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import io.fabric.sdk.android.Fabric;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.activity.PLMainActivity;
-import jp.co.my.myplatform.overlay.PLNavigationController;
+import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 
 public class PLApplication extends Application {
 
@@ -42,7 +42,7 @@ public class PLApplication extends Application {
 	public static void startCoreService() {
 		MYLogUtil.outputLog("startCoreService");
 		Intent intent = new Intent(sContext, PLCoreService.class);
-		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, PLNavigationController.class.getCanonicalName());
+		intent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, PLNavigationOverlay.class.getCanonicalName());
 		sContext.startService(intent);
 	}
 

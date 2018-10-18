@@ -11,12 +11,12 @@ import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.core.PLCoreService;
 
-public class PLFrontButtonView extends PLOverlayView {
+public class PLFrontButtonOverlay extends PLOverlayView {
 
 	protected Button mButton;
 	protected Class mTextClass;
 
-	public PLFrontButtonView() {
+	public PLFrontButtonOverlay() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_front_button, this);
 
@@ -25,7 +25,7 @@ public class PLFrontButtonView extends PLOverlayView {
 		mButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLNavigationController navigation = PLCoreService.getNavigationController();
+				PLNavigationOverlay navigation = PLCoreService.getNavigationController();
 				if (!navigation.displayNavigationIfNeeded()) {
 					navigation.hideNavigationIfNeeded();
 				}
@@ -35,8 +35,8 @@ public class PLFrontButtonView extends PLOverlayView {
 			@Override
 			public boolean onLongClick(View v) {
 				PLOverlayManager overlayManager = PLCoreService.getOverlayManager();
-				if (overlayManager.getOverlayView(PLPointSelectView.class) == null) {
-					overlayManager.addOverlayView(new PLPointSelectView(PLFrontButtonView.this));
+				if (overlayManager.getOverlayView(PLPointSelectOverlay.class) == null) {
+					overlayManager.addOverlayView(new PLPointSelectOverlay(PLFrontButtonOverlay.this));
 				}
 				return true;
 			}
@@ -46,8 +46,8 @@ public class PLFrontButtonView extends PLOverlayView {
 	@Override
 	public WindowManager.LayoutParams getOverlayParams() {
 		SharedPreferences pref = MYLogUtil.getPreference();
-		Float horizontal = pref.getFloat(PLPointSelectView.KEY_HORIZONTAL_MARGIN, 0);
-		Float vertical = pref.getFloat(PLPointSelectView.KEY_VERTICAL_MARGIN, 0);
+		Float horizontal = pref.getFloat(PLPointSelectOverlay.KEY_HORIZONTAL_MARGIN, 0);
+		Float vertical = pref.getFloat(PLPointSelectOverlay.KEY_VERTICAL_MARGIN, 0);
 
 		WindowManager.LayoutParams params = getBaseParamsForButtonView();
 		params.gravity = Gravity.TOP | Gravity.LEFT;

@@ -14,14 +14,14 @@ import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.core.PLDeviceSetting;
 import jp.co.my.myplatform.core.PLWakeLockManager;
 
-public class PLLockView extends PLOverlayView {
+public class PLLockOverlay extends PLOverlayView {
 	private Handler mWakeLockReleaseHandler;
 	private boolean mIsStrongLock; // trueならロック画面が非表示にならず、閉じるの操作が複雑になる
 	private Switch mLockSwitch1, mLockSwitch2, mAlarmSwitch;
 	private Button mStrongButton;
 	private TextView mAlarmText;
 
-	public PLLockView() {
+	public PLLockOverlay() {
 		super();
 
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_lock_view, this);
@@ -37,7 +37,7 @@ public class PLLockView extends PLOverlayView {
 					mLockSwitch2.setChecked(false);
 					return;
 				}
-				PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
+				PLCoreService.getOverlayManager().removeOverlayView(PLLockOverlay.this);
 			}
 		});
 		mStrongButton = findViewById(R.id.strong_button);
@@ -91,7 +91,7 @@ public class PLLockView extends PLOverlayView {
 				}
 				if (!mIsStrongLock) {
 					// ロック解除
-					PLCoreService.getOverlayManager().removeOverlayView(PLLockView.this);
+					PLCoreService.getOverlayManager().removeOverlayView(PLLockOverlay.this);
 				}
 			}
 		}, minute * 60000);

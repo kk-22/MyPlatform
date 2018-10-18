@@ -22,7 +22,7 @@ import jp.co.my.myplatform.core.PLCoreService;
 
 import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
-public class PLNavigationController extends PLOverlayView {
+public class PLNavigationOverlay extends PLOverlayView {
 
 	private static final String KEY_NAVIGATION_VISIBLE = "KEY_NAVIGATION_VISIBLE";
 
@@ -41,7 +41,7 @@ public class PLNavigationController extends PLOverlayView {
 	private boolean mIsHalf;
 	private int mGravity;
 
-	public PLNavigationController() {
+	public PLNavigationOverlay() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
 		mStatusBar = findViewById(R.id.status_bar_view);
@@ -54,7 +54,7 @@ public class PLNavigationController extends PLOverlayView {
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationController.this);
+				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationOverlay.this);
 			}
 		});
 		mBackButton.setOnClickListener(new OnClickListener() {

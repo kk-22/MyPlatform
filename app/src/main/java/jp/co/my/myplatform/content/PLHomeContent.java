@@ -16,8 +16,8 @@ import jp.co.my.myplatform.debug.PLDebugContent;
 import jp.co.my.myplatform.explorer.PLExplorerContent;
 import jp.co.my.myplatform.memo.PLMemoEditorContent;
 import jp.co.my.myplatform.news.PLNewsPagerContent;
-import jp.co.my.myplatform.overlay.PLLockView;
-import jp.co.my.myplatform.overlay.PLNavigationController;
+import jp.co.my.myplatform.overlay.PLLockOverlay;
+import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 
@@ -45,7 +45,7 @@ public class PLHomeContent extends PLContentView {
 						new PLListPopover.PLListItem("上半分", new Runnable() {
 							@Override
 							public void run() {
-								PLNavigationController navigation = PLCoreService.getNavigationController();
+								PLNavigationOverlay navigation = PLCoreService.getNavigationController();
 								navigation.setNavigationButtonVisibility(View.VISIBLE);
 								navigation.resizeNavigation(true, false);
 							}
@@ -53,7 +53,7 @@ public class PLHomeContent extends PLContentView {
 						, new PLListPopover.PLListItem("全画面", new Runnable() {
 							@Override
 							public void run() {
-								PLNavigationController navigation = PLCoreService.getNavigationController();
+								PLNavigationOverlay navigation = PLCoreService.getNavigationController();
 								navigation.setNavigationButtonVisibility(View.GONE);
 								navigation.resizeNavigation(false, false);
 							}
@@ -61,7 +61,7 @@ public class PLHomeContent extends PLContentView {
 						, new PLListPopover.PLListItem("下半分", new Runnable() {
 							@Override
 							public void run() {
-								PLNavigationController navigation = PLCoreService.getNavigationController();
+								PLNavigationOverlay navigation = PLCoreService.getNavigationController();
 								navigation.setNavigationButtonVisibility(View.VISIBLE);
 								navigation.resizeNavigation(true, true);
 							}
@@ -217,7 +217,7 @@ public class PLHomeContent extends PLContentView {
 
 	private void displayLockView(int keepScreenMin) {
 		PLCoreService.getNavigationController().hideNavigationIfNeeded();
-		PLLockView lockView = new PLLockView();
+		PLLockOverlay lockView = new PLLockOverlay();
 		lockView.keepScreenWithLock(keepScreenMin);
 		PLCoreService.getOverlayManager().addOverlayView(lockView);
 	}
