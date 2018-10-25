@@ -18,8 +18,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="メニュー"
-                android:id="@+id/menu_button"/>
+                android:text=""
+                android:id="@+id/games_button"/>
 
             <Button
                 android:layout_weight="1"
@@ -46,8 +46,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text=""
-                android:id="@+id/games_button"/>
+                android:text="メニュー"
+                android:id="@+id/menu_button"/>
 
             <Button
                 android:layout_weight="1"
