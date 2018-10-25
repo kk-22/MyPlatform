@@ -13,44 +13,33 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/close_button"
-                android:text="×"
-                android:layout_weight="6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/delete_line_button"
-                android:text="行削除"
-                android:textSize="8sp"
-                android:layout_weight="4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
+
             <Button
                 android:id="@+id/line_up_button"
                 android:text="行↑"
                 android:textSize="8sp"
-                android:layout_weight="4"
-                android:layout_width="0dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"/>
             <Button
-                android:id="@+id/line_down_button"
-                android:text="行↓"
+                android:id="@+id/copy_button"
+                android:text="COPY"
                 android:textSize="8sp"
-                android:layout_weight="4"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"/>
+
+            <Space
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/back_button"
                 android:text="←"
-                android:layout_weight="6"
-                android:layout_width="0dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/forward_button"
                 android:text="→"
-                android:layout_weight="6"
-                android:layout_width="0dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
@@ -60,23 +49,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
+                android:id="@+id/line_down_button"
+                android:text="行↓"
+                android:textSize="8sp"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"/>
+            <Space
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/delete_line_button"
+                android:text="行削除"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"/>
+            <Button
                 android:id="@+id/hide_button"
                 android:text="非表示"
-                android:layout_weight="6"
-                android:layout_width="0dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"/>
-
             <Button
-                android:id="@+id/copy_button"
-                android:text="COPY"
-                android:textSize="8sp"
-                android:layout_weight="4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-            <Space
-                android:layout_weight="20"
-                android:layout_width="0dp"
+                android:id="@+id/close_button"
+                android:text="×"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
