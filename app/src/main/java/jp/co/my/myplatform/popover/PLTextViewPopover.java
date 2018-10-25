@@ -10,7 +10,7 @@ public class PLTextViewPopover extends PLPopoverView {
 
 	public PLTextViewPopover(String text) {
 		super(R.layout.popover_text_view);
-		mTextView = (TextView) findViewById(R.id.text_view);
+		mTextView = findViewById(R.id.text_view);
 
 		mTextView.setText(text);
 	}

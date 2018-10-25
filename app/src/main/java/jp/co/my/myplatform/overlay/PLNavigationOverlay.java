@@ -45,11 +45,11 @@ public class PLNavigationOverlay extends PLOverlayView {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
 		mStatusBar = findViewById(R.id.status_bar_view);
-		mContentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
-		mBackButton = (Button) findViewById(R.id.back_button);
-		mNavigationButton = (Button) findViewById(R.id.navigation_button);
-		mBottomFrame = (FrameLayout) findViewById(R.id.bottom_frame);
-		mNaviBarFrame = (FrameLayout) findViewById(R.id.customize_navigation_layout);
+		mContentFrameLayout = findViewById(R.id.content_frame);
+		mBackButton = findViewById(R.id.back_button);
+		mNavigationButton = findViewById(R.id.navigation_button);
+		mBottomFrame = findViewById(R.id.bottom_frame);
+		mNaviBarFrame = findViewById(R.id.customize_navigation_layout);
 
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
 			@Override

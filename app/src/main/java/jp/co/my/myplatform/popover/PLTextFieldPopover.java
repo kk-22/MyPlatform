@@ -23,7 +23,7 @@ public class PLTextFieldPopover extends PLPopoverView {
 		super(R.layout.popover_text_field);
 		mEnterListener = enterListener;
 
-		mEditText = (EditText) findViewById(R.id.form_edit);
+		mEditText = findViewById(R.id.form_edit);
 		setKeyEvent();
 	}
 

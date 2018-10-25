@@ -20,7 +20,7 @@ public class PLFrontButtonOverlay extends PLOverlayView {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_front_button, this);
 
-		mButton = (Button) findViewById(R.id.front_button);
+		mButton = findViewById(R.id.front_button);
 		mButton.setLayoutParams(createMatchParams());
 		mButton.setOnClickListener(new View.OnClickListener() {
 			@Override

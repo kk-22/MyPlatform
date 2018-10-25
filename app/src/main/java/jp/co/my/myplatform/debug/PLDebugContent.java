@@ -36,7 +36,7 @@ public class PLDebugContent extends PLContentView {
 	public PLDebugContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_debug, this);
-		mListView = (ListView) findViewById(R.id.debug_list);
+		mListView = findViewById(R.id.debug_list);
 
 		mAdapter = new PLDebugListAdapter(getContext());
 		initDebugItem();

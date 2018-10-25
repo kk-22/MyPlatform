@@ -22,7 +22,7 @@ public class PLPopoverView extends FrameLayout {
 		super(PLCoreService.getContext());
 
 		LayoutInflater.from(getContext()).inflate(R.layout.popover_base_view, this);
-		ViewGroup viewCroup = (ViewGroup) findViewById(R.id.content_relative);
+		ViewGroup viewCroup = findViewById(R.id.content_relative);
 		mPopView = LayoutInflater.from(getContext()).inflate(subResource, viewCroup);
 
 		initBackgroundTouchEvent();
