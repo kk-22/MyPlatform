@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -21,11 +23,8 @@ import jp.co.my.myplatform.R;
 public class PLSelectTimeView extends LinearLayout
 		implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-	private TextView mCurrentTimeText;
-	private TextView mSelectTimeText;
-	private SeekBar mHourSeekBar;
-	private SeekBar mMinSeekBar;
-	private SeekBar mSecSeekBar;
+	private TextView mCurrentTimeText, mSelectTimeText, mHourText, mMinText, mSecText;
+	private SeekBar mHourSeekBar, mMinSeekBar, mSecSeekBar;
 	private SeekBar mFocusSeekBar;		// 最後に操作したシークバー
 	private HashMap<SeekBar, TextView> mTextMap;
 	private Calendar mCurrentCalendar;	// 表示時刻と選択時刻のベースになる現在時刻
@@ -35,11 +34,14 @@ public class PLSelectTimeView extends LinearLayout
 		mCurrentCalendar = Calendar.getInstance();
 
 		LayoutInflater.from(context).inflate(R.layout.view_select_time, this);
-		mCurrentTimeText = (TextView)findViewById(R.id.current_time_text);
-		mSelectTimeText = (TextView)findViewById(R.id.schedule_time_text);
-		mHourSeekBar = (SeekBar)findViewById(R.id.hour_seekBar);
-		mMinSeekBar = (SeekBar)findViewById(R.id.min_seekBar);
-		mSecSeekBar = (SeekBar)findViewById(R.id.sec_seekBar);
+		mCurrentTimeText = findViewById(R.id.current_time_text);
+		mSelectTimeText = findViewById(R.id.schedule_time_text);
+		mHourSeekBar = findViewById(R.id.hour_seekBar);
+		mMinSeekBar = findViewById(R.id.min_seekBar);
+		mSecSeekBar = findViewById(R.id.sec_seekBar);
+		mHourText = findViewById(R.id.hour_text);
+		mMinText = findViewById(R.id.min_text);
+		mSecText = findViewById(R.id.sec_text);
 		mHourSeekBar.setOnSeekBarChangeListener(this);
 		mMinSeekBar.setOnSeekBarChangeListener(this);
 		mSecSeekBar.setOnSeekBarChangeListener(this);
@@ -70,9 +72,9 @@ public class PLSelectTimeView extends LinearLayout
 
 	private void initTextViews() {
 		mTextMap = new HashMap<>();
-		mTextMap.put(mHourSeekBar, (TextView) findViewById(R.id.hour_text));
-		mTextMap.put(mMinSeekBar, (TextView) findViewById(R.id.min_text));
-		mTextMap.put(mSecSeekBar, (TextView) findViewById(R.id.sec_text));
+		mTextMap.put(mHourSeekBar, mHourText);
+		mTextMap.put(mMinSeekBar, mMinText);
+		mTextMap.put(mSecSeekBar, mSecText);
 
 		OnClickListener onClickListener = new OnClickListener() {
 			@Override
@@ -132,6 +134,11 @@ public class PLSelectTimeView extends LinearLayout
 		return (hour == 0 && min == 0 && sec == 0);
 	}
 
+	public void hideSec() {
+		mSecSeekBar.setVisibility(View.GONE);
+		mSecText.setVisibility(View.GONE);
+	}
+
 	private void setAllProgress(int[] progresses) {
 		mHourSeekBar.setProgress(progresses[0]);
 		mMinSeekBar.setProgress(progresses[1]);
@@ -148,17 +155,17 @@ public class PLSelectTimeView extends LinearLayout
 		String baseText;
 		switch (seekBar.getId()) {
 			case R.id.hour_seekBar: {
-				textView = (TextView)findViewById(R.id.hour_text);
+				textView = mHourText;
 				baseText = "時";
 				break;
 			}
 			case R.id.min_seekBar: {
-				textView = (TextView)findViewById(R.id.min_text);
+				textView = mMinText;
 				baseText = "分";
 				break;
 			}
 			case R.id.sec_seekBar: {
-				textView = (TextView)findViewById(R.id.sec_text);
+				textView = mSecText;
 				baseText = "秒";
 				break;
 			}
