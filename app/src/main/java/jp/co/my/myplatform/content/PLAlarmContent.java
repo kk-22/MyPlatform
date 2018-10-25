@@ -67,6 +67,7 @@ public class PLAlarmContent extends PLContentView {
 		}
 		MYLogUtil.outputLog("アラーム開始");
 		mAlarmCount = 0;
+		mCancelButton.setEnabled(true);
 		PLWakeLockManager.getInstance().incrementKeepCPU();
 
 		sAlarmHandler = new Handler();

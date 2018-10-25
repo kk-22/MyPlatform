@@ -139,6 +139,10 @@ public class PLSelectTimeView extends LinearLayout
 		mSecText.setVisibility(View.GONE);
 	}
 
+	public void setMaxHour(int maxHour) {
+		mHourSeekBar.setMax(maxHour);
+	}
+
 	private void setAllProgress(int[] progresses) {
 		mHourSeekBar.setProgress(progresses[0]);
 		mMinSeekBar.setProgress(progresses[1]);

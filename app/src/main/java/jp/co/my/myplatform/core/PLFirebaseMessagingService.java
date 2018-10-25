@@ -17,6 +17,8 @@ import java.util.Map;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.content.PLAlarmContent;
+import jp.co.my.myplatform.content.PLPushNotificationSettingContent;
 
 public class PLFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -45,6 +47,13 @@ public class PLFirebaseMessagingService extends FirebaseMessagingService {
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		if (notificationManager != null) {
 			notificationManager.notify(0 , notificationBuilder.build());
+		}
+
+		if (PLPushNotificationSettingContent.shouldStartAlarmByPushNotification(text)) {
+			// アラームを鳴らす
+			Intent serviceIntent = new Intent(this, PLCoreService.class);
+			serviceIntent.putExtra(PLCoreService.KEY_CONTENT_CLASS_NAME, PLAlarmContent.class.getCanonicalName());
+			startService(serviceIntent);
 		}
 	}
 

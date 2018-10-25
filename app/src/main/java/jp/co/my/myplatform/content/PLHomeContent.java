@@ -11,7 +11,6 @@ import jp.co.my.myplatform.browser.PLBaseBrowserContent;
 import jp.co.my.myplatform.browser.PLHistoryBrowserContent;
 import jp.co.my.myplatform.core.PLApplication;
 import jp.co.my.myplatform.core.PLCoreService;
-import jp.co.my.myplatform.core.PLFirebaseMessagingService;
 import jp.co.my.myplatform.debug.PLDebugContent;
 import jp.co.my.myplatform.explorer.PLExplorerContent;
 import jp.co.my.myplatform.memo.PLMemoEditorContent;
@@ -134,6 +133,12 @@ public class PLHomeContent extends PLContentView {
 
 	private void showMenu() {
 		PLListPopover.showItems(
+				new PLListPopover.PLListItem("Push通知", new Runnable() {
+					@Override
+					public void run() {
+						PLCoreService.getNavigationController().pushView(PLPushNotificationSettingContent.class);
+					}
+				}),
 				new PLListPopover.PLListItem("サービス終了", new Runnable() {
 					@Override
 					public void run() {
@@ -151,12 +156,6 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLAppListContent.class);
-					}
-				}),
-				new PLListPopover.PLListItem("FCM", new Runnable() {
-					@Override
-					public void run() {
-						PLFirebaseMessagingService.outputToken();
 					}
 				}),
 				new PLListPopover.PLListItem("デバッグ", new Runnable() {

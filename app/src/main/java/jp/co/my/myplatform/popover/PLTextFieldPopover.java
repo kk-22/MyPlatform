@@ -73,6 +73,11 @@ public class PLTextFieldPopover extends PLPopoverView {
 		inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 	}
 
+	public PLTextFieldPopover setDefaultText(String text) {
+		mEditText.setText(text);
+		return this;
+	}
+
 	public interface OnEnterListener {
 		boolean onEnter(View v, String text);
 	}
