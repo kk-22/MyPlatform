@@ -2,6 +2,9 @@ package jp.co.my.myplatform.browser;
 
 import android.webkit.WebBackForwardList;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYLogUtil;
 
@@ -76,13 +79,18 @@ public class PLHistoryBrowserContent extends PLBaseBrowserContent {
 	String[] historyTitles() {
 		int size = mUrlHistories.size();
 		String[] titles = new String[size];
-		for (int i = 0; i < size; i++) {
-			String title = mUrlHistories.get(i);
-			if (i == mHistoryIndex) {
-				titles[i] = "■＞" +title;
-			} else {
-				titles[i] = title;
+		try {
+			for (int i = 0; i < size; i++) {
+				String url = mUrlHistories.get(i);
+				String title = URLDecoder.decode(url, "UTF-8");
+				if (i == mHistoryIndex) {
+					titles[i] = "■＞" +title;
+				} else {
+					titles[i] = title;
+				}
 			}
+		} catch (UnsupportedEncodingException e) {
+			MYLogUtil.showExceptionToast(e);
 		}
 		return titles;
 	}
