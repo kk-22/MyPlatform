@@ -23,8 +23,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 		LIST_INDEX_SCROLL_TOP,
 		LIST_INDEX_SCROLL_BOTTOM,
 		LIST_INDEX_OPEN_OTHER,
-		LIST_INDEX_CLEAR_HISTORIES,
-		LIST_INDEX_HIDE_BAR;
+		LIST_INDEX_CLEAR_HISTORIES
 	}
 
 	private PLWebView mWebView;
@@ -47,7 +46,7 @@ public class PLBrowserFunctionList extends PLPopoverView {
 				.querySingle();
 
 		String[] titles = {"上までスクロール", "下までスクロール",
-				"他のアプリで開く", "履歴クリア", "toolbar非表示"};
+				"他のアプリで開く", "履歴クリア"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
 				R.layout.cell_simple_title,
 				titles);
@@ -104,11 +103,6 @@ public class PLBrowserFunctionList extends PLPopoverView {
 								.apply();
 						removeFromContentView();
 						PLCoreService.getNavigationController().popView();
-						break;
-					}
-					case LIST_INDEX_HIDE_BAR: {
-						mBrowserContent.hideToolbar();
-						removeFromContentView();
 						break;
 					}
 				}

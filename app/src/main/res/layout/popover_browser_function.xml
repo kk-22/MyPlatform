@@ -38,7 +38,7 @@
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="210dp"
             android:listSelector="@drawable/selector_list"
             android:id="@+id/function_list"/>
 

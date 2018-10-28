@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.my.common.util.MYLogUtil;
+import jp.co.my.common.view.LongClickRepeatAdapter;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.core.PLCoreService;
@@ -31,7 +32,7 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 			, "https://docs.google.com/spreadsheets/", "https://docs.google.com/document/"};
 
 	private PLWebView mCurrentWebView;
-	private ImageButton mBackButton, mForwardButton, mShowButton;
+	private ImageButton mBackButton, mForwardButton, mDownButton;
 	private ProgressBar mProgressBar;
 	private LinearLayout mToolbar;
 
@@ -41,11 +42,13 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 		LayoutInflater.from(getContext()).inflate(R.layout.content_browser, this);
 		mBackButton = findViewById(R.id.back_button);
 		mForwardButton = findViewById(R.id.forward_button);
-		mShowButton = findViewById(R.id.show_toolbar_button);
+		mDownButton = findViewById(R.id.down_button);
 		mProgressBar = findViewById(R.id.progressBar);
 		mCurrentWebView = findViewById(R.id.su_web_view);
 		mToolbar = findViewById(R.id.browser_toolbar);
 		initButtonEvent();
+
+		LongClickRepeatAdapter.bless(mDownButton);
 
 		mCurrentWebView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
@@ -97,11 +100,6 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 			MYLogUtil.showErrorToast("viewが開放済み");
 			PLCoreService.getNavigationController().popView();
 		}
-	}
-
-	public void hideToolbar() {
-		mToolbar.setVisibility(View.GONE);
-		mShowButton.setVisibility(View.VISIBLE);
 	}
 
 	protected void willLoadPage(String url) {
@@ -241,13 +239,6 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 				mCurrentWebView.setScrollY(currentY + moveY);
 			}
 		});
-		findViewById(R.id.down_button).setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				hideToolbar();
-				return true;
-			}
-		});
 		findViewById(R.id.bookmark_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -265,13 +256,6 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 			@Override
 			public void onClick(View v) {
 				new PLBrowserFunctionList(PLBaseBrowserContent.this).showPopover(new PLRelativeLayoutController(v));
-			}
-		});
-		findViewById(R.id.show_toolbar_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mToolbar.setVisibility(View.VISIBLE);
-				mShowButton.setVisibility(View.GONE);
 			}
 		});
 	}
