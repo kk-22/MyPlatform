@@ -1,5 +1,7 @@
 package jp.co.my.myplatform.memo;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -17,6 +19,8 @@ import android.widget.ScrollView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.view.LongClickRepeatAdapter;
@@ -26,6 +30,8 @@ import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.popover.PLTextFieldPopover;
+
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class PLMemoEditorContent extends PLContentView {
 
@@ -104,7 +110,23 @@ public class PLMemoEditorContent extends PLContentView {
 		});
 	}
 
+	// onTouch メソッドはfalseを返すだけなので警告を抑制
+	@SuppressLint("ClickableViewAccessibility")
 	private void initButtonEvent() {
+		mScrollView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (mEditText.hasFocus()) {
+					mEditText.clearFocus();
+					InputMethodManager input = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+					if (input != null) {
+						input.hideSoftInputFromWindow(mEditText.getWindowToken(), HIDE_NOT_ALWAYS );
+					}
+				}
+				return false;
+			}
+		});
+
 		mCloseButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -153,6 +175,12 @@ public class PLMemoEditorContent extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				displayClipboardList();
+			}
+		});
+		findViewById(R.id.index_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				displayIndexList();
 			}
 		});
 
@@ -299,6 +327,24 @@ public class PLMemoEditorContent extends PLContentView {
 		if (needCut) {
 			editable.delete(Math.min(start, end), Math.max(start, end));
 		}
+	}
+
+	private void displayIndexList() {
+		final ArrayList<Integer> positions = new ArrayList<>();
+		ArrayList<String> titleArray = new ArrayList<>();
+		Pattern pattern = Pattern.compile("[ 　]*[■★][^\n]*");
+		Matcher matcher = pattern.matcher(mEditText.getText());
+		while (matcher.find()) {
+			String title = matcher.group();
+			titleArray.add(title);
+			positions.add(matcher.end());
+		}
+		new PLListPopover(titleArray.toArray(new String[0]), new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				mEditText.scrollWithSelection(positions.get(i));
+			}
+		}).showPopover();
 	}
 
 	// カーソル位置がキーボードにより隠れる場合、スクロールする

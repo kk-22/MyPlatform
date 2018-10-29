@@ -56,6 +56,22 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		return (mHistoryIndex + 1 < mTextHistories.size());
 	}
 
+	void scrollWithSelection(int index) {
+		scrollWithSelection(index, index);
+	}
+
+	void scrollWithSelection(int start, int end) {
+		if (!isFocused()) {
+			// setSelection メソッド実行時にスクロールされるようにフォーカスをあてる
+			requestFocus();
+		}
+		if (getSelectionStart() == start && getSelectionEnd() == end) {
+			// 既に設定済みだとスクロールしないためリセット
+			setSelection((start != 0) ? 0 : 1);
+		}
+		setSelection(start, end);
+	}
+
 	void goBack() {
 		if (hasBackText()) {
 			loadHistory(true);
@@ -82,7 +98,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 		Editable text = getText();
 		text.delete(startIndex, endIndex);
-		setSelection(startIndex);
+		scrollWithSelection(startIndex);
 	}
 
 	void moveSelectionLine(boolean toDown) {
@@ -110,15 +126,15 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		editable.replace(startIndex, endIndex, replaceString);
 		if (currentStartLines == currentEndLines) {
 			// 1行のみ選択していた場合、移動先の行端へカーソルを移動
-			setSelection(getTailIndexOfLines(targetLines));
+			scrollWithSelection(getTailIndexOfLines(targetLines));
 		} else {
 			// 複数行選択していた場合、連続して行移動できるように移動行全体を選択
 			if (toDown) {
 				int numberOfTargetChar = endIndex - middleIndex;
-				setSelection(startIndex + numberOfTargetChar, endIndex - 1);
+				scrollWithSelection(startIndex + numberOfTargetChar, endIndex - 1);
 			} else {
 				int numberOfMovedChar = endIndex - middleIndex;
-				setSelection(startIndex, startIndex + numberOfMovedChar - 1);
+				scrollWithSelection(startIndex, startIndex + numberOfMovedChar - 1);
 			}
 		}
 	}
@@ -288,7 +304,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 				focusIndex--;
 			}
 		}
-		setSelection(focusIndex);
+		scrollWithSelection(focusIndex);
 	}
 
 	private String getCurrentHistoryText() {

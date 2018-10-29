@@ -64,6 +64,11 @@
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"/>
             <Button
+                android:id="@+id/index_button"
+                android:text="INDEX"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"/>
+            <Button
                 android:id="@+id/hide_button"
                 android:text="非表示"
                 android:layout_width="80dp"
