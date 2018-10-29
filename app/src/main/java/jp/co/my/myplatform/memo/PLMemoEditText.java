@@ -1,17 +1,21 @@
 package jp.co.my.myplatform.memo;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.util.Objects;
 
 import jp.co.my.common.util.MYArrayList;
 import jp.co.my.common.util.MYStringUtil;
+
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 @SuppressLint("AppCompatCustomView")
 public class PLMemoEditText extends EditText implements TextWatcher {
@@ -81,6 +85,13 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	void goForward() {
 		if (hasForwardText()) {
 			loadHistory(false);
+		}
+	}
+
+	void hideKeyboard() {
+		InputMethodManager input = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+		if (input != null) {
+			input.hideSoftInputFromWindow(getWindowToken(), HIDE_NOT_ALWAYS );
 		}
 	}
 

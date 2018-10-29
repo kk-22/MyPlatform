@@ -4,9 +4,9 @@
     android:paddingStart="10dp"
     android:paddingEnd="1dp"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="35dp"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:textColor="@android:color/black"
-    android:maxLines="2"
+    android:maxLines="1"
     android:gravity="center|start"
     android:id="@+id/TextView"/>

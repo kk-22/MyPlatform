@@ -1,7 +1,6 @@
 package jp.co.my.myplatform.memo;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -30,8 +28,6 @@ import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.popover.PLTextFieldPopover;
-
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class PLMemoEditorContent extends PLContentView {
 
@@ -117,11 +113,7 @@ public class PLMemoEditorContent extends PLContentView {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
 				if (mEditText.hasFocus()) {
-					mEditText.clearFocus();
-					InputMethodManager input = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-					if (input != null) {
-						input.hideSoftInputFromWindow(mEditText.getWindowToken(), HIDE_NOT_ALWAYS );
-					}
+					hideOtherViews();
 				}
 				return false;
 			}
@@ -130,8 +122,7 @@ public class PLMemoEditorContent extends PLContentView {
 		mCloseButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				InputMethodManager inputMethod = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-				inputMethod.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+				mEditText.hideKeyboard();
 				PLCoreService.getNavigationController().popView();
 			}
 		});
@@ -279,6 +270,7 @@ public class PLMemoEditorContent extends PLContentView {
 	}
 
 	private void displayClipboardList() {
+		hideOtherViews();
 		PLListPopover.showItems(
 				new PLListPopover.PLListItem("コピー", new Runnable() {
 					@Override
@@ -330,6 +322,8 @@ public class PLMemoEditorContent extends PLContentView {
 	}
 
 	private void displayIndexList() {
+		hideOtherViews();
+
 		final ArrayList<Integer> positions = new ArrayList<>();
 		ArrayList<String> titleArray = new ArrayList<>();
 		Pattern pattern = Pattern.compile("[ 　]*[■★][^\n]*");
@@ -344,7 +338,13 @@ public class PLMemoEditorContent extends PLContentView {
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				mEditText.scrollWithSelection(positions.get(i));
 			}
-		}).showPopover();
+		}).setBigWidth().setCellResource(R.layout.cell_oneline_title).showPopover();
+	}
+
+	private void hideOtherViews() {
+		// カーソルを隠す
+		mEditText.clearFocus();
+		mEditText.hideKeyboard();
 	}
 
 	// カーソル位置がキーボードにより隠れる場合、スクロールする

@@ -9,18 +9,21 @@ import android.widget.ListView;
 import java.util.Arrays;
 
 import jp.co.my.myplatform.R;
+import jp.co.my.myplatform.content.PLContentView;
+import jp.co.my.myplatform.core.PLCoreService;
+import jp.co.my.myplatform.layout.PLAbstractLayoutController;
 
 public class PLListPopover extends PLPopoverView {
 
 	private ListView mListView;
 	private PLListItem[] mItems;
 	private String[] mTitles;
+	private int mCellResource;
 
 	// Deprecated. Use showItems method,
 	public PLListPopover(String[] titles,
 						 final AdapterView.OnItemClickListener clickListener) {
-		this();
-		createList(titles);
+		this(titles);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -32,21 +35,22 @@ public class PLListPopover extends PLPopoverView {
 		});
 	}
 
-	private PLListPopover() {
+	private PLListPopover(String[] titles) {
 		super(R.layout.popover_title_list);
+		mTitles = titles;
+		mCellResource = R.layout.cell_simple_title;
+		mListView = findViewById(R.id.title_list);
 	}
 
 	public static void showItems(final PLListItem... listItems) {
-		final PLListPopover popover = new PLListPopover();
-		popover.mItems = listItems;
-
 		int numberOfItems = listItems.length;
 		String[] titles = new String[numberOfItems];
 		for (int i = 0; i < numberOfItems; i++) {
 			titles[i] = listItems[i].mTitle;
 		}
-		popover.createList(titles);
 
+		final PLListPopover popover = new PLListPopover(titles);
+		popover.mItems = listItems;
 		popover.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -57,6 +61,13 @@ public class PLListPopover extends PLPopoverView {
 			}
 		});
 		popover.showPopover();
+	}
+
+	public PLListPopover setBigWidth() {
+		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mListView.getLayoutParams();
+		params.width = (int)(PLCoreService.getNavigationController().getWidth() * 0.75);
+		mListView.setLayoutParams(params);
+		return this;
 	}
 
 	public PLListPopover setMatchWidth() {
@@ -86,14 +97,15 @@ public class PLListPopover extends PLPopoverView {
 		});
 	}
 
-	private void createList(String[] titles) {
-		mTitles = titles;
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-				R.layout.cell_simple_title,
-				titles);
-
-		mListView = findViewById(R.id.title_list);
-		mListView.setAdapter(adapter);
+	@Override
+	public void showPopover(PLAbstractLayoutController layout, PLContentView contentView) {
+		if (mListView.getAdapter() == null) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+					mCellResource,
+					mTitles);
+			mListView.setAdapter(adapter);
+		}
+		super.showPopover(layout, contentView);
 	}
 
 	public static class PLListItem {
@@ -103,5 +115,10 @@ public class PLListPopover extends PLPopoverView {
 			mTitle = title;
 			mClickedRunnable = clickedRunnable;
 		}
+	}
+
+	public PLListPopover setCellResource(int cellResource) {
+		mCellResource = cellResource;
+		return this;
 	}
 }
