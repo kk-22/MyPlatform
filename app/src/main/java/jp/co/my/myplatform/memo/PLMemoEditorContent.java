@@ -46,6 +46,7 @@ public class PLMemoEditorContent extends PLContentView {
 		mScrollView = findViewById(R.id.scroll_view);
 		mEditText = findViewById(R.id.memo_edit);
 		mEditText.setEditorContent(this);
+		mEditText.setScrollView(mScrollView);
 
 		LongClickRepeatAdapter.bless(mBackButton, mForwardButton,
 				findViewById(R.id.line_down_button), findViewById(R.id.line_up_button));
@@ -336,7 +337,7 @@ public class PLMemoEditorContent extends PLContentView {
 		new PLListPopover(titleArray.toArray(new String[0]), new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-				mEditText.scrollWithSelection(positions.get(i));
+				mEditText.scrollWithSelection(true, positions.get(i));
 			}
 		}).setBigWidth().setCellResource(R.layout.cell_oneline_title).showPopover();
 	}

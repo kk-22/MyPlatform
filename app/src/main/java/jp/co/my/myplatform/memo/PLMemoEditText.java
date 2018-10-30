@@ -3,12 +3,14 @@ package jp.co.my.myplatform.memo;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ScrollView;
 
 import java.util.Objects;
 
@@ -30,6 +32,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	private boolean mDisableHistory; // true なら履歴の保存をしない
 	private MYArrayList<String> mTextHistories;
 	private PLMemoEditorContent mEditorContent;
+	private ScrollView mScrollView;
 
 	public PLMemoEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -60,18 +63,20 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		return (mHistoryIndex + 1 < mTextHistories.size());
 	}
 
-	void scrollWithSelection(int index) {
-		scrollWithSelection(index, index);
+	void scrollWithSelection(boolean shouldScroll, int index) {
+		scrollWithSelection(shouldScroll, index, index);
 	}
 
-	void scrollWithSelection(int start, int end) {
-		if (!isFocused()) {
-			// setSelection メソッド実行時にスクロールされるようにフォーカスをあてる
-			requestFocus();
+	void scrollWithSelection(boolean shouldScroll, int start, int end) {
+		int line = getLayout().getLineForOffset (start);
+		int scrollY = (int) ((line + 0.5) * getLineHeight());
+		int diffY = scrollY - mScrollView.getScrollY();
+		if (shouldScroll || diffY <= 0 || mScrollView.getHeight() / 2 < diffY) {
+			// キーボードに隠れたり画面外の位置なら強制スクロール
+			mScrollView.scrollTo(0, scrollY);
 		}
-		if (getSelectionStart() == start && getSelectionEnd() == end) {
-			// 既に設定済みだとスクロールしないためリセット
-			setSelection((start != 0) ? 0 : 1);
+		if (!isFocused()) {
+			requestFocus();
 		}
 		setSelection(start, end);
 	}
@@ -109,7 +114,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 		Editable text = getText();
 		text.delete(startIndex, endIndex);
-		scrollWithSelection(startIndex);
+		scrollWithSelection(false, startIndex);
 	}
 
 	void moveSelectionLine(boolean toDown) {
@@ -137,15 +142,15 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 		editable.replace(startIndex, endIndex, replaceString);
 		if (currentStartLines == currentEndLines) {
 			// 1行のみ選択していた場合、移動先の行端へカーソルを移動
-			scrollWithSelection(getTailIndexOfLines(targetLines));
+			scrollWithSelection(false, getTailIndexOfLines(targetLines));
 		} else {
 			// 複数行選択していた場合、連続して行移動できるように移動行全体を選択
 			if (toDown) {
 				int numberOfTargetChar = endIndex - middleIndex;
-				scrollWithSelection(startIndex + numberOfTargetChar, endIndex - 1);
+				scrollWithSelection(false, startIndex + numberOfTargetChar, endIndex - 1);
 			} else {
 				int numberOfMovedChar = endIndex - middleIndex;
-				scrollWithSelection(startIndex, startIndex + numberOfMovedChar - 1);
+				scrollWithSelection(false, startIndex, startIndex + numberOfMovedChar - 1);
 			}
 		}
 	}
@@ -315,7 +320,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 				focusIndex--;
 			}
 		}
-		scrollWithSelection(focusIndex);
+		scrollWithSelection(false, focusIndex);
 	}
 
 	private String getCurrentHistoryText() {
@@ -326,8 +331,11 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	}
 
 	// setter
-
 	public void setEditorContent(PLMemoEditorContent editorContent) {
 		mEditorContent = editorContent;
+	}
+
+	public void setScrollView(ScrollView scrollView) {
+		mScrollView = scrollView;
 	}
 }
