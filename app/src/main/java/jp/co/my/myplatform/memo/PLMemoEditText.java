@@ -33,6 +33,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 	private MYArrayList<String> mTextHistories;
 	private PLMemoEditorContent mEditorContent;
 	private ScrollView mScrollView;
+	private String mLastChangedText;
 
 	public PLMemoEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -217,6 +218,20 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		String nextText = s.toString();
+		if (mLastChangedText != null && mLastChangedText.equals(nextText)) {
+			// 連続で呼ばれたケース
+			return;
+		}
+		mLastChangedText = nextText;
+		if (s.length() < 1 || start >= s.length() || start < 0 || count == 0) {
+			return;
+		}
+		if (s.subSequence(start, start + 1).toString().equals("\n")) {
+			// 改行入力・削除にカーソルがキーボード裏へ隠れないようにスクロール
+			int diff = getLineHeight();
+			mScrollView.scrollTo(0, mScrollView.getScrollY() + diff);
+		}
 	}
 
 	@Override
