@@ -19,15 +19,24 @@
         android:layout_marginTop="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        app:layout_constraintBottom_toTopOf="@id/save_button"
+        app:layout_constraintBottom_toTopOf="@id/word_button"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="250dp"/>
 
     <Button
+        android:id="@+id/word_button"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/save_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
         android:id="@+id/save_button"
         android:text="通知期間保存"
-        app:layout_constraintBottom_toTopOf="@id/word_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/cancel_button"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -41,7 +50,7 @@
     <Button
         android:id="@+id/cancel_button"
         android:text="キャンセル"
-        app:layout_constraintBottom_toTopOf="@id/word_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/save_button"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_weight="1"
@@ -49,14 +58,5 @@
         android:layout_marginBottom="20dp"
         android:layout_width="0dp"
         android:layout_height="70dp"/>
-
-    <Button
-        android:id="@+id/word_button"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
 </android.support.constraint.ConstraintLayout>
