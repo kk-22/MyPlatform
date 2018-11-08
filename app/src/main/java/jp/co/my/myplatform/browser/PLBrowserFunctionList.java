@@ -1,5 +1,8 @@
 package jp.co.my.myplatform.browser;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -81,19 +84,28 @@ public class PLBrowserFunctionList extends PLPopoverView {
 					}
 					case LIST_INDEX_OPEN_OTHER: {
 						removeFromContentView();
-						String[] titles = {"ブラウザで開く"};
-						new PLListPopover(titles, new AdapterView.OnItemClickListener() {
-							@Override
-							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-								mBrowserContent.removeTopPopover();
-								PLCoreService.getNavigationController().hideNavigationIfNeeded();
-								// ブラウザで開く
-								Uri uri = Uri.parse(mWebView.getUrl());
-								Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-								intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								getContext().startActivity(intent);
-							}
-						}).showPopover();
+						PLListPopover.showItems(
+								new PLListPopover.PLListItem("ブラウザで開く", new Runnable() {
+									@Override
+									public void run() {
+										mBrowserContent.removeTopPopover();
+										PLCoreService.getNavigationController().hideNavigationIfNeeded();
+										// ブラウザで開く
+										Uri uri = Uri.parse(mWebView.getUrl());
+										Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+										intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+										getContext().startActivity(intent);
+									}
+								}),
+								new PLListPopover.PLListItem("URLコピー", new Runnable() {
+									@Override
+									public void run() {
+										ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+										if (null != clipboardManager) {
+											clipboardManager.setPrimaryClip(ClipData.newPlainText("", mWebView.getUrl()));
+										}
+									}
+								}));
 						break;
 					}
 					case LIST_INDEX_CLEAR_HISTORIES: {
