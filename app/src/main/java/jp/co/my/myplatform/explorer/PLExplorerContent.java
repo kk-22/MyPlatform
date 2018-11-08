@@ -7,7 +7,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.File;
@@ -31,6 +33,8 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 	private TextView mPathText;
 	private RecyclerView mRecyclerView;
 	private PLExplorerRecyclerAdapter mAdapter;
+	private PLImagePopover mImagePopover;
+	private Button mCloseButton;
 
 	public PLExplorerContent() {
 		super();
@@ -38,6 +42,10 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 		mPathText = findViewById(R.id.path_text);
 		mRecyclerView = findViewById(R.id.recycler);
 		mAdapter = new PLExplorerRecyclerAdapter(getContext(), this);
+
+		ViewGroup naviBar = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.navibar_explorer, null);
+		setNavigationBar(naviBar);
+		mCloseButton = naviBar.findViewById(R.id.close_button);
 
 		SharedPreferences pref = MYLogUtil.getPreference();
 		String lastPath = pref.getString(KEY_LAST_PATH, null);
@@ -148,6 +156,14 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 			}
 		});
 		MYLogUtil.outputLog("initClick end");
+
+		mCloseButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mImagePopover.removeFromContentView();
+				mCloseButton.setEnabled(false);
+			}
+		});
 	}
 
 	private void loadPicturesDirectory() {
@@ -155,8 +171,9 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 	}
 
 	private void showImageFile(File file) {
-		PLImagePopover imagePopover = new PLImagePopover(mAdapter.getFileList(), file, mAdapter.getImageCache());
-		imagePopover.showPopover(this);
-		imagePopover.setListener(this);
+		mImagePopover = new PLImagePopover(mAdapter.getFileList(), file, mAdapter.getImageCache());
+		mImagePopover.showPopover(this);
+		mImagePopover.setListener(this);
+		mCloseButton.setEnabled(true);
 	}
 }

@@ -62,18 +62,6 @@ public class PLImagePopover extends PLPopoverView {
 	}
 
 	private void initClickEvent() {
-		findViewById(R.id.top_view).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				PLImagePopover.this.removeFromContentView();
-			}
-		});
-		findViewById(R.id.bottom_view).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				PLImagePopover.this.removeFromContentView();
-			}
-		});
 		findViewById(R.id.left_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
