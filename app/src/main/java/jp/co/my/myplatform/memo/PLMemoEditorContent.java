@@ -177,7 +177,7 @@ public class PLMemoEditorContent extends PLContentView {
 		});
 
 		LinearLayout naviBar = new LinearLayout(getContext());
-		LayoutInflater.from(getContext()).inflate(R.layout.navivar_memo_editor, naviBar);
+		LayoutInflater.from(getContext()).inflate(R.layout.navibar_memo_editor, naviBar);
 		setNavigationBar(naviBar);
 		naviBar.findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override
