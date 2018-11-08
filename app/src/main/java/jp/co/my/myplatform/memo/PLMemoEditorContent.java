@@ -10,9 +10,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.io.File;
@@ -176,8 +176,7 @@ public class PLMemoEditorContent extends PLContentView {
 			}
 		});
 
-		LinearLayout naviBar = new LinearLayout(getContext());
-		LayoutInflater.from(getContext()).inflate(R.layout.navibar_memo_editor, naviBar);
+		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_memo_editor, null);
 		setNavigationBar(naviBar);
 		naviBar.findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
 			@Override

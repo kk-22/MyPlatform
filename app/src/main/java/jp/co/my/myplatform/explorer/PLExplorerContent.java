@@ -43,7 +43,7 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 		mRecyclerView = findViewById(R.id.recycler);
 		mAdapter = new PLExplorerRecyclerAdapter(getContext(), this);
 
-		ViewGroup naviBar = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.navibar_explorer, null);
+		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_explorer, null);
 		setNavigationBar(naviBar);
 		mCloseButton = naviBar.findViewById(R.id.close_button);
 
