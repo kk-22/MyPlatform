@@ -203,7 +203,13 @@ public class PLAlarmContent extends PLContentView {
 
 	// 開始したアラーム停止
 	public static void stopAlarm() {
-		cancelAlarm();
+		SharedPreferences pref = MYLogUtil.getPreference();
+		Long timeInMillis = pref.getLong(KEY_ALARM_TIME, 0);
+		if (timeInMillis <= System.currentTimeMillis()) {
+			// 設定したアラームにより鳴っていたらキャンセル。
+			// PUSH通知など外部機能で鳴らしていた場合はキャンセルしない
+			cancelAlarm();
+		}
 		if (sAlarmHandler != null) {
 			PLWakeLockManager.getInstance().decrementKeepCPU();
 			sAlarmHandler.removeCallbacksAndMessages(null);
