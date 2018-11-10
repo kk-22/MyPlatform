@@ -51,7 +51,7 @@ public class PLMemoEditorContent extends PLContentView {
 		mEditText.setEditorContent(this);
 		mEditText.setScrollView(mScrollView);
 
-		LongClickRepeatAdapter.bless(mBackButton, mForwardButton,
+		LongClickRepeatAdapter.bless(mBackButton, mForwardButton, findViewById(R.id.delete_line_button),
 				findViewById(R.id.line_down_button), findViewById(R.id.line_up_button));
 
 		mReadWriter = new PLMemoReadWriter(mEditText);
