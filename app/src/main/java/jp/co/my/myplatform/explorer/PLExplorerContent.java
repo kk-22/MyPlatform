@@ -171,6 +171,9 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 	}
 
 	private void showImageFile(File file) {
+		if (!file.exists()) {
+			return;
+		}
 		mImagePopover = new PLImagePopover(mAdapter.getFileList(), file, mAdapter.getImageCache());
 		mImagePopover.showPopover(this);
 		mImagePopover.setListener(this);
