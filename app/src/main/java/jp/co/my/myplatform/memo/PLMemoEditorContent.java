@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.text.Editable;
 import android.view.KeyEvent;
@@ -31,6 +32,8 @@ import jp.co.my.myplatform.popover.PLTextFieldPopover;
 
 public class PLMemoEditorContent extends PLContentView {
 
+	private static final String KEY_LAST_SCROLL_Y = "KEY_LAST_SCROLL_Y";
+
 	private PLMemoEditText mEditText;
 	private PLMemoReadWriter mReadWriter;
 	private Button mBackButton, mForwardButton, mCloseButton;
@@ -56,6 +59,9 @@ public class PLMemoEditorContent extends PLContentView {
 		initButtonEvent();
 
 		mReadWriter.loadFirstMemo();
+
+		SharedPreferences pref = MYLogUtil.getPreference();
+		mPrevScrollY = pref.getInt(KEY_LAST_SCROLL_Y, 0);
 	}
 
 	@Override
@@ -76,6 +82,10 @@ public class PLMemoEditorContent extends PLContentView {
 		super.onDetachedFromWindow();
 		mReadWriter.saveToFile();
 		mPrevScrollY = mScrollView.getScrollY();
+
+		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
+		editor.putInt(KEY_LAST_SCROLL_Y, mPrevScrollY);
+		editor.commit();
 	}
 
 	void updateButtons() {
@@ -212,6 +222,7 @@ public class PLMemoEditorContent extends PLContentView {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				PLMemoEditorContent.this.removeTopPopover();
+				mScrollView.setScrollY(0);
 
 				if (files.length == position) {
 					// 新規ファイル
