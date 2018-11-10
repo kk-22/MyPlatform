@@ -179,12 +179,6 @@ public class PLMemoEditorContent extends PLContentView {
 				displayClipboardList();
 			}
 		});
-		findViewById(R.id.index_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				displayIndexList();
-			}
-		});
 
 		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_memo_editor, null);
 		setNavigationBar(naviBar);
@@ -202,15 +196,17 @@ public class PLMemoEditorContent extends PLContentView {
 				displayFileOperationPopup();
 			}
 		});
-		naviBar.findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
+		naviBar.findViewById(R.id.index_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mReadWriter.saveToFile();
+				displayIndexList();
 			}
 		});
 	}
 
 	private void displayFileList() {
+		removeTopPopover();
+
 		final File[] files = mReadWriter.memoFiles();
 		ArrayList<String> nameList = new ArrayList<>();
 		for (File file : files) {
@@ -277,6 +273,12 @@ public class PLMemoEditorContent extends PLContentView {
 					}
 				}, null);
 			}
+		}), new PLListPopover.PLListItem("保存", new Runnable() {
+			@Override
+			public void run() {
+				mReadWriter.saveToFile();
+				MYLogUtil.showToast("保存");
+			}
 		}));
 	}
 
@@ -333,7 +335,7 @@ public class PLMemoEditorContent extends PLContentView {
 	}
 
 	private void displayIndexList() {
-		hideOtherViews();
+		removeTopPopover();
 
 		final ArrayList<Integer> positions = new ArrayList<>();
 		ArrayList<String> titleArray = new ArrayList<>();
