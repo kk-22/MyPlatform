@@ -19,3 +19,4 @@ app/build/
 .DS_Store
 /build
 /Application/build
+/captures
