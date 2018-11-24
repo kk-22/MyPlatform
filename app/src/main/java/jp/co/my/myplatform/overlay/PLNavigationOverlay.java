@@ -26,6 +26,11 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 	private static final String KEY_NAVIGATION_VISIBLE = "KEY_NAVIGATION_VISIBLE";
 
+	public enum BarType {
+		BOTTOM,
+		TOP
+	}
+
 	private View mStatusBar;
 	private FrameLayout mContentFrameLayout;
 	private FrameLayout mBarFrame;
@@ -36,6 +41,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
 	private Handler mMainHandler;
+	private BarType mCurrentBarType; // mBarFrameの現在位置
 
 	// ハーフモード用
 	private boolean mIsHalf;
@@ -88,6 +94,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mViewCache = new ArrayList<>();
 		mMainHandler = new Handler();
 		mGravity = Gravity.TOP;
+		mCurrentBarType = BarType.BOTTOM;
 		if (MYLogUtil.getPreference().getBoolean(KEY_NAVIGATION_VISIBLE, false)) {
 			mNavigationButton.setVisibility(VISIBLE);
 		}
@@ -257,6 +264,19 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 		mNavigationButton.setVisibility(view.getNavigationButtonVisibility());
 		putNavigationBar(view.getNavigationBar());
+
+		BarType nextType = view.getBarType();
+		if (mCurrentBarType != nextType) {
+			switch (nextType) {
+				case BOTTOM:
+					MYViewUtil.addViewAgain(mBarFrame);
+					break;
+				case TOP:
+					MYViewUtil.addViewAgain(findViewById(R.id.main_frame));
+					break;
+			}
+			mCurrentBarType = nextType;
+		}
 	}
 
 	private void updateBackButton() {

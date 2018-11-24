@@ -36,4 +36,11 @@ public class MYViewUtil {
 			view.setVisibility(View.INVISIBLE);
 		}
 	}
+
+	// LinearLayout などの順番入れ替えのために View を追加しなおす
+	public static void addViewAgain(View view) {
+		ViewGroup viewGroup = (ViewGroup) view.getParent();
+		viewGroup.removeView(view);
+		viewGroup.addView(view);
+	}
 }

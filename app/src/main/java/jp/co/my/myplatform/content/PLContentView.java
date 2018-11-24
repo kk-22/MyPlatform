@@ -21,12 +21,14 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 	private ArrayList<PLPopoverView> mPopoverViews;
 	private ArrayList<WeakReference<PLSavePositionListView>> mListViews;
 	private ViewGroup mNavigationBar;
+	private PLNavigationOverlay.BarType mBarType;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
 		setFocusable(true);
 		setFocusableInTouchMode(true);
 
+		mBarType = PLNavigationOverlay.BarType.BOTTOM;
 		mPopoverViews = new ArrayList<>();
 	}
 
@@ -130,5 +132,13 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	public ArrayList<PLPopoverView> getPopoverViews() {
 		return mPopoverViews;
+	}
+
+	public PLNavigationOverlay.BarType getBarType() {
+		return mBarType;
+	}
+
+	public void setBarType(PLNavigationOverlay.BarType barType) {
+		mBarType = barType;
 	}
 }

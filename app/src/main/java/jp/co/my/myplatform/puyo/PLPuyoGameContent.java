@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
+import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 
 import static android.support.constraint.ConstraintLayout.LayoutParams.CHAIN_PACKED;
 import static android.support.constraint.ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
@@ -18,6 +19,7 @@ public class PLPuyoGameContent extends PLContentView {
 	public PLPuyoGameContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_puyo_game, this);
+		setBarType(PLNavigationOverlay.BarType.TOP);
 
 		layoutField();
 	}
