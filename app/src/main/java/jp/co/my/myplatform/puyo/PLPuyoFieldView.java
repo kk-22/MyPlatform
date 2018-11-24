@@ -19,6 +19,14 @@ import static android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 
 public class PLPuyoFieldView extends ConstraintLayout {
 
+	private enum GameStatus {
+		FINISHED, STARTED, SUSPENDING,
+	}
+
+	private PLPuyoFieldListener mListener;
+	private GameStatus mGameStatus;
+
+	// ゲーム開始忠用
 	private PLPuyoBlockView[][] mBlocks;
 	private int mNumberOfRow, mNumberOfColumn;
 	private Point mFocusPoint; // 操作中ぷよの座標。非操作時はnull
@@ -28,6 +36,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	public PLPuyoFieldView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mGameStatus = GameStatus.FINISHED;
 		mDownHandler = new Handler();
 		mDownRunnable = new Runnable() {
 			@Override
@@ -47,10 +56,11 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	}
 
 	void startGame() {
-		goNext();
+		mGameStatus = GameStatus.STARTED;
+		goNextTurn();
 	}
 
-	void goNext() {
+	private void goNextTurn() {
 		int startX = mNumberOfRow / 2 - 1;
 		mFocusPoint = new Point(startX, 1);
 		mSubPoint = new Point(startX, 0);
@@ -60,6 +70,25 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		createRandomPuyo(focusBlockView, subBlockView);
 		updateAllBlock();
 		startDownHandler();
+	}
+
+	void finishTurn() {
+		if (canNotOperationFocusPuyo()) {
+			return;
+		}
+		mFocusPoint = null;
+		mSubPoint = null;
+		cancelDownHandler();
+
+		moveDownPuyo();
+
+		int startX = mNumberOfRow / 2 - 1;
+		if (mBlocks[startX][1].hasPuyo()) {
+			mGameStatus = GameStatus.FINISHED;
+			mListener.onGameOver();
+			return;
+		}
+		goNextTurn();
 	}
 
 	private void createRandomPuyo(PLPuyoBlockView blockView1, PLPuyoBlockView blockView2) {
@@ -72,6 +101,9 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	// ぷよ操作
 	void moveFocusPuyoToLeftOrRight(boolean toLeft) {
+		if (canNotOperationFocusPuyo()) {
+			return;
+		}
 		Point nextFocusPoint, nextSubPoint;
 		if (toLeft) {
 			nextFocusPoint = new Point(mFocusPoint.x - 1, mFocusPoint.y);
@@ -115,6 +147,9 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	}
 
 	void rotateFocusPuyo(boolean toLeft) {
+		if (canNotOperationFocusPuyo()) {
+			return;
+		}
 		Point nextSubPoint;
 		if (mFocusPoint.x == mSubPoint.x) {
 			// 縦並び
@@ -151,7 +186,8 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		moveFocusPuyo(nextFocusBlock, nextSubBlock);
 	}
 
-	void moveDownPuyo() {
+	private void moveDownPuyo() {
+		boolean needUpdate = false;
 		for (int i = 0; i < mNumberOfRow; i++) {
 			ArrayList<PLPuyoBlockView> spaceArray = new ArrayList<>();
 			for (int j = mNumberOfColumn - 1; 0 <= j; j--) {
@@ -162,16 +198,19 @@ public class PLPuyoFieldView extends ConstraintLayout {
 					PLPuyoBlockView space = spaceArray.get(0);
 					spaceArray.remove(0);
 					moveSinglePuyo(block, space);
+					needUpdate = true;
 				} else if (!hasPuyo) {
 					spaceArray.add(block);
 				}
 			}
 		}
+		if (needUpdate) {
+			updateAllBlock();
+		}
 	}
 
 	// 時間操作
 	void startDownHandler() {
-		cancelDownHandler();
 		mDownHandler.postDelayed(mDownRunnable, 1250);
 	}
 
@@ -192,8 +231,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 				return;
 			}
 		}
-		moveDownPuyo();
-		goNext();
+		finishTurn();
 	}
 
 	// View操作
@@ -258,6 +296,10 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		}
 	}
 
+	private boolean canNotOperationFocusPuyo() {
+		return (mGameStatus != GameStatus.STARTED || mFocusPoint == null);
+	}
+
 	private boolean isOutOfRange(Point point) {
 		return  (point.x < 0 || mNumberOfRow <= point.x || point.y < 0 || mNumberOfColumn <= point.y);
 	}
@@ -271,5 +313,13 @@ public class PLPuyoFieldView extends ConstraintLayout {
 			return null;
 		}
 		return getBlockOfPoint(point);
+	}
+
+	void setListener(PLPuyoFieldListener listener) {
+		mListener = listener;
+	}
+
+	interface PLPuyoFieldListener {
+		void onGameOver();
 	}
 }

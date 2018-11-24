@@ -10,7 +10,7 @@ import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 
 
-public class PLPuyoGameContent extends PLContentView {
+public class PLPuyoGameContent extends PLContentView implements PLPuyoFieldView.PLPuyoFieldListener {
 
 	private PLPuyoFieldView mFieldView;
 	private Button mLeftButton, mRightButton, mRotateLeftButton, mRotateRightButton;
@@ -18,14 +18,14 @@ public class PLPuyoGameContent extends PLContentView {
 	public PLPuyoGameContent() {
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_puyo_game, this);
-		mFieldView = findViewById(R.id.field_view);
-
 		mLeftButton = findViewById(R.id.left_button);
 		mRightButton = findViewById(R.id.right_button);
 		mRotateLeftButton = findViewById(R.id.rotate_left_button);
 		mRotateRightButton = findViewById(R.id.rotate_right_button);
-		setBarType(PLNavigationOverlay.BarType.TOP);
+		mFieldView = findViewById(R.id.field_view);
+		mFieldView.setListener(this);
 
+		setBarType(PLNavigationOverlay.BarType.TOP);
 		initButtonEvent();
 	}
 
@@ -64,9 +64,12 @@ public class PLPuyoGameContent extends PLContentView {
 		findViewById(R.id.down_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mFieldView.moveDownPuyo();
-				mFieldView.goNext();
+				mFieldView.finishTurn();
 			}
 		});
+	}
+
+	@Override
+	public void onGameOver() {
 	}
 }
