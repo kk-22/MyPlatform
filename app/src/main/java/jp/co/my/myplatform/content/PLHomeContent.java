@@ -19,6 +19,7 @@ import jp.co.my.myplatform.overlay.PLLockOverlay;
 import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
+import jp.co.my.myplatform.puyo.PLPuyoGameContent;
 
 public class PLHomeContent extends PLContentView {
 
@@ -77,6 +78,7 @@ public class PLHomeContent extends PLContentView {
 		findViewById(R.id.games_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				showGameList();
 			}
 		});
 		findViewById(R.id.memo_button).setOnClickListener(new View.OnClickListener() {
@@ -209,6 +211,17 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						displayLockView(1);
+					}
+				})
+		);
+	}
+
+	private void showGameList() {
+		PLListPopover.showItems(
+				new PLListPopover.PLListItem("ぷよぷよ", new Runnable() {
+					@Override
+					public void run() {
+						PLCoreService.getNavigationController().pushView(PLPuyoGameContent.class);
 					}
 				})
 		);
