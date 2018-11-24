@@ -1,6 +1,7 @@
 package jp.co.my.myplatform.puyo;
 
 import android.graphics.Point;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Constraints;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import static android.support.constraint.ConstraintLayout.LayoutParams.CHAIN_PAC
 import static android.support.constraint.ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
 import static android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID;
 import static jp.co.my.myplatform.puyo.PLPuyoBlockView.PuyoType;
+import static jp.co.my.common.util.MYPointUtil.Direction;
 
 public class PLPuyoGameContent extends PLContentView {
 
@@ -28,6 +30,8 @@ public class PLPuyoGameContent extends PLContentView {
 	private Button mLeftButton, mRightButton, mRotateLeftButton, mRotateRightButton;
 	private Point mFocusPoint; // 操作中ぷよの座標。非操作時はnull
 	private Point mSubPoint; // 操作中ぷよに繋がるぷよの座標
+	private Handler mDownHandler; // 時間経過で1段下げる
+	private Runnable mDownRunnable; // mDownHandler で実行する処理
 
 	public PLPuyoGameContent() {
 		super();
@@ -38,9 +42,23 @@ public class PLPuyoGameContent extends PLContentView {
 		mRotateRightButton = findViewById(R.id.rotate_right_button);
 		setBarType(PLNavigationOverlay.BarType.TOP);
 
+		mDownHandler = new Handler();
+		mDownRunnable = new Runnable() {
+			@Override
+			public void run() {
+				timePassed();
+			}
+		};
+
 		layoutField();
 		initButtonEvent();
 		startGame();
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		cancelDownHandler();
 	}
 
 	private void startGame() {
@@ -56,6 +74,7 @@ public class PLPuyoGameContent extends PLContentView {
 
 		createRandomPuyo(focusBlockView, subBlockView);
 		updateAllBlock();
+		startDownHandler();
 	}
 
 	private void createRandomPuyo(PLPuyoBlockView blockView1, PLPuyoBlockView blockView2) {
@@ -122,7 +141,7 @@ public class PLPuyoGameContent extends PLContentView {
 			// 回転先が移動不可ならフォーカスを押し出す
 			int diffX = mFocusPoint.x - nextSubPoint.x;
 			int diffY = mFocusPoint.y - nextSubPoint.y;
-			Point nextFocusPoint = MYPointUtil.createPoint(mFocusPoint, diffX, diffY);
+			Point nextFocusPoint = MYPointUtil.createWithDiff(mFocusPoint, diffX, diffY);
 			nextFocusBlock = getBlockOfPointIfInRange(nextFocusPoint);
 			if (nextFocusBlock == null) {
 				throw new RuntimeException();
@@ -154,6 +173,33 @@ public class PLPuyoGameContent extends PLContentView {
 				}
 			}
 		}
+	}
+
+	// 時間操作
+	private void startDownHandler() {
+		cancelDownHandler();
+		mDownHandler.postDelayed(mDownRunnable, 1250);
+	}
+
+	private void cancelDownHandler() {
+		mDownHandler.removeCallbacks(mDownRunnable);
+	}
+
+	private void timePassed() {
+		Point focusBottomPoint = MYPointUtil.createWithDirection(mFocusPoint, Direction.BOTTOM, 1);
+		PLPuyoBlockView focusBottomBlock = getBlockOfPointIfInRange(focusBottomPoint);
+		if (focusBottomBlock != null && (focusBottomPoint.equals(mSubPoint) || !focusBottomBlock.hasPuyo())) {
+			Point subBottomPoint = MYPointUtil.createWithDirection(mSubPoint, Direction.BOTTOM, 1);
+			PLPuyoBlockView subBottomBlock = getBlockOfPointIfInRange(subBottomPoint);
+			if (subBottomBlock != null && (subBottomPoint.equals(mFocusPoint) || !subBottomBlock.hasPuyo())) {
+				// 1段だけ落下
+				moveFocusPuyo(focusBottomBlock, subBottomBlock);
+				startDownHandler();
+				return;
+			}
+		}
+		moveDownPuyo();
+		goNext();
 	}
 
 	// View操作

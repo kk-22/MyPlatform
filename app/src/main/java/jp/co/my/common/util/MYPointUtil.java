@@ -4,6 +4,10 @@ import android.graphics.Point;
 
 public class MYPointUtil {
 
+	public enum Direction {
+		NONE, TOP, RIGHT, BOTTOM, LEFT,
+	}
+
 	private MYPointUtil() {}
 
 	// 直線を示す2つの Point 間の Point を返す
@@ -25,34 +29,18 @@ public class MYPointUtil {
 		return resultArray;
 	}
 
-	// rootPoint から見て number 分動かした位置を取得
-	public static Point getMovePoint(Point rootPoint, Point movePoint, int number) {
-		if (number == 0) {
-			return null;
-		}
-		int direction = getDirection(rootPoint, movePoint);
-		switch (direction) {
-			case 1: return new Point(movePoint.x, movePoint.y - number);
-			case 2: return new Point(movePoint.x - number, movePoint.y);
-			case 3: return new Point(movePoint.x, movePoint.y + number);
-			case 4: return new Point(movePoint.x + number, movePoint.y);
-			default: return null;
-		}
-	}
-
 	// rootPoint から見た targetPoint の位置を返す
-	// 1：上　2：右　3：下　4：左
-	public static int getDirection(Point rootPoint, Point targetPoint) {
+	public static Direction getDirection(Point rootPoint, Point targetPoint) {
 		if (rootPoint.y < targetPoint.y) {
-			return 1;
+			return Direction.BOTTOM;
 		} else if (rootPoint.y > targetPoint.y) {
-			return 3;
+			return Direction.TOP;
 		} else if (rootPoint.x < targetPoint.x) {
-			return 2;
+			return Direction.RIGHT;
 		} else if (rootPoint.x > targetPoint.x) {
-			return 4;
+			return Direction.LEFT;
 		}
-		return 0;
+		return Direction.NONE;
 	}
 
 	// 縦横いずれかの軸が同じ
@@ -60,7 +48,18 @@ public class MYPointUtil {
 		return  (point1.x == point2.x || point1.y == point2.y);
 	}
 
-	public static Point createPoint(Point basePoint, int diffX, int diffY) {
+	public static Point createWithDiff(Point basePoint, int diffX, int diffY) {
 		return new Point(basePoint.x + diffX, basePoint.y + diffY);
+	}
+
+	public static Point createWithDirection(Point basePoint, Direction direction, int diff) {
+		switch (direction) {
+			default:
+			case NONE: return new Point(basePoint);
+			case TOP: return createWithDiff(basePoint, 0, -diff);
+			case RIGHT: return createWithDiff(basePoint, diff, 0);
+			case BOTTOM: return createWithDiff(basePoint, 0, diff);
+			case LEFT: return createWithDiff(basePoint, -diff, 0);
+		}
 	}
 }
