@@ -30,6 +30,7 @@ public class MYPointUtil {
 	}
 
 	// rootPoint から見た targetPoint の位置を返す
+	// 左上を(0,0)とした座標にのみ使用可能
 	public static Direction getDirection(Point rootPoint, Point targetPoint) {
 		if (rootPoint.y < targetPoint.y) {
 			return Direction.BOTTOM;
@@ -50,6 +51,10 @@ public class MYPointUtil {
 
 	public static Point createWithDiff(Point basePoint, int diffX, int diffY) {
 		return new Point(basePoint.x + diffX, basePoint.y + diffY);
+	}
+
+	public static Point createWithDirection(Point basePoint, Direction direction) {
+		return createWithDirection(basePoint, direction, 1);
 	}
 
 	public static Point createWithDirection(Point basePoint, Direction direction, int diff) {

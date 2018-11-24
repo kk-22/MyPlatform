@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import jp.co.my.common.util.MYPointUtil;
+import jp.co.my.common.util.MYPointUtil.Direction;
+import jp.co.my.myplatform.puyo.PLPuyoBlockView.PuyoType;
 
 import static android.support.constraint.ConstraintLayout.LayoutParams.CHAIN_PACKED;
 import static android.support.constraint.ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
@@ -26,7 +28,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	private PLPuyoFieldListener mListener;
 	private GameStatus mGameStatus;
 
-	// ゲーム開始忠用
+	// ゲーム中用
 	private PLPuyoBlockView[][] mBlocks;
 	private int mNumberOfRow, mNumberOfColumn;
 	private Point mFocusPoint; // 操作中ぷよの座標。非操作時はnull
@@ -80,7 +82,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		mSubPoint = null;
 		cancelDownHandler();
 
-		moveDownPuyo();
+		deleteConnectedPuyo();
 
 		int startX = mNumberOfRow / 2 - 1;
 		if (mBlocks[startX][1].hasPuyo()) {
@@ -94,7 +96,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	private void createRandomPuyo(PLPuyoBlockView blockView1, PLPuyoBlockView blockView2) {
 		Random random = new Random();
 		// NONE 分を除く
-		int numberOfType = PLPuyoBlockView.PuyoType.values().length - 1;
+		int numberOfType = PuyoType.values().length - 1;
 		blockView1.setPuyoTypeByNumber(random.nextInt(numberOfType) + 1);
 		blockView2.setPuyoTypeByNumber(random.nextInt(numberOfType) + 1);
 	}
@@ -130,8 +132,8 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	private void moveFocusPuyo(PLPuyoBlockView nextFocusBlock, PLPuyoBlockView nextSubBlock) {
 		PLPuyoBlockView prevFocusBlock = getBlockOfPoint(mFocusPoint);
 		PLPuyoBlockView prevSubBlock = getBlockOfPoint(mSubPoint);
-		PLPuyoBlockView.PuyoType focusType = prevFocusBlock.getPuyoType();
-		PLPuyoBlockView.PuyoType subType = prevSubBlock.getPuyoType();
+		PuyoType focusType = prevFocusBlock.getPuyoType();
+		PuyoType subType = prevSubBlock.getPuyoType();
 		prevFocusBlock.clearPuyo();
 		prevSubBlock.clearPuyo();
 		nextFocusBlock.setPuyoType(focusType);
@@ -189,15 +191,15 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	private void moveDownPuyo() {
 		boolean needUpdate = false;
 		for (int i = 0; i < mNumberOfRow; i++) {
-			ArrayList<PLPuyoBlockView> spaceArray = new ArrayList<>();
+			ArrayList<PLPuyoBlockView> spaceArray = new ArrayList<>(); // 現列内の空白ブロック
 			for (int j = mNumberOfColumn - 1; 0 <= j; j--) {
 				PLPuyoBlockView block = mBlocks[i][j];
 				boolean hasPuyo = block.hasPuyo();
-				boolean hasSpace = (spaceArray.size() > 0);
-				if (hasPuyo && hasSpace) {
+				if (hasPuyo && spaceArray.size() > 0) {
 					PLPuyoBlockView space = spaceArray.get(0);
 					spaceArray.remove(0);
 					moveSinglePuyo(block, space);
+					spaceArray.add(block); // 移動により空白ブロックに変わった
 					needUpdate = true;
 				} else if (!hasPuyo) {
 					spaceArray.add(block);
@@ -206,6 +208,61 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		}
 		if (needUpdate) {
 			updateAllBlock();
+		}
+	}
+
+	void deleteConnectedPuyo() {
+		moveDownPuyo();
+
+		ArrayList<PLPuyoBlockView> deleteArray = new ArrayList<>(); // 削除対象
+		ArrayList<PLPuyoBlockView> checkedArray = new ArrayList<>(); // チェック済み領域
+		for (int i = 0; i < mNumberOfRow; i++) {
+			for (int j = mNumberOfColumn - 1; 0 <= j; j--) {
+				Point rootPoint = new Point(i, j);
+				PLPuyoBlockView rootBlock = getBlockOfPoint(rootPoint);
+				if (checkedArray.contains(rootBlock)) {
+					checkedArray.remove(rootBlock);
+					continue;
+				}
+				if (!rootBlock.hasPuyo()) {
+					// これより上にぷよは無い
+					break;
+				}
+				ArrayList<PLPuyoBlockView> resultArray = new ArrayList<>();
+				// 左下から順にチェックするため左と下は確認不要
+				searchConnectedPuyo(rootBlock, resultArray, Direction.TOP, Direction.RIGHT);
+				int count = resultArray.size();
+				if (count == 1) {
+					continue;
+				}
+				if (count >= 4) {
+					deleteArray.addAll(resultArray);
+				}
+				resultArray.remove(rootBlock);
+				checkedArray.addAll(resultArray);
+			}
+		}
+		if (deleteArray.size() > 0) {
+			for (PLPuyoBlockView blockView : deleteArray) {
+				blockView.clearPuyo();
+			}
+			deleteConnectedPuyo();
+		}
+	}
+
+	void searchConnectedPuyo(PLPuyoBlockView currentBlock,
+							 ArrayList<PLPuyoBlockView> resultArray,
+							 Direction... directions) {
+		resultArray.add(currentBlock);
+		Point currentPoint = currentBlock.getPoint();
+		PuyoType currentType = currentBlock.getPuyoType();
+		for (Direction direction : directions) {
+			PLPuyoBlockView block = getBlockOfPointIfInRange(
+					MYPointUtil.createWithDirection(currentPoint, direction));
+			if (block != null && block.getPuyoType() == currentType && !resultArray.contains(block)) {
+				// 右上から左に伸びるパターンがあるため全方向必要
+				searchConnectedPuyo(block, resultArray, Direction.TOP, Direction.RIGHT, Direction.BOTTOM, Direction.LEFT);
+			}
 		}
 	}
 
@@ -219,10 +276,10 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	}
 
 	private void timePassed() {
-		Point focusBottomPoint = MYPointUtil.createWithDirection(mFocusPoint, MYPointUtil.Direction.BOTTOM, 1);
+		Point focusBottomPoint = MYPointUtil.createWithDirection(mFocusPoint, Direction.BOTTOM);
 		PLPuyoBlockView focusBottomBlock = getBlockOfPointIfInRange(focusBottomPoint);
 		if (focusBottomBlock != null && (focusBottomPoint.equals(mSubPoint) || !focusBottomBlock.hasPuyo())) {
-			Point subBottomPoint = MYPointUtil.createWithDirection(mSubPoint, MYPointUtil.Direction.BOTTOM, 1);
+			Point subBottomPoint = MYPointUtil.createWithDirection(mSubPoint, Direction.BOTTOM);
 			PLPuyoBlockView subBottomBlock = getBlockOfPointIfInRange(subBottomPoint);
 			if (subBottomBlock != null && (subBottomPoint.equals(mFocusPoint) || !subBottomBlock.hasPuyo())) {
 				// 1段だけ落下
