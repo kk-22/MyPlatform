@@ -28,7 +28,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 	private View mStatusBar;
 	private FrameLayout mContentFrameLayout;
-	private FrameLayout mBottomFrame;
+	private FrameLayout mBarFrame;
 	private FrameLayout mNaviBarFrame;
 	private ViewGroup mCustomizeNavigationBar;
 	private Button mBackButton;
@@ -48,7 +48,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mContentFrameLayout = findViewById(R.id.content_frame);
 		mBackButton = findViewById(R.id.back_button);
 		mNavigationButton = findViewById(R.id.navigation_button);
-		mBottomFrame = findViewById(R.id.bottom_frame);
+		mBarFrame = findViewById(R.id.bar_frame);
 		mNaviBarFrame = findViewById(R.id.customize_navigation_layout);
 
 		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
@@ -73,7 +73,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mNavigationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYViewUtil.toggleVisibility(mBottomFrame, true);
+				MYViewUtil.toggleVisibility(mBarFrame, true);
 			}
 		});
 		mNavigationButton.setOnLongClickListener(new OnLongClickListener() {
@@ -115,10 +115,10 @@ public class PLNavigationOverlay extends PLOverlayView {
 	protected void updateLayout() {
 		if (mIsHalf) {
 			mStatusBar.setVisibility(GONE);
-			mBottomFrame.setVisibility(GONE);
+			mBarFrame.setVisibility(GONE);
 		} else {
 			mStatusBar.setVisibility(VISIBLE);
-			mBottomFrame.setVisibility(VISIBLE);
+			mBarFrame.setVisibility(VISIBLE);
 		}
 		super.updateLayout();
 	}
