@@ -26,4 +26,13 @@ public class MYOtherUtil {
 		}
 		return null;
 	}
+
+	/**
+	 * ordinal から指定した Enum の要素に変換する汎用関数
+	 * https://qiita.com/amay077/items/097f54b7dee586fadc99
+	 */
+	public static <E extends Enum<E>> E fromOrdinal(Class<E> enumClass, int ordinal) {
+		E[] enumArray = enumClass.getEnumConstants();
+		return enumArray[ordinal];
+	}
 }

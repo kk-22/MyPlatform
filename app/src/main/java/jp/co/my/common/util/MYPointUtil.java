@@ -59,4 +59,8 @@ public class MYPointUtil {
 	public static boolean isEqualOneSide(Point point1, Point point2) {
 		return  (point1.x == point2.x || point1.y == point2.y);
 	}
+
+	public static Point createPoint(Point basePoint, int diffX, int diffY) {
+		return new Point(basePoint.x + diffX, basePoint.y + diffY);
+	}
 }
