@@ -2,7 +2,9 @@ package jp.co.my.myplatform.puyo;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import jp.co.my.common.view.LongClickRepeatAdapter;
 import jp.co.my.myplatform.R;
@@ -24,6 +26,7 @@ public class PLPuyoGameContent extends PLContentView implements PLPuyoFieldView.
 		mRotateRightButton = findViewById(R.id.rotate_right_button);
 		mFieldView = findViewById(R.id.field_view);
 		mFieldView.setListener(this);
+		mFieldView.loadNextBlock((LinearLayout) findViewById(R.id.next1_linear), (LinearLayout) findViewById(R.id.next2_linear));
 
 		setBarType(PLNavigationOverlay.BarType.TOP);
 		initButtonEvent();

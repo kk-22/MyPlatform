@@ -10,16 +10,42 @@
         android:background="#000"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/next1_linear"
         app:layout_constraintBottom_toTopOf="@id/rotate_left_button"
         app:layout_constraintVertical_chainStyle="spread"
         android:layout_width="0dp"
         android:layout_height="0dp">
     </jp.co.my.myplatform.puyo.PLPuyoFieldView>
+    
+    <LinearLayout
+        android:id="@+id/next1_linear"
+        android:orientation="vertical"
+        android:background="#000"
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toRightOf="@id/field_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/field_view"
+        app:layout_constraintBottom_toTopOf="@+id/next2_linear"
+        android:layout_width="30dp"
+        android:layout_height="60dp">
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/next2_linear"
+        android:orientation="vertical"
+        android:background="#000"
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toLeftOf="@id/next1_linear"
+        app:layout_constraintRight_toRightOf="@id/next1_linear"
+        app:layout_constraintTop_toBottomOf="@id/next1_linear"
+        android:layout_width="30dp"
+        android:layout_height="60dp">
+    </LinearLayout>
 
     <Button
         android:id="@+id/rotate_left_button"
         android:text="左回転"
+        app:layout_constraintVertical_bias="0.3"
         app:layout_constraintTop_toBottomOf="@id/field_view"
         app:layout_constraintBottom_toTopOf="@id/left_button"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -31,6 +57,7 @@
     <Button
         android:id="@+id/left_button"
         android:text="←"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintTop_toBottomOf="@id/rotate_left_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

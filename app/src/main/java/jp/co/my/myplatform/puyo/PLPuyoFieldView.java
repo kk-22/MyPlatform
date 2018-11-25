@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Constraints;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import jp.co.my.myplatform.puyo.PLPuyoBlockView.PuyoType;
 import static android.support.constraint.ConstraintLayout.LayoutParams.CHAIN_PACKED;
 import static android.support.constraint.ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
 import static android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class PLPuyoFieldView extends ConstraintLayout {
 
@@ -29,6 +31,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	private PLPuyoFieldListener mListener;
 	private GameStatus mGameStatus;
 	private float mSpeedRatio;
+	private PLPuyoBlockView[] mNextBlocks; // 次のぷよを表示する領域
 
 	// ゲーム中用
 	private PLPuyoBlockView[][] mBlocks;
@@ -62,6 +65,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	void startGame() {
 		mGameStatus = GameStatus.STARTED;
+		createRandomPuyo(mNextBlocks);
 		goNextTurn();
 	}
 
@@ -74,10 +78,20 @@ public class PLPuyoFieldView extends ConstraintLayout {
 			mListener.onGameOver();
 			return;
 		}
+
 		mFocusPoint = tempFocusPoint;
 		mSubPoint = new Point(startX, 0);
 		PLPuyoBlockView subBlockView = getBlockOfPoint(mSubPoint);
-		createRandomPuyo(focusBlockView, subBlockView);
+
+		int numberOfNext = mNextBlocks.length;
+		moveSinglePuyo(mNextBlocks[0], subBlockView);
+		moveSinglePuyo(mNextBlocks[1], focusBlockView);
+		for (int i = 0; i < numberOfNext - 2; i++) {
+			moveSinglePuyo(mNextBlocks[i + 2], mNextBlocks[i]);
+		}
+		createRandomPuyo(mNextBlocks[numberOfNext - 1], mNextBlocks[numberOfNext - 2]);
+		updateBlocks(mNextBlocks);
+
 		updateBlocks(focusBlockView, subBlockView);
 		startDownHandler();
 	}
@@ -94,12 +108,13 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		deleteConnectedPuyoWithDelay();
 	}
 
-	private void createRandomPuyo(PLPuyoBlockView blockView1, PLPuyoBlockView blockView2) {
+	private void createRandomPuyo(PLPuyoBlockView... blockViews) {
 		Random random = new Random();
 		// NONE 分を除く
 		int numberOfType = PuyoType.values().length - 1;
-		blockView1.setPuyoTypeByNumber(random.nextInt(numberOfType) + 1);
-		blockView2.setPuyoTypeByNumber(random.nextInt(numberOfType) + 1);
+		for (PLPuyoBlockView blockView : blockViews) {
+			blockView.setPuyoTypeByNumber(random.nextInt(numberOfType) + 1);
+		}
 	}
 
 	// ぷよ操作
@@ -385,6 +400,21 @@ public class PLPuyoFieldView extends ConstraintLayout {
 					params.horizontalChainStyle = CHAIN_PACKED;
 				}
 				addView(mBlocks[i][j], params);
+			}
+		}
+	}
+
+	void loadNextBlock(LinearLayout... linearLayouts) {
+		int numberOfNext = linearLayouts.length;
+		mNextBlocks = new PLPuyoBlockView[numberOfNext * 2];
+		for (int i = 0; i < numberOfNext; i++) {
+			LinearLayout linear = linearLayouts[i];
+			for (int j = 0; j < 2; j++) {
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, 0);
+				params.weight = 1;
+				PLPuyoBlockView blockView = new PLPuyoBlockView(getContext());
+				linear.addView(blockView, params);
+				mNextBlocks[i * 2 + j] = blockView;
 			}
 		}
 	}
