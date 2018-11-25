@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import jp.co.my.common.util.MYPointUtil;
@@ -27,6 +28,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	private PLPuyoFieldListener mListener;
 	private GameStatus mGameStatus;
+	private float mSpeedRatio;
 
 	// ゲーム中用
 	private PLPuyoBlockView[][] mBlocks;
@@ -39,6 +41,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	public PLPuyoFieldView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mGameStatus = GameStatus.FINISHED;
+		mSpeedRatio = 1.0f;
 		mDownHandler = new Handler();
 		mDownRunnable = new Runnable() {
 			@Override
@@ -64,13 +67,18 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	private void goNextTurn() {
 		int startX = mNumberOfRow / 2 - 1;
-		mFocusPoint = new Point(startX, 1);
+		Point tempFocusPoint = new Point(startX, 1);
+		PLPuyoBlockView focusBlockView = getBlockOfPoint(tempFocusPoint);
+		if (focusBlockView.hasPuyo()) {
+			mGameStatus = GameStatus.FINISHED;
+			mListener.onGameOver();
+			return;
+		}
+		mFocusPoint = tempFocusPoint;
 		mSubPoint = new Point(startX, 0);
-		PLPuyoBlockView focusBlockView = getBlockOfPoint(mFocusPoint);
 		PLPuyoBlockView subBlockView = getBlockOfPoint(mSubPoint);
-
 		createRandomPuyo(focusBlockView, subBlockView);
-		updateAllBlock();
+		updateBlocks(focusBlockView, subBlockView);
 		startDownHandler();
 	}
 
@@ -82,15 +90,8 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		mSubPoint = null;
 		cancelDownHandler();
 
-		deleteConnectedPuyo();
-
-		int startX = mNumberOfRow / 2 - 1;
-		if (mBlocks[startX][1].hasPuyo()) {
-			mGameStatus = GameStatus.FINISHED;
-			mListener.onGameOver();
-			return;
-		}
-		goNextTurn();
+		moveDownPuyo();
+		deleteConnectedPuyoWithDelay();
 	}
 
 	private void createRandomPuyo(PLPuyoBlockView blockView1, PLPuyoBlockView blockView2) {
@@ -189,7 +190,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 	}
 
 	private void moveDownPuyo() {
-		boolean needUpdate = false;
+		ArrayList<PLPuyoBlockView> updateArray = new ArrayList<>();
 		for (int i = 0; i < mNumberOfRow; i++) {
 			ArrayList<PLPuyoBlockView> spaceArray = new ArrayList<>(); // 現列内の空白ブロック
 			for (int j = mNumberOfColumn - 1; 0 <= j; j--) {
@@ -200,20 +201,40 @@ public class PLPuyoFieldView extends ConstraintLayout {
 					spaceArray.remove(0);
 					moveSinglePuyo(block, space);
 					spaceArray.add(block); // 移動により空白ブロックに変わった
-					needUpdate = true;
+					updateArray.add(space);
+					updateArray.add(block);
 				} else if (!hasPuyo) {
 					spaceArray.add(block);
 				}
 			}
 		}
-		if (needUpdate) {
-			updateAllBlock();
+		updateBlocks(updateArray);
+	}
+
+	// 連鎖テスト用
+	void loadDebugPuyo() {
+		int bottomColumn = mNumberOfColumn - 1;
+		for (int i = 0; i < mNumberOfRow - 1; i++) {
+			PuyoType type1 = (i % 2 == 0) ? PuyoType.RED : PuyoType.GREEN;
+			PuyoType type2 = (i % 2 == 0) ? PuyoType.GREEN : PuyoType.RED;
+			mBlocks[i][bottomColumn - 3].setPuyoType(type2);
+			mBlocks[i][bottomColumn - 2].setPuyoType(type1);
+			mBlocks[i][bottomColumn - 1].setPuyoType(type1);
+			mBlocks[i][bottomColumn].setPuyoType(type1);
 		}
+		updateAllBlock();
+	}
+
+	void deleteConnectedPuyoWithDelay() {
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				deleteConnectedPuyo();
+			}
+		}, (long) (250 * mSpeedRatio));
 	}
 
 	void deleteConnectedPuyo() {
-		moveDownPuyo();
-
 		ArrayList<PLPuyoBlockView> deleteArray = new ArrayList<>(); // 削除対象
 		ArrayList<PLPuyoBlockView> checkedArray = new ArrayList<>(); // チェック済み領域
 		for (int i = 0; i < mNumberOfRow; i++) {
@@ -242,11 +263,20 @@ public class PLPuyoFieldView extends ConstraintLayout {
 				checkedArray.addAll(resultArray);
 			}
 		}
-		if (deleteArray.size() > 0) {
+		if (deleteArray.size() == 0) {
+			goNextTurn();
+		} else {
 			for (PLPuyoBlockView blockView : deleteArray) {
 				blockView.clearPuyo();
 			}
-			deleteConnectedPuyo();
+			updateBlocks(deleteArray);
+			moveDownPuyo();
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					deleteConnectedPuyoWithDelay();
+				}
+			}, (long) (250 * mSpeedRatio));
 		}
 	}
 
@@ -268,7 +298,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	// 時間操作
 	void startDownHandler() {
-		mDownHandler.postDelayed(mDownRunnable, 1250);
+		mDownHandler.postDelayed(mDownRunnable, (long) (1250 * mSpeedRatio));
 	}
 
 	void cancelDownHandler() {
@@ -302,6 +332,12 @@ public class PLPuyoFieldView extends ConstraintLayout {
 
 	private void updateBlocks(PLPuyoBlockView... blocks) {
 		for (PLPuyoBlockView block : blocks) {
+			block.updateBlock();
+		}
+	}
+
+	private void updateBlocks(List<PLPuyoBlockView> blockList) {
+		for (PLPuyoBlockView block : blockList) {
 			block.updateBlock();
 		}
 	}
