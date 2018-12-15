@@ -68,7 +68,7 @@ public class PLAlarmContent extends PLContentView {
 		MYLogUtil.outputLog("アラーム開始");
 		mAlarmCount = 0;
 		mCancelButton.setEnabled(true);
-		PLWakeLockManager.getInstance().incrementKeepCPU();
+		PLWakeLockManager.getInstance().incrementKeepScreen();
 
 		sAlarmHandler = new Handler();
 		sAlarmHandler.postDelayed(new Runnable() {
@@ -77,27 +77,20 @@ public class PLAlarmContent extends PLContentView {
 				mAlarmCount++;
 				Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 				if (vibrator != null) {
-					long milliseconds = 400;
-					if (2 < mAlarmCount) {
-						// 振動を強くする
-						milliseconds *= (mAlarmCount + 1) / 2;
-					}
+					long milliseconds = 1000 * mAlarmCount;
 					MYLogUtil.outputLog(" vibrato milliseconds=" +milliseconds +" count=" +mAlarmCount);
 					vibrator.vibrate(milliseconds);
 				}
-
-				// 1度だけ画面点灯。バックライト点灯時間がスヌーズ秒より短い場合は消灯する。
-				PLWakeLockManager.getInstance().incrementKeepScreen();
-				PLWakeLockManager.getInstance().decrementKeepScreen();
 
 				if (mAlarmCount < 7) {
 					MYLogUtil.showToast("alarm count=" +mAlarmCount);
 					SharedPreferences pref = MYLogUtil.getPreference();
 					int snoozeSec = pref.getInt(KEY_SNOOZE_SEC, 10);
 					int delayMills = snoozeSec * 1000;
-					if (2 < mAlarmCount) {
+					if (1 < mAlarmCount) {
 						// 離席時用に間隔を伸ばす
-						delayMills *= (mAlarmCount - 2) * 3;
+						// 1：10秒、2：30秒、3：60秒・・・6：150秒
+						delayMills *= (mAlarmCount - 1) * 3;
 					}
 					sAlarmHandler.postDelayed(this, delayMills);
 					return;
@@ -110,7 +103,7 @@ public class PLAlarmContent extends PLContentView {
 				}
 				stopAlarm();
 			}
-		}, 1);
+		}, 5000);
 	}
 
 	private void setButtonEvent() {
@@ -211,7 +204,7 @@ public class PLAlarmContent extends PLContentView {
 			cancelAlarm();
 		}
 		if (sAlarmHandler != null) {
-			PLWakeLockManager.getInstance().decrementKeepCPU();
+			PLWakeLockManager.getInstance().decrementKeepScreen();
 			sAlarmHandler.removeCallbacksAndMessages(null);
 			sAlarmHandler = null;
 		}
