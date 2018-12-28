@@ -20,6 +20,7 @@ import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
 import jp.co.my.myplatform.puyo.PLPuyoGameContent;
+import jp.co.my.myplatform.simulator.PLDamageSimulateContent;
 
 public class PLHomeContent extends PLContentView {
 
@@ -38,35 +39,10 @@ public class PLHomeContent extends PLContentView {
 				showMenu();
 			}
 		});
-		findViewById(R.id.size_button).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.simulator_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLListPopover.showItems(
-						new PLListPopover.PLListItem("上半分", new Runnable() {
-							@Override
-							public void run() {
-								PLNavigationOverlay navigation = PLCoreService.getNavigationController();
-								navigation.setNavigationButtonVisibility(View.VISIBLE);
-								navigation.resizeNavigation(true, false);
-							}
-						})
-						, new PLListPopover.PLListItem("全画面", new Runnable() {
-							@Override
-							public void run() {
-								PLNavigationOverlay navigation = PLCoreService.getNavigationController();
-								navigation.setNavigationButtonVisibility(View.GONE);
-								navigation.resizeNavigation(false, false);
-							}
-						})
-						, new PLListPopover.PLListItem("下半分", new Runnable() {
-							@Override
-							public void run() {
-								PLNavigationOverlay navigation = PLCoreService.getNavigationController();
-								navigation.setNavigationButtonVisibility(View.VISIBLE);
-								navigation.resizeNavigation(true, true);
-							}
-						})
-				);
+				PLCoreService.getNavigationController().pushView(PLDamageSimulateContent.class);
 			}
 		});
 		findViewById(R.id.lock_button).setOnClickListener(new View.OnClickListener() {
@@ -165,6 +141,12 @@ public class PLHomeContent extends PLContentView {
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLDebugContent.class);
 					}
+				}),
+				new PLListPopover.PLListItem("サイズ変更", new Runnable() {
+					@Override
+					public void run() {
+						showSizeList();
+					}
 				})
 		);
 	}
@@ -222,6 +204,35 @@ public class PLHomeContent extends PLContentView {
 					@Override
 					public void run() {
 						PLCoreService.getNavigationController().pushView(PLPuyoGameContent.class);
+					}
+				})
+		);
+	}
+
+	private void showSizeList() {
+		PLListPopover.showItems(
+				new PLListPopover.PLListItem("上半分", new Runnable() {
+					@Override
+					public void run() {
+						PLNavigationOverlay navigation = PLCoreService.getNavigationController();
+						navigation.setNavigationButtonVisibility(View.VISIBLE);
+						navigation.resizeNavigation(true, false);
+					}
+				})
+				, new PLListPopover.PLListItem("全画面", new Runnable() {
+					@Override
+					public void run() {
+						PLNavigationOverlay navigation = PLCoreService.getNavigationController();
+						navigation.setNavigationButtonVisibility(View.GONE);
+						navigation.resizeNavigation(false, false);
+					}
+				})
+				, new PLListPopover.PLListItem("下半分", new Runnable() {
+					@Override
+					public void run() {
+						PLNavigationOverlay navigation = PLCoreService.getNavigationController();
+						navigation.setNavigationButtonVisibility(View.VISIBLE);
+						navigation.resizeNavigation(true, true);
 					}
 				})
 		);
