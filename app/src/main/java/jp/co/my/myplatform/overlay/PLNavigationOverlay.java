@@ -124,7 +124,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 			mStatusBar.setVisibility(GONE);
 			mBarFrame.setVisibility(GONE);
 		} else {
-			mStatusBar.setVisibility(VISIBLE);
+			mStatusBar.setVisibility(mCurrentView.getStatusBarVisibility());
 			mBarFrame.setVisibility(VISIBLE);
 		}
 		super.updateLayout();
@@ -261,6 +261,8 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 		mContentFrameLayout.addView(view, createMatchParams());
 		mCurrentView = view;
+
+		mStatusBar.setVisibility(view.getStatusBarVisibility());
 
 		mNavigationButton.setVisibility(view.getNavigationButtonVisibility());
 		putNavigationBar(view.getNavigationBar());

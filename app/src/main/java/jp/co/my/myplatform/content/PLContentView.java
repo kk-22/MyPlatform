@@ -1,5 +1,6 @@
 package jp.co.my.myplatform.content;
 
+import android.graphics.Color;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,5 +141,9 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	public void setBarType(PLNavigationOverlay.BarType barType) {
 		mBarType = barType;
+	}
+
+	public int getStatusBarVisibility() {
+		return View.VISIBLE;
 	}
 }
