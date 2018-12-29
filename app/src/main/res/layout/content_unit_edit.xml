@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Button
+        android:id="@+id/clear_area_button"
+        android:background="#0000"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+    <View
+        android:background="#fff"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/clear_area_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+
+    <TextView
+        android:id="@+id/hp_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="HP"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/hp_edit"
+        app:layout_constraintRight_toRightOf="@id/hp_edit"
+        app:layout_constraintTop_toBottomOf="@id/clear_area_button">
+        <requestFocus/>
+    </TextView>
+
+    <TextView
+        android:id="@+id/attack_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="攻撃"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/attack_edit"
+        app:layout_constraintRight_toRightOf="@id/attack_edit"
+        app:layout_constraintTop_toBottomOf="@id/clear_area_button" />
+
+    <TextView
+        android:id="@+id/speed_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="速さ"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/speed_edit"
+        app:layout_constraintRight_toRightOf="@id/speed_edit"
+        app:layout_constraintTop_toBottomOf="@id/clear_area_button" />
+
+    <TextView
+        android:id="@+id/defense_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="守備"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/defense_edit"
+        app:layout_constraintRight_toRightOf="@id/defense_edit"
+        app:layout_constraintTop_toBottomOf="@id/clear_area_button" />
+
+    <TextView
+        android:id="@+id/resist_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="魔防"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/resist_edit"
+        app:layout_constraintRight_toRightOf="@id/resist_edit"
+        app:layout_constraintTop_toBottomOf="@id/clear_area_button" />
+
+
+    <TextView
+        android:id="@+id/base_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="ベース"
+        android:textAlignment="center"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/hp_edit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/hp_edit"
+        app:layout_constraintTop_toTopOf="@id/hp_edit" />
+
+    <EditText
+        android:id="@+id/hp_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toRightOf="@id/base_text"
+        app:layout_constraintRight_toLeftOf="@id/attack_edit"
+        app:layout_constraintTop_toBottomOf="@id/hp_text" />
+
+    <EditText
+        android:id="@+id/attack_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/hp_edit"
+        app:layout_constraintRight_toLeftOf="@id/speed_edit"
+        app:layout_constraintTop_toTopOf="@id/hp_edit" />
+
+    <EditText
+        android:id="@+id/speed_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/attack_edit"
+        app:layout_constraintRight_toLeftOf="@id/defense_edit"
+        app:layout_constraintTop_toTopOf="@id/hp_edit" />
+
+    <EditText
+        android:id="@+id/defense_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/speed_edit"
+        app:layout_constraintRight_toLeftOf="@id/resist_edit"
+        app:layout_constraintTop_toTopOf="@id/hp_edit" />
+
+    <EditText
+        android:id="@+id/resist_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/defense_edit"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/hp_edit" />
+
+
+
+    <TextView
+        android:id="@+id/turn_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="ターンバフ"
+        android:textAlignment="center"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/turn_hp_edit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/turn_hp_edit"
+        app:layout_constraintTop_toTopOf="@id/turn_hp_edit" />
+
+    <EditText
+        android:id="@+id/turn_hp_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toRightOf="@id/turn_text"
+        app:layout_constraintRight_toLeftOf="@id/turn_attack_edit"
+        app:layout_constraintTop_toBottomOf="@id/hp_edit" />
+
+    <EditText
+        android:id="@+id/turn_attack_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/turn_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/turn_hp_edit"
+        app:layout_constraintRight_toLeftOf="@id/turn_speed_edit"
+        app:layout_constraintTop_toTopOf="@id/turn_hp_edit" />
+
+    <EditText
+        android:id="@+id/turn_speed_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/turn_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/turn_attack_edit"
+        app:layout_constraintRight_toLeftOf="@id/turn_defense_edit"
+        app:layout_constraintTop_toTopOf="@id/turn_hp_edit" />
+
+    <EditText
+        android:id="@+id/turn_defense_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/turn_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/turn_speed_edit"
+        app:layout_constraintRight_toLeftOf="@id/turn_resist_edit"
+        app:layout_constraintTop_toTopOf="@id/turn_hp_edit" />
+
+    <EditText
+        android:id="@+id/turn_resist_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/turn_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/turn_defense_edit"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/turn_hp_edit" />
+
+
+
+
+    <TextView
+        android:id="@+id/combat_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="戦闘中バフ"
+        android:textAlignment="center"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/combat_hp_edit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/combat_hp_edit"
+        app:layout_constraintTop_toTopOf="@id/combat_hp_edit" />
+
+    <EditText
+        android:id="@+id/combat_hp_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toRightOf="@id/combat_text"
+        app:layout_constraintRight_toLeftOf="@id/combat_attack_edit"
+        app:layout_constraintTop_toBottomOf="@id/turn_hp_edit" />
+
+    <EditText
+        android:id="@+id/combat_attack_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/combat_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/combat_hp_edit"
+        app:layout_constraintRight_toLeftOf="@id/combat_speed_edit"
+        app:layout_constraintTop_toTopOf="@id/combat_hp_edit" />
+
+    <EditText
+        android:id="@+id/combat_speed_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/combat_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/combat_attack_edit"
+        app:layout_constraintRight_toLeftOf="@id/combat_defense_edit"
+        app:layout_constraintTop_toTopOf="@id/combat_hp_edit" />
+
+    <EditText
+        android:id="@+id/combat_defense_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/combat_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/combat_speed_edit"
+        app:layout_constraintRight_toLeftOf="@id/combat_resist_edit"
+        app:layout_constraintTop_toTopOf="@id/combat_hp_edit" />
+
+    <EditText
+        android:id="@+id/combat_resist_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/combat_hp_edit"
+        app:layout_constraintLeft_toRightOf="@id/combat_defense_edit"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/combat_hp_edit" />
+
+
+    <EditText
+        android:id="@+id/name_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="ユニット名"
+        android:inputType="text"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textSize="15sp"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/memo_edit"
+        app:layout_constraintTop_toBottomOf="@id/combat_hp_edit" />
+
+    <EditText
+        android:id="@+id/memo_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="メモ"
+        android:inputType="text"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textSize="15sp"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintLeft_toRightOf="@+id/name_edit"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/combat_hp_edit" />
+
+
+
+    <CheckBox
+        android:id="@+id/mine_check"
+        android:text="自キャラ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/name_edit"
+        app:layout_constraintLeft_toLeftOf="parent" />
+</android.support.constraint.ConstraintLayout>

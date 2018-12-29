@@ -1,6 +1,7 @@
 package jp.co.my.common.util;
 
 import android.graphics.Point;
+import android.widget.EditText;
 
 public class MYMathUtil {
 
@@ -14,5 +15,13 @@ public class MYMathUtil {
 
 	public static int difference(Point point1, Point point2) {
 		return difference(point1.x, point2.x) + difference(point1.y, point2.y);
+	}
+
+	public static int integerFromEditText(EditText editText) {
+		String string = editText.getText().toString();
+		if (string.length() == 0) {
+			return 0;
+		}
+		return Integer.parseInt(string);
 	}
 }
