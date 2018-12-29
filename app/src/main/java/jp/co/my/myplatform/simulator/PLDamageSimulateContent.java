@@ -26,15 +26,13 @@ public class PLDamageSimulateContent extends PLContentView {
 	}
 
 	private void initViewEvent() {
-		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_damage_simulate, null);
-		setNavigationBar(naviBar);
-		naviBar.findViewById(R.id.create_button).setOnClickListener(new OnClickListener() {
+		addNavigationButton("作成", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getNavigationController().pushView(PLUnitEditContent.class);
 			}
 		});
-		naviBar.findViewById(R.id.edit_button).setOnClickListener(new OnClickListener() {
+		addNavigationButton("編集", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				loadUnitList(true, new OnUnitSelectListener() {
@@ -44,6 +42,11 @@ public class PLDamageSimulateContent extends PLContentView {
 						content.editUnit(unitModel);
 					}
 				});
+			}
+		});
+		addNavigationButton("戦闘", new OnClickListener() {
+			@Override
+			public void onClick(View v) {
 			}
 		});
 	}

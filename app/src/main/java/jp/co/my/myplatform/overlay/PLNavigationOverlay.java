@@ -7,11 +7,11 @@ import android.support.constraint.ConstraintSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import java.util.ArrayList;
 
@@ -23,11 +23,13 @@ import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.content.PLHomeContent;
 import jp.co.my.myplatform.core.PLCoreService;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 public class PLNavigationOverlay extends PLOverlayView {
 
 	private static final String KEY_NAVIGATION_VISIBLE = "KEY_NAVIGATION_VISIBLE";
+	private static final int MAX_NUMBER_OF_NAVIGATION_BAR_CHILD = 5; // 戻るボタンとスペースを含む最大数
 
 	public enum BarType {
 		BOTTOM,
@@ -36,15 +38,16 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 	private View mStatusBar;
 	private FrameLayout mContentFrameLayout;
-	private LinearLayout mNavigationBarLinear;
-	private FrameLayout mNaviBarFrame;
-	private ViewGroup mCustomizeNavigationBar;
-	private Button mBackButton;
-	private Button mNavigationButton;
 	private PLContentView mCurrentView;
 	private ArrayList<PLContentView> mViewCache;
 	private Handler mMainHandler;
 	private BarType mCurrentBarType; // mBarFrameの現在位置
+
+	// ナビゲーションバー用
+	private LinearLayout mNavigationBarLinear;
+	private Space mNavigationSpace;
+	private Button mBackButton;
+	private Button mNavigationButton;
 
 	// ハーフモード用
 	private boolean mIsHalf;
@@ -58,7 +61,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mBackButton = findViewById(R.id.back_button);
 		mNavigationButton = findViewById(R.id.navigation_button);
 		mNavigationBarLinear = findViewById(R.id.navigation_bar_linear);
-		mNaviBarFrame = findViewById(R.id.customize_navigation_layout);
+		mNavigationSpace = findViewById(R.id.navigation_space);
 
 		mNavigationBarLinear.setOnClickListener(new OnClickListener() {
 			@Override
@@ -233,17 +236,6 @@ public class PLNavigationOverlay extends PLOverlayView {
 		}
 	}
 
-	public void putNavigationBar(ViewGroup navigationBar) {
-		if (mCustomizeNavigationBar != null) {
-			mNaviBarFrame.removeView(mCustomizeNavigationBar);
-		}
-
-		mCustomizeNavigationBar = navigationBar;
-		if (navigationBar != null) {
-			mNaviBarFrame.addView(navigationBar);
-		}
-	}
-
 	public void resizeNavigation(boolean isHalf, boolean isBottom) {
 		mIsHalf = isHalf;
 		if (isBottom) {
@@ -268,7 +260,14 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mStatusBar.setVisibility(view.getStatusBarVisibility());
 
 		mNavigationButton.setVisibility(view.getNavigationButtonVisibility());
-		putNavigationBar(view.getNavigationBar());
+		// 戻るボタンと mNavigationSpace 以外を取り除く
+		mNavigationBarLinear.removeViews(1, mNavigationBarLinear.getChildCount() - 2);
+		if (view.getNavigationButtons() != null) {
+			for (Button button : view.getNavigationButtons()) {
+				showNavigationButton(button);
+			}
+		}
+		updateNavigationSpace();
 
 		BarType nextType = view.getBarType();
 		if (mCurrentBarType != nextType) {
@@ -295,6 +294,26 @@ public class PLNavigationOverlay extends PLOverlayView {
 			constraintSet.applyTo(layout);
 			mCurrentBarType = nextType;
 		}
+	}
+
+	public void showNavigationButton(Button button) {
+		// スペースの前に追加
+		int childCount = mNavigationBarLinear.getChildCount();
+		if (MAX_NUMBER_OF_NAVIGATION_BAR_CHILD <= childCount) {
+			return;
+		}
+		mNavigationBarLinear.addView(button, childCount - 1, getNavigationButtonLayoutParams());
+	}
+
+	public void updateNavigationSpace() {
+		LayoutParams params = (LayoutParams) mNavigationSpace.getLayoutParams();
+		params.weight = MAX_NUMBER_OF_NAVIGATION_BAR_CHILD - mNavigationBarLinear.getChildCount() + 1;
+	}
+
+	private LinearLayout.LayoutParams getNavigationButtonLayoutParams() {
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, MATCH_PARENT);
+		params.weight = 1;
+		return params;
 	}
 
 	private void updateBackButton() {

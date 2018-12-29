@@ -42,10 +42,7 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 		mPathText = findViewById(R.id.path_text);
 		mRecyclerView = findViewById(R.id.recycler);
 		mAdapter = new PLExplorerRecyclerAdapter(getContext(), this);
-
-		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_explorer, null);
-		setNavigationBar(naviBar);
-		mCloseButton = naviBar.findViewById(R.id.close_button);
+		initClickEvent();
 
 		SharedPreferences pref = MYLogUtil.getPreference();
 		String lastPath = pref.getString(KEY_LAST_PATH, null);
@@ -60,8 +57,6 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 			File imageFile = new File(imagePath);
 			showImageFile(imageFile);
 		}
-
-		initClickEvent();
 	}
 
 	@Override
@@ -157,7 +152,7 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 		});
 		MYLogUtil.outputLog("initClick end");
 
-		mCloseButton.setOnClickListener(new OnClickListener() {
+		mCloseButton = addNavigationButton("閉じる", false, new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mImagePopover.removeFromContentView();

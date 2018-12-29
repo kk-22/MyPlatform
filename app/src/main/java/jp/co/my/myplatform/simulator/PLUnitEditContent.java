@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -20,6 +21,7 @@ public class PLUnitEditContent extends PLContentView {
 	EditText[] mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits;
 	CheckBox[] mCheckBoxes;
 	PLUnitModel mUnitModel;
+	Button mContinueButton, mDeleteButton;
 
 	public PLUnitEditContent() {
 		super();
@@ -36,9 +38,8 @@ public class PLUnitEditContent extends PLContentView {
 
 	public void editUnit(PLUnitModel unitModel) {
 		mUnitModel = unitModel;
-		ViewGroup naviBar = getNavigationBar();
-		naviBar.findViewById(R.id.continue_button).setEnabled(false);
-		naviBar.findViewById(R.id.delete_button).setEnabled(true);
+		mContinueButton.setEnabled(false);
+		mDeleteButton.setEnabled(true);
 
 		int[] baseParams = unitModel.getBaseParams();
 		int[] turnBuffs = unitModel.getTurnBuffs();
@@ -97,9 +98,7 @@ public class PLUnitEditContent extends PLContentView {
 	}
 
 	private void initViewEvent() {
-		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_unit_edit, null);
-		setNavigationBar(naviBar);
-		naviBar.findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
+		addNavigationButton("保存", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (saveUnit()) {
@@ -107,7 +106,7 @@ public class PLUnitEditContent extends PLContentView {
 				}
 			}
 		});
-		naviBar.findViewById(R.id.continue_button).setOnClickListener(new OnClickListener() {
+		mContinueButton = addNavigationButton("連続", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (saveUnit()) {
@@ -115,7 +114,7 @@ public class PLUnitEditContent extends PLContentView {
 				}
 			}
 		});
-		naviBar.findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
+		mDeleteButton = addNavigationButton("削除", false, new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new PLConfirmationPopover(mUnitModel.getName() + "を削除", new PLConfirmationPopover.PLConfirmationListener() {

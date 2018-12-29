@@ -180,9 +180,7 @@ public class PLMemoEditorContent extends PLContentView {
 			}
 		});
 
-		ViewGroup naviBar = (ViewGroup) View.inflate(getContext(), R.layout.navibar_memo_editor, null);
-		setNavigationBar(naviBar);
-		naviBar.findViewById(R.id.list_button).setOnClickListener(new OnClickListener() {
+		addNavigationButton("一覧", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// 現在のファイル保存
@@ -190,16 +188,16 @@ public class PLMemoEditorContent extends PLContentView {
 				displayFileList();
 			}
 		});
-		naviBar.findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				displayFileOperationPopup();
-			}
-		});
-		naviBar.findViewById(R.id.index_button).setOnClickListener(new OnClickListener() {
+		addNavigationButton("INDEX", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				displayIndexList();
+			}
+		});
+		addNavigationButton("FILE", new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				displayFileOperationPopup();
 			}
 		});
 	}

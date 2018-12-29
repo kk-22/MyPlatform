@@ -1,9 +1,8 @@
 package jp.co.my.myplatform.content;
 
-import android.graphics.Color;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
@@ -21,8 +20,8 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 
 	private ArrayList<PLPopoverView> mPopoverViews;
 	private ArrayList<WeakReference<PLSavePositionListView>> mListViews;
-	private ViewGroup mNavigationBar;
 	private PLNavigationOverlay.BarType mBarType;
+	private ArrayList<Button> mNavigationButtons;
 
 	public PLContentView() {
 		super(PLCoreService.getContext());
@@ -110,20 +109,34 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		return false;
 	}
 
-	// getter and setter
-	public ViewGroup getNavigationBar() {
-		return mNavigationBar;
+	public Button addNavigationButton(String title, OnClickListener onClickListener) {
+		return addNavigationButton(title, true, onClickListener);
+	}
+	public Button addNavigationButton(String title, boolean enabled, OnClickListener onClickListener) {
+		Button button = new Button(getContext());
+		button.setText(title);
+		button.setEnabled(enabled);
+		button.setOnClickListener(onClickListener);
+
+		if (mNavigationButtons == null) {
+			mNavigationButtons = new ArrayList<>();
+		}
+		mNavigationButtons.add(button);
+
+		if (isCurrentContentView()) {
+			getNavigationController().showNavigationButton(button);
+			getNavigationController().updateNavigationSpace();
+		}
+		return button;
 	}
 
-	public void setNavigationBar(ViewGroup navigationBar) {
-		mNavigationBar = navigationBar;
-		if (isCurrentContentView()) {
-			getNavigationController().putNavigationBar(mNavigationBar);
-		}
+	// getter and setter
+	public ArrayList<Button> getNavigationButtons() {
+		return mNavigationButtons;
 	}
 
 	public int getNavigationButtonVisibility() {
-		PLNavigationOverlay navigationController = PLCoreService.getNavigationController();
+		PLNavigationOverlay navigationController = getNavigationController();
 		if (navigationController != null && navigationController.isHalf()) {
 			// 戻るボタンを表示できるように常に表示
 			return VISIBLE;
