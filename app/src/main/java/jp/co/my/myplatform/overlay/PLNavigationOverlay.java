@@ -2,6 +2,8 @@ package jp.co.my.myplatform.overlay;
 
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -33,7 +36,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 	private View mStatusBar;
 	private FrameLayout mContentFrameLayout;
-	private FrameLayout mBarFrame;
+	private LinearLayout mNavigationBarLinear;
 	private FrameLayout mNaviBarFrame;
 	private ViewGroup mCustomizeNavigationBar;
 	private Button mBackButton;
@@ -54,10 +57,10 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mContentFrameLayout = findViewById(R.id.content_frame);
 		mBackButton = findViewById(R.id.back_button);
 		mNavigationButton = findViewById(R.id.navigation_button);
-		mBarFrame = findViewById(R.id.bar_frame);
+		mNavigationBarLinear = findViewById(R.id.navigation_bar_linear);
 		mNaviBarFrame = findViewById(R.id.customize_navigation_layout);
 
-		findViewById(R.id.space_view).setOnClickListener(new OnClickListener() {
+		mNavigationBarLinear.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationOverlay.this);
@@ -79,7 +82,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mNavigationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYViewUtil.toggleVisibility(mBarFrame, true);
+				MYViewUtil.toggleVisibility(mNavigationBarLinear, true);
 			}
 		});
 		mNavigationButton.setOnLongClickListener(new OnLongClickListener() {
@@ -122,10 +125,10 @@ public class PLNavigationOverlay extends PLOverlayView {
 	protected void updateLayout() {
 		if (mIsHalf) {
 			mStatusBar.setVisibility(GONE);
-			mBarFrame.setVisibility(GONE);
+			mNavigationBarLinear.setVisibility(GONE);
 		} else {
 			mStatusBar.setVisibility(mCurrentView.getStatusBarVisibility());
-			mBarFrame.setVisibility(VISIBLE);
+			mNavigationBarLinear.setVisibility(VISIBLE);
 		}
 		super.updateLayout();
 	}
@@ -269,14 +272,27 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 		BarType nextType = view.getBarType();
 		if (mCurrentBarType != nextType) {
+			// ナビゲーションバーの位置を変更
+			ConstraintLayout layout = findViewById(R.id.navigation_root_constraint);
+			ConstraintSet constraintSet = new ConstraintSet();
+			constraintSet.clone(layout);
 			switch (nextType) {
 				case BOTTOM:
-					MYViewUtil.addViewAgain(mBarFrame);
+					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, mNavigationBarLinear.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.TOP, mContentFrameLayout.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
 					break;
 				case TOP:
-					MYViewUtil.addViewAgain(findViewById(R.id.main_frame));
+					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mNavigationBarLinear.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mNavigationBarLinear.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
 					break;
 			}
+			constraintSet.applyTo(layout);
 			mCurrentBarType = nextType;
 		}
 	}
