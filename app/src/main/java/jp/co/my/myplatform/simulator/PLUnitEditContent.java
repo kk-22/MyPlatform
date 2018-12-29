@@ -13,11 +13,13 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.overlay.PLNavigationOverlay;
+import jp.co.my.myplatform.popover.PLConfirmationPopover;
 
 public class PLUnitEditContent extends PLContentView {
 
 	EditText[] mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits;
 	CheckBox[] mCheckBoxes;
+	PLUnitModel mUnitModel;
 
 	public PLUnitEditContent() {
 		super();
@@ -30,6 +32,25 @@ public class PLUnitEditContent extends PLContentView {
 	@Override
 	public int getStatusBarVisibility() {
 		return View.INVISIBLE;
+	}
+
+	public void editUnit(PLUnitModel unitModel) {
+		mUnitModel = unitModel;
+		ViewGroup naviBar = getNavigationBar();
+		naviBar.findViewById(R.id.continue_button).setEnabled(false);
+		naviBar.findViewById(R.id.delete_button).setEnabled(true);
+
+		int[] baseParams = unitModel.getBaseParams();
+		int[] turnBuffs = unitModel.getTurnBuffs();
+		int[] combatBuffs = unitModel.getCombatBuffs();
+		for (int i = 0; i < 5; i++) {
+			mBaseEdits[i].setText(String.valueOf(baseParams[i]));
+			mTurnBuffEdits[i].setText(String.valueOf(turnBuffs[i]));
+			mCombatBuffEdits[i].setText(String.valueOf(combatBuffs[i]));
+		}
+		mTextEdits[0].setText(unitModel.getName());
+		mTextEdits[1].setText(unitModel.getMemo());
+		mCheckBoxes[0].setChecked(unitModel.isMine());
 	}
 
 	private void loadViews() {
@@ -81,7 +102,29 @@ public class PLUnitEditContent extends PLContentView {
 		naviBar.findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				saveUnit();
+				if (saveUnit()) {
+					PLCoreService.getNavigationController().popView();
+				}
+			}
+		});
+		naviBar.findViewById(R.id.continue_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (saveUnit()) {
+					clearAll();
+				}
+			}
+		});
+		naviBar.findViewById(R.id.delete_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new PLConfirmationPopover(mUnitModel.getName() + "を削除", new PLConfirmationPopover.PLConfirmationListener() {
+					@Override
+					public void onClickButton(boolean isYes) {
+						mUnitModel.delete();
+						PLCoreService.getNavigationController().popView();
+					}
+				}, null);
 			}
 		});
 
@@ -100,13 +143,13 @@ public class PLUnitEditContent extends PLContentView {
 		});
 	}
 
-	private void saveUnit() {
+	private boolean saveUnit() {
 		if (mTextEdits[0].length() == 0) {
 			MYLogUtil.showErrorToast("必須項目漏れ");
-			return;
+			return false;
 		}
 
-		PLUnitModel model = new PLUnitModel();
+		PLUnitModel model = (mUnitModel != null) ? mUnitModel : new PLUnitModel();
 		model.setBaseHp(MYMathUtil.integerFromEditText(mBaseEdits[0]));
 		model.setBaseAttack(MYMathUtil.integerFromEditText(mBaseEdits[1]));
 		model.setBaseSpeed(MYMathUtil.integerFromEditText(mBaseEdits[2]));
@@ -126,9 +169,25 @@ public class PLUnitEditContent extends PLContentView {
 		model.setName(mTextEdits[0].getText().toString());
 		model.setMemo(mTextEdits[1].getText().toString());
 
-		model.setMine(mCheckBoxes[0].isChecked());
-		model.save();
+		boolean isMine = mCheckBoxes[0].isChecked();
+		if (isMine) {
+			model.setMine(true);
+			model.save();
+		} else if (model.isMine()) {
+			model.setMine(false);
+			model.delete();
+		}
+		return true;
+	}
 
-		PLCoreService.getNavigationController().popView();
+	private void clearAll() {
+		for (EditText[] edits : new EditText[][]{mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits}) {
+			for (EditText text : edits) {
+				text.getText().clear();
+			}
+		}
+		for (CheckBox checkBox : mCheckBoxes) {
+			checkBox.setChecked(false);
+		}
 	}
 }

@@ -4,23 +4,22 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/save_button"
-        android:text="保存"
+        android:id="@+id/create_button"
+        android:text="新規"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"/>
 
     <Button
-        android:id="@+id/continue_button"
-        android:text="連続"
+        android:id="@+id/edit_button"
+        android:text="編集"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"/>
 
     <Button
-        android:enabled="false"
-        android:id="@+id/delete_button"
-        android:text="削除"
+        android:id="@+id/battle_button"
+        android:text="戦闘"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"/>
