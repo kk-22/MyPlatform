@@ -60,11 +60,7 @@ public class PLCoreService extends Service {
 		if (intent != null) {
 			actionIntent(intent);
 		}
-		// デバッグ用
-//		PLCoreService.getNavigationController().pushView(PLCACalculatorContent.class);
-//		return START_NOT_STICKY; // クラッシュ後の再起動でログが流れるのを防ぐ
-
-		return START_STICKY;
+		return START_NOT_STICKY; // クラッシュ後の再起動でログが流れるのを防ぐ
 	}
 
 	@Override
@@ -102,7 +98,8 @@ public class PLCoreService extends Service {
 			sOverlayManager.addFrontOverlays();
 			sNavigationController.displayNavigationIfNeeded();
 			if (className.equals(PLNavigationOverlay.class.getCanonicalName())) {
-				// ナビゲーション表示のみ
+				// ナビゲーション表示のみ。開発中はその画面を追加で開く。
+				PLDevelopmentUtil.openScreenInDevelopment();
 			} else if (className.equals(PLAlarmContent.class.getCanonicalName())) {
 				PLAlarmContent alarmView = PLCoreService.getNavigationController().pushView(PLAlarmContent.class);
 				alarmView.startAlarm();

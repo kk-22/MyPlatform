@@ -31,7 +31,7 @@ public class PLApplication extends Application {
 
 		sContext = getApplicationContext();
 
-		MYLogUtil.initLogUtil(sContext, false);
+		MYLogUtil.initLogUtil(sContext, PLDevelopmentUtil.isWriteLog());
 		FlowManager.init(new FlowConfig.Builder(this).build());
 	}
 
