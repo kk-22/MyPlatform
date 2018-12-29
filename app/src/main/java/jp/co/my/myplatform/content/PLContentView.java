@@ -124,8 +124,7 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		mNavigationButtons.add(button);
 
 		if (isCurrentContentView()) {
-			getNavigationController().showNavigationButton(button);
-			getNavigationController().updateNavigationSpace();
+			getNavigationController().getNavigationBar().showButton(button);
 		}
 		return button;
 	}

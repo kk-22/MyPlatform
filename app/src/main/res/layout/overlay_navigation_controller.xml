@@ -35,8 +35,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"/>
 
-
-    <LinearLayout
+    <jp.co.my.myplatform.view.PLNavigationBarView
         android:id="@+id/navigation_bar_linear"
         android:background="#80000000"
         app:layout_constraintTop_toBottomOf="@id/content_frame"
@@ -45,21 +44,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal"
         android:layout_width="0dp"
-        android:layout_height="55dp">
-
-        <Button
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:textSize="10sp"
-            android:text="Back"
-            android:id="@+id/back_button"/>
-
-        <Space
-            android:id="@+id/navigation_space"
-            android:layout_weight="4"
-            android:layout_width="0dp"
-            android:layout_height="0dp" />
-    </LinearLayout>
+        android:layout_height="55dp"/>
 
 </android.support.constraint.ConstraintLayout>

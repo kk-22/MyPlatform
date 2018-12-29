@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Space;
 
 import java.util.ArrayList;
 
@@ -22,14 +21,13 @@ import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.content.PLHomeContent;
 import jp.co.my.myplatform.core.PLCoreService;
+import jp.co.my.myplatform.view.PLNavigationBarView;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 public class PLNavigationOverlay extends PLOverlayView {
 
 	private static final String KEY_NAVIGATION_VISIBLE = "KEY_NAVIGATION_VISIBLE";
-	private static final int MAX_NUMBER_OF_NAVIGATION_BAR_CHILD = 5; // 戻るボタンとスペースを含む最大数
 
 	public enum BarType {
 		BOTTOM,
@@ -44,9 +42,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 	private BarType mCurrentBarType; // mBarFrameの現在位置
 
 	// ナビゲーションバー用
-	private LinearLayout mNavigationBarLinear;
-	private Space mNavigationSpace;
-	private Button mBackButton;
+	private PLNavigationBarView mNavigationBar;
 	private Button mNavigationButton;
 
 	// ハーフモード用
@@ -58,34 +54,19 @@ public class PLNavigationOverlay extends PLOverlayView {
 		LayoutInflater.from(getContext()).inflate(R.layout.overlay_navigation_controller, this);
 		mStatusBar = findViewById(R.id.status_bar_view);
 		mContentFrameLayout = findViewById(R.id.content_frame);
-		mBackButton = findViewById(R.id.back_button);
 		mNavigationButton = findViewById(R.id.navigation_button);
-		mNavigationBarLinear = findViewById(R.id.navigation_bar_linear);
-		mNavigationSpace = findViewById(R.id.navigation_space);
+		mNavigationBar = findViewById(R.id.navigation_bar_linear);
 
-		mNavigationBarLinear.setOnClickListener(new OnClickListener() {
+		mNavigationBar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PLCoreService.getOverlayManager().removeOverlayView(PLNavigationOverlay.this);
 			}
 		});
-		mBackButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				popView();
-			}
-		});
-		mBackButton.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				PLCoreService.getNavigationController().pushView(PLHomeContent.class);
-				return true;
-			}
-		});
 		mNavigationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MYViewUtil.toggleVisibility(mNavigationBarLinear, true);
+				MYViewUtil.toggleVisibility(mNavigationBar, true);
 			}
 		});
 		mNavigationButton.setOnLongClickListener(new OnLongClickListener() {
@@ -128,10 +109,10 @@ public class PLNavigationOverlay extends PLOverlayView {
 	protected void updateLayout() {
 		if (mIsHalf) {
 			mStatusBar.setVisibility(GONE);
-			mNavigationBarLinear.setVisibility(GONE);
+			mNavigationBar.setVisibility(GONE);
 		} else {
 			mStatusBar.setVisibility(mCurrentView.getStatusBarVisibility());
-			mNavigationBarLinear.setVisibility(VISIBLE);
+			mNavigationBar.setVisibility(VISIBLE);
 		}
 		super.updateLayout();
 	}
@@ -260,14 +241,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mStatusBar.setVisibility(view.getStatusBarVisibility());
 
 		mNavigationButton.setVisibility(view.getNavigationButtonVisibility());
-		// 戻るボタンと mNavigationSpace 以外を取り除く
-		mNavigationBarLinear.removeViews(1, mNavigationBarLinear.getChildCount() - 2);
-		if (view.getNavigationButtons() != null) {
-			for (Button button : view.getNavigationButtons()) {
-				showNavigationButton(button);
-			}
-		}
-		updateNavigationSpace();
+		mNavigationBar.resetButtons(view.getNavigationButtons());
 
 		BarType nextType = view.getBarType();
 		if (mCurrentBarType != nextType) {
@@ -279,15 +253,15 @@ public class PLNavigationOverlay extends PLOverlayView {
 				case BOTTOM:
 					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
 					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, mNavigationBarLinear.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.TOP, mContentFrameLayout.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, mNavigationBar.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mContentFrameLayout.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
 					break;
 				case TOP:
-					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mNavigationBarLinear.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mNavigationBarLinear.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mNavigationBarLinear.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mNavigationBar.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
+					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mNavigationBar.getId(), ConstraintSet.BOTTOM);
 					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
 					break;
 			}
@@ -296,28 +270,8 @@ public class PLNavigationOverlay extends PLOverlayView {
 		}
 	}
 
-	public void showNavigationButton(Button button) {
-		// スペースの前に追加
-		int childCount = mNavigationBarLinear.getChildCount();
-		if (MAX_NUMBER_OF_NAVIGATION_BAR_CHILD <= childCount) {
-			return;
-		}
-		mNavigationBarLinear.addView(button, childCount - 1, getNavigationButtonLayoutParams());
-	}
-
-	public void updateNavigationSpace() {
-		LayoutParams params = (LayoutParams) mNavigationSpace.getLayoutParams();
-		params.weight = MAX_NUMBER_OF_NAVIGATION_BAR_CHILD - mNavigationBarLinear.getChildCount() + 1;
-	}
-
-	private LinearLayout.LayoutParams getNavigationButtonLayoutParams() {
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, MATCH_PARENT);
-		params.weight = 1;
-		return params;
-	}
-
-	private void updateBackButton() {
-		mBackButton.setEnabled(mViewCache.size() > 1);
+	public void updateBackButton() {
+		mNavigationBar.setBackEnable(mViewCache.size() > 1);
 	}
 
 	// getter
@@ -335,5 +289,9 @@ public class PLNavigationOverlay extends PLOverlayView {
 		SharedPreferences.Editor editor = MYLogUtil.getPreferenceEditor();
 		editor.putBoolean(KEY_NAVIGATION_VISIBLE, isVisible);
 		editor.apply();
+	}
+
+	public PLNavigationBarView getNavigationBar() {
+		return mNavigationBar;
 	}
 }
