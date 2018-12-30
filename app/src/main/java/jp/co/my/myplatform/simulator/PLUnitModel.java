@@ -23,7 +23,8 @@ public class PLUnitModel extends BaseModel {
 	private int turnBuffHp, turnBuffAttack, turnBuffSpeed, turnBuffDefense, turnBuffResist;
 	@Column
 	private int combatBuffHp, combatBuffAttack, combatBuffSpeed, combatBuffDefense, combatBuffResist;
-
+	@Column
+	private boolean isPhysicalAttacker, isUsingLower;
 
 	public int[] getBaseParams() {
 		return new int[]{baseHp, baseAttack, baseSpeed, baseDefense, baseResist};
@@ -187,5 +188,21 @@ public class PLUnitModel extends BaseModel {
 
 	public void setCombatBuffResist(int combatBuffResist) {
 		this.combatBuffResist = combatBuffResist;
+	}
+
+	public boolean isPhysicalAttacker() {
+		return isPhysicalAttacker;
+	}
+
+	public void setPhysicalAttacker(boolean pysicalAttacker) {
+		isPhysicalAttacker = pysicalAttacker;
+	}
+
+	public boolean isUsingLower() {
+		return isUsingLower;
+	}
+
+	public void setUsingLower(boolean usingLower) {
+		isUsingLower = usingLower;
 	}
 }

@@ -3,7 +3,6 @@ package jp.co.my.myplatform.simulator;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -20,9 +19,10 @@ import jp.co.my.myplatform.popover.PLConfirmationPopover;
 public class PLUnitEditContent extends PLContentView {
 
 	EditText[] mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits;
-	CheckBox[] mCheckBoxes;
+	CheckBox mMineCheck, mPhysicalAttackCheck, mUsingLowerCheck;
 	PLUnitModel mUnitModel;
 	Button mContinueButton, mDeleteButton;
+	PLOnUpdateUnitListener mListener;
 
 	public PLUnitEditContent() {
 		super();
@@ -52,7 +52,7 @@ public class PLUnitEditContent extends PLContentView {
 		}
 		mTextEdits[0].setText(unitModel.getName());
 		mTextEdits[1].setText(unitModel.getMemo());
-		mCheckBoxes[0].setChecked(unitModel.isMine());
+		mMineCheck.setChecked(unitModel.isMine());
 	}
 
 	private void loadViews() {
@@ -77,9 +77,11 @@ public class PLUnitEditContent extends PLContentView {
 		mTextEdits = new EditText[2];
 		mTextEdits[0] = findViewById(R.id.name_edit);
 		mTextEdits[1] = findViewById(R.id.memo_edit);
-		mCheckBoxes = new CheckBox[1];
-		mCheckBoxes[0] = findViewById(R.id.mine_check);
 		initNextFocus(mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits);
+
+		mMineCheck = findViewById(R.id.mine_check);
+		mPhysicalAttackCheck = findViewById(R.id.physical_attack_check);
+		mUsingLowerCheck = findViewById(R.id.using_lower_check);
 	}
 
 	private void initNextFocus(EditText[]... lists) {
@@ -150,33 +152,39 @@ public class PLUnitEditContent extends PLContentView {
 		}
 
 		PLUnitModel model = (mUnitModel != null) ? mUnitModel : new PLUnitModel();
-		model.setBaseHp(MYMathUtil.integerFromEditText(mBaseEdits[0]));
-		model.setBaseAttack(MYMathUtil.integerFromEditText(mBaseEdits[1]));
-		model.setBaseSpeed(MYMathUtil.integerFromEditText(mBaseEdits[2]));
-		model.setBaseDefense(MYMathUtil.integerFromEditText(mBaseEdits[3]));
-		model.setBaseResist(MYMathUtil.integerFromEditText(mBaseEdits[4]));
-		model.setTurnBuffHp(MYMathUtil.integerFromEditText(mTurnBuffEdits[0]));
-		model.setTurnBuffAttack(MYMathUtil.integerFromEditText(mTurnBuffEdits[1]));
-		model.setTurnBuffSpeed(MYMathUtil.integerFromEditText(mTurnBuffEdits[2]));
-		model.setTurnBuffDefense(MYMathUtil.integerFromEditText(mTurnBuffEdits[3]));
-		model.setTurnBuffResist(MYMathUtil.integerFromEditText(mTurnBuffEdits[4]));
-		model.setCombatBuffHp(MYMathUtil.integerFromEditText(mCombatBuffEdits[0]));
-		model.setCombatBuffAttack(MYMathUtil.integerFromEditText(mCombatBuffEdits[1]));
-		model.setCombatBuffSpeed(MYMathUtil.integerFromEditText(mCombatBuffEdits[2]));
-		model.setCombatBuffDefense(MYMathUtil.integerFromEditText(mCombatBuffEdits[3]));
-		model.setCombatBuffResist(MYMathUtil.integerFromEditText(mCombatBuffEdits[4]));
+		model.setBaseHp(MYMathUtil.integerFromTextView(mBaseEdits[0]));
+		model.setBaseAttack(MYMathUtil.integerFromTextView(mBaseEdits[1]));
+		model.setBaseSpeed(MYMathUtil.integerFromTextView(mBaseEdits[2]));
+		model.setBaseDefense(MYMathUtil.integerFromTextView(mBaseEdits[3]));
+		model.setBaseResist(MYMathUtil.integerFromTextView(mBaseEdits[4]));
+		model.setTurnBuffHp(MYMathUtil.integerFromTextView(mTurnBuffEdits[0]));
+		model.setTurnBuffAttack(MYMathUtil.integerFromTextView(mTurnBuffEdits[1]));
+		model.setTurnBuffSpeed(MYMathUtil.integerFromTextView(mTurnBuffEdits[2]));
+		model.setTurnBuffDefense(MYMathUtil.integerFromTextView(mTurnBuffEdits[3]));
+		model.setTurnBuffResist(MYMathUtil.integerFromTextView(mTurnBuffEdits[4]));
+		model.setCombatBuffHp(MYMathUtil.integerFromTextView(mCombatBuffEdits[0]));
+		model.setCombatBuffAttack(MYMathUtil.integerFromTextView(mCombatBuffEdits[1]));
+		model.setCombatBuffSpeed(MYMathUtil.integerFromTextView(mCombatBuffEdits[2]));
+		model.setCombatBuffDefense(MYMathUtil.integerFromTextView(mCombatBuffEdits[3]));
+		model.setCombatBuffResist(MYMathUtil.integerFromTextView(mCombatBuffEdits[4]));
 
 		model.setName(mTextEdits[0].getText().toString());
 		model.setMemo(mTextEdits[1].getText().toString());
 
+		model.setPhysicalAttacker(mPhysicalAttackCheck.isChecked());
+		model.setUsingLower(mUsingLowerCheck.isChecked());
+
 		// TODO: 敵キャラは保存せずにListenerで返す？
-		boolean isMine = mCheckBoxes[0].isChecked();
+		boolean isMine = mMineCheck.isChecked();
 		if (isMine) {
 			model.setMine(true);
 			model.save();
 		} else if (model.isMine()) {
 			model.setMine(false);
 			model.delete();
+		}
+		if (mListener != null) {
+			mListener.onUpdateUnitModel(model);
 		}
 		return true;
 	}
@@ -187,8 +195,16 @@ public class PLUnitEditContent extends PLContentView {
 				text.getText().clear();
 			}
 		}
-		for (CheckBox checkBox : mCheckBoxes) {
-			checkBox.setChecked(false);
-		}
+		mMineCheck.setChecked(false);
+		mPhysicalAttackCheck.setChecked(false);
+		mUsingLowerCheck.setChecked(false);
+	}
+
+	public void setListener(PLOnUpdateUnitListener listener) {
+		mListener = listener;
+	}
+
+	public interface PLOnUpdateUnitListener {
+		void onUpdateUnitModel(PLUnitModel unitModel);
 	}
 }

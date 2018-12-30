@@ -387,4 +387,20 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/name_edit"
         app:layout_constraintLeft_toLeftOf="parent" />
+
+    <CheckBox
+        android:id="@+id/physical_attack_check"
+        android:text="物理攻撃"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/name_edit"
+        app:layout_constraintLeft_toRightOf="@+id/mine_check" />
+
+    <CheckBox
+        android:id="@+id/using_lower_check"
+        android:text="守魔低い方参照"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/name_edit"
+        app:layout_constraintLeft_toRightOf="@+id/physical_attack_check" />
 </android.support.constraint.ConstraintLayout>
