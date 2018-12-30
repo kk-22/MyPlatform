@@ -27,6 +27,7 @@ import jp.co.my.myplatform.news.PLNewsPageModel;
 import jp.co.my.myplatform.news.PLNewsSiteModel;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 import jp.co.my.myplatform.popover.PLListPopover;
+import jp.co.my.myplatform.simulator.PLUnitModel;
 
 public class PLDebugContent extends PLContentView {
 
@@ -47,6 +48,19 @@ public class PLDebugContent extends PLContentView {
 		ArrayList<PLDebugAbstractItem> itemList = new ArrayList<>();
 		{
 			itemList.add(new PLDebugTitleItem("Database"));
+			itemList.add(new PLDebugButtonItem("FEHシミュレータ", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new PLConfirmationPopover("FEHユニットデータを消去", new PLConfirmationPopover.PLConfirmationListener() {
+						@Override
+						public void onClickButton(boolean isYes) {
+							ArrayList<Class> classArray = new ArrayList<>();
+							classArray.add(PLUnitModel.class);
+							deleteTable(classArray);
+						}
+					}, null);
+				}
+			}));
 			itemList.add(new PLDebugButtonItem("other DB", new OnClickListener() {
 				@Override
 				public void onClick(View v) {
