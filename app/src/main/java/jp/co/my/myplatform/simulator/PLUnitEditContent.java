@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
+import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.core.PLCoreService;
@@ -45,9 +46,9 @@ public class PLUnitEditContent extends PLContentView {
 		int[] turnBuffs = unitModel.getTurnBuffs();
 		int[] combatBuffs = unitModel.getCombatBuffs();
 		for (int i = 0; i < 5; i++) {
-			mBaseEdits[i].setText(String.valueOf(baseParams[i]));
-			mTurnBuffEdits[i].setText(String.valueOf(turnBuffs[i]));
-			mCombatBuffEdits[i].setText(String.valueOf(combatBuffs[i]));
+			mBaseEdits[i].setText(MYStringUtil.stringFromIntegerIfIsNoZero(baseParams[i]));
+			mTurnBuffEdits[i].setText(MYStringUtil.stringFromIntegerIfIsNoZero(turnBuffs[i]));
+			mCombatBuffEdits[i].setText(MYStringUtil.stringFromIntegerIfIsNoZero(combatBuffs[i]));
 		}
 		mTextEdits[0].setText(unitModel.getName());
 		mTextEdits[1].setText(unitModel.getMemo());
@@ -168,6 +169,7 @@ public class PLUnitEditContent extends PLContentView {
 		model.setName(mTextEdits[0].getText().toString());
 		model.setMemo(mTextEdits[1].getText().toString());
 
+		// TODO: 敵キャラは保存せずにListenerで返す？
 		boolean isMine = mCheckBoxes[0].isChecked();
 		if (isMine) {
 			model.setMine(true);

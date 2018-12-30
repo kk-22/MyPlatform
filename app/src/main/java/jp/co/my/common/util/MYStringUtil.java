@@ -39,4 +39,12 @@ public class MYStringUtil {
 		int diffLength = maxLength - minLength;
 		return longString.substring(beginIndex, beginIndex + diffLength);
 	}
+
+	// 数値が0の場合は空文字、それ以外は数字文字を返す
+	public static String stringFromIntegerIfIsNoZero(int value) {
+		if (value == 0) {
+			return "";
+		}
+		return String.valueOf(value);
+	}
 }
