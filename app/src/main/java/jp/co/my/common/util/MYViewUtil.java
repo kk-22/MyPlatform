@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class MYViewUtil {
 
 	private MYViewUtil() {}
@@ -42,5 +45,28 @@ public class MYViewUtil {
 		ViewGroup viewGroup = (ViewGroup) view.getParent();
 		viewGroup.removeView(view);
 		viewGroup.addView(view);
+	}
+
+	public static View setNextFocus(View[]... lists) {
+		ArrayList<View> array = new ArrayList<>();
+		for (View[] views : lists) {
+			array.addAll(Arrays.asList(views));
+		}
+		return setNextFocus(array.toArray(new View[0]));
+	}
+	public static View setNextFocus(View... list) {
+		View prevLastView = null;
+		for (View view : list) {
+			if (!view.isEnabled()) {
+				continue;
+			}
+			if (prevLastView != null) {
+				view.setNextFocusLeftId(prevLastView.getId());
+				prevLastView.setNextFocusDownId(view.getId());
+				prevLastView.setNextFocusRightId(view.getId());
+			}
+			prevLastView = view;
+		}
+		return prevLastView;
 	}
 }

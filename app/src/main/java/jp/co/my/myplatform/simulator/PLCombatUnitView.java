@@ -166,6 +166,9 @@ public class PLCombatUnitView extends ConstraintLayout
 		return mAttackCountSeek.getProgress();
 	}
 
+	public EditText[] getAdditionalParamsEdits() {
+		return mAdditionalParamsEdits;
+	}
 
 	@Override
 	public void onUpdateUnitModel(PLUnitModel unitModel) {

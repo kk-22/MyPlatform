@@ -10,6 +10,7 @@ import android.widget.EditText;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
 import jp.co.my.common.util.MYStringUtil;
+import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 import jp.co.my.myplatform.core.PLCoreService;
@@ -79,27 +80,11 @@ public class PLUnitEditContent extends PLContentView {
 		mTextEdits = new EditText[2];
 		mTextEdits[0] = findViewById(R.id.name_edit);
 		mTextEdits[1] = findViewById(R.id.memo_edit);
-		initNextFocus(mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits);
+		MYViewUtil.setNextFocus(mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits);
 
 		mMineCheck = findViewById(R.id.mine_check);
 		mPhysicalAttackCheck = findViewById(R.id.physical_attack_check);
 		mUsingLowerCheck = findViewById(R.id.using_lower_check);
-	}
-
-	private void initNextFocus(EditText[]... lists) {
-		EditText prevLastEdit = null;
-		for (EditText[] editTexts : lists) {
-			for (EditText edit : editTexts) {
-				if (!edit.isEnabled()) {
-					continue;
-				}
-				if (prevLastEdit != null) {
-					edit.setNextFocusLeftId(prevLastEdit.getId());
-					prevLastEdit.setNextFocusDownId(edit.getId());
-				}
-				prevLastEdit = edit;
-			}
-		}
 	}
 
 	private void initViewEvent() {

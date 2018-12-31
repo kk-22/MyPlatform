@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import java.math.BigDecimal;
 
 import jp.co.my.common.util.MYMathUtil;
+import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.content.PLContentView;
 
@@ -66,6 +68,9 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 		mAdvantageSeek.setOnSeekBarChangeListener(this);
 		mMineAddDamageEdit.addTextChangedListener(this);
 		mEnemyAddDamageEdit.addTextChangedListener(this);
+
+		View lastEdit = MYViewUtil.setNextFocus(mMineView.getAdditionalParamsEdits(), mEnemyView.getAdditionalParamsEdits());
+		MYViewUtil.setNextFocus(lastEdit, mMineAddDamageEdit, mEnemyAddDamageEdit);
 	}
 
 	public double getAdvantageRatio() {
