@@ -1,6 +1,8 @@
 package jp.co.my.myplatform.simulator;
 
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +11,7 @@ import android.widget.EditText;
 
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.common.util.MYMathUtil;
+import jp.co.my.common.util.MYOtherUtil;
 import jp.co.my.common.util.MYStringUtil;
 import jp.co.my.common.util.MYViewUtil;
 import jp.co.my.myplatform.R;
@@ -17,7 +20,9 @@ import jp.co.my.myplatform.core.PLCoreService;
 import jp.co.my.myplatform.overlay.PLNavigationOverlay;
 import jp.co.my.myplatform.popover.PLConfirmationPopover;
 
-public class PLUnitEditContent extends PLContentView {
+public class PLUnitEditContent extends PLContentView implements TextWatcher {
+
+	private static final int MAX_LENGTH_OF_BASE_PARAM = 2;
 
 	EditText[] mBaseEdits, mTurnBuffEdits, mCombatBuffEdits, mTextEdits;
 	CheckBox mMineCheck, mPhysicalAttackCheck, mUsingLowerCheck;
@@ -130,6 +135,10 @@ public class PLUnitEditContent extends PLContentView {
 				}
 			}
 		});
+
+		for (EditText editText : mBaseEdits) {
+			editText.addTextChangedListener(this);
+		}
 	}
 
 	private boolean saveUnit() {
@@ -193,5 +202,22 @@ public class PLUnitEditContent extends PLContentView {
 
 	public interface PLOnUpdateUnitListener {
 		void onUpdateUnitModel(PLUnitModel unitModel);
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	}
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	}
+	@Override
+	public void afterTextChanged(Editable s) {
+		EditText editText = MYOtherUtil.castObject(findFocus(), EditText.class);
+		if (editText == null) {
+			return;
+		}
+		if (s.length() == MAX_LENGTH_OF_BASE_PARAM) {
+			editText.focusSearch(View.FOCUS_RIGHT).requestFocus();
+		}
 	}
 }
