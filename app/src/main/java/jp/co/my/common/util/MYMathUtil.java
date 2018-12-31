@@ -20,7 +20,7 @@ public class MYMathUtil {
 
 	public static int integerFromTextView(TextView editText) {
 		String string = editText.getText().toString();
-		if (string.length() == 0) {
+		if (string.length() == 0 || string.equals("+") || string.equals("-")) {
 			return 0;
 		}
 		return Integer.parseInt(string);

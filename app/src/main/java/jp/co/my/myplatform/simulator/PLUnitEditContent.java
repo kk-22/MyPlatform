@@ -53,6 +53,8 @@ public class PLUnitEditContent extends PLContentView {
 		mTextEdits[0].setText(unitModel.getName());
 		mTextEdits[1].setText(unitModel.getMemo());
 		mMineCheck.setChecked(unitModel.isMine());
+		mPhysicalAttackCheck.setChecked(unitModel.isPhysicalAttacker());
+		mUsingLowerCheck.setChecked(unitModel.isUsingLower());
 	}
 
 	private void loadViews() {

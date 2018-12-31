@@ -47,6 +47,21 @@ public class PLDamageSimulateContent extends PLContentView {
 		addNavigationButton("戦闘", new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// 自キャラ選択
+				loadUnitList(true, new OnUnitSelectListener() {
+					@Override
+					public void onUnitSelected(final PLUnitModel mineUnit) {
+						// 敵キャラ選択
+						// TODO: isMine はfalseに
+						loadUnitList(true, new OnUnitSelectListener() {
+							@Override
+							public void onUnitSelected(PLUnitModel enemyUnit) {
+								PLCombatResultContent content = PLCoreService.getNavigationController().pushView(PLCombatResultContent.class);
+								content.setUnits(mineUnit, enemyUnit);
+							}
+						});
+					}
+				});
 			}
 		});
 	}
