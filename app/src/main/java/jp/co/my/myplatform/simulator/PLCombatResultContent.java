@@ -69,8 +69,9 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 		mMineAddDamageEdit.addTextChangedListener(this);
 		mEnemyAddDamageEdit.addTextChangedListener(this);
 
-		View lastEdit = MYViewUtil.setNextFocus(mMineView.getAdditionalParamsEdits(), mEnemyView.getAdditionalParamsEdits());
-		MYViewUtil.setNextFocus(lastEdit, mMineAddDamageEdit, mEnemyAddDamageEdit);
+		// 自ユニットと敵ユニット上の View の ID は同じなのでフォーカス設定不可
+		MYViewUtil.setNextFocus(mMineView.getAdditionalParamsEdits());
+		MYViewUtil.setNextFocus(mEnemyView.getAdditionalParamsEdits(), mMineAddDamageEdit, mEnemyAddDamageEdit);
 	}
 
 	public double getAdvantageRatio() {

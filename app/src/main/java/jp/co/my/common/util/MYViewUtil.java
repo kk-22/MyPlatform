@@ -47,10 +47,14 @@ public class MYViewUtil {
 		viewGroup.addView(view);
 	}
 
-	public static View setNextFocus(View[]... lists) {
+	public static View setNextFocus(Object... objects) {
 		ArrayList<View> array = new ArrayList<>();
-		for (View[] views : lists) {
-			array.addAll(Arrays.asList(views));
+		for (Object object : objects) {
+			if (object instanceof View) {
+				array.add((View) object);
+			} else if (object instanceof View[]) {
+				array.addAll(Arrays.asList((View[])object));
+			}
 		}
 		return setNextFocus(array.toArray(new View[0]));
 	}
