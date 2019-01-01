@@ -22,7 +22,7 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 	private TextView mAdvantageText;
 	private TextView mMineGiveDamageText, mEnemyGiveDamageText;
 	private TextView mMineRemainingHpText, mEnemyRemainingHpText;
-	private EditText mMineAddDamageEdit, mEnemyAddDamageEdit;
+	private EditText mMemoEdit, mMineAddDamageEdit, mEnemyAddDamageEdit;
 
 	private PLUnitModel mMineUnit, mEnemyUnit;
 	private PLCombatUnitView mMineView, mEnemyView;
@@ -60,6 +60,7 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 		mEnemyGiveDamageText = findViewById(R.id.enemy_give_damage_text);
 		mMineRemainingHpText = findViewById(R.id.mine_hp_text);
 		mEnemyRemainingHpText = findViewById(R.id.enemy_hp_text);
+		mMemoEdit = findViewById(R.id.combat_memo_edit);
 		mMineAddDamageEdit = findViewById(R.id.mine_add_damage_edit);
 		mEnemyAddDamageEdit = findViewById(R.id.enemy_add_damage_edit);
 	}
@@ -70,7 +71,7 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 		mEnemyAddDamageEdit.addTextChangedListener(this);
 
 		// 自ユニットと敵ユニット上の View の ID は同じなのでフォーカス設定不可
-		MYViewUtil.setNextFocus(mMineView.getAdditionalParamsEdits());
+		MYViewUtil.setNextFocus(mMineView.getAdditionalParamsEdits(), mMineAddDamageEdit);
 		MYViewUtil.setNextFocus(mEnemyView.getAdditionalParamsEdits(), mMineAddDamageEdit, mEnemyAddDamageEdit);
 	}
 
@@ -112,6 +113,10 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 	private void updateAdvantageText() {
 		String text = "3すくみ補正" + String.valueOf(getAdvantageRatio());
 		mAdvantageText.setText(text);
+	}
+
+	private String memoText() {
+		return mMemoEdit.getText().toString();
 	}
 
 	@Override
