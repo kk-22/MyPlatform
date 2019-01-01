@@ -22,3 +22,4 @@ app/build/
 /Application/build
 /captures
 /.idea/kotlinc.xml
+/.idea/misc.xml
