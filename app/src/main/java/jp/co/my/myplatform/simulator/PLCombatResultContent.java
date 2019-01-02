@@ -115,8 +115,32 @@ public class PLCombatResultContent extends PLContentView implements PLCombatUnit
 		mAdvantageText.setText(text);
 	}
 
-	private String memoText() {
+	public TextView getMineRemainingHpText() {
+		return mMineRemainingHpText;
+	}
+
+	public TextView getEnemyRemainingHpText() {
+		return mEnemyRemainingHpText;
+	}
+
+	public String getMineHpString() {
+		return mMineRemainingHpText.getText().toString();
+	}
+
+	public String getEnemyHpString() {
+		return mEnemyRemainingHpText.getText().toString();
+	}
+
+	public String getMemoString() {
 		return mMemoEdit.getText().toString();
+	}
+
+	public PLUnitModel getMineUnit() {
+		return mMineUnit;
+	}
+
+	public PLUnitModel getEnemyUnit() {
+		return mEnemyUnit;
 	}
 
 	@Override

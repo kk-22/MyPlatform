@@ -69,6 +69,11 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		mPopoverViews.clear();
 	}
 
+	// 遷移先画面から戻ってきたときに呼ばれる
+	public void viewWillComeBack(PLContentView from) {
+
+	}
+
 	public boolean removeTopPopover() {
 		int size = mPopoverViews.size();
 		if (size == 0) {

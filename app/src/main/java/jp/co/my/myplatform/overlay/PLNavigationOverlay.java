@@ -144,6 +144,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 				return null;
 			}
 		} else if (clazz != PLHomeContent.class) {
+			view.viewWillComeBack(mCurrentView);
 			// 履歴の重複を無くす
 			int index = mViewCache.indexOf(view);
 			int nextIndex = index + 1;
@@ -170,6 +171,8 @@ public class PLNavigationOverlay extends PLOverlayView {
 			return;
 		}
 		PLContentView prevView = mViewCache.get(count - 2);
+		prevView.viewWillComeBack(mCurrentView);
+
 		mViewCache.remove(count - 1);
 		if (!mViewCache.contains(mCurrentView)) {
 			mCurrentView.viewWillDisappear();
