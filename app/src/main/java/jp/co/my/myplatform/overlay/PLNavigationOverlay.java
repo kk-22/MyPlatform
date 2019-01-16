@@ -30,8 +30,7 @@ public class PLNavigationOverlay extends PLOverlayView {
 	private static final String KEY_NAVIGATION_VISIBLE = "KEY_NAVIGATION_VISIBLE";
 
 	public enum BarType {
-		BOTTOM,
-		TOP
+		NONE, BOTTOM, TOP, RIGHT
 	}
 
 	private View mStatusBar;
@@ -81,7 +80,6 @@ public class PLNavigationOverlay extends PLOverlayView {
 		mViewCache = new ArrayList<>();
 		mMainHandler = new Handler();
 		mGravity = Gravity.TOP;
-		mCurrentBarType = BarType.BOTTOM;
 		if (MYLogUtil.getPreference().getBoolean(KEY_NAVIGATION_VISIBLE, false)) {
 			mNavigationButton.setVisibility(VISIBLE);
 		}
@@ -245,32 +243,60 @@ public class PLNavigationOverlay extends PLOverlayView {
 
 		mNavigationButton.setVisibility(view.getNavigationButtonVisibility());
 		mNavigationBar.resetButtons(view.getNavigationButtons());
+		layoutNavigationController();
+	}
 
-		BarType nextType = view.getBarType();
-		if (mCurrentBarType != nextType) {
-			// ナビゲーションバーの位置を変更
-			ConstraintLayout layout = findViewById(R.id.navigation_root_constraint);
-			ConstraintSet constraintSet = new ConstraintSet();
-			constraintSet.clone(layout);
-			switch (nextType) {
-				case BOTTOM:
-					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, mNavigationBar.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mContentFrameLayout.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-					break;
-				case TOP:
-					constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mNavigationBar.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
-					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mNavigationBar.getId(), ConstraintSet.BOTTOM);
-					constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-					break;
-			}
-			constraintSet.applyTo(layout);
-			mCurrentBarType = nextType;
+	// ナビゲーションバーの位置を変更
+	public void layoutNavigationController() {
+		BarType nextType = (PLCoreService.getCoreService().isPortrait()) ? mCurrentView.getBarType() : BarType.RIGHT ;
+		if (mCurrentBarType == nextType) {
+			return;
 		}
+		mCurrentBarType = nextType;
+		mNavigationBar.setOrientation((nextType == BarType.RIGHT) ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+		mNavigationBar.updateSubLayoutParams();
+
+		ConstraintLayout layout = findViewById(R.id.navigation_root_constraint);
+		ConstraintSet constraintSet = new ConstraintSet();
+		constraintSet.clone(layout);
+		switch (nextType) {
+			case NONE:
+			case BOTTOM:
+				constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, mNavigationBar.getId(), ConstraintSet.TOP);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mContentFrameLayout.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
+				constraintSet.constrainWidth(mNavigationBar.getId(), ConstraintSet.MATCH_CONSTRAINT);
+				constraintSet.constrainHeight(mNavigationBar.getId(), 150);
+				break;
+			case TOP:
+				constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mNavigationBar.getId(), ConstraintSet.TOP);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mNavigationBar.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
+				constraintSet.constrainWidth(mNavigationBar.getId(), ConstraintSet.MATCH_CONSTRAINT);
+				constraintSet.constrainHeight(mNavigationBar.getId(), 150);
+				break;
+			case RIGHT:
+				constraintSet.connect(mStatusBar.getId(), ConstraintSet.BOTTOM, mContentFrameLayout.getId(), ConstraintSet.TOP);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.RIGHT, mNavigationBar.getId(), ConstraintSet.LEFT);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mContentFrameLayout.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.TOP, mStatusBar.getId(), ConstraintSet.BOTTOM);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+				constraintSet.connect(mNavigationBar.getId(), ConstraintSet.LEFT, mContentFrameLayout.getId(), ConstraintSet.RIGHT);
+				constraintSet.constrainWidth(mNavigationBar.getId(), 200);
+				constraintSet.constrainHeight(mNavigationBar.getId(), ConstraintSet.MATCH_CONSTRAINT);
+				break;
+		}
+		constraintSet.applyTo(layout);
 	}
 
 	public void updateBackButton() {

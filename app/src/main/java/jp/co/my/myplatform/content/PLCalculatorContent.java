@@ -34,7 +34,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 		super();
 		LayoutInflater.from(getContext()).inflate(R.layout.content_calculator, this);
 		ViewGroup headerView = findViewById(R.id.header);
-		if (PLCoreService.getNavigationController().isHalf()) {
+		if (PLCoreService.getNavigationController().isHalf() || !PLCoreService.getCoreService().isPortrait()) {
 			headerView.removeAllViews();
 			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			if (inflater != null) {

@@ -53,6 +53,15 @@ public class PLNavigationBarView extends LinearLayout {
 		updateSpaceWeight();
 	}
 
+	public void updateSubLayoutParams() {
+		for (int i = 0; i < getChildCount(); i++) {
+			View child = getChildAt(i);
+			if (mSpace != child) {
+				child.setLayoutParams(getButtonLayoutParams());
+			}
+		}
+	}
+
 	// 古いボタンを削除して一括追加
 	public void resetButtons(List<Button> buttonList) {
 		// 戻るボタンと mSpace 以外を取り除く
@@ -90,7 +99,12 @@ public class PLNavigationBarView extends LinearLayout {
 	}
 
 	private LinearLayout.LayoutParams getButtonLayoutParams() {
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, MATCH_PARENT);
+		LinearLayout.LayoutParams params;
+		if (PLCoreService.getCoreService().isPortrait()) {
+			params = new LinearLayout.LayoutParams(0, MATCH_PARENT);
+		} else {
+			params = new LinearLayout.LayoutParams(MATCH_PARENT, 0);
+		}
 		params.weight = 1;
 		return params;
 	}

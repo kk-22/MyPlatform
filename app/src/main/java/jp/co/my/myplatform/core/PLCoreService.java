@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -85,6 +86,12 @@ public class PLCoreService extends Service {
 	public IBinder onBind(Intent intent) {
 		MYLogUtil.showToast("onBind");
 		return null;
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		getNavigationController().layoutNavigationController();
 	}
 
 	private void actionIntent(Intent intent) {
@@ -175,5 +182,9 @@ public class PLCoreService extends Service {
 
 	public static Context getContext() {
 		return sContext;
+	}
+
+	public boolean isPortrait() {
+		return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
 	}
 }
