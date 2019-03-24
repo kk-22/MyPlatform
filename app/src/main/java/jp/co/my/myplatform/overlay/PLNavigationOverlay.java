@@ -131,35 +131,54 @@ public class PLNavigationOverlay extends PLOverlayView {
 			return (T) mCurrentView;
 		}
 
-		T view = getContentView(clazz);
-		if (view == null) {
+		T selectedView = getContentView(clazz);
+		PLContentView pushingView = selectedView;
+		if (selectedView == null) {
 			// インスタンス作成
 			try {
 				String className = clazz.getName();
-				view = (T) Class.forName(className).getConstructor().newInstance();
+				selectedView = (T) Class.forName(className).getConstructor().newInstance();
+				pushingView = selectedView;
 			} catch (Exception e) {
 				MYLogUtil.showExceptionToast(e);
 				return null;
 			}
 		} else if (clazz != PLHomeContent.class) {
-			view.viewWillComeBack(mCurrentView);
-			// 履歴の重複を無くす
-			int index = mViewCache.indexOf(view);
-			int nextIndex = index + 1;
+			// ホーム以外の前の画面に戻る
+			int selectedIndex = mViewCache.indexOf(selectedView);
+			int nextIndex = selectedIndex + 1;
+			int prevIndex = selectedIndex - 1;
 			if (nextIndex > 0 && mViewCache.get(nextIndex) instanceof PLHomeContent) {
 				// 2連続Homeになるのを防ぐ
 				mViewCache.remove(nextIndex);
+			} else if (0 <= prevIndex && mViewCache.get(prevIndex) instanceof PLHomeContent) {
+				// 戻る対象の画面がホームから開いた画面
+				for (int i = nextIndex + 1; i < mViewCache.size(); i++) {
+					if (mViewCache.get(i) instanceof PLHomeContent) {
+						// ホームを開いた画面へ戻り、ホームに囲まれた全画面を履歴の最後に移動
+						mViewCache.remove(i);
+						pushingView = mViewCache.get(i - 1);
+						for (int j = selectedIndex; j < i; j++) {
+							// 履歴の最後へ移動
+							PLContentView content = mViewCache.get(selectedIndex);
+							mViewCache.remove(content);
+							mViewCache.add(content);
+						}
+						break;
+					}
+				}
 			}
-			mViewCache.remove(view);
+			pushingView.viewWillComeBack(mCurrentView);
+			mViewCache.remove(pushingView);
 		}
-		return pushView(view);
+		pushView(pushingView);
+		return selectedView;
 	}
 
-	public <T extends PLContentView> T pushView(T view) {
+	public <T extends PLContentView> void pushView(T view) {
 		mViewCache.add(view);
 		changeCurrentView(view);
 		updateBackButton();
-		return (T) view;
 	}
 
 	public void popView() {
