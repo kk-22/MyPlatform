@@ -1,7 +1,7 @@
 package jp.co.my.myplatform.simulator;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;

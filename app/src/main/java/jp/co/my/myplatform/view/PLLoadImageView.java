@@ -4,12 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.annotation.DrawableRes;
-import android.support.v4.util.LruCache;
+import androidx.annotation.DrawableRes;
+import androidx.collection.LruCache;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +15,7 @@ import java.io.InputStream;
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 
-public class PLLoadImageView extends android.support.v7.widget.AppCompatImageView {
+public class PLLoadImageView extends androidx.appcompat.widget.AppCompatImageView {
 
 	private File mFile;
 	private LruCache<String, Bitmap> mCache;

@@ -2,8 +2,8 @@ package jp.co.my.myplatform.overlay;
 
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;

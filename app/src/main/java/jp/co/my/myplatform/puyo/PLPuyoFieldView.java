@@ -3,8 +3,7 @@ package jp.co.my.myplatform.puyo;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Constraints;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
@@ -17,9 +16,9 @@ import jp.co.my.common.util.MYPointUtil;
 import jp.co.my.common.util.MYPointUtil.Direction;
 import jp.co.my.myplatform.puyo.PLPuyoBlockView.PuyoType;
 
-import static android.support.constraint.ConstraintLayout.LayoutParams.CHAIN_PACKED;
-import static android.support.constraint.ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
-import static android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID;
+import static androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED;
+import static androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
+import static androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class PLPuyoFieldView extends ConstraintLayout {
@@ -374,7 +373,7 @@ public class PLPuyoFieldView extends ConstraintLayout {
 		}
 		for (int i = 0; i < mNumberOfRow; i++) {
 			for (int j = 0; j < mNumberOfColumn; j++) {
-				ConstraintLayout.LayoutParams params = new Constraints.LayoutParams(MATCH_CONSTRAINT, MATCH_CONSTRAINT);
+				ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(MATCH_CONSTRAINT, MATCH_CONSTRAINT);
 				if (i == 0) {
 					params.leftToLeft = PARENT_ID;
 				} else {

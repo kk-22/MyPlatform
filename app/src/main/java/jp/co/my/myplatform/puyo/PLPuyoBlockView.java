@@ -3,7 +3,7 @@ package jp.co.my.myplatform.puyo;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 

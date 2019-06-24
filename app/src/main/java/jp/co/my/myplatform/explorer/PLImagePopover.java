@@ -1,7 +1,7 @@
 package jp.co.my.myplatform.explorer;
 
 import android.graphics.Bitmap;
-import android.support.v4.util.LruCache;
+import androidx.collection.LruCache;
 import android.view.View;
 
 import java.io.File;
