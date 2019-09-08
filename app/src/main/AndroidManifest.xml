@@ -30,6 +30,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="ae20c152d0c78c1f9cc9c9055ed48110ddb754de" />
+        <uses-library android:name="org.apache.http.legacy"/>
     </application>
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -42,4 +43,5 @@
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>

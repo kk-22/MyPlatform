@@ -1,11 +1,14 @@
 package jp.co.my.myplatform.core;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -143,16 +146,24 @@ public class PLCoreService extends Service {
 	}
 
 	public void showNotification(RemoteViews remote) {
+		final String NOTIFICATION_CHANNEL_ID = "MyBackgroundChannelId";
+		NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "MyBackgroundChannelName", NotificationManager.IMPORTANCE_NONE);
+		chan.setLightColor(Color.BLUE);
+		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
+		manager.createNotificationChannel(chan);
+
 		Context context = getApplicationContext();
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
 		builder.setSmallIcon(R.mipmap.ic_launcher);
-		builder.setVisibility(Notification.VISIBILITY_PUBLIC);	// ロック画面で表示
+		builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);	// ロック画面で表示
 		builder.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
 		builder.setOngoing(true);	// 削除不可にする
 		builder.setContent(remote);
 
-		NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
-		manager.notify(1, builder.build());
+		NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getApplicationContext());
+		managerCompat.notify(1, builder.build());
 		startForeground(1, builder.build());
 	}
 

@@ -32,7 +32,7 @@ public abstract class PLOverlayView extends LinearLayout {
 		return new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.WRAP_CONTENT,
 				WindowManager.LayoutParams.WRAP_CONTENT,
-				WindowManager.LayoutParams.TYPE_PHONE,
+				WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
 				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,					// フォーカスされない
 				PixelFormat.TRANSLUCENT											// ウィンドウの透明化
 		);
@@ -42,7 +42,7 @@ public abstract class PLOverlayView extends LinearLayout {
 		return new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.MATCH_PARENT,
 				WindowManager.LayoutParams.MATCH_PARENT,
-				WindowManager.LayoutParams.TYPE_PHONE,
+				WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
 				WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL					// タッチイベントを拾わない
 						| WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN		// ステータスバーの上まで表示１
 						| WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS		// ステータスバーの上まで表示２
@@ -54,7 +54,7 @@ public abstract class PLOverlayView extends LinearLayout {
 		return new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.MATCH_PARENT,
 				WindowManager.LayoutParams.MATCH_PARENT,
-				WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+				WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
 				WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS				// PLDragDropViewで画面外へフリック時に必要
 						| WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR	// FLAG_LAYOUT_IN_SCREENで必要
 						| WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,		// 画面全体に配置
