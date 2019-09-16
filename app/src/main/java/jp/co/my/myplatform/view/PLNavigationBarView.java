@@ -37,7 +37,9 @@ public class PLNavigationBarView extends LinearLayout {
 		mBackButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PLCoreService.getNavigationController().popView();
+				if (PLCoreService.getNavigationController().getCurrentView().canGoBackContent()) {
+					PLCoreService.getNavigationController().popView();
+				}
 			}
 		});
 		mBackButton.setOnLongClickListener(new OnLongClickListener() {

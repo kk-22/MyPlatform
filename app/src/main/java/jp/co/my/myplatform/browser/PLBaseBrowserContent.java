@@ -35,6 +35,7 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 	private ImageButton mBackButton, mForwardButton, mDownButton;
 	private ProgressBar mProgressBar;
 	private LinearLayout mToolbar;
+	private boolean disableNaviCloseButton; // trueならナビゲーションバーの閉じるボタンで1ページずつ戻る
 
 	public PLBaseBrowserContent() {
 		super();
@@ -121,6 +122,15 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 		}
 		PLCoreService.getNavigationController().popView();
 		return true;
+	}
+
+	@Override
+	public boolean canGoBackContent() {
+		if (disableNaviCloseButton) {
+			onBackKey();
+			return false;
+		}
+		return super.canGoBackContent();
 	}
 
 	protected boolean canGoHistory(boolean isBack) {
@@ -298,6 +308,10 @@ public class PLBaseBrowserContent extends PLContentView implements PLActionListP
 
 	protected LinearLayout getToolbar() {
 		return mToolbar;
+	}
+
+	public void setDisableNaviCloseButton(boolean disableNaviCloseButton) {
+		this.disableNaviCloseButton = disableNaviCloseButton;
 	}
 
 	// PLActionListListener of bookmark list

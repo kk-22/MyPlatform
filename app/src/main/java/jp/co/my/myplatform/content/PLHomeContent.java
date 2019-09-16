@@ -73,6 +73,7 @@ public class PLHomeContent extends PLContentView {
 			@Override
 			public void onClick(View v) {
 				PLBaseBrowserContent browserView = new PLBaseBrowserContent();
+				browserView.setDisableNaviCloseButton(true);
 				browserView.getCurrentWebView().loadUrl("https://twitter.com/dorann217/lists/%E3%83%AA%E3%82%B9%E3%83%88");
 				PLCoreService.getNavigationController().pushView(browserView);
 			}

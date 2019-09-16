@@ -114,6 +114,10 @@ public class PLContentView extends FrameLayout implements View.OnKeyListener {
 		return false;
 	}
 
+	public boolean canGoBackContent() {
+		return true;
+	}
+
 	public Button addNavigationButton(String title, OnClickListener onClickListener) {
 		return addNavigationButton(title, true, onClickListener);
 	}
