@@ -199,7 +199,7 @@ public class PLCalculatorContent extends PLContentView implements View.OnClickLi
 			return;
 		}
 		ArrayList<String> titleArray = new ArrayList<>();
-		for (int i = count - 1; 0 < i; i--) {
+		for (int i = 0; i < count; i++) {
 			titleArray.add(mHistories.get(i).replace("=", "\n="));
 		}
 		new PLListPopover(titleArray.toArray(new String[0]), new AdapterView.OnItemClickListener() {
