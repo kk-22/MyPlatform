@@ -126,7 +126,7 @@ public class PLAlarmContent extends PLContentView {
 				updateFrontButtonText(calendar);
 				String dateString = MYCalendarUtil.getDateTextFromCalendar(calendar);
 				String timeString = mSelectTimeView.getSelectTimeString();
-				MYLogUtil.showLongToast("schedule :" +dateString +"\nremaining:" +timeString +"ago\nschedule :" +snoozeSec +"/sec");
+				MYLogUtil.showLongToast("schedule :" +dateString +"\nremaining:" +timeString +"ago");
 				showAlarmNotification(dateString);
 
 				if (!mSelectTimeView.isZeroAll()) {
