@@ -112,7 +112,7 @@ public class PLExplorerContent extends PLContentView implements PLExplorerRecycl
 		});
 		List<File> fileList = Arrays.asList(allFiles);
 		if (fileList.size() == 0) {
-			MYLogUtil.showToast("ファイルなし");
+			loadPicturesDirectory();
 			return;
 		}
 
