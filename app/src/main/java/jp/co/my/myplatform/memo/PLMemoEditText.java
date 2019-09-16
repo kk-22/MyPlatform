@@ -70,7 +70,7 @@ public class PLMemoEditText extends EditText implements TextWatcher {
 
 	void scrollWithSelection(boolean shouldScroll, int start, int end) {
 		int line = getLayout().getLineForOffset (start);
-		int scrollY = (int) ((line + 0.5) * getLineHeight());
+		int scrollY = getLayout().getLineTop(Math.max(0, line - 2));
 		int diffY = scrollY - mScrollView.getScrollY();
 		if (shouldScroll || diffY <= 0 || mScrollView.getHeight() / 2 < diffY) {
 			// キーボードに隠れたり画面外の位置なら強制スクロール
