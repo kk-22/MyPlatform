@@ -13,6 +13,10 @@ import android.widget.ListView;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.regex.Pattern;
+
 import jp.co.my.common.util.MYLogUtil;
 import jp.co.my.myplatform.R;
 import jp.co.my.myplatform.core.PLCoreService;
@@ -129,10 +133,15 @@ public class PLBrowserFunctionList extends PLPopoverView {
 					@Override
 					public boolean onEnter(View v, String text) {
 						String urlStr;
-						if (text.startsWith("http")) {
+						if (Pattern.matches("https?:.*", text)) {
 							urlStr = text;
 						} else {
-							urlStr = "https://www.google.co.jp/search?q=" + text;
+							try {
+								urlStr = "https://www.google.co.jp/search?q=" + URLEncoder.encode(text, "UTF-8");
+							} catch (UnsupportedEncodingException e) {
+								urlStr = "https://www.google.co.jp/search?q=EncodeEerror";
+								MYLogUtil.showExceptionToast(e);
+							}
 						}
 						mWebView.loadUrl(urlStr);
 						return true;
