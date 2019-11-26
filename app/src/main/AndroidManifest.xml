@@ -13,12 +13,13 @@
         <activity android:name=".activity.PLMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <service android:name=".core.PLCoreService"></service>
+        <service android:name=".core.PLCoreService">
+        </service>
 
         <service
             android:name=".core.PLFirebaseMessagingService">
@@ -27,7 +28,9 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".core.PLBroadcastReceiver"></receiver>
+        <receiver android:name=".core.PLBroadcastReceiver">
+        </receiver>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="ae20c152d0c78c1f9cc9c9055ed48110ddb754de" />
