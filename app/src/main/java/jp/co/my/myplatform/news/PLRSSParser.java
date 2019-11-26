@@ -95,8 +95,7 @@ public class PLRSSParser {
 				pageData.setTitle(parser.nextText());
 			} else if (tag.equals("link")) {
 				String url = parser.nextText();
-				String replacedUrl = url.replace("http://", "https://");
-				pageData.setUrl(replacedUrl);
+				pageData.setUrl(url);
 			} else if (tag.equals("dc:date")) {
 				// 投稿日（RSS1.0）
 				String dateText = parser.nextText();
