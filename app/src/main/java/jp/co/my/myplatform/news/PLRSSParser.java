@@ -96,16 +96,17 @@ public class PLRSSParser {
 			} else if (tag.equals("link")) {
 				String url = parser.nextText();
 				pageData.setUrl(url);
-			} else if (tag.equals("dc:date")) {
-				// 投稿日（RSS1.0）
+			} else if (tag.equals("dc:date") || tag.equals("pubDate")) {
 				String dateText = parser.nextText();
-				String tempText = dateText.replace("T", " ").substring(0, 19);
-				Calendar calendar = convertStringToCalendar(tempText, "yyyy-MM-dd hh:mm:ss");
-				pageData.setPostedDate(calendar);
-			} else if (tag.equals("pubDate")) {
-				// 投稿日（RSS2.0）
-				String dateText = parser.nextText();
-				Calendar calendar = convertStringToCalendar(dateText, "EEE, dd MMM yyyy HH:mm:ss Z");
+				Calendar calendar;
+				if (dateText.length() <= 24) {
+					// 投稿日（RSS1.0, YahooNews） "2020-09-27T03:16:01.000Z"
+					String tempText = dateText.replace("T", " ").substring(0, 19);
+					calendar = convertStringToCalendar(tempText, "yyyy-MM-dd hh:mm:ss");
+				} else {
+					// 投稿日（RSS2.0） "Sun, 27 Sep 2020 20:42:54 +0900"
+					calendar = convertStringToCalendar(dateText, "EEE, dd MMM yyyy HH:mm:ss Z");
+				}
 				pageData.setPostedDate(calendar);
 			}
 		}
