@@ -99,8 +99,8 @@ public class PLRSSParser {
 			} else if (tag.equals("dc:date") || tag.equals("pubDate")) {
 				String dateText = parser.nextText();
 				Calendar calendar;
-				if (dateText.length() <= 24) {
-					// 投稿日（RSS1.0, YahooNews） "2020-09-27T03:16:01.000Z"
+				if (dateText.length() <= 25) {
+					// 投稿日（RSS1.0, YahooNews） "2020-09-27T03:16:01.000Z" "2020-09-27T22:00:45+09:00"
 					String tempText = dateText.replace("T", " ").substring(0, 19);
 					calendar = convertStringToCalendar(tempText, "yyyy-MM-dd hh:mm:ss");
 				} else {
